@@ -37,7 +37,7 @@
                                     </button>
 
                                     <button v-show="option.value=='fs'" class="btn btn-success" :disabled="storage[option.prop] === null"
-                                            @click="handleChoose(option.value+'-insertUrl');handleShowModal()" :name="`btn-insert-url-${option.prop}`">
+                                            :name="`btn-insert-url-${option.prop}`" @click="handleChoose(option.value+'-insertUrl');handleShowModal()">
                                         {{$t('dataSource.insertViaUrl')}}
                                     </button>
                                 </div>
@@ -173,16 +173,17 @@
                     {{$t('actions.back')}}
                 </button>
             </div>
-            <b-modal ref="modal" id="bv-modal" size="lg" title="Preencha os dados" hide-footer>
+            <b-modal id="bv-modal" ref="modal" size="lg" title="Preencha os dados"
+                     hide-footer>
                 <div class="row">
                     <div class="col-md-9">
-                        <label class="font-weight-bold">{{$tc('common.name')}}*:</label>
+                        <label class="font-weight-bold">{{$t('common.name')}}*:</label>
                         <input v-model="dataSource.name" type="text"
-                                class="form-control">
+                               class="form-control">
                     </div>
 
                     <div class="col-md-3">
-                        <label class="font-weight-bold">{{$tc('common.format')}}*:</label>
+                        <label class="font-weight-bold">{{$t('common.format')}}*:</label>
                         <select v-model="dataSource.format" class="form-control">
                             <option v-for="fmt in formats" :key="fmt" :value="fmt">
                                 {{fmt}}
@@ -191,21 +192,22 @@
                     </div>
 
                     <div class="col-md-12" style="margin-top: 2%;">
-                        <label class="font-weight-bold">{{$tc('dataSource.fileUrl')}}*:</label>
-                        <textarea ref="filepathTextArea" v-model="dataSource.url" class="form-control"/>
+                        <label class="font-weight-bold">{{$t('dataSource.fileUrl')}}*:</label>
+                        <textarea ref="filepathTextArea" v-model="dataSource.url" class="form-control" />
                     </div>
 
                     <div class="col-md-12" style="display: flex; justify-content: center; flex-direction: column; margin-top: 2%;">
                         <label>Sistema de arquivos atualmente escolhido:</label>
-                            <select v-model="storage[options[0].prop]" class="form-control" :name="`storage-${options[0].prop}`">
-                                <option v-for="s in storages[options[0].items]" :key="s.id" :value="s.id">
-                                    {{s.name}}
-                                </option>
-                            </select>
+                        <select v-model="storage[options[0].prop]" class="form-control" :name="`storage-${options[0].prop}`">
+                            <option v-for="s in storages[options[0].items]" :key="s.id" :value="s.id">
+                                {{s.name}}
+                            </option>
+                        </select>
                     </div>
-                    <div class="footer"  style="margin: 10pt auto auto auto;display: flex">
-
-                        <b-button class="btn" style="margin: 5pt" block @click="$bvModal.hide('bv-modal')">Fechar</b-button>
+                    <div class="footer" style="margin: 10pt auto auto auto;display: flex">
+                        <b-button class="btn" style="margin: 5pt" block @click="$bvModal.hide('bv-modal')">
+                            Fechar
+                        </b-button>
                         <button class="btn btn-success" style="margin: 5pt" @click="handleSave">
                             {{$t('actions.save')}}
                         </button>
@@ -227,17 +229,6 @@ import axios from 'axios';
 let limoneroUrl = import.meta.env.VITE_LIMONERO_URL;
 import Resumable from 'resumablejs';
 export default {
-    computed: {
-        console: () => console,
-    },
-    methods: {
-        handleShowModal(){
-            this.$refs.modal.show();
-        },
-        handleCloseModal(){
-            this.$refs.modal.hide();
-        },
-    },
     setup() {
         const router = useRouter();
         const { t } = useI18n();
@@ -324,8 +315,8 @@ export default {
 
             const token = localStorage.getItem('token');
             if (token) {
-                headers['Authorization'] = token
-                headers['X-THORN-ID'] = 'true'
+                headers['Authorization'] = token;
+                headers['X-THORN-ID'] = 'true';
             } else {
                 let accessToken = await openIdService.getAccessToken();
                 accessToken && (headers['Authorization'] = accessToken);
@@ -517,6 +508,17 @@ export default {
                 'TAR_IMAGE_FOLDER', 'TEXT', 'VIDEO_FOLDER', 'UNKNOWN',
                 'XML_FILE'].sort(),
         };
+    },
+    computed: {
+        console: () => console,
+    },
+    methods: {
+        handleShowModal(){
+            this.$refs.modal.show();
+        },
+        handleCloseModal(){
+            this.$refs.modal.hide();
+        },
     }
 };
 </script>

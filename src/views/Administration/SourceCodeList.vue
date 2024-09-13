@@ -6,7 +6,7 @@
                     <div class="d-flex justify-content-between align-items-center">
                         <h1>Biblioteca de Códigos</h1>
                         <router-link :to="{ name: 'sourceCodeAdd' }" class="btn btn-lemonade-primary btn-success">
-                            <font-awesome-icon icon="plus" /> {{ $t('actions.add') }}
+                            <font-awesome-icon icon="plus" /> {{$t('actions.add')}}
                         </router-link>
                     </div>
                     <hr>
@@ -14,21 +14,21 @@
                         <div class="col-md-12">
                             <div class="card">
                                 <div class="card-body">
-                                    <v-server-table :columns="options.columns" :options="options.options"
-                                        name="codeList" ref="codeList">
+                                    <v-server-table ref="codeList" :columns="options.columns"
+                                                    :options="options.options" name="codeList">
                                         <template #id="props">
                                             <router-link :to="{ name: 'sourceCodeEdit', params: { id: props.row.id } }">
-                                                {{ props.row.id }}
+                                                {{props.row.id}}
                                             </router-link>
                                         </template>
                                         <template #name="props">
                                             <router-link :to="{ name: 'sourceCodeEdit', params: { id: props.row.id } }">
-                                                {{ props.row.name }}
+                                                {{props.row.name}}
                                             </router-link>
                                         </template>
                                         <template #enabled="props">
-                                            <span v-if="props.row.enabled">{{ $t('common.yes') }}</span>
-                                            <span v-else>{{ $t('common.no') }}</span>
+                                            <span v-if="props.row.enabled">{{$t('common.yes')}}</span>
+                                            <span v-else>{{$t('common.no')}}</span>
                                         </template>
                                         <template #actions="props">
                                             <button class="btn btn-sm btn-light" @click="remove(props.row.id)">
@@ -48,8 +48,8 @@
 
 <script setup>
 import axios from 'axios';
-import { ref } from 'vue'
-import { useI18n } from 'vue-i18n-bridge';
+import { ref } from 'vue';
+//import { useI18n } from 'vue-i18n-bridge';
 import DataTableBuilder from '../../data-table-builder.js';
 import useNotifier from '@/composables/useNotifier.js';
 import { getCurrentInstance } from 'vue';
@@ -81,7 +81,7 @@ const reqFn = async (data) => {
     } catch (e) {
         error(e);
     }
-}
+};
 const dtBuilder = new DataTableBuilder(t)
     .columns(...columns)
     .headings({
@@ -108,7 +108,7 @@ const remove = async (id) => {
                 codeList.value.refresh();
                 success(t('messages.successDeletion', {
                     what: 'Biblioteca de código'
-                }), t('actions.delete'))
+                }), t('actions.delete'));
             }
         });
     } catch (e) {

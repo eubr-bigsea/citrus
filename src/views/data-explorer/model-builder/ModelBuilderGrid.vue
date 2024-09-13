@@ -1,6 +1,8 @@
 <template>
     <div>
-        <h5 class="mb-3 border-bottom pb-3">Grade de parâmetros</h5>
+        <h5 class="mb-3 border-bottom pb-3">
+            Grade de parâmetros
+        </h5>
         <div class="row">
             <div class="col-6">
                 <form class="form">
@@ -27,8 +29,8 @@
                         <div class="col-12 mt-2">
                             <b-form-group label="Número máximo de iterações:">
                                 <input v-model.number="max_iterations"
-                                    class="form-control form-control-sm w-25" type="number" min="0" maxlength="4"
-                                    max="9999">
+                                       class="form-control form-control-sm w-25" type="number" min="0" maxlength="4"
+                                       max="9999">
                                 <div class="form-text">
                                     Número máximo de iterações (buscas na grade). 0 significa ilimitado para estratégia de grade
                                     e 20
@@ -39,7 +41,7 @@
                         <div class="col-12 mt-2">
                             <b-form-group label="Semente para números aleatórios (seed):">
                                 <input v-model.number="seed" class="form-control form-control-sm w-25"
-                                    type="number" min="0" maxlength="12">
+                                       type="number" min="0" maxlength="12">
                                 <div class="form-text">
                                     Semente usada para aleatorizar a grade, permitindo repetir experimentos.
                                     Se vazio, usa uma semente definida durante a execução.
@@ -49,7 +51,7 @@
                         <div v-if="false" class="col-6">
                             <b-form-group label="Max search time:">
                                 <input v-model.number="max_search_time"
-                                    class="form-control form-control-sm w-25" type="number" min="0" maxlength="10">
+                                       class="form-control form-control-sm w-25" type="number" min="0" maxlength="10">
                                 <div class="form-text">
                                     Maximum number of minutes for the grid search. 0 means unlimited.
                                 </div>
@@ -57,7 +59,7 @@
                             </b-form-group>
                             <b-form-group label="Paralelismo:">
                                 <input v-model="parallelism" class="form-control form-control-sm w-25"
-                                    type="number" min="0" max="999" maxlength="3">
+                                       type="number" min="0" max="999" maxlength="3">
                                 <div class="form-text">
                                     0 significa 'auto'.
                                 </div>

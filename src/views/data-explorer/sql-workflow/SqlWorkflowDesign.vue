@@ -1,41 +1,45 @@
 <template>
     <main role="main">
         <div class="d-flex justify-content-between align-items-center pb-2 mb-2 border-bottom">
-            <h1>{{ $t('titles.sqlWorkflow') }}</h1>
+            <h1>{{$t('titles.sqlWorkflow')}}</h1>
             <div class="mt-2">
                 <router-link v-if="workflowObj.pipeline" :to="{name: 'pipelineEdit', params: {id: workflowObj.pipeline.id}}"
-                    class="btn btn-outline-secondary btn-sm mr-1" :title="workflowObj.pipeline.name" tag="button">
-                    <font-awesome-icon icon="fa fa-circle-nodes" />
-                    Ir para pipeline #{{workflowObj.pipeline.id}}
+                             class="btn btn-outline-secondary btn-sm mr-1" :title="workflowObj.pipeline.name">
+                    <button class="btn btn-secondary btn-sm">
+                        <font-awesome-icon icon="fa fa-circle-nodes" />
+                        Ir para pipeline #{{workflowObj.pipeline.id}}
+                    </button>
                 </router-link>
                 <b-button variant="outline-secondary" size="sm" title="Usar biblioteca"
-                    @click="handleShowModalCodeLibrary" class="mr-1">
+                          class="mr-1" @click="handleShowModalCodeLibrary">
                     <font-awesome-icon icon="fa fa-file-code" />
-                   Bibliotecas de código <span v-if="workflowObj.forms.code_libraries?.value.length >=0"> ({{
-                        workflowObj.forms.code_libraries.value.length }})</span>
+                    Bibliotecas de código <span v-if="workflowObj.forms.code_libraries?.value.length >=0"> ({{workflowObj.forms.code_libraries.value.length}})</span>
                 </b-button>
 
                 <b-button variant="outline-dark" size="sm" :title="$t('actions.showVariables')"
-                    @click.prevent="$refs.variablesModal.show()" class="mr-1">
+                          class="mr-1" @click.prevent="$refs.variablesModal.show()">
                     <font-awesome-icon icon="fa fa-dollar-sign" /> Variáveis
-                    <span v-if="workflowObj.variables?.length >=0"> ({{
-                        workflowObj.variables?.length }})</span>
+                    <span v-if="workflowObj.variables?.length >=0"> ({{workflowObj.variables?.length}})</span>
                 </b-button>
 
-                <b-button variant="primary" size="sm" class="pu mr-1" @click="saveWorkflow" data-test="save">
+                <b-button variant="primary" size="sm" class="pu mr-1" data-test="save"
+                          @click="saveWorkflow">
                     <font-awesome-icon icon="fa fa-save" />
-                    {{ $t('actions.save') }}
+                    {{$t('actions.save')}}
                 </b-button>
-                <b-button variant="success" size="sm" class="pu" @click="executeWorkflow" data-test="execute">
-                    <font-awesome-icon icon="fa fa-play" /> {{ $t('actions.execute') }}
+                <b-button variant="success" size="sm" class="pu" data-test="execute"
+                          @click="executeWorkflow">
+                    <font-awesome-icon icon="fa fa-play" /> {{$t('actions.execute')}}
                 </b-button>
-                <b-button v-if="sample" variant="info" size="sm" class="ml-2 pu" @click="showSample"
-                    data-test="sample">
+                <b-button v-if="sample" variant="info" size="sm" class="ml-2 pu"
+                          data-test="sample"
+                          @click="showSample">
                     <font-awesome-icon icon="fa fa-eye" /> Ver dados
                 </b-button>
-                <b-button variant="danger" size="sm" class="ml-2 pu" @click="stop" data-test="restart"
-                    title="Para os recursos alocados e reinicia os executores">
-                    <font-awesome-icon icon="fa fa-skull" /> {{ $t('actions.stop') }}
+                <b-button variant="danger" size="sm" class="ml-2 pu" data-test="restart"
+                          title="Para os recursos alocados e reinicia os executores"
+                          @click="stop">
+                    <font-awesome-icon icon="fa fa-skull" /> {{$t('actions.stop')}}
                 </b-button>
             </div>
         </div>
@@ -44,132 +48,137 @@
                 <div>
                     <form class="clearfix">
                         <div data-test="basic-options-section">
-                            <label>{{ $tc('common.name') }}:</label>
+                            <label>{{$t('common.name')}}:</label>
                             <input v-model="workflowObj.name" type="text" class="form-control form-control-sm"
-                                :placeholder="$tc('common.name')" maxlength="100"
-                                title="Apelido usado quando referenciar esta fonte de dados no comando SQL">
+                                   :placeholder="$t('common.name')" maxlength="100"
+                                   title="Apelido usado quando referenciar esta fonte de dados no comando SQL">
 
                             <b-form-checkbox v-if="workflowObj" v-model="workflowObj.forms.$meta.value.use_hwc"
-                                class="mt-3 " value="true" unchecked-value="false" style="zoom:.9">
+                                             class="mt-3 " value="true" unchecked-value="false" style="zoom:.9">
                                 Usar o Hive Warehouse Connector (HWC)
                             </b-form-checkbox>
-                            <label class="mt-3">{{ $tc('titles.cluster') }}: </label>
-                            <v-select v-model="workflowObj.preferred_cluster_id" :options="clusters" label="name"
-                                ref="clusterRef" :reduce="(opt) => opt.id" :taggable="false" :close-on-select="true"
-                                :filterable="false">
+                            <label class="mt-3">{{$t('titles.cluster')}}: </label>
+                            <v-select ref="clusterRef" v-model="workflowObj.preferred_cluster_id" :options="clusters"
+                                      label="name" :reduce="(opt) => opt.id" :taggable="false" :close-on-select="true"
+                                      :filterable="false">
                                 <template #option="{ description, name }">
-                                    {{ name }}<br>
-                                    <small><em>{{ description }}</em></small>
+                                    {{name}}<br>
+                                    <small><em>{{description}}</em></small>
                                 </template>
                             </v-select>
-                            <label for="" class="mt-3">{{ $tc('titles.dataSource', 2) }}
-                                ({{ workflowObj.dataSources?.length }}):</label> &nbsp;
+                            <label for="" class="mt-3">{{$t('titles.dataSource', 2)}}
+                                ({{workflowObj.dataSources?.length}}):</label> &nbsp;
                             <button class="btn btn-sm btn-secondary mt-2 float-right" :title="$t('actions.add')"
-                                @click.prevent="handleAddDataSource" :disabled="addingDataSource">
-                                <font-awesome-icon icon="fa fa-plus" /> {{ $tc('titles.dataSource', 1) }}</button>
+                                    :disabled="addingDataSource" @click.prevent="handleAddDataSource">
+                                <font-awesome-icon icon="fa fa-plus" /> {{$t('titles.dataSource', 1)}}
+                            </button>
                             <div v-if="addingDataSource" class="mt-2">
                                 <label>Escolha uma fonte de dados</label>
                                 <vue-select :filterable="false" :options="dataSourceList" :reduce="(opt) => opt.id"
-                                    label="name" @search="loadDataSourceList" @input="handleAddDataSource">
+                                            label="name" @search="loadDataSourceList" @input="handleAddDataSource">
                                     <template #no-options="{}">
                                         <small>Digite parte do nome pesquisar ...</small>
                                     </template>
                                     <template #option="option">
                                         <div class="d-center">
-                                            <span class="span-id">{{ option.id }}</span> - {{ option.name }}
+                                            <span class="span-id">{{option.id}}</span> - {{option.name}}
                                         </div>
                                     </template>
                                     <template #selected-option="option">
                                         <div class="selected d-center">
-                                            {{ option.id }} - {{ option.name }}
+                                            {{option.id}} - {{option.name}}
                                         </div>
                                     </template>
                                 </vue-select>
                                 <div class="mt-2">
                                     <button class="btn btn-sm ml-1 btn-secondary" :title="$t('actions.cancel')"
-                                        @click.prevent="addingDataSource = false"> {{ $t('actions.cancel') }}</button>
+                                            @click.prevent="addingDataSource = false">
+                                        {{$t('actions.cancel')}}
+                                    </button>
                                 </div>
                             </div>
                             <ul class="list-group data-sources mt-2 scroll-area">
-                                <li v-for="dataSource in workflowObj.dataSources" class="list-group-item p-2 pb-1 pt-1">
+                                <li v-for="dataSource in workflowObj.dataSources" :key="dataSource.id" class="list-group-item p-2 pb-1 pt-1">
                                     <div class="mb-2 truncate" :title="dataSource.forms.data_source.labelValue">
-                                        {{ dataSource.forms.data_source.labelValue }}
+                                        {{dataSource.forms.data_source.labelValue}}
                                     </div>
                                     <small>Apelido:</small>
-                                    <input type="text" class="form-control form-control-sm w-75 float-right mb-1"
-                                        v-model="dataSource.name" maxlength="50" @change="handleChangeAlias" />
+                                    <input v-model="dataSource.name" type="text"
+                                           class="form-control form-control-sm w-75 float-right mb-1" maxlength="50" @change="handleChangeAlias">
                                     <div class="float-left">
                                         <button class="btn btn-sm text-danger" :title="$t('actions.delete')"
-                                            @click.prevent="handleRemoveDataSource(dataSource.id)"><font-awesome-icon
-                                                icon="fa fa-times" /></button>
+                                                @click.prevent="handleRemoveDataSource(dataSource.id)">
+                                            <font-awesome-icon icon="fa fa-times" />
+                                        </button>
                                         <button :title="$t('common.preview')" class="btn btn-sm"
-                                            @click.prevent="handlePreview(dataSource.forms.data_source.value)">
+                                                @click.prevent="handlePreview(dataSource.forms.data_source.value)">
                                             <font-awesome-icon icon="fa-eye" />
                                         </button>
                                         <button title="Criar SELECT para fonte de dados" class="btn btn-sm btn-light"
-                                            @click.prevent="handleAddSqlFromDataSource('select', dataSource.forms.data_source.value)">
+                                                @click.prevent="handleAddSqlFromDataSource('select', dataSource.forms.data_source.value)">
                                             SELECT
                                         </button>
                                         <button title="Criar INSERT para fonte de dados"
-                                            class="btn btn-sm btn-light ml-1"
-                                            @click.prevent="handleAddSqlFromDataSource('insert', dataSource.forms.data_source.value)">
+                                                class="btn btn-sm btn-light ml-1"
+                                                @click.prevent="handleAddSqlFromDataSource('insert', dataSource.forms.data_source.value)">
                                             INSERT
                                         </button>
                                     </div>
                                 </li>
                             </ul>
-
                         </div>
                     </form>
                 </div>
                 <div>
-                    <span class="px-3 lemonade-job" :class="jobStatus.status.toLowerCase()">{{ jobStatus.status
-                        }}</span>
-                    {{ jobStatus.message }}
+                    <span class="px-3 lemonade-job" :class="jobStatus.status.toLowerCase()">{{jobStatus.status}}</span>
+                    {{jobStatus.message}}
                     <div v-if="jobStatus.exception_stack" class="exception-stack scroll-area">
-                        <pre class="exception mt-4">{{ jobStatus.exception_stack }}</pre>
+                        <pre class="exception mt-4">{{jobStatus.exception_stack}}</pre>
                     </div>
                 </div>
             </div>
             <div class="layout-center pt-2">
-                <h4>Comandos ({{ workflowObj.cells?.length }})</h4>
+                <h4>Comandos ({{workflowObj.cells?.length}})</h4>
                 <div v-if="workflowObj.cells?.length === 0">
-                    <button @click="handleAdd(null, 'sql', '\n')" class="btn btn-secondary btn-sm">
-                        <font-awesome-icon icon="fa fa-plus" /> {{ $t('actions.add') }} SQL</button>
-                    <button @click="handleAdd(null, 'python', '\n')" class="btn btn-secondary btn-sm ml-3">
-                        <font-awesome-icon icon="fa fa-plus" /> {{ $t('actions.add') }} Python</button>
+                    <button class="btn btn-secondary btn-sm" @click="handleAdd(null, 'sql', '\n')">
+                        <font-awesome-icon icon="fa fa-plus" /> {{$t('actions.add')}} SQL
+                    </button>
+                    <button class="btn btn-secondary btn-sm ml-3" @click="handleAdd(null, 'python', '\n')">
+                        <font-awesome-icon icon="fa fa-plus" /> {{$t('actions.add')}} Python
+                    </button>
                     <blockquote class="blockquote">
-                        <p class="mb-0">Nenhum comando ainda.</p>
+                        <p class="mb-0">
+                            Nenhum comando ainda.
+                        </p>
                         Escolha uma das opções acima para iniciar.
                     </blockquote>
                 </div>
                 <div class="scroll-area commands pb-5 mb-4">
                     <transition-group name="fade" @after-enter="handleCodeAppear">
-                        <div v-for="cell, i in workflowObj.cells" class="mb-3 editors" :key="cell.id"
-                            :class="{ 'disabled-cell': !cell.enabled }">
-                            <div class="row" v-if="cell.operation.slug === 'execute-sql'" :data-cell="cell.id">
+                        <div v-for="cell, i in workflowObj.cells" :key="cell.id" class="mb-3 editors"
+                             :class="{ 'disabled-cell': !cell.enabled }">
+                            <div v-if="cell.operation.slug === 'execute-sql'" class="row" :data-cell="cell.id">
                                 <div class="col-12">
                                     <div class="button-toolbar">
                                         <sql-editor-toolbar ref="toolbar" :task="cell" :show-move-up="i > 0"
-                                            :data-task="cell.id" :show-move-down="i < workflowObj.cells.length - 1"
-                                            :useHWC="cell.forms.useHWC.value" @on-move="handleMove"
-                                            @on-remove="handleRemoveSql" @on-add="handleAdd"
-                                            @on-indent="handleIndent(cell.id)"
-                                            @on-execute="(taskId, value) => executeWorkflow(cell.id, value)"
-                                            @on-toggle-use-hwc="handleToggleHWC" />
+                                                            :data-task="cell.id" :show-move-down="i < workflowObj.cells.length - 1"
+                                                            :use-h-w-c="cell.forms.useHWC.value" @on-move="handleMove"
+                                                            @on-remove="handleRemoveSql" @on-add="handleAdd"
+                                                            @on-indent="handleIndent(cell.id)"
+                                                            @on-execute="(taskId, value) => executeWorkflow(cell.id, value)"
+                                                            @on-toggle-use-hwc="handleToggleHWC" />
                                     </div>
                                 </div>
                                 <div class="col-4"
-                                    title="Apelido usado quando referenciar esta fonte de dados no comando SQL">
-                                    <span class="form-text">{{ $t('common.aliasSql') }} (use no SQL):</span>
-                                    <input class="form-control form-control-sm mb-1" maxlength="50"
-                                        v-model="cell.name" />
+                                     title="Apelido usado quando referenciar esta fonte de dados no comando SQL">
+                                    <span class="form-text">{{$t('common.aliasSql')}} (use no SQL):</span>
+                                    <input v-model="cell.name" class="form-control form-control-sm mb-1"
+                                           maxlength="50">
                                 </div>
 
                                 <div class="col-4">
-                                    <span class="form-text">{{ $t('titles.comment') }}:</span> <input
-                                        class="form-control form-control-sm mb-1" maxlength="100"
-                                        v-model="cell.forms.comment.value" />
+                                    <span class="form-text">{{$t('titles.comment')}}:</span> <input v-model="cell.forms.comment.value" class="form-control form-control-sm mb-1"
+                                                                                                    maxlength="100">
                                 </div>
                                 <div class="col-2 mt-4">
                                     <b-form-checkbox v-model="cell.enabled" :value="true" :unchecked-value="false">
@@ -179,24 +188,23 @@
                                 <div class="col-2">
                                     <span class="form-text">Tipo:</span>
                                     <input type="text" readonly :value="cell.operation.slug.substring(8)"
-                                        class="form-control form-control-sm w-24" />
+                                           class="form-control form-control-sm w-24">
                                 </div>
                             </div>
-                            <div class="row" v-else>
+                            <div v-else class="row">
                                 <div class="col-12">
                                     <div class="button-toolbar">
                                         <sql-editor-toolbar ref="toolbar" :task="cell" :show-move-up="i > 0"
-                                            :data-task="cell.id" :show-move-down="i < workflowObj.cells.length - 1"
-                                            @on-move="handleMove" @on-remove="handleRemoveSql" @on-add="handleAdd"
-                                            @on-indent="handleIndent(cell.id)"
-                                            @on-execute="(taskId, value) => executeWorkflow(cell.id, value)"
-                                            @on-toggle-use-hwc="handleToggleHWC" />
+                                                            :data-task="cell.id" :show-move-down="i < workflowObj.cells.length - 1"
+                                                            @on-move="handleMove" @on-remove="handleRemoveSql" @on-add="handleAdd"
+                                                            @on-indent="handleIndent(cell.id)"
+                                                            @on-execute="(taskId, value) => executeWorkflow(cell.id, value)"
+                                                            @on-toggle-use-hwc="handleToggleHWC" />
                                     </div>
                                 </div>
                                 <div class="col-8">
-                                    <span class="form-text">{{ $t('titles.comment') }}:</span> <input
-                                        class="form-control form-control-sm mb-1" maxlength="100"
-                                        v-model="cell.forms.comment.value" />
+                                    <span class="form-text">{{$t('titles.comment')}}:</span> <input v-model="cell.forms.comment.value" class="form-control form-control-sm mb-1"
+                                                                                                    maxlength="100">
                                 </div>
                                 <div class="col-2 mt-4">
                                     <b-form-checkbox v-model="cell.enabled" :value="true" :unchecked-value="false">
@@ -206,21 +214,21 @@
                                 <div class="col-2">
                                     <span class="form-text">Tipo:</span>
                                     <input type="text" readonly :value="cell.operation.slug.substring(8)"
-                                        class="form-control form-control-sm w-24" />
+                                           class="form-control form-control-sm w-24">
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-12">
                                     <div class="editor">
                                         <sql-editor v-if="cell.operation.slug === 'execute-sql'"
-                                            :query="cell.forms.query.value" @update="(v) => cell.forms.query.value = v"
-                                            ref="codeEditor" :tables="dataSources" :functions="functions"
-                                            :data-task="cell.id"
-                                            :format="{ language: 'spark', tabWidth: 2, keywordCase: 'upper', linesBetweenQueries: 2 }" />
-                                        <python-editor v-else :query="cell.forms.code.value"
-                                            @update="(v) => cell.forms.code.value = v" ref="codeEditor"
-                                            :tables="dataSources" :functions="functions" :data-task="cell.id"
-                                            :format="{ language: 'spark', tabWidth: 2, keywordCase: 'upper', linesBetweenQueries: 2 }" />
+                                                    ref="codeEditor" :query="cell.forms.query.value"
+                                                    :tables="dataSources" :functions="functions" :data-task="cell.id"
+                                                    :formatter="{ language: 'spark', tabWidth: 2, keywordCase: 'upper', linesBetweenQueries: 2 }"
+                                                    @update="(v) => cell.forms.query.value = v" />
+                                        <python-editor v-else ref="codeEditor"
+                                                       :query="cell.forms.code.value" :tables="dataSources"
+                                                       :functions="functions" :data-task="cell.id" :format="{ language: 'spark', tabWidth: 2, keywordCase: 'upper', linesBetweenQueries: 2 }"
+                                                       @update="(v) => cell.forms.code.value = v" />
                                     </div>
                                 </div>
                             </div>
@@ -232,19 +240,19 @@
                                         <font-awesome-icon v-if="taskStatuses[cell.id] === 'ERROR'" icon="fa-stop" class="text-danger" />
                                         -->
                                     <span v-if="cell.status && cell.status != ''">
-                                        {{ cell.message }}
-                                        <font-awesome-icon icon="fa" :icon="getCellIcon(cell)"
-                                            :class="getCellClass(cell)" />
+                                        {{cell.message}}
+                                        <font-awesome-icon :icon="'fa' + getCellIcon(cell)"
+                                                           :class="getCellClass(cell)" />
                                     </span>
                                 </div>
                                 <div v-if="cell.userMessages && cell.userMessages != ''" class="col-12">
                                     <div class=" ml-4 mt-3 border-top notifications px-4 py-2">
-                                        <div v-for="msg in cell.userMessages" class="mt-2 pt-2 border-top">
+                                        <div v-for="msg, counter in cell.userMessages" :key="counter" class="mt-2 pt-2 border-top">
                                             <div v-if="msg.type.toUpperCase() === 'HTML'">
                                                 <span v-html="msg.message" />
                                             </div>
                                             <div v-else>
-                                                {{ msg.message }}
+                                                {{msg.message}}
                                             </div>
                                         </div>
                                     </div>
@@ -255,21 +263,20 @@
                 </div>
             </div>
             <div class="layout-help">
-                <h4>{{ $t('common.help') }}</h4>
+                <h4>{{$t('common.help')}}</h4>
                 <sql-editor-help :data-sources="dataSources" :functions="sparkFunctions"
-                    :custom-functions="customFunctions" />
+                                 :custom-functions="customFunctions" />
             </div>
             <div v-show="loadingData" class="preview-loading">
                 <font-awesome-icon icon="lemon" spin class="text-success" />
-                {{ i18n.$t('common.wait') }}
+                {{i18n.$t('common.wait')}}
             </div>
         </div>
         <modal-preview-data-source ref="previewWindow" />
-        <sql-sample v-show="sample" :sample="sample" ref="modalSample" />
+        <sql-sample v-show="sample" ref="modalSample" :sample="sample" />
         <modal-workflow-variables ref="variablesModal" :simple="true" :workflow="workflowObj"
-            :items="workflowObj.variables" />
-        <sql-editor-use-code-library v-if="showUseCodeLibrary" ref="modalUseCodeLibrary" :task="workflowObj"/>
-
+                                  :items="workflowObj.variables" />
+        <sql-editor-use-code-library v-if="showUseCodeLibrary" ref="modalUseCodeLibrary" :task="workflowObj" />
     </main>
 </template>
 
@@ -382,7 +389,7 @@ window.onbeforeunload = function () {
     if (isDirty.value) {
         return confirmMsg;
     }
-}
+};
 router.beforeEach(function (to, from, next) {
     if (!isDirty.value || (confirm(confirmMsg))) {
         isDirty.value = false;
@@ -443,7 +450,7 @@ const configureWebSocket = async () => {
     };
     connectWebSocket(standSocketServer, standNamespace, standSocketIoPath,
         eventHandlers);
-}
+};
 
 onBeforeMount(async () => {
     internalWorkflowId.value = (route) ? route.params.id : 0;
@@ -453,7 +460,7 @@ onUnmounted(() => {
     disconnectWebSocket();
 });
 onMounted(() => {
-    job.value = { id: 800_000 + parseInt(internalWorkflowId.value) };
+    job.value = { id: (800000 + parseInt(internalWorkflowId.value)) };
     configureWebSocket();
 });
 //disconnectWebSocket();
@@ -485,7 +492,7 @@ const updateDataSources = async (useCached) => {
             cachedDataSources.value.push(dataSource);
         }
     }
-}
+};
 
 const load = async () => {
     loadingData.value = true;
@@ -579,7 +586,7 @@ const executeWorkflow = async (taskId, only) => {
     }
     delete cloned.dataSources;
     delete cloned.cells;
-    const PAGE_SIZE = 20
+    const PAGE_SIZE = 20;
     const body = {
         workflow: cloned,
         cluster: { id: cloned.preferred_cluster_id },
@@ -607,7 +614,7 @@ const executeWorkflow = async (taskId, only) => {
 
 const stop = async () => {
     try {
-        const resp = await axios.post(`${standUrl}/jobs/${job.value.id}/stop?executor=true`)
+        const resp = await axios.post(`${standUrl}/jobs/${job.value.id}/stop?executor=true`);
         success(i18n.$t('messages.successStop', { what: i18n.$t('titles.job') }));
     } catch (e) {
         error(e, null, null, 10000, false);
@@ -656,20 +663,20 @@ const handleAdd = (taskId, type, command) => {
     }
     if (codeEditor.value) {
         Vue.nextTick(() => {
-            codeEditor.value.slice(-1)[0].focus()
+            codeEditor.value.slice(-1)[0].focus();
         });
     }
     isDirty.value = true;
-}
+};
 const handleRemoveSql = (taskId) => {
     if (confirm(i18n.$t('messages.doYouWantToDelete'))) {
         workflowObj.value.removeTask(taskId);
         isDirty.value = true;
     }
-}
+};
 const handleMove = (taskId, direction) => {
     workflowObj.value.moveTask(taskId, direction);
-}
+};
 /* Data source related */
 const addingDataSource = ref(false);
 const dataSourceList = ref([]);
@@ -695,47 +702,47 @@ const handleAddDataSource = async (dataSourceId) => {
         isDirty.value = true;
     }
     addingDataSource.value = !addingDataSource.value;
-}
+};
 const handleRemoveDataSource = (taskId) => {
     if (confirm(i18n.$t('messages.doYouWantToDelete'))) {
         workflowObj.value.removeTask(taskId);
         dataSources.value = dataSources.value.filter(ds => ds.id !== taskId);
     }
     isDirty.value = true;
-}
+};
 const handlePreview = (dataSourceId) => {
     previewWindow.value.show(dataSourceId);
-}
+};
 const handleAddSqlFromDataSource = (type, dataSourceId) => {
     const ds = dataSources.value.find(ds => ds.dataSourceId === dataSourceId);
     if (ds && ds.attributes.length > 0) {
         const cmd = [];
         if (type === 'select') {
-            cmd.push('SELECT')
+            cmd.push('SELECT');
             for (const attr of ds.attributes.slice(0, -1)) {
-                cmd.push(`   ${ds.alias}.${attr.name},`)
+                cmd.push(`   ${ds.alias}.${attr.name},`);
             }
             cmd.push(`   ${ds.alias}.${ds.attributes.slice(-1)[0].name}`);
-            cmd.push(`FROM ${ds.alias}`)
+            cmd.push(`FROM ${ds.alias}`);
         } else if (type === 'insert') {
-            cmd.push(`INSERT INTO ${ds.alias}(`)
+            cmd.push(`INSERT INTO ${ds.alias}(`);
             for (const attr of ds.attributes.slice(0, -1)) {
-                cmd.push(`   ${attr.name},`)
+                cmd.push(`   ${attr.name},`);
             }
             cmd.push(`   ${ds.attributes.slice(-1)[0].name}`);
-            cmd.push(')')
-            cmd.push('VALUES()')
+            cmd.push(')');
+            cmd.push('VALUES()');
         }
         handleAdd(null, 'sql', cmd.join('\n'));
     }
-}
+};
 const handleChangeAlias = () => {
     isDirty.value = true;
     updateDataSources(true);
-}
+};
 const handleToggleHWC = (task, value) => {
-    task.forms.useHWC.value = value
-}
+    task.forms.useHWC.value = value;
+};
 const toolbar = ref();
 
 const handleIndent = (taskId) => {
@@ -745,31 +752,31 @@ const handleIndent = (taskId) => {
         currentToolbar.showStatus('código formatado');
         currentEditor.indent();
     }
-}
+};
 const handleCodeAppear = (el, done) => {
     el.scrollIntoView({ behavior: "smooth" });
 
-}
+};
 const getCellIcon = (cell) => {
     switch (cell.status) {
-        case 'RUNNING':
-            return 'fa-sync';
-        case 'COMPLETED':
-            return 'fa-check-circle';
-        case 'ERROR':
-            return 'fa-stop';
-        default:
-            return 'fa-question';
+    case 'RUNNING':
+        return 'fa-sync';
+    case 'COMPLETED':
+        return 'fa-check-circle';
+    case 'ERROR':
+        return 'fa-stop';
+    default:
+        return 'fa-question';
     }
 };
 const getCellClass = (cell) => {
     switch (cell.status) {
-        case 'RUNNING':
-            return 'text-primary';
-        case 'COMPLETED':
-            return 'text-success';
-        case 'ERROR':
-            return 'text-danger';
+    case 'RUNNING':
+        return 'text-primary';
+    case 'COMPLETED':
+        return 'text-success';
+    case 'ERROR':
+        return 'text-danger';
     }
 };
 
@@ -778,7 +785,7 @@ const modalUseCodeLibrary = ref();
 const handleShowModalCodeLibrary = () => {
     showUseCodeLibrary.value = true;
     nextTick(() => modalUseCodeLibrary.value.show());
-}
+};
 </script>
 
 <style>

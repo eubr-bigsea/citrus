@@ -53,10 +53,9 @@ import axios from 'axios';
 import { openIdService } from '../openid-auth.js';
 import { UserManager, WebStorageStateStore } from 'oidc-client';
 const thornUrl = import.meta.env.VITE_THORN_URL;
-const thornUrl = import.meta.env.VITE_THORN_URL;
 const parseJwt = (token) => {
     try {
-        const parts = token.split('.')
+        const parts = token.split('.');
         return [
             JSON.parse(atob(parts[0])),
             JSON.parse(atob(parts[1]))

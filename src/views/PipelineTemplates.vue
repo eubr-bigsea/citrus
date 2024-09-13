@@ -106,10 +106,10 @@ export default {
                 },
                 headings: {
                     id: 'ID',
-                    name: this.$tc('common.name'),
-                    description: this.$tc('common.description'),
-                    steps: this.$tc('titles.step', 2),
-                    actions: this.$tc('common.action', 2)
+                    name: this.$t('common.name'),
+                    description: this.$t('common.description'),
+                    steps: this.$t('titles.step', 2),
+                    actions: this.$t('common.action', 2)
                 },
                 sortable: ['id', 'name'],
                 filterable: ['name'],
@@ -123,7 +123,7 @@ export default {
                 preserveState: true,
                 saveState: true,
                 texts: {
-                    filter: this.$tc('common.filter'),
+                    filter: this.$t('common.filter'),
                     count: this.$t('common.pagerShowing'),
                     limit: this.$t('common.limit'),
                     noResults: this.$t('common.noData'),

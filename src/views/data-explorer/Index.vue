@@ -3,7 +3,7 @@
         <div>
             <div class="d-flex justify-content-between align-items-center">
                 <h1>
-                    <font-awesome-icon icon="fa fa-vial" /> {{ $tc('dataExplorer.tagline', 1) }}
+                    <font-awesome-icon icon="fa fa-vial" /> {{$t('dataExplorer.tagline', 1)}}
                 </h1>
             </div>
             <hr>
@@ -26,9 +26,9 @@
                 <b-card class="clickable m-1" role="button">
                     <div class="row">
                         <div class="rounded-option bg-warning">
-                            <svg fill="#ffffff" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg"
-                                xmlns:xlink="http://www.w3.org/1999/xlink" width="50px" height="50px"
-                                viewBox="0 0 550.801 550.801" xml:space="preserve">
+                            <svg id="Capa_1" fill="#ffffff" version="1.1" xmlns="http://www.w3.org/2000/svg"
+                                 xmlns:xlink="http://www.w3.org/1999/xlink" width="50px" height="50px"
+                                 viewBox="0 0 550.801 550.801" xml:space="preserve">
                                 <g>
                                     <g>
                                         <path d="M277.425,402.116c-20.208,0-31.87,19.833-31.87,44.317c-0.2,24.88,11.853,43.934,31.681,43.934
@@ -129,84 +129,83 @@
                     <h5>Ou você quer editar algo existente?</h5>
 
                     <form class="form-inline">
-                        <label class="sr-only" for="type">{{ $tc('common.type') }}</label>
+                        <label class="sr-only" for="type">{{$t('common.type')}}</label>
                         <select v-model="typeFilter" class="form-control w-25 pt-0">
-                            <option selected value="">
-                            </option>
+                            <option selected value="" />
                             <option value="DATA_EXPLORER">
-                                {{ $t('dataExplorer.experiments.DATA_EXPLORER') }}
+                                {{$t('dataExplorer.experiments.DATA_EXPLORER')}}
                             </option>
                             <option value="MODEL_BUILDER">
-                                {{ $t('dataExplorer.experiments.MODEL_BUILDER') }}
+                                {{$t('dataExplorer.experiments.MODEL_BUILDER')}}
                             </option>
                             <option value="VIS_BUILDER">
-                                {{ $t('dataExplorer.experiments.VIS_BUILDER') }}
+                                {{$t('dataExplorer.experiments.VIS_BUILDER')}}
                             </option>
                             <option value="SQL">
-                                {{ $t('dataExplorer.experiments.SQL') }}
+                                {{$t('dataExplorer.experiments.SQL')}}
                             </option>
                         </select>
-                        <label class="sr-only" for="search">{{ $tc('common.name') }}</label>
+                        <label class="sr-only" for="search">{{$t('common.name')}}</label>
                         <input v-model="searchFilter" type="text" class="form-control m-2 w-25"
-                            :placeholder="$tc('common.name')">
+                               :placeholder="$t('common.name')">
                         <button ref="searchBtn" class="btn btn-secondary btn-sm mb-2 btn-spinner" @click.prevent="search">
-                            <font-awesome-icon icon="fa fa-search default-icon" /> {{ $t('actions.search') }}
+                            <font-awesome-icon icon="fa fa-search default-icon" /> {{$t('actions.search')}}
                             <font-awesome-icon icon="spinner" pulse class="icon" />
                         </button>
                     </form>
 
 
                     <v-server-table v-show="totalRecords > 0" ref="workflowList" :columns="columns" :options="options"
-                        name="workflowListDataExperiments">
+                                    name="workflowListDataExperiments">
                         <template #id="props">
                             <router-link v-if="props.row.type === 'DATA_EXPLORER'"
-                                :to="{ name: 'data-explorer-panel', params: { id: props.row.id, platform: props.row.platform.id } }">
-                                {{ props.row.id }}
+                                         :to="{ name: 'data-explorer-panel', params: { id: props.row.id, platform: props.row.platform.id } }">
+                                {{props.row.id}}
                             </router-link>
                             <router-link v-if="props.row.type === 'MODEL_BUILDER'"
-                                :to="{ name: 'model-design', params: { id: props.row.id, platform: props.row.platform.id } }">
-                                {{ props.row.id }}
+                                         :to="{ name: 'model-design', params: { id: props.row.id, platform: props.row.platform.id } }">
+                                {{props.row.id}}
                             </router-link>
                             <router-link v-if="props.row.type === 'VIS_BUILDER'"
-                                :to="{ name: 'visualization-design', params: { id: props.row.id, platform: props.row.platform.id } }">
-                                {{ props.row.id }}
+                                         :to="{ name: 'visualization-design', params: { id: props.row.id, platform: props.row.platform.id } }">
+                                {{props.row.id}}
                             </router-link>
                             <router-link v-if="props.row.type === 'SQL'"
-                                :to="{ name: 'sql-workflow', params: { id: props.row.id } }">
-                                {{ props.row.id }}
+                                         :to="{ name: 'sql-workflow', params: { id: props.row.id } }">
+                                {{props.row.id}}
                             </router-link>
                         </template>
                         <template #type="props">
                             <font-awesome-icon :icon="getIcon(props.row)" />
-                            {{ $t(`dataExplorer.experiments.${props.row.type}`) }}
+                            {{$t(`dataExplorer.experiments.${props.row.type}`)}}
                         </template>
                         <template #user="props">
-                            {{ props.row.user.name }}
+                            {{props.row.user.name}}
                         </template>
                         <template #name="props">
                             <router-link v-if="props.row.type === 'DATA_EXPLORER'"
-                                :to="{ name: 'data-explorer-panel', params: { id: props.row.id, platform: props.row.platform.id } }">
-                                {{ props.row.name }}
+                                         :to="{ name: 'data-explorer-panel', params: { id: props.row.id, platform: props.row.platform.id } }">
+                                {{props.row.name}}
                             </router-link>
                             <router-link v-if="props.row.type === 'MODEL_BUILDER'"
-                                :to="{ name: 'model-design', params: { id: props.row.id, platform: props.row.platform.id } }">
-                                {{ props.row.name }}
+                                         :to="{ name: 'model-design', params: { id: props.row.id, platform: props.row.platform.id } }">
+                                {{props.row.name}}
                             </router-link>
                             <router-link v-if="props.row.type === 'VIS_BUILDER'"
-                                :to="{ name: 'visualization-design', params: { id: props.row.id, platform: props.row.platform.id } }">
-                                {{ props.row.name }}
+                                         :to="{ name: 'visualization-design', params: { id: props.row.id, platform: props.row.platform.id } }">
+                                {{props.row.name}}
                             </router-link>
                             <router-link v-if="props.row.type === 'SQL'"
-                                :to="{ name: 'sql-workflow', params: { id: props.row.id } }">
-                                {{ props.row.name }}
+                                         :to="{ name: 'sql-workflow', params: { id: props.row.id } }">
+                                {{props.row.name}}
                             </router-link>
                         </template>
                         <template #updated="props">
-                            {{ props.row.updated | formatJsonDate }}
+                            {{props.row.updated | formatJsonDate}}
                         </template>
                     </v-server-table>
                     <div v-show="totalRecords === 0">
-                        {{ $t('common.noData') }}
+                        {{$t('common.noData')}}
                     </div>
                 </b-card>
             </div>
@@ -299,11 +298,11 @@ export default {
                 dateColumns: ['updated'],
                 headings: {
                     id: 'ID',
-                    name: this.$tc('common.name'),
-                    user: this.$tc('common.user.name'),
-                    type: this.$tc('common.type'),
-                    updated: this.$tc('common.updated'),
-                    version: this.$tc('common.version'),
+                    name: this.$t('common.name'),
+                    user: this.$t('common.user.name'),
+                    type: this.$t('common.type'),
+                    updated: this.$t('common.updated'),
+                    version: this.$t('common.version'),
                 },
                 sortable: ['name', 'id', 'updated'],
                 //filterable: ['name', 'id'],
@@ -323,7 +322,7 @@ export default {
                     data.sort = data.orderBy;
                     data.asc = data.ascending === 1 ? 'true' : 'false';
                     data.size = 5;
-                    data.name = self.searchFilter //data.query;
+                    data.name = self.searchFilter; //data.query;
                     data.platform = META_PLATFORM_SLUG;
 
                     if (self.typeFilter && self.typeFilter.length) {
@@ -357,7 +356,7 @@ export default {
                         ).finally(() => self.$refs.searchBtn.classList.add('btn-spinner'));
                 },
                 texts: {
-                    filter: this.$tc('common.filter'),
+                    filter: this.$t('common.filter'),
                     count: this.$t('common.pagerShowing'),
                     limit: this.$t('common.limit'),
                     noResults: this.$t('common.noData'),
@@ -376,10 +375,10 @@ export default {
             localStorage.setItem('experiments:list:type', this.typeFilter);
             localStorage.setItem('experiments:list:search', this.searchFilter);
 
-            this.$refs.workflowList.refresh()
+            this.$refs.workflowList.refresh();
         },
         navigate(name, query) {
-            this.$router.push({ name, query })
+            this.$router.push({ name, query });
         },
         clearFilters() {
             this.$refs.workflowList.setFilter('');

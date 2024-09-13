@@ -11,9 +11,9 @@
 
                         <label for="">Fonte de dados:</label> &nbsp;
                         <vue-select v-if="workflowObj && workflowObj.readData"
-                            v-model="workflowObj.readData.forms.data_source.value" :filterable="false"
-                            :options="dataSourceList" :reduce="(opt) => opt.id" label="name" @search="loadDataSourceList"
-                            @input="updateAttributeList">
+                                    v-model="workflowObj.readData.forms.data_source.value" :filterable="false"
+                                    :options="dataSourceList" :reduce="(opt) => opt.id" label="name" @search="loadDataSourceList"
+                                    @input="updateAttributeList">
                             <template #no-options="{}">
                                 <small>Digite parte do nome pesquisar ...</small>
                             </template>
@@ -114,7 +114,7 @@
                                 :type="visualizationObj.type.value"
                                 :value="axis" />
             <div class="chart">
-                <div class="chart-builder-visualization" ref="chartArea">
+                <div ref="chartArea" class="chart-builder-visualization">
                     <div v-if="display && plotlyData" ref="chart">
                         <plotly :key="plotVersion" ref="plotly" :options="chartOptions" :data="plotlyData.data"
                                 :layout="plotlyData.layout" :frames="plotlyData.frames" :watch-shallow="true"
@@ -211,11 +211,11 @@ const targetPlatform = ref(4);
 const workflowObj = ref({ forms: { $meta: { value: { target: '', taskType: '' } } } });
 const visualizationObj = ref(null);
 const chartOptions = ref({ responsive: true, height: 600 });
-const chartArea = ref(null)
+const chartArea = ref(null);
 
 // Elements refs
-const cluster = ref(null)
-const visualizationDesigner = ref(null)
+const cluster = ref(null);
+const visualizationDesigner = ref(null);
 
 
 const dataSourceId = computed({
@@ -305,7 +305,7 @@ const loadDataSourceList = debounce(async function (search, loading) {
 const updateAttributeList = async (id, loading) => {
     const result = await getAttributeList(id, loading);
     attributes.value = result || [];
-}
+};
 
 onBeforeMount(async () => {
     disconnectWebSocket();

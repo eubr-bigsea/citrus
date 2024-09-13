@@ -1,39 +1,38 @@
 <template>
     <div class="lemonade-toolbox">
-
-            <div>
-                <ul class="list-group">
-                    <li class="list-group-item truncate sidebar-separator-title text-muted d-flex align-items-center menu-collapsed">
-                        <input v-model="search"
-                               type="text"
-                               class="form-control"
-                               :placeholder="$tc('actions.search')"
-                               @input="searchOperation">
-                    </li>
-                    <li v-if="loading"
-                        class="text-center m-2">
-                        <font-awesome-icon icon="spinner"
-                                           pulse
-                                           class="fa-2x icon" />
-                    </li>
-                    <div v-if="search === ''"
-                         class="menu">
-                        <div v-for="(group, index) in groupedOperations"
-                             :key="group.group"
-                             :title="group.order"
-                             class="unstyled"
-                             :data-category="JSON.stringify(group)">
-                            <!-- https://github.com/bootstrap-vue/bootstrap-vue/issues/5352 -->
-                            <b-button v-b-toggle="'submenu' + index"
-                                      draggable="false"
-                                      data-parent="submenus"
-                                      class="list-group-item truncate list-group-item-action flex-column align-items-start">
-                                <span class="when-closed"><font-awesome-icon icon="fa fa-angle-right" /></span>
-                                <span class="when-opened"><font-awesome-icon icon="fa fa-angle-down" /></span>
-                                <strong>
-                                    {{group.group}}
-                                </strong>
-                            </b-button>
+        <div>
+            <ul class="list-group">
+                <li class="list-group-item truncate sidebar-separator-title text-muted d-flex align-items-center menu-collapsed">
+                    <input v-model="search"
+                           type="text"
+                           class="form-control"
+                           :placeholder="$t('actions.search')"
+                           @input="searchOperation">
+                </li>
+                <li v-if="loading"
+                    class="text-center m-2">
+                    <font-awesome-icon icon="spinner"
+                                       pulse
+                                       class="fa-2x icon" />
+                </li>
+                <div v-if="search === ''"
+                     class="menu">
+                    <div v-for="(group, index) in groupedOperations"
+                         :key="group.group"
+                         :title="group.order"
+                         class="unstyled"
+                         :data-category="JSON.stringify(group)">
+                        <!-- https://github.com/bootstrap-vue/bootstrap-vue/issues/5352 -->
+                        <b-button v-b-toggle="'submenu' + index"
+                                  draggable="false"
+                                  data-parent="submenus"
+                                  class="list-group-item truncate list-group-item-action flex-column align-items-start">
+                            <span class="when-closed"><font-awesome-icon icon="fa fa-angle-right" /></span>
+                            <span class="when-opened"><font-awesome-icon icon="fa fa-angle-down" /></span>
+                            <strong>
+                                {{group.group}}
+                            </strong>
+                        </b-button>
 
                         <b-collapse :id="'submenu' + index"
                                     data-parent="submenus">

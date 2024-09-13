@@ -36,8 +36,8 @@
                                                                disabled class="form-control">
                                                     </div>
                                                     <div v-if="enable_url_edit && dataSource.format !== 'HIVE'" class="col-md-6">
-                                                        <label>{{$tc('dataSource.fileUrl')}}:</label>
-                                                        <textarea ref="filepathTextArea" v-model="dataSource.url" class="form-control"/>
+                                                        <label>{{$t('dataSource.fileUrl')}}:</label>
+                                                        <textarea ref="filepathTextArea" v-model="dataSource.url" class="form-control" />
                                                     </div>
                                                     <div class="col-md-6">
                                                         <label>{{$t('common.description')}}:</label>
@@ -180,33 +180,33 @@
                                                :class="!loggedUserIsOwnerOrAdmin ? 'disabled-mouse': ''">
                                             <thead>
                                                 <tr>
-                                                    <th class="primary text-center" style="width:3%"/> <!-- drag icon column -->
+                                                    <th class="primary text-center" style="width:3%" /> <!-- drag icon column -->
                                                     <th class="primary text-center" style="width:3%">
                                                         #
                                                     </th>
                                                     <th class="primary text-center" style="width:12%">
-                                                        {{$tc('common.name')}}
+                                                        {{$t('common.name')}}
                                                     </th>
                                                     <th class="primary text-center" style="width:8%">
-                                                        {{$tc('common.type')}}
+                                                        {{$t('common.type')}}
                                                     </th>
                                                     <th class="primary text-center" style="width:12%">
-                                                        {{$tc('common.rawType')}}
+                                                        {{$t('common.rawType')}}
                                                     </th>
                                                     <th class="primary text-center" style="width:8%">
-                                                        {{$tc('common.format')}}
+                                                        {{$t('common.format')}}
                                                     </th>
                                                     <th class="primary text-center" style="width:15%">
-                                                        {{$tc('dataSource.missingRepresentation')}}
+                                                        {{$t('dataSource.missingRepresentation')}}
                                                     </th>
                                                     <th v-if="dataSource.privacy_aware" class="primary text-center"
                                                         style="width:5%">
                                                         {{$t('dataSource.privacy')}}
                                                     </th>
                                                     <th class="primary text-center" style="width:20%">
-                                                        {{$tc('common.description')}}
+                                                        {{$t('common.description')}}
                                                     </th>
-                                                    <th class="primary text-center" style="width:3%"/>
+                                                    <th class="primary text-center" style="width:3%" />
                                                     <!--
                                                 <th class="primary text-center" style="width:5%">{{$t('common.nullable')}}</th>
                                                 <th class="primary text-center" style="width:5%">{{$t('common.size')}}</th>
@@ -265,7 +265,7 @@
                                                     <td v-if="dataSource.privacy_aware" class="text-center">
                                                         <button class="btn btn-sm btn-outline-success hover-action"
                                                                 @click.prevent="showPrivacyModal(attr)">
-                                                            {{$tc('actions.edit')}}...
+                                                            {{$t('actions.edit')}}...
                                                         </button>
                                                     </td>
                                                     <td>
@@ -273,10 +273,10 @@
                                                     </td>
                                                     <td class="text-center">
                                                         <button v-show="attr === selectedAttribute"
-                                                         class="ml-1 btn btn-sm btn-danger"
-                                                          :title="$tc('actions.delete')"
-                                                          @click="deleteAttribute(index)">
-                                                            <font-awesome-icon icon="trash"/>
+                                                                class="ml-1 btn btn-sm btn-danger"
+                                                                :title="$t('actions.delete')"
+                                                                @click="deleteAttribute(index)">
+                                                            <font-awesome-icon icon="trash" />
                                                         </button>
                                                     </td>
                                                 </tr>
@@ -288,10 +288,10 @@
                                             </div>
                                         </div>
                                         <div>
-                                            <b-button class= "ml-2" variant="outline-success"
-                                             :title="$tc('actions.simpleAdd')"
-                                            @click="addAttribute()">
-                                                <font-awesome-icon icon="plus" /> {{$tc('actions.simpleAdd')}}
+                                            <b-button class="ml-2" variant="outline-success"
+                                                      :title="$t('actions.simpleAdd')"
+                                                      @click="addAttribute()">
+                                                <font-awesome-icon icon="plus" /> {{$t('actions.simpleAdd')}}
                                             </b-button>
                                         </div>
                                     </b-tab>
@@ -299,13 +299,13 @@
                                     <b-tab v-if="enable_url_edit" title="Variáveis">
                                         <div>
                                             <b-tabs class="filter-field">
-                                                <b-tab :title="$tc('dataSource.userVariables', 2)">
-                                                    <UserVariables  :items="dataSource.variables"/>
+                                                <b-tab :title="$t('dataSource.userVariables', 2)">
+                                                    <UserVariables :items="dataSource.variables" />
                                                     <p class="lead mark small bg-light p-3 m-2">
                                                         {{$t("dataSource.variables.userVariablesDefinition")}}
                                                     </p>
                                                 </b-tab>
-                                                <b-tab :title="$tc('titles.systemVariables', 2)">
+                                                <b-tab :title="$t('titles.systemVariables', 2)">
                                                     <SystemVariables />
                                                     <p class="lead mark small bg-light p-3 m-2">
                                                         {{$t("dataSource.variables.systemVariablesDefinition")}}
@@ -507,8 +507,8 @@
 import axios from 'axios';
 import Notifier from '../mixins/Notifier.js';
 import ModalPreviewDataSource from './modal/ModalPreviewDataSource.vue';
-import UserVariables from './UserVariables.vue'
-import SystemVariables from './SystemVariables.vue'
+import UserVariables from './UserVariables.vue';
+import SystemVariables from './SystemVariables.vue';
 import DataSourceOptions from '../components/data-source/DataSourceOptions.vue';
 import { debounce } from '../util.js';
 import draggable from 'vuedraggable';

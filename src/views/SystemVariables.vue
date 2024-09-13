@@ -7,7 +7,7 @@
                         <code v-html="'${' + v + '}'" />
                     </td>
                     <td>
-                        {{$tc('variables.names.' + v)}}
+                        {{$t('variables.names.' + v)}}
                     </td>
                 </tr>
             </table>
@@ -22,11 +22,6 @@ export default {
             default: () => []
         }
     },
-    computed: {
-        allVariables() {
-            return [...this.variables, ...this.otherVariables];
-        },
-    },
     data() {
         return {
             variables: [
@@ -34,5 +29,10 @@ export default {
                 'user_login', 'user_name'],
         };
     },
-}
+    computed: {
+        allVariables() {
+            return [...this.variables, ...this.otherVariables];
+        },
+    },
+};
 </script>

@@ -17,39 +17,39 @@
                             </div>
                         </div>
                         <button class="btn btn-success btn-sm mt-2" @click.prevent="add">
-                            <font-awesome-icon icon="fa fa-plus" /> {{ $t('actions.addItem') }}
+                            <font-awesome-icon icon="fa fa-plus" /> {{$t('actions.addItem')}}
                         </button>
                     </div>
                     <div class="col-md-8">
                         <div v-if="selected" class="form-filter ">
                             <div class="row">
                                 <div class="col-md-4">
-                                    <label>{{ $t('variables.name') }}:</label>
+                                    <label>{{$t('variables.name')}}:</label>
                                     <input v-model="selected.name" v-focus maxlength="40" autocomplete="off"
-                                        class="form-control">
+                                           class="form-control">
                                 </div>
                                 <div class="col-md-4">
-                                    <label>{{ $t('variables.defaultValue') }}:</label>
+                                    <label>{{$t('variables.defaultValue')}}:</label>
                                     <input v-model="selected.default_value" maxlength="40" autocomplete="off"
-                                        class="form-control">
+                                           class="form-control">
                                 </div>
                                 <div class="col-md-4">
                                     <label>{{$t('variables.type')}}:</label>
                                     <select v-model="selected.type" class="form-select">
                                         <option />
                                         <option v-for="dt in dataTypes" :key="dt" :value="dt">
-                                            {{ $t('dataTypes.' + dt) }}
+                                            {{$t('dataTypes.' + dt)}}
                                         </option>
                                     </select>
                                 </div>
                                 <template v-if="!simple">
                                     <div class="col-md-4">
-                                        <label>{{ $t('variables.label') }}:</label>
+                                        <label>{{$t('variables.label')}}:</label>
                                         <input v-model="selected.label" maxlength="40" autocomplete="off"
-                                            class="form-control">
+                                               class="form-control">
                                     </div>
                                     <div class="col-md-4">
-                                        <label>{{ $t('variables.multiplicity') }}:</label>
+                                        <label>{{$t('variables.multiplicity')}}:</label>
                                         <select v-model="selected.multiplicity" class="form-control" tabindex="0">
                                             <option value="0">
                                                 Opcional
@@ -66,38 +66,38 @@
                                         </select>
                                     </div>
                                     <div class="col-md-4">
-                                        <label>{{ $t('variables.index') }}:</label>
+                                        <label>{{$t('variables.index')}}:</label>
                                         <input v-model="selected.parameters.display_index" maxlength="4"
-                                            autocomplete="off" class="form-control w-50" type="number" min="0"
-                                            max="100">
+                                               autocomplete="off" class="form-control w-50" type="number" min="0"
+                                               max="100">
                                     </div>
                                 </template>
-                                    <div class="col-md-12">
-                                        <label>{{ $t('variables.description') }}:</label>
-                                        <textarea v-model="selected.description" autocomplete="off"
-                                            class="form-control form-control-sm" rows="3" />
-                                    </div>
-                                    <!--
+                                <div class="col-md-12">
+                                    <label>{{$t('variables.description')}}:</label>
+                                    <textarea v-model="selected.description" autocomplete="off"
+                                              class="form-control form-control-sm" rows="3" />
+                                </div>
+                                <!--
                                 <div class="col-md-12">
                                     <label>{{$t('variables.help')}}:</label>
                                     <textarea v-model="selected.help" maxlength="300" autocomplete="off"
                                         class="form-control" rows="1"></textarea>
                                 </div>
                                 -->
-                                    <div v-if="!simple" class="col-md-12">
-                                        <label>Lista de valores personalizados (use JSON):</label>
-                                        <textarea v-model="selected.parameters.values" maxlength="300"
-                                            autocomplete="off" class="form-control form-control-sm" rows="3" />
-                                        <em>Exemplo:</em>
-                                        <br>
-                                        <code>[
+                                <div v-if="!simple" class="col-md-12">
+                                    <label>Lista de valores personalizados (use JSON):</label>
+                                    <textarea v-model="selected.parameters.values" maxlength="300"
+                                              autocomplete="off" class="form-control form-control-sm" rows="3" />
+                                    <em>Exemplo:</em>
+                                    <br>
+                                    <code>[
                                         {"key": 1, "value": "Primeira escolha"},
                                         {"key": 2, "value": "Segunda escolha"}
                                         ]</code>
-                                        <br>
-                                        O valor de <code>key</code> será atribuído à variável e <code>value</code> é
-                                        exibido.
-                                    </div>
+                                    <br>
+                                    O valor de <code>key</code> será atribuído à variável e <code>value</code> é
+                                    exibido.
+                                </div>
                             </div>
                         </div>
                         <div v-else>
@@ -110,9 +110,9 @@
                     </div>
                 </div>
             </b-tab>
-            <b-tab v-if="!simple" :title="$tc('titles.systemVariables', 2)">
+            <b-tab v-if="!simple" :title="$t('titles.systemVariables', 2)">
                 <div class="col-md-12 mt-1">
-                    <SystemVariables :other-variables="this.variables" />
+                    <SystemVariables :other-variables="variables" />
                 </div>
                 <p class="lead mark small bg-light p-3 m-2">
                     Variáveis de sistema são definidas pelo Lemonade e podem ser usadas no fluxo como qualquer outra
@@ -133,15 +133,17 @@
             tentará converter o "Valor-padrão" para o tipo especificado. Caso não seja
             possível, ocorrerá um erro durante a execução.
         </p>
-        <div slot="modal-footer" class="w-100 text-right">
-            <b-btn variant="primary" size="sm" class="mr-1 pl-5 pr-5" @click="okClicked">
-                {{ $t('common.ok') }}
-            </b-btn>
-        </div>
+        <template #modal-footer>
+            <div class="w-100 text-right">
+                <b-btn variant="primary" size="sm" class="mr-1 pl-5 pr-5" @click="okClicked">
+                    {{$t('common.ok')}}
+                </b-btn>
+            </div>
+        </template>
     </b-modal>
 </template>
 <script>
-import SystemVariables from '../SystemVariables.vue'
+import SystemVariables from '../SystemVariables.vue';
 
 export default {
     components: {

@@ -3,27 +3,29 @@
         <div>
             <div class="d-flex justify-content-between align-items-center border-bottom">
                 <div class="title">
-                    <h1 class="pt-2">Construção de Modelos</h1>
+                    <h1 class="pt-2">
+                        Construção de Modelos
+                    </h1>
                 </div>
                 <form class="float-end form-inline w-50 d-flex justify-content-end">
-                    <label>{{ $t('common.name') }}:</label>
+                    <label>{{$t('common.name')}}:</label>
                     <input v-model="workflowObj.name" type="text" class="form-control form-control-sm ms-1 w-50"
-                        :placeholder="$t('common.name')" maxlength="100">
+                           :placeholder="$t('common.name')" maxlength="100">
                     <button class="btn btn-sm btn-outline-success ms-1 float-end" @click.prevent="saveWorkflow">
                         <font-awesome-icon icon="fa fa-save" />
-                        {{ $t('actions.save') }}
+                        {{$t('actions.save')}}
                     </button>
 
                     <button v-if="notRunning" class="btn btn-sm btn-outline-primary ml-1 float-right"
-                        @click.prevent="handleTraining">
+                            @click.prevent="handleTraining">
                         <font-awesome-icon icon="fa fa-play" />
-                        {{ $t('actions.train') }}
+                        {{$t('actions.train')}}
                     </button>
 
                     <button v-else class="btn btn-sm btn-outline-danger ml-1 float-right"
-                        @click.prevent="handleStopTrain">
+                            @click.prevent="handleStopTrain">
                         <font-awesome-icon icon="fa fa-stop" />
-                        {{ $t('actions.stop') }}
+                        {{$t('actions.stop')}}
                     </button>
 
                     <!--
@@ -46,47 +48,44 @@
                                 <form action="" class="form p-2">
                                     <template v-if="selected === 'target'">
                                         <DesignData :attributes="attributes" :data-source-list="dataSourceList"
-                                            :supervised="supervised" :label="labelAttribute" :data-source="dataSource"
-                                            :sample="workflowObj.sample" @search-data-source="loadDataSourceList"
-                                            @retrieve-attributes="handleRetrieveAttributes" />
+                                                    :supervised="supervised" :label="labelAttribute" :data-source="dataSource"
+                                                    :sample="workflowObj.sample" @search-data-source="loadDataSourceList"
+                                                    @retrieve-attributes="handleRetrieveAttributes" />
                                     </template>
                                     <template v-if="selected === 'data'">
-                                        <ModelBuilderTrainTest
-                                                   v-model:strategy="workflowObj.split.forms.strategy.value"
-                                                   v-model:ratio="workflowObj.split.forms.ratio.value"
-                                                   v-model:folds="workflowObj.split.forms.folds.value"
-                                                   v-model:seed="workflowObj.split.forms.seed.value"
-                                                   :split="workflowObj.split"/>
+                                        <ModelBuilderTrainTest v-model:strategy="workflowObj.split.forms.strategy.value"
+                                                               v-model:ratio="workflowObj.split.forms.ratio.value"
+                                                               v-model:folds="workflowObj.split.forms.folds.value"
+                                                               v-model:seed="workflowObj.split.forms.seed.value"
+                                                               :split="workflowObj.split" />
                                     </template>
                                     <template v-if="selected === 'metric'">
                                         <Metric :evaluator="workflowObj.evaluator" :attributes="attributes" />
                                     </template>
                                     <template v-if="selected === 'adjusts'">
                                         <FeatureSelection :attributes="attributes" :features="workflowObj.features"
-                                            :target="workflowObj.forms.$meta.value.target" :supervised="supervised"
-                                            @update-target="handleUpdateTarget" />
+                                                          :target="workflowObj.forms.$meta.value.target" :supervised="supervised"
+                                                          @update-target="handleUpdateTarget" />
                                     </template>
                                     <template v-if="selected === 'generation'">
                                         <FeatureGeneration />
                                     </template>
                                     <template v-if="selected === 'reduction'">
-                                        <ModelBuilderFeatureReduction :reduction="workflowObj.reduction"
-                                            v-model:method="workflowObj.reduction.forms.method.value"
-                                            v-model:k="workflowObj.reduction.forms.k.value"/>
+                                        <ModelBuilderFeatureReduction v-model:method="workflowObj.reduction.forms.method.value"
+                                                                      v-model:k="workflowObj.reduction.forms.k.value"
+                                                                      :reduction="workflowObj.reduction" />
                                     </template>
                                     <template v-if="selected === 'algorithms'">
                                         <Algorithms ref="algorithms" :operations="algorithmOperation"
-                                            :workflow="workflowObj" :operation-map="operationsMap" />
+                                                    :workflow="workflowObj" :operation-map="operationsMap" />
                                     </template>
                                     <template v-if="selected === 'grid'">
-                                        <ModelBuilderGrid
-                                            :grid="workflowObj.grid"
-                                            v-model:random_grid="workflowObj.grid.forms.random_grid.value"
-                                            v-model:max_iterations="workflowObj.grid.forms.max_iterations.value"
-                                            v-model:max_search_time="workflowObj.grid.forms.max_search_time.value"
-                                            v-model:parallelism="workflowObj.grid.forms.parallelism.value"
-                                            v-model:strategy="workflowObj.grid.forms.strategy.value"
-                                            v-model:seed="workflowObj.grid.forms.seed.value"/>
+                                        <ModelBuilderGrid v-model:random_grid="workflowObj.grid.forms.random_grid.value"
+                                                          v-model:max_iterations="workflowObj.grid.forms.max_iterations.value"
+                                                          v-model:max_search_time="workflowObj.grid.forms.max_search_time.value"
+                                                          v-model:parallelism="workflowObj.grid.forms.parallelism.value"
+                                                          v-model:strategy="workflowObj.grid.forms.strategy.value"
+                                                          v-model:seed="workflowObj.grid.forms.seed.value" :grid="workflowObj.grid" />
                                     </template>
                                     <template v-if="selected === 'weighting'">
                                         <Weighting />
@@ -99,8 +98,8 @@
                         </div>
                     </b-tab>
                     <b-tab ref="tabResults" title="Resultados" class="pt-2">
-                        <Result ref="results" :jobs="jobs" :number-of-features="numberOfFeatures"
-                            @delete-job="handleDeleteJob" :features="features" />
+                        <Result ref="results" :jobs="jobs" :number-of-features="numberOfFeatures" :features="features"
+                                @delete-job="handleDeleteJob" />
                     </b-tab>
                 </b-tabs>
             </div>
@@ -141,8 +140,11 @@ const META_PLATFORM_ID = 1000;
 export default {
     name: 'DesignComponent',
     components: {
-        ModelBuilderSideBar, ModelBuilderDataAndSampling, ModelBuilderTrainTest, ModelBuilderMetric, ModelBuilderFeatureSelection, FeatureGeneration,
-        ModelBuilderFeatureReduction, ModelBuilderAlgorithmList, ModelBuilderGrid, ModelBuilderRuntime, Weighting, Result
+        //ModelBuilderSideBar, ModelBuilderDataAndSampling, ModelBuilderTrainTest,
+        //ModelBuilderMetric, ModelBuilderFeatureSelection, ModelBuilderAlgorithmList,
+        // ModelBuilderRuntime
+        ModelBuilderGrid, Weighting, Result,
+        FeatureGeneration, ModelBuilderFeatureReduction,
     },
     mixins: [DataSourceMixin, Notifier],
     data() {
@@ -234,7 +236,7 @@ export default {
             }
         },
         'workflowObj.evaluator.forms.task_type.value': function (v) {
-            console.debug('Changing type')
+            console.debug('Changing type');
             /*
             // Disable all tasks. They could be removed, but user may lose
             // all previous configurations.
@@ -432,7 +434,7 @@ export default {
 
                 this.loadClusters();
 
-                if (this.workflowObj.features.forms.features.value === null){
+                if (this.workflowObj.features.forms.features.value === null) {
                     this.workflowObj.features.forms.features.value = [];
                 }
                 this.loaded = true;

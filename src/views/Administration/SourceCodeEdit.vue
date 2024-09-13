@@ -7,7 +7,7 @@
                         <h1>Editar Código</h1>
                     </div>
                     <hr>
-                    <div class="row" v-if="sourceCode">
+                    <div v-if="sourceCode" class="row">
                         <div class="col-md-12 col-xg-12 mx-auto">
                             <div class="card">
                                 <div class="card-body">
@@ -16,42 +16,38 @@
                                             <div class="col-md-6">
                                                 <div class="row">
                                                     <div class="col-6">
-                                                        <label class="font-weight-bold">{{ $tc('common.name')
-                                                            }}:</label>
+                                                        <label class="font-weight-bold">{{$t('common.name')}}:</label>
                                                         <input v-model="sourceCode.name" type="text"
-                                                            class="form-control">
+                                                               class="form-control">
                                                     </div>
                                                     <div class="col-md-3 mt-3 mb-3 mt-3">
                                                         <b-form-checkbox v-model="sourceCode.enabled">
-                                                            {{ $t('common.enabled') }}
+                                                            {{$t('common.enabled')}}
                                                         </b-form-checkbox>
                                                     </div>
                                                     <div class="col-md-12 mt-2">
-                                                        <label class="font-weight-bold">{{ $t('titles.requirement', 2)
-                                                            }}:</label>
+                                                        <label class="font-weight-bold">{{$t('titles.requirement', 2)}}:</label>
                                                         <textarea v-model="sourceCode.requirements" class="form-control"
-                                                            rows="5"></textarea>
+                                                                  rows="5" />
                                                     </div>
                                                     <div class="col-md-12 mt-2">
-                                                        <label class="font-weight-bold">{{ $tc('titles.imports', 2)
-                                                            }}:</label>
+                                                        <label class="font-weight-bold">{{$t('titles.imports', 2)}}:</label>
                                                         <div @click="focusTextarea">
                                                             <prism-editor ref="prism" v-model="sourceCode.imports"
-                                                                :highlight="highlighterImport"
-                                                                class="prism-editor-wrapper-disabled code3"
-                                                                :readonly="false" />
+                                                                          :highlight="highlighterImport"
+                                                                          class="prism-editor-wrapper-disabled code3"
+                                                                          :readonly="false" />
                                                         </div>
                                                     </div>
                                                     <div class="col-md-12 mt-2">
-                                                        <label class="font-weight-bold">{{ $tc('titles.help')
-                                                            }}:</label>
+                                                        <label class="font-weight-bold">{{$t('titles.help')}}:</label>
                                                         <textarea v-model="sourceCode.help" class="form-control"
-                                                            rows="5"></textarea>
+                                                                  rows="5" />
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="col-6">
-                                                <label class="font-weight-bold">{{ $tc('titles.code') }}:</label>
+                                                <label class="font-weight-bold">{{$t('titles.code')}}:</label>
                                                 <div class="form-text">
                                                     Escreva o código Python na forma de um método/função, geralmente com
                                                     parâmetros.
@@ -60,9 +56,9 @@
                                                     campo "Importar".
                                                 </div>
                                                 <prism-editor ref="prism" v-model="sourceCode.code"
-                                                    :highlight="highlighter"
-                                                    class="prism-editor-wrapper-disabled code2 scroll-area"
-                                                    :readonly="false" />
+                                                              :highlight="highlighter"
+                                                              class="prism-editor-wrapper-disabled code2 scroll-area"
+                                                              :readonly="false" />
                                             </div>
                                         </div>
                                     </form>
@@ -71,11 +67,11 @@
                                             <button class="btn btn-primary mr-1 btn-spinner" @click.stop="save">
                                                 <font-awesome-icon icon="spinner" pulse class="icon" />
                                                 <font-awesome-icon icon="fa fa-save" />
-                                                {{ $tc('actions.save') }}
+                                                {{$t('actions.save')}}
                                             </button>
                                             <router-link :to="{ name: 'sourceCodeList' }"
-                                                class="btn btn-outline-secondary mr-1">
-                                                {{ $tc('actions.cancel') }}
+                                                         class="btn btn-outline-secondary mr-1">
+                                                {{$t('actions.cancel')}}
                                             </router-link>
                                         </div>
                                     </div>
@@ -83,7 +79,6 @@
                             </div>
                         </div>
                     </div>
-
                 </div>
             </div>
         </div>
@@ -143,7 +138,7 @@ const save = async (event) => {
 
     if (props.add) {
         url = `${tahitiUrl}/source-codes`;
-        axiosCall = axios.post
+        axiosCall = axios.post;
     }
     event.target.setAttribute('disabled', 'disabled');
     event.target.classList.remove('btn-spinner');
@@ -158,7 +153,7 @@ const save = async (event) => {
         /*
         self.success(
             this.$t('messages.savedWithSuccess', {
-                what: this.$tc('titles.sourceCode', 1)
+                what: this.$t('titles.sourceCode', 1)
             })
         );*/
         router.push({ name: 'sourceCodeList' });
@@ -185,7 +180,7 @@ const focusTextarea = (event) => {
     if (elem) {
         elem.focus();
     }
-}
+};
 </script>
 <style scoped>
 .code2>>>textarea, .code3>>>textarea,

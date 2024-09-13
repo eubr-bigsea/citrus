@@ -15,9 +15,9 @@ export default {
             const mgr = new UserManager({
                 response_mode: 'query',
                 userStore: new WebStorageStateStore()
-            })
+            });
             mgr.readSigninResponseState().then(({state, response}) => {
-                    console.debug(state)
+                console.debug(state);
             });
             mgr.signinRedirectCallback().then(async function (user) { // eslint-disable-line no-unused-vars
                 await self.getThornProfile();
@@ -42,7 +42,7 @@ export default {
             //const headers = { 'Authorization': token };
             const headers = {};
             const resp = await axios.get(`${thornUrl}/users/me`, { headers });
-            this.$store.dispatch('setUser', { user: resp.data.data[0], token })
+            this.$store.dispatch('setUser', { user: resp.data.data[0], token });
         },
     },
 };

@@ -106,10 +106,10 @@ export default {
         }
     },
     watch: {
-       code: debounce(function () {
-           console.debug(this.code)
+        code: debounce(function () {
+            console.debug(this.code);
             this.triggerUpdateEvent(this.message, this.field, this.code);
-       }, 500)
+        }, 500)
     },
     mounted() {
         this.code = this.value || this.field.default || ' ';

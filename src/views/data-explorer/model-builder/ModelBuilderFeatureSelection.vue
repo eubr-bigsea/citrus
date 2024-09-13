@@ -19,7 +19,7 @@
                             <div class="w-100 p-1"
                                  :class="{ 'bg-light border-secondary border': selectedAttribute === attr }">
                                 <b-form-checkbox :checked="attr.usage !== 'unused'" switch @change="handleEnable">
-                                    <font-awesome-icon v-if="attr.feature_type !== 'vector'" :icon="getAttributeTypeIcon(attr.feature_type)"/> 
+                                    <font-awesome-icon v-if="attr.feature_type !== 'vector'" :icon="getAttributeTypeIcon(attr.feature_type)" /> 
                                     <span v-else>[ ]</span>
                                     {{attr.name}}
                                 </b-form-checkbox>
@@ -34,7 +34,7 @@
             <div class="col-md-8 border p-3">
                 <div v-if="selectedAttribute">
                     <h6 class="border-bottom mb-4 pb-2">
-                        <font-awesome-icon icon="fa fa-columns"/>  {{selectedAttribute.name}}
+                        <font-awesome-icon icon="fa fa-columns" />  {{selectedAttribute.name}}
                     </h6>
 
                     <div class="row">

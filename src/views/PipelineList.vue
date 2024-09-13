@@ -1,7 +1,7 @@
 <template>
     <main role="main">
         <div class="d-flex justify-content-between align-items-center pb-2 mb-2 border-bottom">
-            <h1>{{$tc('titles.pipeline', 2)}}</h1>
+            <h1>{{$t('titles.pipeline', 2)}}</h1>
             <div>
                 <router-link :to="{ name: 'pipelineRunsList' }" class="btn btn-outline-secondary float-left ml-2">
                     <font-awesome-icon icon="fa fa-history" /> Execuções
@@ -13,40 +13,40 @@
         </div>
 
         <ModalCreatePipeline ref="addModal" :pipeline-templates="pipelineTemplates"
-            :template-options="templateOptions" />
-        <ModalSchedulePipeline ref="scheduleModal" @on-schedule-pipeline="schedulePipeline"/>
+                             :template-options="templateOptions" />
+        <ModalSchedulePipeline ref="scheduleModal" @on-schedule-pipeline="schedulePipeline" />
 
         <div class="card pipelineList-body">
             <div class="card-body pipelineList-container">
                 <v-server-table ref="pipelineList" :columns="columns" :options="options" name="pipelineList">
                     <template #id="props">
                         <router-link :to="{ name: 'pipelineEdit', params: { id: props.row.id } }">
-                            {{ props.row.id }}
+                            {{props.row.id}}
                         </router-link>
                     </template>
                     <template #name="props">
                         <router-link :to="{ name: 'pipelineEdit', params: { id: props.row.id } }">
-                            {{ props.row.name }}
+                            {{props.row.name}}
                         </router-link>
                     </template>
                     <template #created="props">
-                        {{ props.row.created | formatJsonDate }}
+                        {{props.row.created | formatJsonDate}}
                     </template>
                     <template #updated="props">
-                        {{ props.row.updated | formatJsonDate }}
+                        {{props.row.updated | formatJsonDate}}
                     </template>
                     <template #version="props">
-                        {{ props.row.version }}
+                        {{props.row.version}}
                     </template>
                     <template #actions="props">
                         <div>
                             <button class="btn btn-sm btn-success mr-1"
-                                @click="openScheduleModal(props.row.id, props.row.name)">
+                                    @click="openScheduleModal(props.row.id, props.row.name)">
                                 Agendar
                                 <font-awesome-icon icon="calendar-alt" />
                             </button>
-                            <button class="btn btn-sm btn-danger" :title="$tc('actions.delete')"
-                                @click="deletePipeline(props.row.id, props.row.name)">
+                            <button class="btn btn-sm btn-danger" :title="$t('actions.delete')"
+                                    @click="deletePipeline(props.row.id, props.row.name)">
                                 <font-awesome-icon icon="trash" />
                             </button>
                         </div>
@@ -102,12 +102,12 @@ export default {
                 },
                 headings: {
                     id: 'ID',
-                    name: this.$tc('common.name'),
-                    created: this.$tc('common.created'),
-                    updated: this.$tc('common.updated'),
-                    user_name: this.$tc('common.userName'),
-                    actions: this.$tc('common.action', 2),
-                    version: this.$tc('common.version', 1),
+                    name: this.$t('common.name'),
+                    created: this.$t('common.created'),
+                    updated: this.$t('common.updated'),
+                    user_name: this.$t('common.userName'),
+                    actions: this.$t('common.action', 2),
+                    version: this.$t('common.version', 1),
                 },
                 sortable: ['id', 'name', 'created', 'updated'],
                 filterable: ['name'],
@@ -120,7 +120,7 @@ export default {
                 preserveState: true,
                 saveState: true,
                 texts: {
-                    filter: this.$tc('common.filter'),
+                    filter: this.$t('common.filter'),
                     count: this.$t('common.pagerShowing'),
                     limit: this.$t('common.limit'),
                     noResults: this.$t('common.noData'),
@@ -168,7 +168,7 @@ export default {
                 const resp = await axios.post(`${standUrl}/pipeline-runs/create`,
                     {id, start, finish});
                 this.success(
-                    `Agendamento de pipeline criado com sucesso, com id=${resp.data.id}`)
+                    `Agendamento de pipeline criado com sucesso, com id=${resp.data.id}`);
             }catch(e) {
                 this.error(e);
             }

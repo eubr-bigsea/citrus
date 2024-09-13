@@ -1,42 +1,44 @@
 <template>
-    <b-navbar id="l-navbar" toggleable="md" sticky>
+    <b-navbar id="l-navbar" toggleable="md" sticky class="border-bottom">
         <b-navbar-toggle target="nav_collapse" />
         <b-navbar-brand :to="{ name: 'home' }">
-            <img class="full_logo" src="../assets/lemonade_logo.svg" width="157" height="32" alt="Lemonade">
-            <img class="icon_logo" src="../assets/lemonade_icon.svg" width="25" height="32" alt="Lemonade">
+            <img class="full_logo" src="../assets/lemonade_logo.svg" width="157" height="32"
+                 alt="Lemonade">
+            <img class="icon_logo" src="../assets/lemonade_icon.svg" width="25" height="32"
+                 alt="Lemonade">
         </b-navbar-brand>
         <b-collapse id="nav_collapse" is-nav>
             <b-navbar-nav class="pt-1">
                 <b-nav-item v-if="hasAnyPermission(DATA_SOURCE_PERMISSIONS) || isAdmin" :to="{ name: 'dataSources' }">
-                    <font-awesome-icon icon="fa fa-database" class="text-success" /> {{ $tc('titles.dataSource', 2) }}
+                    <font-awesome-icon icon="fa fa-database" class="text-success" /> {{$t('titles.dataSource', 2)}}
                 </b-nav-item>
                 <b-nav-item v-if="hasAnyPermission(WORKFLOW_PERMISSIONS) || isAdmin" :to="{ name: 'workflows' }">
-                    <font-awesome-icon icon="fa fa-flask" class="text-success" /> {{ $tc('titles.workflow', 2) }}
+                    <font-awesome-icon icon="fa fa-flask" class="text-success" /> {{$t('titles.workflow', 2)}}
                 </b-nav-item>
                 <b-nav-item v-if="hasAnyPermission(WORKFLOW_PERMISSIONS) || isAdmin" :to="{ name: 'index-explorer' }"
                             data-test="experiments-menu">
-                    <font-awesome-icon icon="fa fa-vial" class="text-success" /> {{ $tc('titles.dataExplorer', 2) }}
+                    <font-awesome-icon icon="fa fa-vial" class="text-success" /> {{$t('titles.dataExplorer', 2)}}
                 </b-nav-item>
                 <b-nav-item v-if="hasAnyPermission(APP_PERMISSIONS) || isAdmin" :to="{ name: 'tracks' }">
-                    <font-awesome-icon icon="fa fa-microscope" class="text-success" /> {{ $tc('titles.track', 2) }}
+                    <font-awesome-icon icon="fa fa-microscope" class="text-success" /> {{$t('titles.track', 2)}}
                 </b-nav-item>
                 <b-nav-item v-if="hasAnyPermission(JOB_PERMISSIONS) || isAdmin" :to="{ name: 'jobs' }">
-                    <font-awesome-icon icon="fa fa-tasks" class="text-success" /> {{ $tc('titles.jobs', 2) }}
+                    <font-awesome-icon icon="fa fa-tasks" class="text-success" /> {{$t('titles.jobs', 2)}}
                 </b-nav-item>
                 <b-nav-item v-if="hasAnyPermission(DASHBOARD_PERMISSIONS) || isAdmin" :to="{ name: 'dashboards' }">
-                    <font-awesome-icon icon="fa fa-chart-line" class="text-success" /> {{ $tc('titles.dashboard', 2) }}
+                    <font-awesome-icon icon="fa fa-chart-line" class="text-success" /> {{$t('titles.dashboard', 2)}}
                 </b-nav-item>
 
                 <b-nav-item-dropdown v-if="isAdmin" right data-test="pipelines-menu">
                     <template #button-content>
                         <font-awesome-icon icon="fa fa-circle-nodes" class="text-success" />
-                        {{ $tc('titles.pipeline', 2) }}
+                        {{$t('titles.pipeline', 2)}}
                     </template>
                     <b-dropdown-item :to="{ name: 'pipelines' }" data-test="pipelines-item">
-                        {{ $tc('titles.pipeline', 2) }}
+                        {{$t('titles.pipeline', 2)}}
                     </b-dropdown-item>
                     <b-dropdown-item :to="{ name: 'pipelineRunsList' }" data-test="pipelineRuns-item">
-                        {{ $tc('titles.pipelineRuns', 2) }}
+                        {{$t('titles.pipelineRuns', 2)}}
                     </b-dropdown-item>
                 </b-nav-item-dropdown>
             </b-navbar-nav>
@@ -64,16 +66,16 @@
                     </li>
                     <b-dropdown-divider />
                     <b-dropdown-item :to="{ name: 'clusters' }">
-                        {{ $tc('titles.cluster', 2) }}
+                        {{$t('titles.cluster', 2)}}
                     </b-dropdown-item>
                     <b-dropdown-item :to="{ name: 'storages' }">
-                        {{ $tc('titles.storage', 2) }}
+                        {{$t('titles.storage', 2)}}
                     </b-dropdown-item>
                     <b-dropdown-item :to="{ name: 'platforms' }">
-                        {{ $tc('titles.platform', 2) }}
+                        {{$t('titles.platform', 2)}}
                     </b-dropdown-item>
                     <b-dropdown-item :to="{ name: 'models' }">
-                        {{ $tc('titles.model', 2) }}
+                        {{$t('titles.model', 2)}}
                     </b-dropdown-item>
                     <b-dropdown-item :to="{ name: 'pipelineTemplates' }" data-test="pipelineTemplates-item">
                         Template Pipeline
@@ -114,7 +116,7 @@
                             <strong>{{$t('titles.role', 2)}}</strong><br>
                             <div class="mt-2">
                                 <span v-for="role in userRoles" :key="role.id" class="badge badge-info mr-1 p-1">
-                                    {{ role.label }}
+                                    {{role.label}}
                                 </span>
                             </div>
                         </div>
@@ -151,8 +153,8 @@
                     </b-dropdown-item>
                 </b-nav-item-dropdown>
             </b-navbar-nav>
-        </BCollapse>
-    </BNavbar>
+        </b-collapse>
+    </b-navbar>
 </template>
 
 <script>
@@ -303,7 +305,7 @@ export default {
 #l-navbar .dropdown-divider {
     margin: 0;
 }
-
+*/
 .navbar-brand {
     text-align: center;
 
@@ -339,7 +341,7 @@ export default {
         }
     }
 }
-
+/*
 #l-navbar a.nav-link {
     font-weight: 500;
     font-size: 14px;
@@ -361,7 +363,6 @@ export default {
     margin: 0;
     padding: 0;
 }
-
 .navbar .nav-item .nav-link {
     line-height: calc(60px - 4px);
     padding: 0 .5rem;
@@ -381,6 +382,7 @@ export default {
     }
 }
 
+*/
 
 
 .badge {

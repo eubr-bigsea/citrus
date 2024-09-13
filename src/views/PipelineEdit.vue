@@ -3,26 +3,25 @@
         <div class="d-flex justify-content-between align-items-center mb-2">
             <div class="mt-2">
                 <h6 class="header-pretitle">
-                    Pipeline #{{ pipeline.id }}
+                    Pipeline #{{pipeline.id}}
                 </h6>
                 <h1>
-                    <InputHeader v-model="pipeline.name" @input="isDirty = true"
-                        :maxlength="50"/>
+                    <InputHeader v-model="pipeline.name" :maxlength="50"
+                                 @input="isDirty = true" />
                 </h1>
             </div>
             <div class="btn-group">
                 <router-link :to="{ name: 'pipelines' }"
-                    class="btn btn-outline-secondary d-print-none float-left btn-sm">
+                             class="btn btn-outline-secondary d-print-none float-left btn-sm">
                     <font-awesome-icon icon="fa-chevron-right" />
-                    {{ $t('actions.back') }}
+                    {{$t('actions.back')}}
                 </router-link>
                 <button class="btn btn-sm btn-outline-secondary float-left" @click="redirectToRuns">
                     <font-awesome-icon icon="fa fa-history" /> Histórico
                 </button>
                 <button class="btn btn-sm btn-success" :disabled="!isDirty" @click="saveChanges">
-                    <font-awesome-icon icon="fa fa-save" class="mr-1" /> {{ $tc('actions.save') }}
+                    <font-awesome-icon icon="fa fa-save" class="mr-1" /> {{$t('actions.save')}}
                 </button>
-
             </div>
         </div>
 
@@ -34,33 +33,32 @@
                         Informações básicas
                     </h5>
                     <b-card class="editPage-infos">
-
                         <div class="d-flex flex-row">
                             <div class="font-weight-bold mr-2">
                                 <div>Criado em:</div>
                                 <div>Atualizado em:</div>
                             </div>
                             <div>
-                                <div>{{ pipeline.created | formatJsonDate }}</div>
-                                <div>{{ pipeline.updated | formatJsonDate }}</div>
+                                <div>{{pipeline.created | formatJsonDate}}</div>
+                                <div>{{pipeline.updated | formatJsonDate}}</div>
                             </div>
                         </div>
                         <div class="mt-4">
                             <span class="font-weight-bold">Descrição:</span>
-                            <textarea v-model="pipeline.description" @input="isDirty = true" rows="4"
-                                class="form-control form-control-sm" maxlength="200"/>
+                            <textarea v-model="pipeline.description" rows="4" class="form-control form-control-sm"
+                                      maxlength="200" @input="isDirty = true" />
                         </div>
                         <div class="mt-4">
                             <b-form-checkbox v-model="pipeline.enabled" class="d-flex align-items-center"
-                                name="check-button" size="sm" switch @change="isDirty = true">
+                                             name="check-button" size="sm" switch @change="isDirty = true">
                                 Habilitada
                             </b-form-checkbox>
                         </div>
-                        <div class="mt-4" v-if="pipeline.periodicity">
+                        <div v-if="pipeline.periodicity" class="mt-4">
                             <div>
                                 <label class="font-weight-bold">Periodicidade da execução:</label>
                                 <b-form-select v-model="pipeline.periodicity" class="mt-0" size="sm"
-                                    @input="isDirty = true" :options="periodicityOptions" />
+                                               :options="periodicityOptions" @input="isDirty = true" />
                             </div>
                             <div class="mt-2">
                                 <div>
@@ -68,16 +66,16 @@
                                         Iniciar:
                                     </label>
                                     <input id="iniciar-data" v-model.number="pipeline.periodicity_start"
-                                        class="form-control mr-auto form-control-sm w-75" type="number" max="31"
-                                        min="1">
+                                           class="form-control mr-auto form-control-sm w-75" type="number" max="31"
+                                           min="1">
                                 </div>
                                 <div class="mt-2">
                                     <label class="font-weight-bold mr-2">
                                         Intervalo (opcional):
                                     </label>
                                     <input v-model.number="pipeline.periodicity_interval"
-                                        class="form-control form-control-sm mr-auto w-75" type="number" min="0"
-                                        max="30">
+                                           class="form-control form-control-sm mr-auto w-75" type="number" min="0"
+                                           max="30">
                                 </div>
                             </div>
                         </div>
@@ -110,32 +108,32 @@
                                 <div v-if="pipeline.steps && pipeline.steps.length === 0" class="editPage-no-steps">
                                     Adicione etapas à sua pipeline
                                     <button class="ml-1 btn btn-sm btn-secondary" title="Adicionar etapa"
-                                        @click="openAddStepModal(0)">
+                                            @click="openAddStepModal(0)">
                                         <font-awesome-icon icon="plus" />
                                     </button>
                                 </div>
                                 <draggable v-model="pipeline.steps" :options="dragOptions" @end="onDragEnd">
                                     <div v-for="(step, index) in orderedPipelineSteps" :key="step.id"
-                                        class="editPage-dragDiv"
-                                        :class="{ 'editPage-dragDiv-selected': selectedStep.id === step.id }"
-                                        @dragstart="onDragStart" @click="setSelectedStep(step, index)">
+                                         class="editPage-dragDiv"
+                                         :class="{ 'editPage-dragDiv-selected': selectedStep.id === step.id }"
+                                         @dragstart="onDragStart" @click="setSelectedStep(step, index)">
                                         <font-awesome-icon class="editPage-dragIcon" icon="fa fa-grip-vertical" />
                                         <div class="editPage-drag-column">
-                                            # {{ index + 1 }}
+                                            # {{index + 1}}
                                         </div>
                                         <div class="editPage-drag-column" :class="ident">
                                             <span class="editPage-stepButton" @click="redirectToWorkflow(step)">
-                                                {{ step.name }}
+                                                {{step.name}}
                                             </span>
                                         </div>
                                         <div class="editPage-drag-column">
                                             <div>
                                                 <button class="ml-1 btn btn-sm btn-danger" title="Excluir etapa"
-                                                    @click="deleteStep(step.id, step.name)">
+                                                        @click="deleteStep(step.id, step.name)">
                                                     <font-awesome-icon icon="trash" />
                                                 </button>
                                                 <button class="ml-1 btn btn-sm btn-secondary" title="Adicionar etapa"
-                                                    @click="openAddStepModal(step.order)">
+                                                        @click="openAddStepModal(step.order)">
                                                     <font-awesome-icon icon="plus" />
                                                 </button>
                                             </div>
@@ -143,7 +141,7 @@
                                     </div>
                                 </draggable>
                                 <ModalAddPipelineStep ref="addStepModal" :pipeline="pipeline"
-                                    @onupdate-pipeline="updatePipeline" />
+                                                      @onupdate-pipeline="updatePipeline" />
                             </div>
 
                             <div class="editPage-right-container">
@@ -163,8 +161,8 @@
                                             </span>
                                         </template>
                                         <PipelineStepScheduler ref="stepScheduler" :selected-step="selectedStep"
-                                            :selected-step-index="selectedStepIndex" :pipeline-id="pipeline.id"
-                                            @send-scheduler-changes="schedulerUpdate" />
+                                                               :selected-step-index="selectedStepIndex" :pipeline-id="pipeline.id"
+                                                               @send-scheduler-changes="schedulerUpdate" />
                                     </b-tab>
                                     <b-tab>
                                         <template #title>
@@ -173,8 +171,8 @@
                                             </span>
                                         </template>
                                         <EditPipelineStep ref="editStepModal" :edited-step="editedStep"
-                                            :pipeline="pipeline" :selected-step-index="selectedStepIndex"
-                                            @send-step-changes="schedulerUpdate" />
+                                                          :pipeline="pipeline" :selected-step-index="selectedStepIndex"
+                                                          @send-step-changes="schedulerUpdate" />
                                     </b-tab>
                                 </b-tabs>
                             </div>
@@ -194,7 +192,6 @@ import PipelineStepScheduler from '../components/PipelineStepScheduler.vue';
 import axios from 'axios';
 import draggable from 'vuedraggable';
 import InputHeader from '../components/InputHeader.vue';
-import TextAreaCustom from '../components/TextAreaCustom.vue';
 import Notifier from '../mixins/Notifier.js';
 
 let tahitiUrl = import.meta.env.VITE_TAHITI_URL;
@@ -203,7 +200,6 @@ export default {
     components: {
         draggable,
         InputHeader,
-        TextAreaCustom,
         EditPipelineStep,
         ModalAddPipelineStep,
         PipelineStepScheduler,

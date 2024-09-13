@@ -117,7 +117,7 @@ export default {
             labelAttribute: null,
             editableLabel: null,
             dataSource_: null,
-        }
+        };
     },
     mounted() {
         this.editableLabel = this.label;
@@ -126,11 +126,11 @@ export default {
     methods: {
         pad: (num, places, ch) => String(num).padStart(places, ch),
         searchDataSource(search, loading) {
-            this.$emit('search-data-source', search, loading)
+            this.$emit('search-data-source', search, loading);
         },
         retrieveAttributes(ds) {
             this.$emit('retrieve-attributes', ds);
         }
     }
-}
+};
 </script>

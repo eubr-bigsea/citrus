@@ -1,17 +1,23 @@
 <template>
-    <b-modal title="Sugestão de arquivo GeoJSON" ref="modal" size="lg" hide-footer>
+    <b-modal ref="modal" title="Sugestão de arquivo GeoJSON" size="lg" hide-footer>
         <div v-if="options.length > 0">
             <h6>Os seguintes arquivos são sugestões cadastradas para arquivos GeoJSON</h6>
             <div class="selection-area scroll-area border">
-                <template v-for="opt in options">
+                <template v-for="opt in options" :key="opt.key">
                     <div v-if="opt.enabled" class="row border-bottom p-2">
                         <div class="col-9">
-                            <input type="radio" @click="confirm(opt.url)" class="pt-4" name="geo-opt">
-                            {{ opt.description }}
+                            <input type="radio" class="pt-4" name="geo-opt" @click="confirm(opt.url)">
+                            {{opt.description}}
                         </div>
-                        <div class="col-3">Identificador: {{ opt.key }}</div>
-                        <div class="col-12">Disponível em <a :href="opt.url" target="_blank">{{ opt.url }}</a></div>
-                        <div class="col-12">Exemplo de propriedades: {{ opt.properties }}</div>
+                        <div class="col-3">
+                            Identificador: {{opt.key}}
+                        </div>
+                        <div class="col-12">
+                            Disponível em <a :href="opt.url" target="_blank">{{opt.url}}</a>
+                        </div>
+                        <div class="col-12">
+                            Exemplo de propriedades: {{opt.properties}}
+                        </div>
                     </div>
                 </template>
             </div>
@@ -41,7 +47,7 @@ const show = async () => {
 const confirm = (newValue) => {
     emit('input', newValue);
     modal.value.hide();
-}
+};
 defineExpose({ show });
 // Methods
 const options = ref([]);
@@ -50,7 +56,7 @@ const load = async () => {
         const resp = await axios.get(`${thornUrl}/public/configurations/GEO_JSON_URLS`);
         options.value = resp.data.data; //.sort((a, b) => a.description.localeCompare(b.description));
     } catch (e) {
-        console.debug(e)
+        console.debug(e);
     }
 };
 

@@ -7,7 +7,7 @@ const thornUrl = import.meta.env.VITE_THORN_URL;
 */
 class AuthService {
     constructor() {
-        this.settings = {}
+        this.settings = {};
     }
     async loadConfig(vueStore){
         this.vueStore = vueStore;
@@ -60,7 +60,7 @@ class AuthService {
                 issuer: 'https://ssogsi.mpmg.mp.br/oauth2/token',
                 authorization_endpoint: 'https://sso.gsi.mpmg.mp.br/oauth2/authorize',
             }*/
-            //}
+        //}
         const mgr = new UserManager(merged);
         this.userManager = mgr;
         mgr.events.addAccessTokenExpiring(function () {
@@ -72,7 +72,7 @@ class AuthService {
                 //self.getThornProfile();
             }).catch(function(e) {
                 console.log("silent renew error", e.message);
-            })
+            });
         });
     }
     /**
@@ -104,7 +104,7 @@ class AuthService {
                     console.log(error);
                     this.userManager.removeUser();
                     this.vueStore && this.vueStore.dispatch('logout');
-                })
+                });
         });
     }
 

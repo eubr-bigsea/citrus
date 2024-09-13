@@ -1,33 +1,32 @@
 <template>
-    <div ref="container">
-    </div>
+    <div ref="container" />
 </template>
 
 <script setup>
 
-import { debounce } from "@/util.js"
-import { autocompletion, completionKeymap } from '@codemirror/autocomplete'
+import { debounce } from "@/util.js";
+import { autocompletion, completionKeymap } from '@codemirror/autocomplete';
 import {
     defaultKeymap, history, historyKeymap,
     indentWithTab
-} from '@codemirror/commands'
-import { sql } from '@codemirror/lang-sql'
+} from '@codemirror/commands';
+import { sql } from '@codemirror/lang-sql';
 import {
     defaultHighlightStyle, foldKeymap, indentUnit,
     syntaxHighlighting
-} from '@codemirror/language'
-import { searchKeymap } from '@codemirror/search'
-import { EditorView, keymap, lineNumbers } from '@codemirror/view'
-import { defineEmits, defineExpose, defineProps, onMounted, ref } from "vue"
+} from '@codemirror/language';
+import { searchKeymap } from '@codemirror/search';
+import { EditorView, keymap, lineNumbers } from '@codemirror/view';
+import { defineEmits, defineExpose, defineProps, onMounted, ref } from "vue";
 
-import { format } from 'sql-formatter'
+import { format } from 'sql-formatter';
 
 const emit = defineEmits(['update']);
 const props = defineProps({
     query: { type: String, default: () => '' },
     tables: { type: Array, default: () => [] },
     functions: { type: Array, default: () => [] },
-    format: { type: Object, default: () => { language: 'sql' } },
+    formatter: { type: Object, default: () => { language: 'sql'; } },
 });
 
 const container = ref();
@@ -49,7 +48,7 @@ const sqlKeywords = ref(['ABS', 'ALL', 'AND', 'APPROXIMATE', 'AS', 'ASC',
 const focus = () => editor.value.focus();
 const sqlCompletion = (context) => {
     const completions = [];
-    let before = context.matchBefore(/[\w\.]+/)
+    let before = context.matchBefore(/[\w\.]+/);
     function apply(ctx, f) {
         return (view, completion, from, to) => {
             if (completion.type === 'method') {
@@ -60,10 +59,10 @@ const sqlCompletion = (context) => {
                         insert: `${f}()`
                     },
                     selection: { anchor: from + f.length + 1 }
-                })
+                });
             }
             return autocompletion.apply(view, from, to, completion);
-        }
+        };
     }
     for (const f of props.functions) {
         if (f === undefined) {
@@ -87,7 +86,7 @@ const sqlCompletion = (context) => {
                 label: `${t.alias}.${a.name}`,
                 detail: "coluna",
                 type: 'property'
-            })
+            });
         }
     }
     for (const keyword of sqlKeywords.value) {
@@ -99,20 +98,20 @@ const sqlCompletion = (context) => {
     }
     // If completion wasn't explicitly started and there
     // is no word before the cursor, don't open completions.
-    if (!context.explicit && !before) return null
+    if (!context.explicit && !before) return null;
     return {
         from: before ? before.from : context.pos,
         options: completions,
         validFor: /^\w*$/
-    }
-}
+    };
+};
 const indent = () => {
     const formatted = format(props.query, props.format);
     editor.value.dispatch({
         changes: { from: 0, to: editor.value.state.doc.length, insert: formatted }
     });
 
-}
+};
 
 /* Events */
 onMounted(() => {
@@ -150,5 +149,5 @@ onMounted(() => {
         parent: container.value
     });
 });
-defineExpose({ focus, indent })
+defineExpose({ focus, indent });
 </script>

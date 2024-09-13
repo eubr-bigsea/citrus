@@ -7,7 +7,7 @@
                 <div v-if="selectedTarget">
                     <label>
                         <font-awesome-icon icon="fa-bullseye" class="text-primary" />
-                        Alvo atual: {{ selectedTarget.name }}</label>
+                        Alvo atual: {{selectedTarget.name}}</label>
                 </div>
                 <div v-else-if="supervised" class="text-danger">
                     É necessário informar um atributo alvo!
@@ -15,15 +15,15 @@
                 <div class="mt-2 features-list scroll-area">
                     <b-list-group>
                         <b-list-group-item v-for="attr in features.forms.features.value" :key="attr.name" class="p-0"
-                            role="button" @click="handleSelectAttribute(attr)">
+                                           role="button" @click="handleSelectAttribute(attr)">
                             <div v-if="attr.usage !== 'label'" class="w-100 p-1"
-                                :class="{ 'bg-light': selectedAttribute === attr }">
+                                 :class="{ 'bg-light': selectedAttribute === attr }">
                                 <b-form-checkbox v-model="attr.usage" switch value="feature">
-                                    {{ attr.name }}
+                                    {{attr.name}}
                                 </b-form-checkbox>
                             </div>
                             <div v-else-if="supervised" class="w-100 p-1" title="Alvo">
-                                <font-awesome-icon icon="fa-bullseye" class="text-primary" /> {{ attr.name }}
+                                <font-awesome-icon icon="fa-bullseye" class="text-primary" /> {{attr.name}}
                             </div>
                         </b-list-group-item>
                     </b-list-group>
@@ -35,14 +35,14 @@
             <div class="col-md-8 border p-3">
                 <div v-if="selectedAttribute">
                     <h6 class="border-bottom mb-4">
-                        {{ selectedAttribute.name }}
+                        {{selectedAttribute.name}}
                     </h6>
 
                     <div class="row">
                         <div class="col-4">
                             <b-form-group label="Uso do atributo:">
                                 <b-form-radio-group name="radio-usage" :checked="selectedAttribute.usage" stacked
-                                    @input="changeUsage($event)">
+                                                    @input="changeUsage($event)">
                                     <b-form-radio name="usage" value="unused">
                                         <font-awesome-icon icon="fa fa-times" class="text-danger" /> Não usar
                                     </b-form-radio>
@@ -57,7 +57,7 @@
                             </b-form-group>
 
                             <template v-if="selectedAttributeUsed">
-                                <label for="">{{ $tc('common.type') }}:</label>
+                                <label for="">{{$t('common.type')}}:</label>
                                 <b-form-radio-group v-model="selectedAttribute.feature_type" stacked>
                                     <b-form-radio value="categorical">
                                         <font-awesome-icon icon="fa fa-font" />
@@ -139,20 +139,20 @@
                                 <template v-if="selectedAttribute.transform === 'binarize'">
                                     <label>Limiar para a binarização:</label>
                                     <input v-model="selectedAttribute.threshold" type="number"
-                                        class="form-control form-control-sm mb-3 w-25" maxlength="18" step="0.01">
+                                           class="form-control form-control-sm mb-3 w-25" maxlength="18" step="0.01">
                                 </template>
                                 <template v-if="selectedAttribute.transform === 'quantis'">
                                     <label>Número de quantis:</label>
                                     <input v-model="selectedAttribute.quantis" type="number"
-                                        class="form-control form-control-sm mb-3 w-25" maxlength="10" step="1">
+                                           class="form-control form-control-sm mb-3 w-25" maxlength="10" step="1">
                                 </template>
                                 <template v-if="selectedAttribute.transform === 'buckets'">
                                     <label>Definição dos buckets:</label>
                                     <b-form-tags v-model="selectedAttribute.buckets" no-outer-focus class="mb-2 p-2"
-                                        placeholder="Informe um limite para o bucket"
-                                        duplicate-tag-text="Valor já informado" add-button-text="+" input-type="number" />
+                                                 placeholder="Informe um limite para o bucket"
+                                                 duplicate-tag-text="Valor já informado" add-button-text="+" input-type="number" />
                                     <p v-if="selectedAttribute.buckets">
-                                        -∞ ... {{ [...selectedAttribute.buckets].sort().join(' ... ') }} ... +∞
+                                        -∞ ... {{[...selectedAttribute.buckets].sort().join(' ... ')}} ... +∞
                                     </p>
                                 </template>
 
@@ -205,8 +205,8 @@
                                 <label>Substituir valores ausentes
                                     por:</label>
                                 <input v-model="selectedAttribute.constant"
-                                    :type="(selectedAttribute.feature_type === 'numerical') ? 'number' : 'text'"
-                                    class="form-control form-control-sm" maxlength="100">
+                                       :type="(selectedAttribute.feature_type === 'numerical') ? 'number' : 'text'"
+                                       class="form-control form-control-sm" maxlength="100">
                             </template>
                         </div>
                     </div>
@@ -222,7 +222,7 @@
 export default {
     props: {
         attributes: { type: Array, required: true },
-        features: { required: true, type: Object, default: () => { return { forms: {} } } },
+        features: { required: true, type: Object, default: () => { return { forms: {} }; } },
         target: { type: String, default: () => null },
         supervised: { type: Boolean },
     },
@@ -231,7 +231,7 @@ export default {
             selectedAttribute: null,
             selectedTarget: null,
             flagUpdating: false, //used to avoid changing usage when handling enable checkboxes.
-        }
+        };
     },
     computed: {
         selectedAttributeUsed() {
@@ -262,12 +262,12 @@ export default {
                 if (['INTEGER', 'DECIMAL'].includes(cloned.type)) {
                     cloned.feature_type = 'numerical';
                     if (!cloned.transform) {
-                        cloned.transform = 'keep'
+                        cloned.transform = 'keep';
                     }
                 } else {
                     cloned.feature_type = 'categorical';
                     if (!cloned.transform) {
-                        cloned.transform = 'hashing'
+                        cloned.transform = 'hashing';
                     }
                 }
             }
@@ -312,7 +312,7 @@ export default {
             }
         }
     },
-}
+};
 </script>
 <style scoped>
 .features-list {
