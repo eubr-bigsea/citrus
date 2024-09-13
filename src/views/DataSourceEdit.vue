@@ -215,37 +215,36 @@
                                 -->
                                                 </tr>
                                             </thead>
-                                            <draggable v-model="dataSource.attributes" :options="dragOptions" tag="tbody" itemKey="id">
+                                            <draggable v-model="dataSource.attributes" :options="dragOptions" tag="tbody" item-key="id">
                                                 <template #item="{element, index}">
-                                                <tr
-                                                    :class="{'hovered-row':element === selectedAttribute}"
-                                                    @mouseover="selectAttribute(element)"
-                                                    @mouseleave="unSelectAttribute()">
-                                                    <td class="text-center">
-                                                        <font-awesome-icon class="editPage-dragIcon" icon="fa fa-grip-vertical" />
-                                                    </td>
-                                                    <td class="text-center">
-                                                        {{index + 1}}
-                                                    </td>
-                                                    <td>
-                                                        <input v-model="element.name" class="form-control-sm form-control">
-                                                    </td>
-                                                    <td>
-                                                        <select v-model="element.type"
-                                                                class="form-select-sm form-select">
-                                                            <option v-for="dt in dataTypes" :key="dt" :value="dt">
-                                                                {{dt}}
-                                                            </option>
-                                                        </select>
-                                                    </td>
-                                                    <td>
-                                                        <input v-model="element.raw_type" class="form-control-sm form-control">
-                                                    </td>
-                                                    <td class="text-center">
-                                                        <input v-model="element.format" type="text"
-                                                               class="form-control-sm form-control" maxlenght="50">
-                                                    </td>
-                                                    <!--
+                                                    <tr :class="{'hovered-row':element === selectedAttribute}"
+                                                        @mouseover="selectAttribute(element)"
+                                                        @mouseleave="unSelectAttribute()">
+                                                        <td class="text-center">
+                                                            <font-awesome-icon class="editPage-dragIcon" icon="fa fa-grip-vertical" />
+                                                        </td>
+                                                        <td class="text-center">
+                                                            {{index + 1}}
+                                                        </td>
+                                                        <td>
+                                                            <input v-model="element.name" class="form-control-sm form-control">
+                                                        </td>
+                                                        <td>
+                                                            <select v-model="element.type"
+                                                                    class="form-select-sm form-select">
+                                                                <option v-for="dt in dataTypes" :key="dt" :value="dt">
+                                                                    {{dt}}
+                                                                </option>
+                                                            </select>
+                                                        </td>
+                                                        <td>
+                                                            <input v-model="element.raw_type" class="form-control-sm form-control">
+                                                        </td>
+                                                        <td class="text-center">
+                                                            <input v-model="element.format" type="text"
+                                                                   class="form-control-sm form-control" maxlenght="50">
+                                                        </td>
+                                                        <!--
                                                 <td class="text-center">
                                                     <SwitchComponent v-model="element.nullable" :checked="element.nullable"></SwitchComponent>
                                                 </td>
@@ -259,28 +258,28 @@
                                                     <input type="number" class="form-control-sm form-control" maxlenght="2" v-model="element.scale" min="0" />
                                                 </td>
                           -->
-                                                    <td>
-                                                        <input v-model="element.missing_representation"
-                                                               class="form-control-sm form-control" maxlength="200">
-                                                    </td>
-                                                    <td v-if="dataSource.privacy_aware" class="text-center">
-                                                        <button class="btn btn-sm btn-outline-success hover-action"
-                                                                @click.prevent="showPrivacyModal(element)">
-                                                            {{$t('actions.edit')}}...
-                                                        </button>
-                                                    </td>
-                                                    <td>
-                                                        <input v-model="element.description" class="form-control-sm form-control">
-                                                    </td>
-                                                    <td class="text-center">
-                                                        <button v-show="element === selectedAttribute"
-                                                                class="ml-1 btn btn-sm btn-danger"
-                                                                :title="$t('actions.delete')"
-                                                                @click="deleteAttribute(index)">
-                                                            <font-awesome-icon icon="trash" />
-                                                        </button>
-                                                    </td>
-                                                </tr>
+                                                        <td>
+                                                            <input v-model="element.missing_representation"
+                                                                   class="form-control-sm form-control" maxlength="200">
+                                                        </td>
+                                                        <td v-if="dataSource.privacy_aware" class="text-center">
+                                                            <button class="btn btn-sm btn-outline-success hover-action"
+                                                                    @click.prevent="showPrivacyModal(element)">
+                                                                {{$t('actions.edit')}}...
+                                                            </button>
+                                                        </td>
+                                                        <td>
+                                                            <input v-model="element.description" class="form-control-sm form-control">
+                                                        </td>
+                                                        <td class="text-center">
+                                                            <button v-show="element === selectedAttribute"
+                                                                    class="ml-1 btn btn-sm btn-danger"
+                                                                    :title="$t('actions.delete')"
+                                                                    @click="deleteAttribute(index)">
+                                                                <font-awesome-icon icon="trash" />
+                                                            </button>
+                                                        </td>
+                                                    </tr>
                                                 </template>
                                             </draggable>
                                         </table>

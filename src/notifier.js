@@ -1,5 +1,4 @@
 import { useToast, POSITION } from 'vue-toastification';
-import { useModalController } from 'bootstrap-vue-next';
 
 const toastOptions = {
     transition: "Vue-Toastification__bounce",
@@ -49,28 +48,28 @@ export default class {
         this.$snotify.success(
             msg,
             this.$t('titles.success'),
-            { timeout: timeout || 2000, bodyMaxLength: bodyMaxLength || 150 }
+            { timeout: timeout || 5000, bodyMaxLength: bodyMaxLength || 150 }
         );
     }
     info(msg, timeout, bodyMaxLength) {
         this.$snotify.info(
             msg,
             this.$t('titles.info', 2),
-            { timeout: timeout || 2000, bodyMaxLength: bodyMaxLength || 150 }
+            { timeout: timeout || 5000, bodyMaxLength: bodyMaxLength || 150 }
         );
     }
     warning(msg, timeout, bodyMaxLength) {
         this.$snotify.warning(
             msg,
             this.$t('titles.warning'),
-            { timeout: timeout || 2000, bodyMaxLength: bodyMaxLength || 150 }
+            { timeout: timeout || 5000, bodyMaxLength: bodyMaxLength || 150 }
         );
     }
     html(msg, title, timeout, bodyMaxLength) {
         this.$snotify.html(
             `<div class="snotifyToast__title">${title}</div>
                  <div class="snotifyToast__body">${msg}</div>`,
-            { timeout: timeout || 2000, bodyMaxLength: bodyMaxLength || 150 }
+            { timeout: timeout || 5000, bodyMaxLength: bodyMaxLength || 150 }
         );
     }
     error(e, msg, timeout, bodyMaxLength) {

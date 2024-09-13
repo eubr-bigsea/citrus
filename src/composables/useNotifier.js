@@ -26,7 +26,7 @@ export default (vm) => {
         const elems = faIcon ? h('div', { style: 'display: flex;align-items: center;flex:1;gap: 10px;' },
             [h('font-awesome-icon',
                 { props: { icon: `fa ${faIcon}`, size: '2x', } }),
-                msg]) : msg;
+            msg]) : msg;
         toaster.toast(elems, {
             title,
             type: variant,
