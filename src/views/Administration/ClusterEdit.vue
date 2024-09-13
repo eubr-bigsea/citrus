@@ -64,7 +64,7 @@
                                                           :close-on-select="false"
                                                           :selectable="option => cluster.platforms && !cluster.platforms.includes(option)" />
                                                 <label>{{$t('cluster.authToken')}}:</label>
-                                                <input v-model="cluster.auth_token" type="password" autocomplete=""
+                                                <input v-model="cluster.auth_token" type="password" autocomplete="off"
                                                        class="form-control">
                                             </div>
                                             <div class="col-md-12">

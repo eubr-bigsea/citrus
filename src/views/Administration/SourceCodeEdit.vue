@@ -64,13 +64,13 @@
                                     </form>
                                     <div class="row">
                                         <div class="col-md-12 mt-4 border-top pt-2">
-                                            <button class="btn btn-primary mr-1 btn-spinner" @click.stop="save">
+                                            <button class="btn btn-primary me-1 btn-spinner" @click.stop="save">
                                                 <font-awesome-icon icon="spinner" pulse class="icon" />
                                                 <font-awesome-icon icon="fa fa-save" />
                                                 {{$t('actions.save')}}
                                             </button>
                                             <router-link :to="{ name: 'sourceCodeList' }"
-                                                         class="btn btn-outline-secondary mr-1">
+                                                         class="btn btn-outline-secondary me-1">
                                                 {{$t('actions.cancel')}}
                                             </router-link>
                                         </div>
@@ -86,10 +86,12 @@
 </template>
 
 <script setup>
-import { ref, watch, onMounted } from 'vue';
+import {nextTick, ref, onMounted } from 'vue';
 import { getCurrentInstance } from 'vue';
 import { PrismEditor } from "vue-prism-editor";
 import "vue-prism-editor/dist/prismeditor.min.css"; // import the styles somewhere
+import { useI18n } from 'vue-i18n';
+import { useRouter, useRoute } from 'vue-router';
 
 // import highlighting library (you can use any library you want just return html string)
 import { highlight, languages } from "prismjs/components/prism-core";
@@ -99,10 +101,12 @@ import axios from 'axios';
 import useNotifier from '../../composables/useNotifier.js';
 
 const vm = getCurrentInstance();
-const route = vm.proxy.$route;
-const router = vm.proxy.$router;
-const i18n = vm.proxy.$i18n.vm;
+const router = useRouter();
+const route = useRoute();
+
+const { t } = useI18n();
 const { success, error } = useNotifier(vm.proxy);
+
 /*
 watch(route.params.id, () => {
     load().then(() => {
@@ -145,18 +149,14 @@ const save = async (event) => {
 
     try {
         const resp = await axiosCall(url, sourceCode.value);
-        sourceCode.value = resp.data;
-        Vue.nextTick(() => {
+        sourceCode.value = resp.data.data[0];
+        nextTick(() => {
             isDirty.value = false;
         });
-        success(i18n.$t('messages.savedWithSuccess', { what: i18n.$t('titles.code') }));
-        /*
-        self.success(
-            this.$t('messages.savedWithSuccess', {
-                what: this.$t('titles.sourceCode', 1)
-            })
-        );*/
-        router.push({ name: 'sourceCodeList' });
+        success(t('messages.savedWithSuccess', { what: t('titles.code') }));
+        setTimeout(() => {
+            router.push({ name: 'sourceCodeList' });
+        }, 100)
     } catch (ex) {
         error(ex);
     } finally {
@@ -195,7 +195,7 @@ const focusTextarea = (event) => {
     border: 1px solid #ddd;
     border-radius: 3px;
     overflow-y: scroll;
-    height: 65vh;
+    height: 60vh;
 
 }
 

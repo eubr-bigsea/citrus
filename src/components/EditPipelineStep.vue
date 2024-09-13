@@ -17,7 +17,7 @@
         <div v-if="editedStep.workflow !== undefined && showWorkflowOps < 0" class="d-flex flex-column">
             <label class="editPage-label">Etapa associada a um fluxo de trabalho:</label>
             <button class="btn text-center btn-outline-secondary my-2" @click="redirectToWorkflow(editedStep)">
-                <font-awesome-icon icon="fa fa-flask" class="mr-1" size="lg" />
+                <font-awesome-icon icon="fa fa-flask" class="me-1" size="lg" />
                 <span class="editPage-workflow-label">
                     {{$t('actions.edit')}} {{editedStep.workflow.id}} - {{editedStep.workflow.name}}
                 </span>

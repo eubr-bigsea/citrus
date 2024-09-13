@@ -21,7 +21,7 @@ export default {
             this.$snotify.success(
                 msg,
                 this.$t('titles.success'),
-                { timeout: timeout || 2000, bodyMaxLength: bodyMaxLength || 150 }
+                { timeout: timeout || 5000, bodyMaxLength: bodyMaxLength || 150 }
             );
         },
         info(msg, timeout, bodyMaxLength) {

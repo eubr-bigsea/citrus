@@ -40,7 +40,7 @@
                     </template>
                     <template #actions="props">
                         <div>
-                            <button class="btn btn-sm btn-success mr-1"
+                            <button class="btn btn-sm btn-success me-1"
                                     @click="openScheduleModal(props.row.id, props.row.name)">
                                 Agendar
                                 <font-awesome-icon icon="calendar-alt" />

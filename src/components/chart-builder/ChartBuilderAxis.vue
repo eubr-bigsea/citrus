@@ -100,7 +100,7 @@
             </template>
             <template v-else>
                 <div class="clearfix">
-                    <b-dropdown v-if="hasAxis" ref="axis" size="sm" class="mt-2 mr-1 float-left"
+                    <b-dropdown v-if="hasAxis" ref="axis" size="sm" class="mt-2 me-1 float-left"
                                 variant="outline-secondary small-dd-title">
                         <template #button-content>
                             <font-awesome-icon class="mr-2" prefix="fa" icon="y" />
@@ -188,7 +188,7 @@
                                :move="handleYAxisDrag" direction="horizontal" class="draggable-area" @start="drag = true"
                                @end="drag = false">
                         <div v-for="(ySerie, counter) in ySeries" :key="counter" class="drag-handle" :data-test="`y-series-${counter}`">
-                            <b-dropdown ref="yDimensionDD" size="sm" class="mt-2 mr-1 pull-right"
+                            <b-dropdown ref="yDimensionDD" size="sm" class="mt-2 me-1 pull-right"
                                         :variant="'outline-secondary small-dd-title ' + (ySerie.enabled ? '' : 'disabled')">
                                 <template #button-content>
                                     {{ySerie.attribute === '*' ? 'COUNT' : ySerie.aggregation.toUpperCase()}}
@@ -392,7 +392,7 @@
                     </b-button>
                 </div>
                 <div class="clearfix">
-                    <b-dropdown v-if="hasAxis" ref="axis" size="sm" class="mt-2 mr-1 float-left"
+                    <b-dropdown v-if="hasAxis" ref="axis" size="sm" class="mt-2 me-1 float-left"
                                 variant="outline-secondary small-dd-title">
                         <template #button-content>
                             <font-awesome-icon class="mr-2" prefix="fa" icon="x" />
@@ -464,7 +464,7 @@
                                @end="drag = false">
                         <div v-for="(xSerie, i) in xSeries" :key="i" class="drag-handle">
                             <b-dropdown :id="`x-series-${i}`" ref="xDimensionDD" size="sm small-dd-title"
-                                        class="mt-2 mr-1 pull-right" :variant="xSerie.attribute ? 'outline-secondary' : 'outline-danger'">
+                                        class="mt-2 me-1 pull-right" :variant="xSerie.attribute ? 'outline-secondary' : 'outline-danger'">
                                 <template #button-content>
                                     {{getDisplayXDimensionLabel(xSerie, 'Selecione...', 'grupos', 'tamanho', 'Categórico')}}
                                 </template>

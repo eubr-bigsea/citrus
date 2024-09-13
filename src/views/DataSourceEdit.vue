@@ -212,13 +212,14 @@
                                                 <th class="primary text-center" style="width:5%">{{$t('common.size')}}</th>
                                                 <th class="primary text-center" style="width:5%">{{$t('common.precision')}}</th>
                                                 <th class="primary text-center" style="width:5%">{{$t('common.scale')}}</th>
-                          -->
+                                -->
                                                 </tr>
                                             </thead>
-                                            <draggable v-model="dataSource.attributes" :options="dragOptions" tag="tbody">
-                                                <tr v-for="(attr, index) in dataSource.attributes" :key="attr.id"
-                                                    :class="{'hovered-row':attr === selectedAttribute}"
-                                                    @mouseover="selectAttribute(attr)"
+                                            <draggable v-model="dataSource.attributes" :options="dragOptions" tag="tbody" itemKey="id">
+                                                <template #item="{element, index}">
+                                                <tr
+                                                    :class="{'hovered-row':element === selectedAttribute}"
+                                                    @mouseover="selectAttribute(element)"
                                                     @mouseleave="unSelectAttribute()">
                                                     <td class="text-center">
                                                         <font-awesome-icon class="editPage-dragIcon" icon="fa fa-grip-vertical" />
@@ -227,10 +228,10 @@
                                                         {{index + 1}}
                                                     </td>
                                                     <td>
-                                                        <input v-model="attr.name" class="form-control-sm form-control">
+                                                        <input v-model="element.name" class="form-control-sm form-control">
                                                     </td>
                                                     <td>
-                                                        <select v-model="attr.type"
+                                                        <select v-model="element.type"
                                                                 class="form-select-sm form-select">
                                                             <option v-for="dt in dataTypes" :key="dt" :value="dt">
                                                                 {{dt}}
@@ -238,41 +239,41 @@
                                                         </select>
                                                     </td>
                                                     <td>
-                                                        <input v-model="attr.raw_type" class="form-control-sm form-control">
+                                                        <input v-model="element.raw_type" class="form-control-sm form-control">
                                                     </td>
                                                     <td class="text-center">
-                                                        <input v-model="attr.format" type="text"
+                                                        <input v-model="element.format" type="text"
                                                                class="form-control-sm form-control" maxlenght="50">
                                                     </td>
                                                     <!--
                                                 <td class="text-center">
-                                                    <SwitchComponent v-model="attr.nullable" :checked="attr.nullable"></SwitchComponent>
+                                                    <SwitchComponent v-model="element.nullable" :checked="element.nullable"></SwitchComponent>
                                                 </td>
                                                 <td class="col-xs-1">
-                                                    <input type="number" class="form-control-sm form-control" maxlenght="2" v-model="attr.size" min="0" />
+                                                    <input type="number" class="form-control-sm form-control" maxlenght="2" v-model="element.size" min="0" />
                                                 </td>
                                                 <td class="col-xs-1">
-                                                    <input type="number" class="form-control-sm form-control" maxlenght="2" v-model="attr.precision" min="0" />
+                                                    <input type="number" class="form-control-sm form-control" maxlenght="2" v-model="element.precision" min="0" />
                                                 </td>
                                                 <td class="col-xs-1">
-                                                    <input type="number" class="form-control-sm form-control" maxlenght="2" v-model="attr.scale" min="0" />
+                                                    <input type="number" class="form-control-sm form-control" maxlenght="2" v-model="element.scale" min="0" />
                                                 </td>
                           -->
                                                     <td>
-                                                        <input v-model="attr.missing_representation"
+                                                        <input v-model="element.missing_representation"
                                                                class="form-control-sm form-control" maxlength="200">
                                                     </td>
                                                     <td v-if="dataSource.privacy_aware" class="text-center">
                                                         <button class="btn btn-sm btn-outline-success hover-action"
-                                                                @click.prevent="showPrivacyModal(attr)">
+                                                                @click.prevent="showPrivacyModal(element)">
                                                             {{$t('actions.edit')}}...
                                                         </button>
                                                     </td>
                                                     <td>
-                                                        <input v-model="attr.description" class="form-control-sm form-control">
+                                                        <input v-model="element.description" class="form-control-sm form-control">
                                                     </td>
                                                     <td class="text-center">
-                                                        <button v-show="attr === selectedAttribute"
+                                                        <button v-show="element === selectedAttribute"
                                                                 class="ml-1 btn btn-sm btn-danger"
                                                                 :title="$t('actions.delete')"
                                                                 @click="deleteAttribute(index)">
@@ -280,6 +281,7 @@
                                                         </button>
                                                     </td>
                                                 </tr>
+                                                </template>
                                             </draggable>
                                         </table>
                                         <div v-else class="border-bottom mb-5 pt-3 pb-3">
@@ -409,7 +411,6 @@
                                             </div>
                                         </div>
                                     </b-tab>
-                                    -->
                                 </b-tabs>
                                 <div class="card-footer">
                                     <button v-if="loggedUserIsOwnerOrAdmin" class="btn btn-success btn-spinner"
@@ -538,6 +539,7 @@ export default {
     data() {
         return {
             copyingStep: 0,
+            customTags: [],
             atmosphereExtension: import.meta.env.VITE_ATMOSPHERE,
             isDirty: false,
             samples: [],

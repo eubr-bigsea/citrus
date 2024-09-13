@@ -67,7 +67,7 @@
                                                     {{$t('common.language')}}:
                                                 </label>
                                                 <select v-model="user.locale"
-                                                        class="form-control">
+                                                        class="form-control form-select">
                                                     <option value="en">
                                                         English/Inglês
                                                     </option>
@@ -93,7 +93,7 @@
                                                     {{$t('common.user.authenticationType')}}:
                                                 </label>
                                                 <select v-model="user.authentication_type"
-                                                        class="form-control">
+                                                        class="form-control form-select">
                                                     <option value="INTERNAL">
                                                         {{$t('common.user.authenticationInternal')}}
                                                     </option>
@@ -105,7 +105,7 @@
                                                     </option>
                                                 </select>
                                             </div>
-                                            <div class="col-sm-3">
+                                            <div class="col-sm-3 pt-2">
                                                 <b-form-checkbox v-model="user.enabled">
                                                     {{$t('common.enabled')}}
                                                 </b-form-checkbox>
@@ -135,7 +135,7 @@
                                                     {{$t('common.user.notes', 2)}}:
                                                 </label>
                                                 <textarea v-model="user.notes"
-                                                          rows="4"
+                                                          rows="4" maxlength="250"
                                                           class="form-control" />
                                             </div>
                                             <div class="col-sm-6">
@@ -149,7 +149,7 @@
                                                           :taggable="false"
                                                           :close-on-select="false" />
                                                 <label class="mt-3">{{$t('common.user.globalRoles')}}:</label>
-                                                <div>
+                                                <div class="mt-2 ps-1">
                                                     <div v-for="gr in globalRoles"
                                                          :key="gr.id"
                                                          class="badge bg-info me-1">
@@ -187,7 +187,7 @@
 
 <script>
 import axios from 'axios';
-import Notifier from '../../mixins/Notifier.js';
+import Notifier from '@/mixins/Notifier.js';
 import {mapGetters} from 'vuex';
 import vSelect from "vue-select";
 
