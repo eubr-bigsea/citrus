@@ -1,7 +1,7 @@
 <template>
     <div>
         <div v-if="jobs" class="row">
-            <div class="col-md-4 col-lg-3 pl-4">
+            <div class="col-md-4 col-lg-3 ps-4">
                 <b-list-group v-if="jobs.length > 0">
                     <b-list-group-item v-for="job in jobs" :key="job.id" class="flex-column align-items-start p-0"
                                        role="button" @click="handleClick(job)">

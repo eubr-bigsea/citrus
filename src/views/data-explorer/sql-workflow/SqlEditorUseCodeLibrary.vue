@@ -4,17 +4,20 @@
         <div class="row">
             <div class="col-12">
                 <p>
-                    Selecione uma ou mais bibliotecas de código para adicionar ao código gerado. Ao adicionar uma biblioteca
+                    Selecione uma ou mais bibliotecas de código para adicionar ao código gerado. Ao adicionar uma
+                    biblioteca
                     de código, ela estará disponível para todas as células do tipo Python.
                 </p>
                 <div class="scrollable-area code-library">
                     <div v-for="opt, i in codeLibraries" :key="opt.id" class="custom-control custom-checkbox">
-                        <input :id="`sql_code_lib_opt-${i}`" v-model="task.forms.code_libraries.value" type="checkbox" class="custom-control-input"
-                               :value="opt.id">
-                        <label :for="`sql_code_lib_opt-${i}`" class="custom-control-label">
-                            <span>{{opt.name}}</span>
-                            <br><small>{{opt.help}}</small>
-                        </label>
+                        <div class="form-check ms-2">
+                            <input :id="`sql_code_lib_opt-${i}`" v-model="task.forms.code_libraries.value" type="checkbox"
+                                   class="custom-control-input form-check-input" :value="opt.id">
+                            <label :for="`sql_code_lib_opt-${i}`" class="custom-control-label">
+                                <strong>{{opt.name}}</strong>
+                                <br><small>{{opt.help}}</small>
+                            </label>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -56,8 +59,8 @@ const handleSubmit = () => {
 defineExpose({ show });
 </script>
 <style scoped>
-    .code-library {
-        max-height: 200px;
-        overflow-y: auto;
-    }
+.code-library {
+    max-height: 200px;
+    overflow-y: auto;
+}
 </style>

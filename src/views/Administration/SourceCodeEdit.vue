@@ -16,40 +16,40 @@
                                             <div class="col-md-6">
                                                 <div class="row">
                                                     <div class="col-6">
-                                                        <label class="font-weight-bold">{{ $t('common.name') }}:</label>
+                                                        <label class="font-weight-bold">{{$t('common.name')}}:</label>
                                                         <input v-model="sourceCode.name" type="text"
-                                                            class="form-control">
+                                                               class="form-control">
                                                     </div>
                                                     <div class="col-md-3 mt-3 mb-3 mt-3">
                                                         <b-form-checkbox v-model="sourceCode.enabled">
-                                                            {{ $t('common.enabled') }}
+                                                            {{$t('common.enabled')}}
                                                         </b-form-checkbox>
                                                     </div>
                                                     <div class="col-md-12 mt-2">
-                                                        <label class="font-weight-bold">{{ $t('titles.requirement',
-                                                            2)}}:</label>
+                                                        <label class="font-weight-bold">{{$t('titles.requirement',
+                                                                                             2)}}:</label>
                                                         <textarea v-model="sourceCode.requirements" class="form-control"
-                                                            rows="5" />
+                                                                  rows="5" />
                                                     </div>
                                                     <div class="col-md-12 mt-2">
-                                                        <label class="font-weight-bold">{{ $t('titles.imports',
-                                                            2)}}:</label>
+                                                        <label class="font-weight-bold">{{$t('titles.imports',
+                                                                                             2)}}:</label>
                                                         <div @click="focusTextarea">
                                                             <prism-editor ref="prism" v-model="sourceCode.imports"
-                                                                :highlight="highlighterImport"
-                                                                class="prism-editor-wrapper-disabled code3"
-                                                                :readonly="false" />
+                                                                          :highlight="highlighterImport"
+                                                                          class="prism-editor-wrapper-disabled code3"
+                                                                          :readonly="false" />
                                                         </div>
                                                     </div>
                                                     <div class="col-md-12 mt-2">
-                                                        <label class="font-weight-bold">{{ $t('titles.help') }}:</label>
+                                                        <label class="font-weight-bold">{{$t('titles.help')}}:</label>
                                                         <textarea v-model="sourceCode.help" class="form-control"
-                                                            rows="5" />
+                                                                  rows="5" />
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="col-6">
-                                                <label class="font-weight-bold">{{ $t('titles.code') }}:</label>
+                                                <label class="font-weight-bold">{{$t('titles.code')}}:</label>
                                                 <div class="form-text">
                                                     Escreva o código Python na forma de um método/função, geralmente com
                                                     parâmetros.
@@ -58,9 +58,9 @@
                                                     campo "Importar".
                                                 </div>
                                                 <prism-editor ref="prism" v-model="sourceCode.code"
-                                                    :highlight="highlighter"
-                                                    class="prism-editor-wrapper-disabled code2 scroll-area"
-                                                    :readonly="false" />
+                                                              :highlight="highlighter"
+                                                              class="prism-editor-wrapper-disabled code2 scroll-area"
+                                                              :readonly="false" />
                                             </div>
                                         </div>
                                     </form>
@@ -69,11 +69,11 @@
                                             <button class="btn btn-primary me-1 btn-spinner" @click.stop="save">
                                                 <font-awesome-icon icon="spinner" pulse class="icon" />
                                                 <font-awesome-icon icon="fa fa-save" />
-                                                {{ $t('actions.save') }}
+                                                {{$t('actions.save')}}
                                             </button>
                                             <router-link :to="{ name: 'sourceCodeList' }"
-                                                class="btn btn-outline-secondary me-1">
-                                                {{ $t('actions.cancel') }}
+                                                         class="btn btn-outline-secondary me-1">
+                                                {{$t('actions.cancel')}}
                                             </router-link>
                                         </div>
                                     </div>

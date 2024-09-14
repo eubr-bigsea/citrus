@@ -107,7 +107,7 @@
                                 </div>
                                 <div v-if="pipeline.steps && pipeline.steps.length === 0" class="editPage-no-steps">
                                     Adicione etapas à sua pipeline
-                                    <button class="ml-1 btn btn-sm btn-secondary" title="Adicionar etapa"
+                                    <button class="ms-1 btn btn-sm btn-secondary" title="Adicionar etapa"
                                             @click="openAddStepModal(0)">
                                         <font-awesome-icon icon="plus" />
                                     </button>
@@ -128,11 +128,11 @@
                                         </div>
                                         <div class="editPage-drag-column">
                                             <div>
-                                                <button class="ml-1 btn btn-sm btn-danger" title="Excluir etapa"
+                                                <button class="ms-1 btn btn-sm btn-danger" title="Excluir etapa"
                                                         @click="deleteStep(step.id, step.name)">
                                                     <font-awesome-icon icon="trash" />
                                                 </button>
-                                                <button class="ml-1 btn btn-sm btn-secondary" title="Adicionar etapa"
+                                                <button class="ms-1 btn btn-sm btn-secondary" title="Adicionar etapa"
                                                         @click="openAddStepModal(step.order)">
                                                     <font-awesome-icon icon="plus" />
                                                 </button>

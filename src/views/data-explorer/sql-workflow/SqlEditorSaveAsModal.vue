@@ -1,6 +1,7 @@
 <template>
     <b-modal ref="modal" button-size="sm" size="lg" :title="$t('actions.save')"
-             :ok-disabled="!valid" @ok="handleSubmit">
+             :ok-disabled="!valid"
+             @ok="handleSubmit">
         <div class="row">
             <div class="col-6">
                 <b-form-checkbox v-model="task.forms.save.value" value="1" unchecked-value="0"
@@ -15,7 +16,7 @@
                     </div>
                     <div class="col-12 mt-2">
                         <label>Armazenamento:</label>
-                        <select v-model.number="task.forms.storage.value" class="form-control form-control-sm"
+                        <select v-model.number="task.forms.storage.value" class="form-select form-select-sm"
                                 name="storage">
                             <option />
                             <option v-for="st in storages" :key="st.id" :value="st.id">
@@ -44,8 +45,7 @@
                 -->
                 <div class="col-12 mt-2">
                     <label>Opção de sobrescrita (se existir):</label>
-                    <select v-model.number="task.forms.mode.value" class="form-control form-control-sm"
-                            name="mode">
+                    <select v-model.number="task.forms.mode.value" class="form-select form-select-sm" name="mode">
                         <option value="error">
                             Gerar erro (não salvar)
                         </option>
@@ -76,16 +76,14 @@ const props = defineProps({
     task: { type: Object, required: true },
 });
 
-const storages = ref([]);
+const storages = [];
 const loadStorages = async () => {
-    const fields = "&fields=id,name,type";
+    const params = { fields: 'id,name,type', size: 100, sort: 'name' };
     const response = await axios.get(
-        `${import.meta.env.VITE_LIMONERO_URL}/storages?size=100${fields}`);
-    storages.value = response.data.data;
+        `${import.meta.env.VITE_LIMONERO_URL}/storages`, { params });
+    storages.push(...response.data.data);
 };
-onBeforeMount(async () => {
-    await loadStorages();
-});
+onBeforeMount(loadStorages);
 
 const show = () => {
     modal.value.show();

@@ -3,7 +3,7 @@
         <div class="d-flex justify-content-between align-items-center">
             <h1>Biblioteca de Códigos</h1>
             <router-link :to="{ name: 'sourceCodeAdd' }" class="btn btn-lemonade-primary btn-success">
-                <font-awesome-icon icon="plus" /> {{ $t('actions.add') }}
+                <font-awesome-icon icon="plus" /> {{$t('actions.add')}}
             </router-link>
         </div>
         <hr>
@@ -12,19 +12,19 @@
                 <div class="card">
                     <div class="card-body">
                         <v-server-table ref="listing" :columns="options.columns" :options="options.options"
-                            name="codeList">
+                                        name="codeList">
                             <template #id="props">
                                 <router-link :to="{ name: 'sourceCodeEdit', params: { id: props.row.id } }">
-                                    {{ props.row.id }}
+                                    {{props.row.id}}
                                 </router-link>
                             </template>
                             <template #name="props">
                                 <router-link :to="{ name: 'sourceCodeEdit', params: { id: props.row.id } }">
-                                    {{ props.row.name }}
+                                    {{props.row.name}}
                                 </router-link>
                             </template>
                             <template #enabled="props">
-                                {{props.row.enabled ? $t('common.yes') : $t('common.no') }}
+                                {{props.row.enabled ? $t('common.yes') : $t('common.no')}}
                             </template>
                             <template #actions="props">
                                 <button class="btn btn-sm btn-danger" @click="remove(props.row.id)">

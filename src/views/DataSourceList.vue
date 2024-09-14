@@ -25,7 +25,7 @@
                         <div class="btn-group" role="group">
                             <button v-if="visualizable(props.row)" :title="$t('common.preview')"
                                     class="btn btn-spinner btn-primary btn-sm" @click.stop="handlePreview(props.row.id)">
-                                <font-awesome-icon v-if="showPreview" icon="fa-spinner" pulse />
+                                <font-awesome-icon v-if="showPreview === props.row.id" icon="fa-spinner" pulse />
                                 <font-awesome-icon v-else icon="fa-eye" />
                             </button>
                             <a :href="getDownloadLink(props.row)" class="btn btn-sm btn-info"
@@ -58,7 +58,7 @@
                 </v-server-table>
                 <modal-preview-data-source v-if="showPreview"
                                            ref="previewWindow" table-class="table-striped table-sm"
-                                           @hidden="showPreview = false" />
+                                           @hidden="showPreview = null" />
             </div>
         </div>
     </main>
@@ -141,12 +141,15 @@ export default {
         //#region Preview
 
         const previewWindow = ref(null);
-        const handlePreview = (dataSource) => {
+        const handlePreview = async (dataSource) => {
             /**/
-            showPreview.value = true;
-            nextTick(() =>
-                previewWindow.value.show(dataSource)
-            );
+            showPreview.value = dataSource;
+            nextTick(async () => {
+                const ok = await previewWindow.value.show(dataSource);
+                if (!ok){
+                    showPreview.value = null;
+                }
+            });
         };
         //#endregion
         const loggedUserIsOwnerOrAdmin = (dataSource) => {

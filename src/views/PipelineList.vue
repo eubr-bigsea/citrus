@@ -3,10 +3,10 @@
         <div class="d-flex justify-content-between align-items-center pb-2 mb-2 border-bottom">
             <h1>{{$t('titles.pipeline', 2)}}</h1>
             <div>
-                <router-link :to="{ name: 'pipelineRunsList' }" class="btn btn-outline-secondary float-left ml-2">
+                <router-link :to="{ name: 'pipelineRunsList' }" class="btn btn-outline-secondary float-left ms-2">
                     <font-awesome-icon icon="fa fa-history" /> Execuções
                 </router-link>
-                <button class="btn btn-primary btn-lemonade-primary float-left ml-2" @click="openAddModal">
+                <button class="btn btn-primary btn-lemonade-primary float-left ms-2" @click="openAddModal">
                     <font-awesome-icon icon="fa fa-plus" /> Adicionar
                 </button>
             </div>

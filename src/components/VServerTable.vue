@@ -268,8 +268,7 @@ div.table-area {
     height: 100%;
     overflow: auto;
 }
-.server-table>>>td,
-.server-table>>>th {
+.server-table>>>td{
     padding: 10px 5px 0 2px;
     font-size: .9em;
 }

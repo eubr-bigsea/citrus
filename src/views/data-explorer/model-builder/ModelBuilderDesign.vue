@@ -16,13 +16,13 @@
                         {{$t('actions.save')}}
                     </button>
 
-                    <button v-if="notRunning" class="btn btn-sm btn-outline-primary ml-1 float-right"
+                    <button v-if="notRunning" class="btn btn-sm btn-outline-primary ms-1 float-right"
                             @click.prevent="handleTraining">
                         <font-awesome-icon icon="fa fa-play" />
                         {{$t('actions.train')}}
                     </button>
 
-                    <button v-else class="btn btn-sm btn-outline-danger ml-1 float-right"
+                    <button v-else class="btn btn-sm btn-outline-danger ms-1 float-right"
                             @click.prevent="handleStopTrain">
                         <font-awesome-icon icon="fa fa-stop" />
                         {{$t('actions.stop')}}
@@ -44,7 +44,7 @@
                                     <SideBar :selected="selected" :supervised="supervised" @edit="edit" />
                                 </div>
                             </div>
-                            <div class="col-md-9 col-lg-10 pl-4 pr-4 bg-white expand">
+                            <div class="col-md-9 col-lg-10 ps-4 pe-4 bg-white expand">
                                 <form action="" class="form p-2">
                                     <template v-if="selected === 'target'">
                                         <DesignData :attributes="attributes" :data-source-list="dataSourceList"

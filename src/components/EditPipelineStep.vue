@@ -27,7 +27,7 @@
                     {{$t('actions.change')}}
                 </b-button>
                 <!--
-                    <b-button class="w-25 ml-2" @click="removeWorkflow(editStep)" size="sm" variant="outline-danger">
+                    <b-button class="w-25 ms-2" @click="removeWorkflow(editStep)" size="sm" variant="outline-danger">
                         {{ $t('actions.delete') }}
                     </b-button>
                     -->
@@ -46,7 +46,7 @@
                         Novo workflow
                     </span>
                 </b-button>
-                <b-button v-if="editedStep.workflow" class="ml-2" variant="outline-secondary" size="sm"
+                <b-button v-if="editedStep.workflow" class="ms-2" variant="outline-secondary" size="sm"
                           @click="showWorkflowOps = -1">
                     {{$t('actions.cancel')}}
                 </b-button>

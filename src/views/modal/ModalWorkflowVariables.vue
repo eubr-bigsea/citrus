@@ -5,7 +5,7 @@
                 <div class="row user-filter">
                     <div class="col-md-4 mt-4">
                         <div class="values pb-1 border">
-                            <div v-for="(row, index) in itemsCopy" :key="row.name" class="clear-fix item-list"
+                            <div v-for="(row, index) in items" :key="row.name" class="clear-fix item-list"
                                  :class="{selected: selected && selected.index === row.index }"
                                  @click.prevent="select(row, index)">
                                 <small>{{row.name}} <em v-if="! row.name">&lt;variável sem nome&gt;</em>
@@ -135,14 +135,15 @@
         </p>
         <template #modal-footer>
             <div class="w-100 text-right">
-                <b-btn variant="primary" size="sm" class="me-1 pl-5 pr-5" @click="okClicked">
+                <button class="btn btn-primary btn-sm me-1 ps-5 pe-5" @click="okClicked">
                     {{$t('common.ok')}}
-                </b-btn>
+                </button>
             </div>
         </template>
     </b-modal>
 </template>
 <script>
+
 import SystemVariables from '../SystemVariables.vue';
 
 export default {
@@ -205,10 +206,12 @@ export default {
         },
         okClicked() {
             this.$emit('confirm', this.itemsCopy);
+            this.$emit('input', this.itemsCopy);
             this.$refs.modal.hide();
         },
     }
 };
+
 </script>
 <style>
 div.values {

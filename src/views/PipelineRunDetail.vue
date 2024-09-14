@@ -9,7 +9,7 @@
                     <span class="pipeline-runs-status" :class="pipelineRun.status.toLowerCase()">
                         <font-awesome-icon v-if="pipelineRun.status === 'RUNNING'" icon="fa fa-refresh" spin />
                         {{$t(`status.${pipelineRun.status}`)}}
-                    </span> <span class="ml-2">{{pipelineRun.pipeline_name}}</span>
+                    </span> <span class="ms-2">{{pipelineRun.pipeline_name}}</span>
                 </h1>
             </div>
             <div>
@@ -18,7 +18,7 @@
                     <font-awesome-icon icon="fa-chevron-right" />
                     {{$t('actions.back', 2)}}
                 </router-link>
-                <button v-if="pipelineRun.status !== 'CANCELED'" class="btn btn-sm btn-outline-danger ml-2"
+                <button v-if="pipelineRun.status !== 'CANCELED'" class="btn btn-sm btn-outline-danger ms-2"
                         @click="cancelRun">
                     <font-awesome-icon icon="fa fa-ban" class="" /> {{$t('actions.cancel')}}
                 </button>
@@ -123,7 +123,7 @@
             <div class="col-5">
                 <b-card :header="`Relatório de Execução - Etapa #${selectedStep.order}  -${selectedStep.name}`" no-body>
                     <b-card-body class="scroll-area execution-report">
-                        <div v-for="(job, index) in orderedJobs" :key="index" class="mb-3 border-left border-info pl-2">
+                        <div v-for="(job, index) in orderedJobs" :key="index" class="mb-3 border-left border-info ps-2">
                             <div v-b-toggle="`collapse-${index.toString()}`" class="d-flex">
                                 <div class="text-start font-weight-bold">
                                     Tentativa #{{orderedJobs.length - index}}
@@ -153,7 +153,7 @@
                                 <b-collapse v-if="job.steps && job.steps.length" :id="`collapse-${index.toString()}`"
                                             :visible="index === 0">
                                     <div v-for="step, counter_step in job.steps" :key="counter_step"
-                                         class="border-bottom mb-3 pl-4 job-step">
+                                         class="border-bottom mb-3 ps-4 job-step">
                                         <div class="flex-grow-1 d-flex justify-content-start">
                                             <h6>
                                                 Tarefa #{{counter_step + 1}}: <span class="font-weight-normal">{{step.operation.name}}</span>

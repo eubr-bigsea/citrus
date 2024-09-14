@@ -82,7 +82,7 @@ const complete = ref(true);
 const tags = ref([]);
 const originalId = ref();
 
-const valid = computed(() => 
+const valid = computed(() =>
     !!((newName.value !== '' && storage.value) || originalId.value));
 onMounted(async () => {
     storages.value = await loadStorages();
@@ -129,7 +129,7 @@ defineExpose({
     overflow: auto;
     border: 1px solid #ccc;
     padding: 5px;
-    
+
 }
 .related-data-source>>>small {
     font-size: .7em;

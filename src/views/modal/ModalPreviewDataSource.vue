@@ -64,9 +64,11 @@ export default {
                     this.$refs.table.setCurrentPage(1);
                     this.$refs.table.refresh();
                 });
+                return true;
             }
             catch (e) {
                 this.error(e);
+                return false;
             }
         },
     }
