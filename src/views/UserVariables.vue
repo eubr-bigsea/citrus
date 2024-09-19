@@ -58,10 +58,10 @@
 export default {
     props: {
         items: { type: Array, default: () => [], required: true },
-        selected: { type: Object, default: null}
     },
     data() {
         return {
+            selected: null,
             dataTypes: [
                 'DATE',
                 'DECIMAL',
