@@ -39,48 +39,7 @@
                     As variáveis de fluxo também podem aparecer nas informações das fontes de dados.
                     <br /> A seguir, a lista de variáveis suportadas:
 
-                <dl>
-                    <dt><code>${date}</code></dt>
-                    <dd>
-                        Data atual, no formato aaaa-mm-dd. Para aplicar outros
-                        formatos, use a sintaxe: <code>${date|fmt}</code>
-                        , onde <code>fmt</code> é um formato compatível com a formatação
-                        de datas da linguagem Python. Por exemplo:
-                        <code>${date|%Y}</code> imprime somente o ano;
-                        <code>${date|%H:M:S}</code> imprime a hora, minuto e segundo;
-                        <code>${date|%d%m%y}</code> Imprime dia, mês e ano (com 2 dígitos).
-                        Para mais informações, consulte a
-                        <a href="https://docs.python.org/3/library/datetime.html#strftime-and-strptime-format-codes">lista de
-                            formatos</a> suportados.
-
-                    </dd>
-                    <dt><code>${ref}</code></dt>
-                    <dd>Data de referência para uma execução de pipeline. Só existe no contexto de um fluxo em uma pipeline.</strong>.
-                        Caso queira simular uma execução no contexto de uma pipeline, defina
-                        uma variável de usuário com o nome <code>ref</code>, um valor compatível com data/hora
-                        e informe o tipo como sendo "Data".
-                        Possui os mesmos recursos de formatação que a variável
-                        <code>${date}</code>.
-                    </dd>
-                    <dt><code>${now}</code></dt>
-                    <dd>Data atual, no formato aaaa-mm-dd hh:MM:ss</dd>
-                    <dt><code>${user_login}</code></dt>
-                    <dd>Login do usuário</dd>
-                    <dt><code>${user_name}</code></dt>
-                    <dd>Nome do usuário que executa o fluxo</dd>
-                    <dt><code>${user_email}</code></dt>
-                    <dd>Email do usuário que executa o fluxo</dd>
-                    <dt><code>${user_id}</code></dt>
-                    <dd>Id do usuário que executa o fluxo</dd>
-                    <dt><code>${workflow_name}</code></dt>
-                    <dd>Nome do fluxo</dd>
-                    <dt><code>${workflow_id}</code></dt>
-                    <dd>Id do fluxo</dd>
-                    <dt><code>${run_start}</code></dt>
-                    <dd>Data de referência</dd>
-                    <dt><code>${workflow_id}</code></dt>
-                    <dd>Id do fluxo</dd>
-                </dl>
+                    <system-variables class="mt-3 border-top pt-2"/>
                 </p>
             </div>
         </b-tab>
@@ -136,7 +95,8 @@
     </b-tabs>
 </template>
 <script setup>
-import { defineProps } from 'vue'
+import { defineProps } from 'vue';
+import SystemVariables from '../../SystemVariables.vue';
 
 const props = defineProps({
     dataSources: { type: Array, default: () => [] },
