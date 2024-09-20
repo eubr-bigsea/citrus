@@ -9,7 +9,7 @@
                         <input v-model="workflowObj.name" type="text" class="form-control form-control-sm"
                             :placeholder="$tc('common.name')" maxlength="100">
 
-                        <label for="">Fonte de dados:</label> &nbsp;
+                        <label for="" class="mt-2">Fonte de dados:</label> &nbsp;
                         <vue-select v-if="workflowObj && workflowObj.readData"
                             v-model="workflowObj.readData.forms.data_source.value" :filterable="false"
                             :options="dataSourceList" :reduce="(opt) => opt.id" label="name" @search="loadDataSourceList"
@@ -28,6 +28,11 @@
                                 </div>
                             </template>
                         </vue-select>
+                        <div v-if="workflowObj.readData?.forms.data_source.value">
+                            <button class="btn btn-sm btn-outline mb-1" @click.prevent="handlePreview(workflowObj.readData?.forms.data_source.value)">
+                                <font-awesome-icon icon="fa-eye"/> {{$t('common.preview')}}
+                            </button>
+                        </div>
 
                         <label>{{ $tc('titles.cluster') }}: </label>
                         <v-select v-model="workflowObj.preferred_cluster_id" :options="clusters" label="name"
@@ -114,22 +119,23 @@
                 {{ i18n.$t('common.wait') }}
             </div>
         </div>
+        <modal-preview-data-source ref="previewWindow" />
     </div>
 </template>
 
 <script setup>
 import { ref, shallowRef, computed, onBeforeMount, onMounted, onUnmounted } from "vue";
 import { getCurrentInstance } from 'vue';
-import ChartBuilderOptions from '../../../components/chart-builder/ChartBuilderOptions.vue';
-import ChartBuilderAxis from '../../../components/chart-builder/ChartBuilderAxis.vue';
+import ChartBuilderOptions from '@/components/chart-builder/ChartBuilderOptions.vue';
+import ChartBuilderAxis from '@/components/chart-builder/ChartBuilderAxis.vue';
 
-import { debounce } from "../../../util.js";
+import ModalPreviewDataSource from '@/views/modal/ModalPreviewDataSource.vue';
+import { debounce } from "@/util.js";
 import Vue from 'vue';
-import ExpressionEditor from '../../../components/widgets/ExpressionEditor.vue';
 
-import Plotly from '../../../components/visualization/Plotly.vue';
-import useNotifier from '../../../composables/useNotifier.js';
-import useDataSource from '../../../composables/useDataSource.js';
+import Plotly from '@/components/visualization/Plotly.vue';
+import useNotifier from '@/composables/useNotifier.js';
+import useDataSource from '@/composables/useDataSource.js';
 
 import { Operation, VisualizationBuilderWorkflow, Visualization } from '../entities.js';
 import axios from 'axios';
@@ -137,7 +143,6 @@ import VueSelect from 'vue-select';
 
 import io from 'socket.io-client';
 import { toPng } from 'html-to-image';
-import AttributeSelector from "@/components/widgets/AttributeSelector.vue";
 
 const vm = getCurrentInstance();
 const router = vm.proxy.$router;
@@ -485,6 +490,13 @@ const loadData = async () => {
         progress.finish();
     }
 };
+// Preview
+const previewWindow = ref(null);
+const handlePreview = (dataSource) => {
+    previewWindow.value.show(dataSource);
+    return false;
+}
+
 /* WebSocket Handling */
 const disconnectWebSocket = () => {
     if (socketIo.value) {
