@@ -322,9 +322,9 @@ export default {
             this.pipelineWithoutSteps = false;
             this.setSelectedStep(this.pipeline.steps[this.pipeline.steps.length - 1], this.pipeline.steps.length - 1);
         },
-        schedulerUpdate(childData) {
+        schedulerUpdate(childData, selected) {
             this.isDirty = true;
-            const foundStep = this.pipeline.steps.find(step => step.id === childData.id);
+            const foundStep = this.pipeline.steps.find(step => step === selected);
             Object.assign(foundStep, childData);
         },
         leaving(event) {
