@@ -71,7 +71,7 @@
                         {{ $t('titles.day') }}:
                     </p>
                     <select class="form-control form-control-sm" v-model="startDay">
-                        <option v-for="i in 31" value="i" :key="i">{{ i }}</option>
+                        <option v-for="i in 31" :value="i" :key="i">{{ i }}</option>
                         <option value="last">Último</option>
                     </select>
                     <!--
@@ -390,18 +390,21 @@ export default {
             this.selectedDays = scheduling.stepSchedule.days;
             this.executeImmediately = scheduling.stepSchedule.executeImmediately;
 
-            if (scheduling.stepSchedule.startDateTime === null) {
+            /*if (scheduling.stepSchedule.startDateTime === null) {
                 this.startDate = null;
                 this.startTime = null;
             } else {
                 this.startDate = scheduling.stepSchedule.startDateTime.split('T')[0];
                 this.startTime = scheduling.stepSchedule.startDateTime.split('T')[1];
-            }
+            }*/
+           this.startDay = scheduling.stepSchedule.startDay;
+           this.startTime = scheduling.stepSchedule.startTime;
         },
         resetSelect() {
             this.intervalDays = null;
             this.intervalWeeks = null;
             this.startDate = null;
+            this.startDay = null;
             this.startTime = null;
             this.selectedWeekDays = [];
             this.selectedMonths = [];
@@ -425,7 +428,9 @@ export default {
                     "intervalWeeks": this.intervalWeeks,
                     "weekDays": this.selectedWeekDays,
                     "months": this.selectedMonths,
-                    "days": this.selectedDays
+                    "days": this.selectedDays,
+                    "startDay": this.startDay,
+                    "startTime": this.startTime,
                 },
             };
 
