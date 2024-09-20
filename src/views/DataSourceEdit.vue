@@ -548,6 +548,7 @@ export default {
     data() {
         return {
             copyingStep: 0,
+            customTags: this.dataSource?.tags.split(',') || [],
             atmosphereExtension: import.meta.env.VITE_ATMOSPHERE,
             isDirty: false,
             samples: [],
@@ -596,14 +597,6 @@ export default {
         inferableDataSource() {
             return ['CSV', 'JDBC', 'PARQUET'].includes(this.dataSource.format);
         },
-        customTags: {
-            get() {
-                return this.dataSource.tags ? this.dataSource.tags.split(',') : [];
-            },
-            set(value) {
-                this.dataSource.tags = value.join(',');
-            }
-        },
         customTreatAsMissing: {
             get() {
                 return this.dataSource.treat_as_missing
@@ -624,6 +617,9 @@ export default {
         }
     },
     watch: {
+        customTags(value) {
+            this.dataSource.tags = value.join(',');
+        },
         '$route.params.id': function () {
             this.load().then(() => {
                 Vue.nextTick(() => {
@@ -780,6 +776,7 @@ export default {
                     .get(`${limoneroUrl}/datasources/${this.$route.params.id}`)
                     .then(resp => {
                         self.dataSource = resp.data;
+                        self.customTags = self.dataSource.tags?.split(',') || []
                         resolve();
                     })
                     .catch(function (e) {
