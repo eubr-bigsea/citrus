@@ -87,12 +87,12 @@
                                 <small class="form-text text-muted">Atributo com nome (exibido ao apontar com o mouse,
                                     opcional):</small>
                                 <chart-builder-attribute-selector v-model="editableVisualization.hover_name.value"
-                                    :options="attributes" />
+                                    :options="attributes"/>
 
                                 <small class="form-text text-muted">Valor(es) (exibido(s) ao apontar com o
                                     mouse, opcional):</small>
                                 <chart-builder-attribute-selector v-model="editableVisualization.hover_data.value"
-                                    :options="attributes" />
+                                    :options="attributes" :multiple="true"/>
                             </div>
                         </div>
                     </div>
