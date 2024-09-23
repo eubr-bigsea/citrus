@@ -3,68 +3,63 @@
         <div class="editPage-agendador-body">
             <div class="editPage-agendador-box">
                 <p class="font-weight-bold">
-                    {{$t('pipeline.edit.scheduler.chooseSchedulerFrequency')}}
+                    {{ $t('pipeline.edit.scheduler.chooseSchedulerFrequency') }}
                 </p>
-                <b-form-select v-model="selectedFreqOpt"
-                               class="mb-2" 
-                               :options="selectedStepIndex === 0 ? 
-                                   filteredSelectFreqOpt.slice(0, 1).concat(filteredSelectFreqOpt.slice(2)) : 
-                                   filteredSelectFreqOpt" 
-                               data-test="select-frequency"
-                               @change="resetSelect" />
+                <b-form-select v-model="selectedFreqOpt" class="mb-2" :options="selectFreqOpt"
+                    data-test="select-frequency" @change="resetSelect" />
             </div>
             <div v-if="selectedFreqOpt === 'once'">
                 <div class="editPage-agendador-box" :class="radios">
                     <p class="font-weight-bold">
-                        {{$t('titles.start')}}:
+                        {{ $t('titles.start') }}:
                     </p>
-                    <input id="iniciar-data" v-model="startDate" class="editPage-input" type="date" 
-                           :min="minDate">
+                    <input id="iniciar-data" v-model="startDate" class="editPage-input" type="date" :min="minDate">
                     <input id="iniciar-hora" v-model="startTime" class="editPage-input" type="time">
                 </div>
             </div>
-            
+
             <div v-if="selectedFreqOpt === 'daily'">
                 <div class="editPage-agendador-box" :class="radios">
                     <p class="font-weight-bold">
-                        {{$t('titles.start')}}:
+                        {{ $t('titles.start') }}:
                     </p>
-                    <input id="iniciar-data" v-model="startDate" class="editPage-input" type="date" 
-                           :min="minDate">
+                    <input id="iniciar-data" v-model="startDate" class="editPage-input" type="date" :min="minDate">
                     <input id="iniciar-hora" v-model="startTime" class="editPage-input" type="time">
                 </div>
                 <div class="editPage-agendador-box" :class="dias">
                     <p class="font-weight-bold">
-                        {{$t('pipeline.edit.scheduler.repetitionInterval')}} ({{$t('common.periods.day', 2).toLowerCase()}}):
+                        {{ $t('pipeline.edit.scheduler.repetitionInterval') }} ({{ $t('common.periods.day',
+                            2).toLowerCase() }}):
                     </p>
-                    <input id="repetir-dias" v-model="intervalDays" class="editPage-input" :class="dias" 
-                           type="number" min="0">
+                    <input id="repetir-dias" v-model="intervalDays" class="editPage-input" :class="dias" type="number"
+                        min="0">
                 </div>
             </div>
 
             <div v-if="selectedFreqOpt === 'weekly'">
                 <div class="editPage-agendador-box" :class="radios">
                     <p class="font-weight-bold">
-                        {{$t('titles.start')}}:
+                        {{ $t('titles.start') }}:
                     </p>
-                    <input id="iniciar-data" v-model="startDate" class="editPage-input" type="date" 
-                           :min="minDate">
+                    <input id="iniciar-data" v-model="startDate" class="editPage-input" type="date" :min="minDate">
                     <input id="iniciar-hora" v-model="startTime" class="editPage-input" type="time">
                 </div>
                 <div class="editPage-agendador-box" :class="dias">
                     <p class="font-weight-bold">
-                        {{$t('pipeline.edit.scheduler.repetitionInterval')}} ({{$t('common.periods.week', 2).toLowerCase()}}):
+                        {{ $t('pipeline.edit.scheduler.repetitionInterval') }} ({{ $t('common.periods.week',
+                            2).toLowerCase() }}):
                     </p>
-                    <input id="repetir-semanas" v-model="intervalWeeks" class="editPage-input" :class="dias" 
-                           type="number" min="0">
+                    <input id="repetir-semanas" v-model="intervalWeeks" class="editPage-input" :class="dias"
+                        type="number" min="0">
                 </div>
                 <b-form-group>
                     <div class="editPage-chackbox-div" :class="diasSemana">
                         <p class="font-weight-bold mb-2">
-                            {{$t('pipeline.edit.scheduler.selectWeekDays')}}:
+                            {{ $t('pipeline.edit.scheduler.selectWeekDays') }}:
                         </p>
-                        <b-form-checkbox v-for="day in weekDays" :key="day.value" v-model="selectedWeekDays" :value="day.value">
-                            {{day.label}}
+                        <b-form-checkbox v-for="day in weekDays" :key="day.value" v-model="selectedWeekDays"
+                            :value="day.value">
+                            {{ day.label }}
                         </b-form-checkbox>
                     </div>
                 </b-form-group>
@@ -73,66 +68,100 @@
             <div v-if="selectedFreqOpt === 'monthly'">
                 <div class="editPage-agendador-box" :class="radios">
                     <p class="font-weight-bold">
-                        {{$t('titles.start')}}:
+                        {{ $t('titles.day') }}:
                     </p>
-                    <input id="iniciar-data" v-model="startDate" class="editPage-input" type="date" 
+                    <select class="form-control form-control-sm" v-model="startDay">
+                        <option v-for="i in 31" :value="i" :key="i">{{ i }}</option>
+                        <option value="last">Último</option>
+                    </select>
+                    <!--
+                    <input id="iniciar-data" v-model="startDate" class="editPage-input" type="date"
                            :min="minDate">
-                    <input id="iniciar-hora" v-model="startTime" class="editPage-input" type="time">
+                           -->
+                    <input id="iniciar-hora" v-model="startTime" class="form-control form-control-sm" type="time">
                 </div>
-                <b-form-group>
-                    <p class="font-weight-bold mb-2">
-                        {{$t('pipeline.edit.scheduler.selectMonths')}}:
-                    </p>
-                    <b-form-checkbox v-model="selectAllMonths" class="mb-2" @change="toggleAllMonths">
-                        <span data-test="select-all-months">
-                            {{$t('pipeline.edit.scheduler.selectAll')}}
-                        </span>
-                    </b-form-checkbox>
-                    <div class="editPage-chackbox-div" :class="meses">
-                        <div>
-                            <b-form-checkbox v-model="selectedMonths" value="1" data-test="january">
-                                {{$t('common.months.january')}}
-                            </b-form-checkbox>
-                            <b-form-checkbox v-model="selectedMonths" value="2">
-                                {{$t('common.months.february')}}
-                            </b-form-checkbox>
-                            <b-form-checkbox v-model="selectedMonths" value="3">
-                                {{$t('common.months.march')}}
-                            </b-form-checkbox>
-                            <b-form-checkbox v-model="selectedMonths" value="4">
-                                {{$t('common.months.april')}}
-                            </b-form-checkbox>
-                        </div>
-                        <div>
-                            <b-form-checkbox v-model="selectedMonths" value="5">
-                                {{$t('common.months.may')}}
-                            </b-form-checkbox>
-                            <b-form-checkbox v-model="selectedMonths" value="6">
-                                {{$t('common.months.june')}}
-                            </b-form-checkbox>
-                            <b-form-checkbox v-model="selectedMonths" value="7">
-                                {{$t('common.months.july')}}
-                            </b-form-checkbox>
-                            <b-form-checkbox v-model="selectedMonths" value="8">
-                                {{$t('common.months.august')}}
-                            </b-form-checkbox>
-                        </div>
-                        <div>
-                            <b-form-checkbox v-model="selectedMonths" value="9">
-                                {{$t('common.months.september')}}
-                            </b-form-checkbox>
-                            <b-form-checkbox v-model="selectedMonths" value="10">
-                                {{$t('common.months.october')}}
-                            </b-form-checkbox>
-                            <b-form-checkbox v-model="selectedMonths" value="11">
-                                {{$t('common.months.november')}}
-                            </b-form-checkbox>
-                            <b-form-checkbox v-model="selectedMonths" value="12">
-                                {{$t('common.months.december')}}
-                            </b-form-checkbox>
-                        </div>
+                <div class="row">
+                    <div class="col-12">
+                        <p class="font-weight-bold mb-2">
+                            {{ $t('pipeline.edit.scheduler.selectMonths') }}:
+                        </p>
+                        <b-form-checkbox v-model="selectAllMonths" class="mb-2" @change="toggleAllMonths">
+                            <span data-test="select-all-months">
+                                {{ $t('pipeline.edit.scheduler.selectAll') }}
+                            </span>
+                        </b-form-checkbox>
                     </div>
-                </b-form-group>
+
+                    <div class="col-4">
+                        <b-form-checkbox v-model="selectedMonths" value="1" data-test="january">
+                            {{ $t('common.months.january') }}
+                        </b-form-checkbox>
+                    </div>
+                    <div class="col-4">
+                        <b-form-checkbox v-model="selectedMonths" value="2">
+                            {{ $t('common.months.february') }}
+                        </b-form-checkbox>
+                    </div>
+                    <div class="col-4">
+                        <b-form-checkbox v-model="selectedMonths" value="3">
+                            {{ $t('common.months.march') }}
+                        </b-form-checkbox>
+                    </div>
+
+
+                    <div class="col-4">
+                        <b-form-checkbox v-model="selectedMonths" value="4">
+                            {{ $t('common.months.april') }}
+                        </b-form-checkbox>
+                    </div>
+
+                    <div class="col-4">
+                        <b-form-checkbox v-model="selectedMonths" value="5">
+                            {{ $t('common.months.may') }}
+                        </b-form-checkbox>
+                    </div>
+                    <div class="col-4">
+                        <b-form-checkbox v-model="selectedMonths" value="6">
+                            {{ $t('common.months.june') }}
+                        </b-form-checkbox>
+                    </div>
+
+
+                    <div class="col-4">
+                        <b-form-checkbox v-model="selectedMonths" value="7">
+                            {{ $t('common.months.july') }}
+                        </b-form-checkbox>
+                    </div>
+                    <div class="col-4">
+                        <b-form-checkbox v-model="selectedMonths" value="8">
+                            {{ $t('common.months.august') }}
+                        </b-form-checkbox>
+                    </div>
+
+                    <div class="col-4">
+                        <b-form-checkbox v-model="selectedMonths" value="9">
+                            {{ $t('common.months.september') }}
+                        </b-form-checkbox>
+                    </div>
+
+
+                    <div class="col-4">
+                        <b-form-checkbox v-model="selectedMonths" value="10">
+                            {{ $t('common.months.october') }}
+                        </b-form-checkbox>
+                    </div>
+                    <div class="col-4">
+                        <b-form-checkbox v-model="selectedMonths" value="11">
+                            {{ $t('common.months.november') }}
+                        </b-form-checkbox>
+                    </div>
+                    <div class="col-4">
+                        <b-form-checkbox v-model="selectedMonths" value="12">
+                            {{ $t('common.months.december') }}
+                        </b-form-checkbox>
+                    </div>
+                </div>
+                <!--
                 <b-form-group>
                     <p class="font-weight-bold mb-2">
                         {{$t('pipeline.edit.scheduler.selectDays')}}:
@@ -253,6 +282,7 @@
                         </div>
                     </div>
                 </b-form-group>
+                -->
             </div>
         </div>
     </div>
@@ -261,7 +291,7 @@
 <script>
 export default {
     props: {
-        selectedStep: { type: Object, default: () => {} },
+        selectedStep: { type: Object, default: () => { } },
         selectedStepIndex: { type: Number, default: 0 },
         pipelineId: { type: Number, default: 0 },
     },
@@ -277,14 +307,15 @@ export default {
             intervalWeeks: null,
             startDate: null,
             startTime: null,
+            startDay: 1,
             selectedWeekDays: [],
             selectedFreqOpt: null,
             selectFreqOpt: [
                 { value: null, text: this.$t('pipeline.edit.scheduler.selectFrequency') },
-                { value: 'immediately', text: this.$t('pipeline.edit.scheduler.immediately') },
-                { value: 'once', text: this.$t('pipeline.edit.scheduler.once') },
-                { value: 'daily', text: this.$t('pipeline.edit.daily') },
-                { value: 'weekly', text: this.$t('pipeline.edit.weekly') },
+                //{ value: 'immediately', text: this.$t('pipeline.edit.scheduler.immediately') },
+                //{ value: 'once', text: this.$t('pipeline.edit.scheduler.once') },
+                //{ value: 'daily', text: this.$t('pipeline.edit.daily') },
+                //{ value: 'weekly', text: this.$t('pipeline.edit.weekly') },
                 { value: 'monthly', text: this.$t('pipeline.edit.monthly') },
                 { value: 'user', text: this.$t('pipeline.edit.scheduler.triggeredByUser') },
             ],
@@ -359,18 +390,21 @@ export default {
             this.selectedDays = scheduling.stepSchedule.days;
             this.executeImmediately = scheduling.stepSchedule.executeImmediately;
 
-            if (scheduling.stepSchedule.startDateTime === null) {
+            /*if (scheduling.stepSchedule.startDateTime === null) {
                 this.startDate = null;
                 this.startTime = null;
             } else {
                 this.startDate = scheduling.stepSchedule.startDateTime.split('T')[0];
                 this.startTime = scheduling.stepSchedule.startDateTime.split('T')[1];
-            }
+            }*/
+           this.startDay = scheduling.stepSchedule.startDay;
+           this.startTime = scheduling.stepSchedule.startTime;
         },
         resetSelect() {
             this.intervalDays = null;
             this.intervalWeeks = null;
             this.startDate = null;
+            this.startDay = null;
             this.startTime = null;
             this.selectedWeekDays = [];
             this.selectedMonths = [];
@@ -384,10 +418,8 @@ export default {
             if (this.startDate === null || this.startTime === null) {
                 dateTime = null;
             }
-            
+
             const data = {
-                // "pipelineId": this.pipelineId,
-                // "stepId": this.selectedStep.id,
                 "stepSchedule": {
                     "executeImmediately": this.selectedFreqOpt === 'immediately' ? true : false,
                     "frequency": this.selectedFreqOpt,
@@ -396,13 +428,15 @@ export default {
                     "intervalWeeks": this.intervalWeeks,
                     "weekDays": this.selectedWeekDays,
                     "months": this.selectedMonths,
-                    "days": this.selectedDays
+                    "days": this.selectedDays,
+                    "startDay": this.startDay,
+                    "startTime": this.startTime,
                 },
             };
 
             this.stepCopy.scheduling = JSON.stringify(data);
 
-            this.$emit('send-scheduler-changes', this.stepCopy);
+            this.$emit('send-scheduler-changes', this.stepCopy, this.selectedStep);
         }
     },
 };
