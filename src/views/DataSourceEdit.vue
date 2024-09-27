@@ -38,7 +38,7 @@
                                                             :value="dataSource.storage.name + ' (' + dataSource.storage.type + ')'"
                                                             disabled class="form-control">
                                                     </div>
-                                                    <div v-if="enable_url_edit && dataSource.format !== 'HIVE'"
+                                                    <div v-if="enable_url_edit && !['JDBC', 'HIVE'].includes(dataSource.format) "
                                                         class="col-md-6">
                                                         <label>{{ $tc('dataSource.fileUrl') }}:</label>
                                                         <textarea ref="filepathTextArea" v-model="dataSource.url"
@@ -56,7 +56,7 @@
                                                             <span slot="no-options" />
                                                         </v-select>
                                                     </div>
-                                                    <div v-if="dataSource.format === 'JDBC' || dataSource.storage.type === 'HIVE' || dataSource.storage.type === 'HIVE_WAREHOUSE'"
+                                                    <div v-if="usesCommand"
                                                         class="col-md-8 mt-3 pb-1">
                                                         <label>{{ $tc('common.command') }}:</label>
                                                         <textarea v-model="dataSource.command" class="form-control" />
@@ -514,12 +514,12 @@
 import Vue from 'vue';
 import axios from 'axios';
 import VueSelect from 'vue-select';
-import Notifier from '../mixins/Notifier.js';
+import Notifier from '@/mixins/Notifier.js';
 import ModalPreviewDataSource from './modal/ModalPreviewDataSource.vue';
 import UserVariables from './UserVariables.vue'
 import SystemVariables from './SystemVariables.vue'
-import DataSourceOptions from '../components/data-source/DataSourceOptions.vue';
-import { debounce } from '../util.js';
+import DataSourceOptions from '@/components/data-source/DataSourceOptions.vue';
+import { debounce } from '@/util.js';
 import draggable from 'vuedraggable';
 
 const limoneroUrl = import.meta.env.VITE_LIMONERO_URL;
@@ -594,6 +594,11 @@ export default {
     },
 
     computed: {
+        usesCommand() {
+            return this.dataSource.format === 'JDBC'
+                || this.dataSource.storage.type === 'HIVE'
+                || this.dataSource.storage.type === 'HIVE_WAREHOUSE';
+        },
         inferableDataSource() {
             return ['CSV', 'JDBC', 'PARQUET'].includes(this.dataSource.format);
         },
@@ -896,12 +901,18 @@ export default {
             }
         },
         _checkProblems() {
-            const regex = /\$\{([a-zA-Z0-9_]+(:[a-zA-Z0-9_]*%[a-zA-Z0-9%]+)?)\}/g;
-            const matches = [...this.dataSource.url.matchAll(regex)].map(match => match[1]);
+            const regex = /\$\{([a-zA-Z0-9_]+(\|[a-zA-Z0-9_]*%[a-zA-Z0-9%]+)?)\}/g;
+            let matches;
+
+            if (this.usesCommand) {
+                matches = [...this.dataSource.command.matchAll(regex)].map(match => match[1]);
+            } else {
+                matches = [...this.dataSource.url.matchAll(regex)].map(match => match[1]);
+            }
 
             const variables = new Set(this.dataSource.variables.map(v => v.name));
             return matches.reduce((acc, match) => {
-                const parts = match.split(':');
+                const parts = match.split('|');
                 if (parts[0] !== 'date' && !acc.includes(parts[0]) &&
                     !variables.has(parts[0])) {
                     acc.push(parts[0]);
