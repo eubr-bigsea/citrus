@@ -111,6 +111,8 @@ const Design = () => import('./views/data-explorer/model-builder/Design.vue');
 const VisualizationDesign = () => import('./views/data-explorer/vis-builder/VisualizationDesign.vue');
 const CreateVisualization = () => import('./views/data-explorer/vis-builder/CreateVisualization.vue');
 
+const PeelHome = () => import('./views/data-explorer/peel-platform/Home.vue')
+const ExplanationEdit = () => import('./views/data-explorer/peel-platform/ExplanationEdit.vue')
 
 const TestEntities = () => import('./views/data-explorer/TestEntities.vue');
 
@@ -853,6 +855,24 @@ let router = new VueRouter({
             meta: {
                 requiresAuth: true,
                 title: ['titles.dataExplorer', 1]
+            }
+        },
+        {
+            path: '/experiments/peel',
+            name: 'peel-home',
+            component: PeelHome,
+            meta: {
+                requiresAuth: true,
+                title: ['titles.peelPlatform', 1]
+            }
+        },
+        {
+            path: '/experiments/peel/explanation/:id',
+            name: 'explanationEdit',
+            component: ExplanationEdit,
+            meta: {
+                requiresAuth: true,
+                title: ['titles.peelPlatform', 1]
             }
         },
         {

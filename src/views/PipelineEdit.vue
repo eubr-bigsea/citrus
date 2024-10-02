@@ -279,6 +279,7 @@ export default {
                     .get(`${tahitiUrl}/pipelines/${this.$route.params.id}`);
                 this.$Progress.finish();
                 this.pipeline = resp.data.data[0];
+                console.log(this.pipeline);
                 if (this.pipeline.steps.length !== 0) {
                     this.setSelectedStep(this.pipeline.steps[0], 0);
                 } else {

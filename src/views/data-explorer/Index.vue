@@ -100,6 +100,32 @@
                         </div>
                     </div>
                 </b-card>
+                <b-card class="clickable m-1" role="button" @click="navigate('peel-home')">
+                    <div class="row">
+                        <div class="rounded-option bg-info">
+                            <font-awesome-icon icon="fa fa-magnifying-glass-chart" size="3x" inverse />
+                        </div>
+                        <div class="col mt-2">
+                            <h5>Plataforma PeelAI: Interpretabilidade de Modelos</h5>
+                            <small>
+                                Entenda seus modelos por meio de ferramentas que evidenciam o <em>porquê</em> por trás de cada resultado obtido.
+                            </small>
+                        </div>
+                    </div>
+                </b-card>
+                <b-card class="clickable m-1" role="button" @click="navigate('new-visualization')">
+                    <div class="row">
+                        <div class="rounded-option bg-dark">
+                            <font-awesome-icon icon="fa fa-balance-scale" size="3x" inverse />
+                        </div>
+                        <div class="col mt-2">
+                            <h5>Plataforma PulpAI: Justiça de Modelos</h5>
+                            <small>
+                                Compreenda se seu modelo, aplicado numa base de dados, está sendo justo com as diferentes classes rotuladas.
+                            </small>
+                        </div>
+                    </div>
+                </b-card>
                 <!--
                 <b-card class="clickable m-1">
                     <div class="row">
