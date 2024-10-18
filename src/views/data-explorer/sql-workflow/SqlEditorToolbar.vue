@@ -2,7 +2,7 @@
     <div class="w-100">
         <div v-if="task.operation.slug === 'execute-sql'" class="float-left mt-1">
             <button class="btn btn-sm btn-outline-secondary" :title="$t('actions.save')" @click="handleShowModal">
-                <font-awesome-icon icon="fa fa-save" :class="task.forms.save.value === '1' ? 'text-success': 'text-secondary'" />
+                <font-awesome-icon icon="fa fa-save" :class="task.forms.save.value === 1 ? 'text-success': 'text-secondary'" />
                 <span v-if="task.forms.save.value == 1"> Editar opções para salvar...</span>
                 <span v-else> Habilitar salvar dados...</span>
             </button>

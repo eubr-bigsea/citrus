@@ -1,14 +1,14 @@
 <template>
-    <b-modal ref="modal" button-size="sm" size="lg" :title="$t('actions.save')" @ok="handleSubmit" :ok-disabled="!valid">
+    <b-modal ref="modal" button-size="sm" size="lg" :title="$t('actions.save')" @ok="handleSubmit" :ok-disabled="!valid" ok-only>
         <div class="row">
             <div class="col-6">
-                <b-form-checkbox v-model="task.forms.save.value" value="1" unchecked-value="0"
+                <b-form-checkbox v-model.number="task.forms.save.value" value="1" unchecked-value="0"
                         @input="doEmit('save', $event)">
                     Salvar dados
                 </b-form-checkbox>
                 <div v-if="task.forms.save.value == 1" class="row">
                     <div class="col-12">
-                        <label>Nome da nova fonte de dados:</label>
+                        <label>Nome da nova fonte de dados/tabela:</label>
                         <input v-model="task.forms.new_name.value" type="text" class="form-control form-control-sm"
                             maxlength="100">
                     </div>

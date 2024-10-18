@@ -173,7 +173,7 @@
                                 </div>
                                 <div class="col-2 mt-4">
                                     <b-form-checkbox v-model="cell.enabled" :value="true" :unchecked-value="false">
-                                        Habilitado
+                                        {{$t('common.enabled')}}
                                     </b-form-checkbox>
                                 </div>
                                 <div class="col-2">
@@ -200,7 +200,7 @@
                                 </div>
                                 <div class="col-2 mt-4">
                                     <b-form-checkbox v-model="cell.enabled" :value="true" :unchecked-value="false">
-                                        Habilitado
+                                        {{$t('common.enabled')}}
                                     </b-form-checkbox>
                                 </div>
                                 <div class="col-2">
@@ -212,17 +212,26 @@
                             <div class="row">
                                 <div class="col-12">
                                     <div class="editor">
-                                        <sql-editor v-if="cell.operation.slug === 'execute-sql'"
-                                            :query="cell.forms.query.value" @update="(v) => cell.forms.query.value = v"
-                                            ref="codeEditor" :tables="dataSources" :functions="functions"
-                                            :data-task="cell.id"
-                                            :format="{ language: 'spark', tabWidth: 2, keywordCase: 'upper', linesBetweenQueries: 2 }" />
+                                        <template  v-if="cell.operation.slug === 'execute-sql'">
+                                            <sql-editor
+                                                :query="cell.forms.query.value" @update="(v) => cell.forms.query.value = v"
+                                                ref="codeEditor" :tables="dataSources" :functions="functions"
+                                                :data-task="cell.id"
+                                                :format="{ language: 'spark', tabWidth: 2, keywordCase: 'upper', linesBetweenQueries: 2 }" />
+                                        </template>
                                         <python-editor v-else :query="cell.forms.code.value"
                                             @update="(v) => cell.forms.code.value = v" ref="codeEditor"
                                             :tables="dataSources" :functions="functions" :data-task="cell.id"
                                             :format="{ language: 'spark', tabWidth: 2, keywordCase: 'upper', linesBetweenQueries: 2 }" />
                                     </div>
                                 </div>
+                            </div>
+                            <div v-if="cell.forms.save.value === 1" class="col-12 mt-1">
+                                <strong>Salvar habilitado. Pseudocódigo a ser executado:</strong>
+                                <div class="my-1">
+                                    <code class="text-left" style="white-space: pre-wrap">{{ getSaveCommand(cell) }}</code>
+                                </div>
+                                Modo de sobrescrita: {{cell.forms.mode.value}}
                             </div>
                             <div class="row">
                                 <div class="col-12 cell-status-bar">
@@ -772,7 +781,28 @@ const getCellClass = (cell) => {
             return 'text-danger';
     }
 };
-
+const indentString = (str, count, indent = " ") =>
+  str.replace(/^/gm, indent.repeat(count));
+const getSaveCommand = (cell) => {
+    const result = [];
+    const insert = `INSERT ${cell.forms.mode.value === 'overwrite' ?'OVERWRITE':'INTO'} "${cell.forms.new_name.value}"`;
+    const select = `${indentString(cell.forms?.query?.value?.trim(), 4)}`;
+    if (cell.forms.mode.value === 'error' || cell.forms.mode.value === 'ignore') {
+        result.push(`IF EXISTS TABLE "${cell.forms.new_name.value}"`);
+        if (cell.forms.mode.value === 'error'){
+            result.push('    ERROR');
+        } else {
+            result.push('    -- IGNORE');
+        }
+        result.push('ELSE');
+        result.push(`   ${insert}`);
+        result.push(`   ${select}`);
+    } else {
+        result.push(`${insert}`);
+        result.push(`   ${select}`);
+    }
+    return result.join('\n');
+};
 const showUseCodeLibrary = ref(false);
 const modalUseCodeLibrary = ref();
 const handleShowModalCodeLibrary = () => {
