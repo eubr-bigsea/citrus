@@ -391,15 +391,17 @@ export default {
                 correlation: 'Correlação',
 
             },
+
             attribute: 'Atributo | Atributos',
             attributeDelimiter: 'Delimitador de atributos (apenas CSV)',
             basicInformation: 'Informação básica',
             characteristics: 'Características',
+            cloudEnabled: 'Você pode usar provedores de nuvem, como a AWS',
             databaseConnectionPreviouslyConfigured:
                 'A conexão ao servidor de banco de dados deve ter sido configurada anteriormente por um administrador',
             databaseStorage: 'Armazenamento para a base de dados',
             differentFormatsSupported:
-                'Diferentes formatos são suportados (CSV, JSON, XML, TXT)',
+                'Diferentes formatos são suportados (CSV, JSON, XML, TXT, PARQUET)',
             distributedFileSystem: 'Sistema de arquivos distribuído (HDFS)',
             dropFilesHere: 'Arraste e solte arquivos aqui para carregá-los ou',
             encoding: 'Codificação (opcional)',
@@ -409,6 +411,7 @@ export default {
             fileUrl: 'Caminho do arquivo',
             format: 'Formato',
             hive: 'Hive',
+            icebergCatalog: 'Catálogo Apache Iceberg',
             inconsistentFormat:
                 'O formato escolhido é incompatível com o armazenamento escolhido.',
             inferSchema: 'Inferir o esquema',
@@ -424,6 +427,7 @@ export default {
             missingRepresentation: 'Representação para dados ausentes',
             noPermissions: 'Nenhuma permissão definida',
             noAttributes: 'Nenhum atributo definido.',
+            objectStorageS3: 'Armazenamento (Object Storage) compatível com AWS S3',
             performance: 'Desempenho',
             permission: 'Permissão | Permissões',
             previewExplanation: 'Esta é uma amostra com {amount} registros (max).',
@@ -1351,11 +1355,12 @@ export default {
             attributeDelimiter: 'Attribute delimiter (CSV only)',
             basicInformation: 'Basic information',
             characteristics: 'Characteristics',
+            cloudEnabled: 'You may use cloud providers, such as AWS, to store data',
             databaseConnectionPreviouslyConfigured:
                 'The database connection must be previously configured by an administrator',
             databaseStorage: 'Database storage',
             differentFormatsSupported:
-                'Different formats are supported (CSV, JSON, XML, TXT)',
+                'Different formats are supported (CSV, JSON, XML, TXT, PARQUET)',
             distributedFileSystem: 'Distributed file system (HDFS)',
             dropFilesHere: 'Drop files here to upload or',
             encoding: 'Encoding (optional)',
@@ -1365,6 +1370,7 @@ export default {
             fileUrl: 'File path',
             format: 'Format',
             hive: 'Hive',
+            icebergCatalog: 'Apache Iceberg Catalog',
             inconsistentFormat:
                 'The chosen format is incompatible with the chosen storage.',
             inferSchema: 'Infer schema',
@@ -1380,6 +1386,7 @@ export default {
             missingRepresentation: 'Missing representation',
             noPermissions: 'No permissions defined',
             noAttributes: 'No attributes defined.',
+            objectStorageS3: 'Object Storage compatible with AWS S3',
             performance: 'Performance',
             permission: 'Permission | Permissions',
             previewExplanation: 'This is a sample of {amount} rows (max).',

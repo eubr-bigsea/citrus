@@ -87,7 +87,7 @@
                         </div>
                     </div>
                 </div>
-                <div v-if="step === 3 && storageType === 'HIVE'" class="card animated">
+                <div v-else-if="step === 3 && storageType === 'HIVE'" class="card animated">
                     <div class="card-body">
                         <h4 class="card-title">
                             {{$t('dataSource.hive')}}
@@ -106,6 +106,64 @@
                                         @dblclick.stop="copyTableName">
                                     <option v-for="tb in tables" :key="tb">
                                         {{tb}}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="border-top mt-5 pt-4">
+                            <button class="btn btn-success" @click="handleSave">
+                                {{$t('actions.save')}}
+                            </button>
+                            <button class="btn ml-1 btn-outline-secondary" @click="step=1">
+                                {{$t('actions.back')}}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div v-else-if="step === 3 && storageType === 'ICEBERG'" class="card animated">
+                    <div class="card-body">
+                        <h4 class="card-title">
+                            {{$t('dataSource.icebergCatalog')}}
+                        </h4>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label>{{$tc('common.name', 1)}}:</label>
+                                <input v-model="dataSource.name" type="text" class="form-control w-50">
+
+                                <label>{{$t('dataSource.selectCommand')}}:</label>
+                                <textarea v-model="dataSource.command" class="form-control" rows="4" />
+                            </div>
+                        </div>
+
+                        <div class="border-top mt-5 pt-4">
+                            <button class="btn btn-success" @click="handleSave">
+                                {{$t('actions.save')}}
+                            </button>
+                            <button class="btn ml-1 btn-outline-secondary" @click="step=1">
+                                {{$t('actions.back')}}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div v-else-if="step === 3 && storageType === 'S3'" class="card animated">
+                    <div class="card-body">
+                        <h4 class="card-title">
+                            {{$t('dataSource.objectStorageS3')}}
+                        </h4>
+                        <div class="row">
+                            <div class="col-md-8">
+                                <label>{{$tc('common.name', 1)}}:</label>
+                                <input v-model="dataSource.name" type="text" class="form-control">
+
+                                <label>{{$t('dataSource.file')}}:</label>
+                                <textarea v-model="dataSource.url" class="form-control" rows="4" />
+                            </div>
+                            <div class="col-md-4">
+                                <label>{{$t('dataSource.format')}}:</label>
+                                <select v-model="dataSource.format" class="form-control">
+                                    <option v-for="fmt in formats" :key="fmt" :value="fmt">
+                                        {{fmt}}
                                     </option>
                                 </select>
                             </div>
@@ -246,6 +304,8 @@ export default {
         const dataSource = ref({ format: '', storage_id: null, command: null, url: 'placeholder', name:''});
         const storage = ref({
             fsStorage: null,
+            s3Storage: null,
+            icebergStorage: null,
             sqlStorage: null,
             hiveStorage: null,
         });
@@ -257,7 +317,6 @@ export default {
                 ? 'danger'
                 : 'success';
         }
-
         const handleChoose = (method) => {
             if (method === 'sql') {
                 step.value = 3;
@@ -270,6 +329,17 @@ export default {
                 dataSource.value.format = 'HIVE';
                 dataSource.value.storage_id = storage.value.hiveStorage;
                 storageType.value = 'HIVE';
+            } else if (method === 's3') {
+                step.value = 3;
+                dataSource.value.format = 'UNKNOWN';
+                dataSource.value.storage_id = storage.value.s3Storage;
+                dataSource.value.url = '';
+                storageType.value = 'S3';
+            } else if (method === 'iceberg') {
+                step.value = 3;
+                dataSource.value.format = 'ICEBERG';
+                dataSource.value.storage_id = storage.value.icebergStorage;
+                storageType.value = 'ICEBERG';
                 //this.retrieveTables()
             } else if (method === 'fs'){
                 step.value = 2;
@@ -442,6 +512,8 @@ export default {
 
         const storages = ref({
             fsStorages: [],
+            s3Storages: [],
+            icebergStorages: [],
             sqlStorages: [],
             hiveStorages: [],
         });
@@ -454,12 +526,20 @@ export default {
                         storages.value.fsStorages.push(st);
                     } else if (st.type === 'JDBC') {
                         storages.value.sqlStorages.push(st);
+                    } else if (st.type === 'ICEBERG_CATALOG') {
+                        storages.value.icebergStorages.push(st);
+                    } else if (st.type === 'S3') {
+                        storages.value.s3Storages.push(st);
                     } else if (st.type === 'HIVE' || st.type === 'HIVE_WAREHOUSE') {
                         storages.value.hiveStorages.push(st);
+                    } else {
+                        console.debug('Unknown storage type ', st)
                     }
                 });
 
                 storage.value.fsStorage = storages.value.fsStorages.length ? storages.value.fsStorages[0].id : '';
+                storage.value.s3Storage = storages.value.s3Storages.length ? storages.value.s3Storages[0].id : '';
+                storage.value.icebergStorage = storages.value.icebergStorages.length ? storages.value.icebergStorages[0].id : '';
                 storage.value.sqlStorage = storages.value.sqlStorages.length ? storages.value.sqlStorages[0].id : '';
                 storage.value.hiveStorage = storages.value.hiveStorages.length ? storages.value.hiveStorages[0].id : '';
 
@@ -490,6 +570,28 @@ export default {
                     value: 'fs'
                 },
                 {
+                    title: t('dataSource.objectStorageS3'),
+                    features: [
+                        t('dataSource.scalability'),
+                        t('dataSource.youCanUploadYourFiles'),
+                        t('dataSource.differentFormatsSupported'),
+                        t('dataSource.cloudEnabled')
+                    ],
+                    prop: 's3Storage',
+                    items: 's3Storages',
+                    value: 's3'
+                },
+                {
+                    title: t('dataSource.icebergCatalog'),
+                    features: [
+                        t('dataSource.scalability'),
+                        t('dataSource.cloudEnabled')
+                    ],
+                    prop: 'icebergStorage',
+                    items: 'icebergStorages',
+                    value: 'iceberg'
+                },
+                {
                     title: t('dataSource.databaseStorage'),
                     features: [
                         t('dataSource.youCanUseSQL'),
@@ -511,9 +613,9 @@ export default {
                 },
             ],
             formats: [
-                'CSV', 'CUSTOM', 'GEO_JSON', 'HAR_IMAGE_FOLDER', 'HDF5',
-                'DATA_FOLDER', 'IMAGE_FOLDER', 'HIVE', 'JDBC', 'JSON',
-                'NPY', 'PARQUET', 'PICKLE', 'SAV', 'SHAPEFILE',
+                'CSV', 'GEO_JSON', 'HAR_IMAGE_FOLDER', 'HDF5',
+                'DATA_FOLDER', 'IMAGE_FOLDER', 'ICEBERG', 'HIVE', 'JDBC', 'JSON',
+                'PARQUET', 'SHAPEFILE',
                 'TAR_IMAGE_FOLDER', 'TEXT', 'VIDEO_FOLDER', 'UNKNOWN',
                 'XML_FILE'].sort(),
         };
