@@ -69,7 +69,7 @@
                                     </template>
                                     <template v-if="selected === 'algorithms'">
                                         <Algorithms ref="algorithms" :operations="algorithmOperation"
-                                            :workflow="workflowObj" :operation-map="operationsMap" />
+                                            :workflow="workflowObj" :operation-map="operationsMap" :task-type="taskType"/>
                                     </template>
                                     <template v-if="selected === 'grid'">
                                         <Grid :grid="workflowObj.grid" />
@@ -163,7 +163,7 @@ export default {
             return Array.from(this.operationsMap.values()).filter((op) => op.categories.find(cat => cat.subtype === taskType));
         },
         dataSourceId: {
-            get() { return this.workflowObj.tasks[0].forms.data_source.value; },
+            get() { return this.workflowObj.tasks[0].forms?.data_source?.value; },
             set(newValue) { this.workflowObj.tasks[0].forms.data_source.value = newValue }
         },
         supervised() {
@@ -406,7 +406,7 @@ export default {
                     this.job = job;
                 }
                 job.results.forEach(result => {
-                    if (result?.content) {
+                    if (result?.content && result.type !== 'HTML') {
                         result.content = JSON.parse(result.content);
                     }
                 });
@@ -418,16 +418,18 @@ export default {
                 }, {});
                 Object.entries(job.groupedResults).forEach(([id, results]) => { // eslint-disable-line no-unused-vars
                     let result0 = results[0];
-                    const isLargerBetter = Boolean(result0.content.metric && result0.content.metric.isLargerBetter);
-                    let best = result0.content.metric ? result0.content.metric.value : 0;
-                    results.forEach(r => {
-                        if (r.content.metric &&
-                            (isLargerBetter && r.content.metric.value > best
-                                || !isLargerBetter && r.content.metric.value < best)) {
-                            best = r.content.metric.value;
-                        }
-                    });
-                    Vue.set(result0, 'best', best);
+                    if (result0.type !== 'HTML') {
+                        const isLargerBetter = Boolean(result0.content.metric && result0.content.metric.isLargerBetter);
+                        let best = result0.content.metric ? result0.content.metric.value : 0;
+                        results.forEach(r => {
+                            if (r.content.metric &&
+                                (isLargerBetter && r.content.metric.value > best
+                                    || !isLargerBetter && r.content.metric.value < best)) {
+                                best = r.content.metric.value;
+                            }
+                        });
+                        Vue.set(result0, 'best', best);
+                    }
 
                 });
             });

@@ -5,8 +5,7 @@
                 <b-list-group v-if="jobs.length > 0">
                     <b-list-group-item v-for="job in jobs" :key="job.id" class="flex-column align-items-start p-0"
                         @click="handleClick(job)" role="button">
-                        <div class="d-flex w-100 justify-content-between p-1"
-                            :class="(selectedJob && (selectedJob.id === job.id)) ? 'bg-secondary text-white' : 'bg-light'">
+                        <div class="d-flex w-100 justify-content-between p-1" :class="getResultClass(job)">
                             <span class="mb-1 job-title">{{ $tc('titles.job') }} #{{ job.id }}</span>
                             <small>
                                 {{ $t('status.' + job.status) }}
@@ -21,9 +20,11 @@
                             </small>
                         </div>
                         <div class="result">
-                            <div v-for="(result, inx) in groupedResults(job)" :key="inx" role="button">
+                            <div v-for="(result, inx) in groupedResults(job)" v-if="result[0].type !== 'HTML'"
+                                :key="inx" role="button">
                                 {{ result[0].title }}
                                 <div v-if="result[0] && result[0].best" class="float-right">
+                                    {{ result[0].content.metric.name }}
                                     {{ result[0].best.toFixed(4) }}
                                 </div>
                                 <!--
@@ -40,7 +41,7 @@
                     {{ $t('common.noResults') }}
                 </div>
             </div>
-            <div class="col-md-8 col-lg-9">
+            <div class="col-md-8 col-lg-9" style="margin-left: -2px">
                 <b-card v-if="selectedJob" variant="primary">
                     <template #header>
                         <b>{{ $tc('titles.job') }} #{{ selectedJob.id }}</b>
@@ -51,6 +52,10 @@
                         </span>
                     </template>
                     <div class="row pt-1 pb-4">
+                        <div v-if="!finalReport" class="col-12 loading">
+                            <font-awesome-icon icon="spinner" pulse class="icon" />
+                            Aguardando resultados ...
+                        </div>
                         <div v-if="finalReport" class="col-4 text-center">
                             <b-card border-variant="primary">
                                 <strong>Resultado: </strong>
@@ -71,11 +76,11 @@
                             </b-card>
                         </div>
                         <!-- Chart -->
-                        <div class="col-9 mt-2">
+                        <div v-if="finalReport" class="col-9 mt-2">
                             <b-card border-variant="primary">
                                 <div v-if="selectedJob.status !== 'ERROR' && selectedJob.status !== 'CANCELED'"
-                                    style="height: 250px">
-                                    <Plotly ref="plotly" :data="scatterData" :layout="scatterLayout"
+                                    style="height: 250px; width: 100%">
+                                    <Plotly ref="plotly" :data="chartData" :layout="chartLayout"
                                         :display-mode-bar="true" :auto-resize="true"
                                         :options="{ displayModeBar: false }" />
                                 </div>
@@ -88,8 +93,11 @@
                         <div v-if="finalReport" class="col-3 mt-2 text-center">
                             <b-card border-variant="primary">
                                 <small>Treino/teste</small>
-                                <Plotly ref="plotly" :data="pieData" :layout="pieLayout" :display-mode-bar="true"
-                                    :auto-resize="true" :options="{ displayModeBar: false }" />
+                                <div v-if="selectedJob.status !== 'ERROR' && selectedJob.status !== 'CANCELED'"
+                                    style="height: 250px; width: 100%">
+                                    <Plotly ref="plotlyPie" :data="pieData" :layout="pieLayout" :display-mode-bar="true"
+                                        :auto-resize="true" :options="{ displayModeBar: false }" />
+                                </div>
                             </b-card>
                         </div>
                         <!--
@@ -101,8 +109,8 @@
                             </div>
                             -->
                     </div>
-                    <div v-for="(results, key) in selectedGroupedResults" v-if="results[1][0].type !== 'OTHER'"
-                        :key="key" class="row">
+                    <div v-for="(results, key) in selectedGroupedResults"
+                        v-if="results[1][0].type !== 'OTHER' && results[1][0].type !== 'HTML'" :key="key" class="row">
                         <div v-if="results && results.length > 0" class="col-12">
                             <h6 class="result">
                                 <font-awesome-icon v-if="results.find(r => r.winner)" icon="trophy" class="best"
@@ -180,6 +188,18 @@
                                 </tr>
                             </tbody>
                         </table>
+                    </div>
+
+                    <div v-for="(results, key) in selectedGroupedResults" v-if="results[1][0].type === 'HTML'"
+                        :key="key" class="row">
+                        <div class="col-12">
+                            <h6 class="result">
+                                {{ results[1][0].title }}
+                            </h6>
+                        </div>
+                        <div class="col-12" style="overflow: auto">
+                            <span v-html="results[1][0].content" />
+                        </div>
                     </div>
                     <!--
                             <img src="https://topepo.github.io/caret/basic/train_plot1-1.svg" alt="">
@@ -283,16 +303,21 @@ export default {
             internalJobs: [],
 
             pieLayout: {
-                autosize: true,
-                height: 140,
-                width: 140,
+                height: 240,
+                xwidth: 200,
                 showlegend: false,
                 margin: {
-                    t: 10, b: 10, l: 10, r: 10
+                    t: 0, b: 10, l: 0, r: 0
                 }
             },
-            scatterLayout: {
-                showlegend: true,
+            xchartLayout: {
+                xaxis: { title: 'Value' },
+                yaxis: { title: 'Frequency' },
+                bargap: 0.05 // Adjust bar gap
+            },
+            chartLayout: {
+                bargap: 0.1, // Adjust bar gap
+                showlegend: false,
                 legend: {
                     orientation: "h",
                     yanchor: "bottom",
@@ -308,8 +333,6 @@ export default {
                 margin: {
                     t: 0, b: 25, l: 50, r: 10
                 },
-                xplot_bgcolor: '#444',
-                xpaper_bgcolor: '#fff',
                 yaxis: {
                     tickcolor: "#eee",
                     tickwidth: 1,
@@ -325,8 +348,8 @@ export default {
                     gridcolor: "#eee",
                     gridwidth: 1,
                     rangemode: 'tozero',
-                    title: 'Duração (s)',
-                    titlefont: { size: 12 }
+                    titlefont: { size: 12 },
+                    ticktext: ['', '', '', '', '']
                 },
                 hoverlabel: {
                     font: {
@@ -339,7 +362,8 @@ export default {
                         r: 40
                     },
                     borderwidth: 2
-                }
+                },
+
             }
         }
     },
@@ -354,27 +378,37 @@ export default {
                     hole: .5, textposition: 'inside',
                 }] : [{}]
         },
-        scatterData() {
+        chartData() {
             const series = []
+            let x = [];
+            let y = [];
+            let text = [];
+            const palette = ['#045275', '#00718b', '#089099', '#46aea0', '#7ccba2', '#b7e6a5', '#f7feae'];
+            const colors = [];
+            let c = 0
             if (this.selectedJob && this.selectedJob.groupedResults) {
-                Object.entries(this.selectedJob.groupedResults).forEach(([k, results]) => { // eslint-disable-line no-unused-vars
-                    let x = [];
-                    let y = [];
-                    let text = [];
+                Object.entries(this.selectedJob.groupedResults).forEach(([k, results],) => { // eslint-disable-line no-unused-vars
+
                     results.forEach((result, inx) => {// eslint-disable-line no-unused-vars
-                        const content = result.content;
-                        if (!content.error && content.metric) {
-                            x.push(content.t);
-                            y.push(content.metric.value);
-                            text.push(JSON.stringify(content.params, null, '<br>').replace(/[{}]/g, ''));
+                        if (result.type !== 'HTML') {
+                            const content = result.content;
+                            if (!content.error && content.metric) {
+                                x.push(content.t);
+                                y.push(content.metric.value);
+                                colors.push(palette[c]);
+                                text.push(results[0].title + ' ' + JSON.stringify(content.params, null, '<br>').replace(/[{}]/g, ''));
+                            }
                         }
                     });
-                    series.push({
-                        x, y, mode: 'markers', type: 'scatter',
-                        text, marker: { size: 8 }, name: results[0].title
-                    })
+                    c++;
                 });
             }
+            series.push({
+                x: text.map((v, i) => 'Modelo ' + (i+1)), y: y, mode: 'markers', type: 'bar', orientation: 'v',
+                text, marker: { size: 8, color: colors },
+
+            })
+
             return series;
         },
         selectedGroupedResults() {
@@ -409,7 +443,15 @@ export default {
                 return [];
             }
         },
-
+        getResultClass(job) {
+            if (job.status === 'RUNNING') {
+                return 'bg-success text-white'
+            } else if (this.selectedJob && (this.selectedJob.id === job.id)) {
+                return 'bg-secondary text-white';
+            } else {
+                return 'bg-light';
+            }
+        },
         selectFirst() {
             this.selectedJob = null;
             if (this.jobs.length) {
