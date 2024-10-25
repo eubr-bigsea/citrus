@@ -226,7 +226,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div v-if="cell.forms.save.value === 1" class="col-12 mt-1">
+                            <div v-if="cell?.forms?.save?.value === 1" class="col-12 mt-1">
                                 <strong>Salvar habilitado. Pseudocódigo a ser executado:</strong>
                                 <div class="my-1">
                                     <code class="text-left" style="white-space: pre-wrap">{{ getSaveCommand(cell) }}</code>
