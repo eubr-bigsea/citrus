@@ -80,6 +80,11 @@
                                     <template v-if="selected === 'runtime'">
                                         <Runtime :clusters="clusters" :workflow="workflowObj" />
                                     </template>
+                                    <template v-if="selected === 'save'">
+                                        <model-builder-save-results
+                                            @update="updateSaveResults"
+                                            :form="workflowObj.forms"/>
+                                    </template>
                                 </form>
                             </div>
                         </div>
@@ -103,6 +108,7 @@ import Metric from './Metric.vue';
 import FeatureSelection from './FeatureSelection.vue';
 import FeatureGeneration from './FeatureGeneration.vue';
 import FeatureReduction from './FeatureReduction.vue';
+import ModelBuilderSaveResults from './ModelBuilderSaveResults.vue';
 import Algorithms from './Algorithms.vue';
 import Grid from './Grid.vue';
 import Runtime from './Runtime.vue';
@@ -110,7 +116,7 @@ import Result from './result/Result.vue';
 import Weighting from './Weighting.vue';
 
 import DataSourceMixin from '../DataSourceMixin.js';
-import Notifier from '../../../mixins/Notifier.js';
+import Notifier from '@/mixins/Notifier.js';
 
 import { ModelBuilderWorkflow, Operation } from '../entities.js';
 
@@ -128,7 +134,8 @@ export default {
     name: 'DesignComponent',
     components: {
         SideBar, DesignData, TrainTest, Metric, FeatureSelection, FeatureGeneration,
-        FeatureReduction, Algorithms, Grid, Runtime, Weighting, Result
+        FeatureReduction, Algorithms, Grid, Runtime, Weighting, Result,
+        ModelBuilderSaveResults
     },
     mixins: [DataSourceMixin, Notifier],
     data() {
@@ -179,7 +186,6 @@ export default {
             return this.workflowObj?.features?.forms?.features?.value?.length || 0;
         },
         features() {
-            console.debug(this.workflowObj?.features?.forms?.features)
             return this.workflowObj?.features?.forms?.features?.value || [];
         }
     },
@@ -262,6 +268,9 @@ export default {
             } else if (self.job) {
                 self.changeRoom(self.job.id);
             }
+        },
+        updateSaveResults(name, value){
+            this.workflowObj.forms[name] = {value};
         },
         validate() {
             const self = this;
@@ -526,15 +535,6 @@ export default {
             this.workflowObj.forms.$meta.value.target = target;
         },
         async handleDeleteJob(job_id) {
-            /*this.confirm(
-                this.$t('actions.delete'),
-                this.$tc('titles.job') + "?",
-                async () => {
-                    await axios.delete(`${standUrl}/jobs/${job_id}`);
-                    this.loadJobs();
-                    this.$refs.results.selectFirst();
-                },
-            );*/
             await axios.delete(`${standUrl}/jobs/${job_id}`);
             this.loadJobs();
             this.$refs.results.selectFirst();

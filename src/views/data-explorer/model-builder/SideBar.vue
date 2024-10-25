@@ -1,108 +1,110 @@
 <template>
-    <div>
-        <b-nav vertical
-               class="model-builder-sidebar">
-            <b-nav-text class="header">
-                Entrada
+    <b-nav vertical class="model-builder-sidebar">
+        <template v-for="header in menus" class="header">
+            <b-nav-text :key="header.name">
+                {{ header.name }}
             </b-nav-text>
-            <b-nav-item :class="{active: selected === 'target'}"
-                        @click.prevent="edit('target')">
-                Dados
+            <b-nav-item v-for="menu in header.items" :class="{ active: selected === menu.action }"
+                @click.prevent="edit(menu.action)">
+                {{ menu.name }}
             </b-nav-item>
-            <b-nav-item v-if="supervised"
-                        :class="{active: selected === 'data'}"
-                        @click.prevent="edit('data')">
-                Divisão entre treino e
-                teste
-            </b-nav-item>
-            <b-nav-item :class="{active: selected === 'metric'}"
-                        @click.prevent="edit('metric')">
-                Tarefa e métrica
-            </b-nav-item>
-
-            <b-nav-text class="header">
-                Atributos (Features)
-            </b-nav-text>
-            <b-nav-item :class="{active: selected === 'adjusts'}"
-                        @click.prevent="edit('adjusts')">
-                Seleção, alvo e ajustes
-            </b-nav-item>
-            <!--
-                <b-nav-item :class="{active: selected === 'generation'}" @click.prevent="edit('generation')">Geração
-                </b-nav-item>
-            -->
-            <b-nav-item :class="{active: selected === 'reduction'}"
-                        @click.prevent="edit('reduction')">
-                Redução
-            </b-nav-item>
-
-            <b-nav-text class="header">
-                Ajustes do Modelo
-            </b-nav-text>
-            <b-nav-item :class="{active: selected === 'algorithms'}"
-                        @click.prevent="edit('algorithms')">
-                Algoritmos e
-                hiperparâmetros
-            </b-nav-item>
-            <b-nav-item :class="{active: selected === 'hyperparameters'}"
-                        @click.prevent="edit('grid')">
-                Grade
-                de parâmetros
-            </b-nav-item>
-
-            <b-nav-text class="header">
-                Avançado
-            </b-nav-text>
-            <!--
-            <b-nav-item :class="{active: selected === 'weighting'}" @click.prevent="edit('weighting')">Estratégia de
-                ponderação</b-nav-item>
-                -->
-            <b-nav-item :class="{active: selected === 'runtime'}"
-                        @click.prevent="edit('runtime')">
-                Ambiente de
-                processamento
-            </b-nav-item>
-        </b-nav>
-    </div>
+        </template>
+    </b-nav>
 </template>
-<script>
-export default {
-    name: 'ModelBuilderSideBar',
-    props: {
-        selected: { type: String, default: () => 'target' },
-        supervised: {type: Boolean}
+<script setup>
+import { defineProps, defineEmits, ref } from 'vue';
+
+const menus = [
+    {
+        name: 'Entrada',
+        items: [
+            {
+                name: 'Dados',
+                action: 'target'
+            },
+            {
+                name: 'Divisão entre treino e teste',
+                action: 'data'
+            },
+            {
+                name: 'Tarefa e métrica',
+                action: 'metric'
+            },
+        ]
     },
-    emits: ['edit'],
-    methods: {
-        edit(item) {
-            this.$emit('edit', item);
-        }
-    }
-}
+    {
+        name: 'Atributos (Features)',
+        items: [
+            {
+                name: 'Seleção, alvo e ajustes',
+                action: 'adjusts'
+            },
+            {
+                name: 'Redução',
+                action: 'reduction'
+            },
+        ]
+    },
+    {
+        name: 'Ajustes do Modelo',
+        items: [
+            {
+                name: 'Algoritmos e hiperparâmetros',
+                action: 'algorithms'
+            },
+            {
+                name: 'Grade de parâmetros',
+                action: 'grid'
+            },
+        ]
+    },
+    {
+        name: 'Avançado',
+        items: [
+            {
+                name: 'Ambiente de processamento',
+                action: 'runtime'
+            },
+            {
+                name: 'Salvar resultados',
+                action: 'save'
+            },
+        ]
+    },
+];
+
+const props = defineProps({
+    selected: { type: String, default: () => 'target' },
+    supervised: { type: Boolean }
+});
+const emit = defineEmits(['edit']);
+const edit = (item) => {
+    emit('edit', item);
+};
+
 </script>
 <style scoped>
-    .model-builder-sidebar>>>.nav-item {
-        margin-bottom: 0px;
-        padding: 0
-    }
+.model-builder-sidebar>>>.nav-item {
+    margin-bottom: 0px;
+    padding: 0
+}
 
-    .model-builder-sidebar>>>.nav-item a {
-        color: #444;
-        padding: 1px 0px 1px 10px;
-        xborder: 1px solid #222;
-        margin: 3px 0;
-        font-size: .85em;
-    }
+.model-builder-sidebar>>>.nav-item a {
+    color: #444;
+    padding: 1px 0px 1px 10px;
+    margin: 3px 0;
+    font-size: .85em;
+}
 
-    .model-builder-sidebar>>>.nav-item.active a {
-        border-left: 5px solid green;
-        padding-left: 5px !important;
-    }
+.model-builder-sidebar>>>.nav-item.active a {
+    border-left: 5px solid green;
+    padding-left: 5px !important;
+}
 
-    .model-builder-sidebar>>>.header {
-        color: #555;
-        font-size: .9em;
-        font-weight: bold;
-        text-transform: uppercase;
-    }
+.model-builder-sidebar>>>.header {
+    color: #555;
+    font-size: .9em;
+    font-weight: bold;
+    text-transform: uppercase;
+}
 </style>
