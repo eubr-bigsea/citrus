@@ -700,6 +700,7 @@ const handleAddDataSource = async (dataSourceId) => {
         const ds = await loadDataSource(dataSourceId);
 
         workflowObj.value.addDataSourceTask(dataSourceId, ds.name);
+        cachedDataSources.value.push(ds);
         updateDataSources(true);
         isDirty.value = true;
     }
