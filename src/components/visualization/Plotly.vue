@@ -83,7 +83,7 @@ export default {
         */
 
         this.$watch('options', (a, b) => {
-            console.debug(a, b)
+            //console.debug(a, b)
             //this.react()
         }, { deep: !this.watchShallow });
         this.$watch('layout', (a, newValue) => {
@@ -161,7 +161,7 @@ export default {
             return opts;
         },
         newPlot() {
-            console.debug('Plotly newPlot');
+            //console.debug('Plotly newPlot');
             return Plotly.newPlot(this.$refs.container, this.data, this.internalLayout, this.getOptions());
         },
         react() {

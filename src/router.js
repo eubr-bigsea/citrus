@@ -106,7 +106,7 @@ const SqlWorkflowDesign = () => import('./views/data-explorer/sql-workflow/SqlWo
 
 const ChooseTask = () => import('./views/data-explorer/model-builder/ChooseTask.vue');
 const ModelTraining = () => import('./views/data-explorer/model-builder/ModelTraining.vue');
-const Design = () => import('./views/data-explorer/model-builder/Design.vue');
+const Design = () => import('./views/data-explorer/model-builder/ModelBuilderDesign.vue');
 
 const VisualizationDesign = () => import('./views/data-explorer/vis-builder/VisualizationDesign.vue');
 const CreateVisualization = () => import('./views/data-explorer/vis-builder/CreateVisualization.vue');
