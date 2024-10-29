@@ -1,5 +1,5 @@
 <template>
-    <div ref="container" class="vue-plotly" />
+    <div ref="container" class="vue-plotly" :style="cssStyle"/>
 </template>
 <script>
 /* (c) https://github.com/statnett/vue-plotly/blob/master/src/Plotly.vue */
@@ -52,6 +52,9 @@ export default {
         layout: {
             type: Object, default: () => null
         },
+        cssStyle: {
+            type: Object, default: () => null
+        },
         frames: {
             type: Array, default: () => null
         },
@@ -97,9 +100,11 @@ export default {
         initEvents() {
             if (this.autoResize) {
                 this.__resizeListener = debounce(() => {
-                    this.internalLayout.datarevision++;
-                    console.debug(this, 'resize')
-                    this.react();
+                    if (this.internalLayout){
+                        this.internalLayout.datarevision++;
+                        //console.debug(this, 'resize')
+                        this.react();
+                    }
                 }, 200);
                 window.addEventListener('resize', this.__resizeListener);
             }

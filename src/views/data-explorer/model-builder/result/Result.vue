@@ -20,7 +20,7 @@
                             </small>
                         </div>
                         <div class="result">
-                            <div v-for="(result, inx) in groupedResults(job)" v-if="result[0].type !== 'HTML'"
+                            <div v-for="(result, inx) in groupedResults(job)" v-if="result[0].type == 'METRIC'"
                                 :key="inx" role="button">
                                 {{ result[0].title }}
                                 <div v-if="result[0] && result[0].best" class="float-right">
@@ -76,7 +76,7 @@
                             </b-card>
                         </div>
                         <!-- Chart -->
-                        <div v-if="finalReport" class="col-9 mt-2">
+                        <div v-if="finalReport" class="col-12 mt-2">
                             <b-card border-variant="primary">
                                 <div v-if="selectedJob.status !== 'ERROR' && selectedJob.status !== 'CANCELED'"
                                     style="height: 250px; width: 100%">
@@ -90,6 +90,7 @@
                                 </div>
                             </b-card>
                         </div>
+                        <!--
                         <div v-if="finalReport" class="col-3 mt-2 text-center">
                             <b-card border-variant="primary">
                                 <small>Treino/teste</small>
@@ -100,6 +101,7 @@
                                 </div>
                             </b-card>
                         </div>
+                    -->
                         <!--
                             <div class="row">
                                 <div class="col-3">Métrica <font-awesome-icon icon="fa fa-trophy text-secondary" /> R2</div>
@@ -109,8 +111,8 @@
                             </div>
                             -->
                     </div>
-                    <div v-for="(results, key) in selectedGroupedResults"
-                        v-if="results[1][0].type !== 'OTHER' && results[1][0].type !== 'HTML'" :key="key" class="row">
+                    <div v-for="(results, key) in selectedGroupedResults" v-if="results[1][0].type === 'METRIC'"
+                        :key="key" class="row">
                         <div v-if="results && results.length > 0" class="col-12">
                             <h6 class="result">
                                 <font-awesome-icon v-if="results.find(r => r.winner)" icon="trophy" class="best"
@@ -164,13 +166,24 @@
                                             </b-link>
                                             <b-popover :target="`popover-${counter}`" variant="" triggers="focus">
                                             -->
-                                            <b>Importância dos atributos</b>
                                             <div v-for="fi, inx in result.content.feature_importance">
-                                                <template v-if="features[inx]">
-                                                    {{ features[inx].name }}: {{ parseFloat(fi).toFixed(4) }}
+                                                <strong>{{ inx }}</strong>
+                                                <template v-if="isObject(fi)">
+                                                    <table class="table table-sm table-smallest m-0">
+                                                        <tr>
+                                                            <template v-for="(value, key) in fi">
+                                                                <th :key="key">{{ key }}</th>
+                                                            </template>
+                                                        </tr>
+                                                        <tr>
+                                                            <template v-for="(value, key) in fi">
+                                                            <td :key="`row-${key}`">{{ parseFloat(value).toFixed(2) }}</td>
+                                                            </template>
+                                                        </tr>
+                                                    </table>
                                                 </template>
                                                 <template v-else>
-                                                    {{ inx }}: {{ parseFloat(fi).toFixed(2) }}
+                                                    {{ parseFloat(fi).toFixed(2) }}
                                                 </template>
                                             </div>
                                             <!--
@@ -189,9 +202,21 @@
                             </tbody>
                         </table>
                     </div>
-
+                    <div v-for="(results, key) in selectedGroupedResults" v-if="results[1][0].type === 'VISUALIZATION'"
+                        :key="`visualization${key}`" class="row">
+                        <div class="col-12">
+                            <h6 class="result">
+                                {{ results[1][0].title }}
+                            </h6>
+                        </div>
+                        <div class="col-12">
+                            <Plotly :ref="key" :data="results[1][0].content.data" :layout="results[1][0].content.layout"
+                                :css-style="{ width: '100%', height: '450px' }" :display-mode-bar="true"
+                                :auto-resize="true" :options="{ displayModeBar: false }" />
+                        </div>
+                    </div>
                     <div v-for="(results, key) in selectedGroupedResults" v-if="results[1][0].type === 'HTML'"
-                        :key="key" class="row">
+                        :key="`html-${key}`" class="row">
                         <div class="col-12">
                             <h6 class="result">
                                 {{ results[1][0].title }}
@@ -201,6 +226,7 @@
                             <span v-html="results[1][0].content" />
                         </div>
                     </div>
+
                     <!--
                             <img src="https://topepo.github.io/caret/basic/train_plot1-1.svg" alt="">
                             Gráfico métrica por tempo
@@ -283,7 +309,7 @@
     </div>
 </template>
 <script>
-import Plotly from '../../../../components/visualization/Plotly.vue';
+import Plotly from '@/components/visualization/Plotly.vue';
 
 
 export default {
@@ -404,7 +430,7 @@ export default {
                 });
             }
             series.push({
-                x: text.map((v, i) => 'Modelo ' + (i+1)), y: y, mode: 'markers', type: 'bar', orientation: 'v',
+                x: text.map((v, i) => 'Modelo ' + (i + 1)), y: y, mode: 'markers', type: 'bar', orientation: 'v',
                 text, marker: { size: 8, color: colors },
 
             })
@@ -461,7 +487,9 @@ export default {
         handleClick(job) {
             this.selectedJob = job;
         },
-
+        isObject(o) {
+            return o === Object(o);
+        },
         getClassesForDecor(value) {
             let result = [];
             switch (value) {

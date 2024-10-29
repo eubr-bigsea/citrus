@@ -238,7 +238,7 @@ export default {
                         operation_id: msg.operation_id,
                         title: msg.title,
                         type: msg.type,
-                        content: msg.message
+                        content: msg.type === 'VISUALIZATION' ? JSON.parse(msg.message) : msg.message
                     })
                     this.jobs[0].groupedResults = this.jobs[0].results.reduce((rv, x) => {
                         const key = `${x.task_id}:${x.title}`;
