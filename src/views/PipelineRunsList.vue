@@ -107,17 +107,16 @@
                                                     <option v-for="(graphicOption,key) in graphicOptions" :value="key">{{ graphicOption.layout.title }}
                                                     </option>
                                                 </select>
-                                                <!-- DESCOMENTAR QUANDO STAND OFERECER timeInterval DA SERIE TEMPORAL -->
-                                                <!-- <div class="mt-3" v-if="currentGraphic=='steps-time-series'"> 
+                                                <div class="mt-3" v-if="currentGraphic=='steps-time-series' || currentGraphic=='steps-time-series-by-status'"> 
                                                     <div class="border-bottom mb-2"></div>
                                                     <label>Intervalo dos dados:</label>
-                                                    <select v-model="graphicOptions['steps-time-series'].request.filters.timeInterval" @change="updateGraph" class="form-control form-control-sm">
-                                                        <option selected value="hour">Hora a hora</option>
+                                                    <select v-model="graphicOptions[currentGraphic].request.filters.timeInterval" @change="updateGraph" class="form-control form-control-sm">
+                                                        <option selected value="hourly">Hora a hora</option>
                                                         <option value="daily">Diário</option>
                                                         <option value="weekly">Semanal</option>
                                                         <option value="monthly">Mensal</option>
                                                     </select>
-                                                </div> -->
+                                                </div>
                                             </div>
                                             <div class="col-md-10">
                                                 <div class="flex-grow-1 d-flex justify-content-center align-items-center w-100 h-100">
@@ -220,7 +219,7 @@ export default {
                         const values = data.map(item => item[1]);
                         const colors = labels.map(status => this.statusesColors[status]);
                         labels = labels.map(status => this.$tc(`status.${status}`).toUpperCase());
-                        return [{
+                        const update = [{
                                 type: "pie",
                                 labels:labels,
                                 values:values,
@@ -229,7 +228,8 @@ export default {
                                 },
                                 textinfo: "label+percent",
                                 insidetextorientation: "radial"
-                            }]
+                            }];
+                        return update;
                     }
                 },
                 'steps-time-series': {
@@ -237,7 +237,7 @@ export default {
                     request: {
                         type: "line",
                         filters: {
-                            timeInterval: "hour"
+                            timeInterval: "hourly"
                         }
                     },
                     layout: {
@@ -246,13 +246,13 @@ export default {
                     receiveData: (data) => {
                         return [{...data,type:"bar"}]
                     }
-                },/* DESCOMENTAR QUANDO STAND OFERECER TIME SERIES POR STATUS
+                },
                 'steps-time-series-by-status': {
                     type: "bar",
                     request: {
                         type: "histogram",
                         filters: {
-                            timeInterval: "hour"
+                            timeInterval: "hourly"
                         }
                     },
                     layout: {
@@ -263,26 +263,16 @@ export default {
                     },
                     data: [],
                     receiveData: (data) => {
-                        let startDate = new Date("2024-09-01");
-                        let x = [];
 
-                        for (let i = 0; i < 10; i++) {
-                            let currentDate = new Date(startDate);
-                            currentDate.setDate(startDate.getDate() + i);
-                            let formattedDate = currentDate.toISOString().split('T')[0];
-                            x.push(formattedDate);
-                        }
-
-                        let update = [];
+                        let update = {};
                         let i = 0
 
                         this.statuses.forEach(status => {
-                            let y = x.map(() => Math.floor(Math.random() * 6));
                             i = i+1;
                             let trace = {
-                                x: x,
-                                y: y,
-                                name: status,
+                                x: data.x,
+                                y: [],
+                                name: this.$tc(`status.${status}`).toUpperCase(),
                                 marker: {
                                     color: this.statusesColors[status],
                                     line: {
@@ -296,11 +286,18 @@ export default {
                                 offsetgroup: i
                             };
                             
-                            update.push(trace);
+                            update[status] = trace;
                         });
-                        return update;
+
+
+                        data.y.forEach(step => {
+                            this.statuses.forEach(status => {
+                                update[status].y.push(step[status])
+                            });
+                        })
+                        return Object.values(update);
                     }
-                }*/
+                }
             },
             currentGraphic: "",
             newGraphicLoaded: false,
