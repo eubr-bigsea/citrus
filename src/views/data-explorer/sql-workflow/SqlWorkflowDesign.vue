@@ -3,22 +3,23 @@
         <div class="d-flex justify-content-between align-items-center pb-2 mb-2 border-bottom">
             <h1>{{ $t('titles.sqlWorkflow') }}</h1>
             <div class="mt-2">
-                <router-link v-if="workflowObj.pipeline" :to="{name: 'pipelineEdit', params: {id: workflowObj.pipeline.id}}"
+                <router-link v-if="workflowObj.pipeline"
+                    :to="{ name: 'pipelineEdit', params: { id: workflowObj.pipeline.id } }"
                     class="btn btn-outline-secondary btn-sm mr-1" :title="workflowObj.pipeline.name" tag="button">
                     <font-awesome-icon icon="fa fa-circle-nodes" />
-                    Ir para pipeline #{{workflowObj.pipeline.id}}
+                    Ir para pipeline #{{ workflowObj.pipeline.id }}
                 </router-link>
                 <b-button variant="outline-secondary" size="sm" title="Usar biblioteca"
                     @click="handleShowModalCodeLibrary" class="mr-1">
                     <font-awesome-icon icon="fa fa-file-code" />
-                   Bibliotecas de código <span v-if="workflowObj.forms.code_libraries?.value.length >=0"> ({{
+                    Bibliotecas de código <span v-if="workflowObj.forms.code_libraries?.value.length >= 0"> ({{
                         workflowObj.forms.code_libraries.value.length }})</span>
                 </b-button>
 
                 <b-button variant="outline-dark" size="sm" :title="$t('actions.showVariables')"
                     @click.prevent="$refs.variablesModal.show()" class="mr-1">
                     <font-awesome-icon icon="fa fa-dollar-sign" /> Variáveis
-                    <span v-if="workflowObj.variables?.length >=0"> ({{
+                    <span v-if="workflowObj.variables?.length >= 0"> ({{
                         workflowObj.variables?.length }})</span>
                 </b-button>
 
@@ -29,8 +30,7 @@
                 <b-button variant="success" size="sm" class="pu" @click="executeWorkflow" data-test="execute">
                     <font-awesome-icon icon="fa fa-play" /> {{ $t('actions.execute') }}
                 </b-button>
-                <b-button v-if="sample" variant="info" size="sm" class="ml-2 pu" @click="showSample"
-                    data-test="sample">
+                <b-button v-if="sample" variant="info" size="sm" class="ml-2 pu" @click="showSample" data-test="sample">
                     <font-awesome-icon icon="fa fa-eye" /> Ver dados
                 </b-button>
                 <b-button variant="danger" size="sm" class="ml-2 pu" @click="stop" data-test="restart"
@@ -173,7 +173,7 @@
                                 </div>
                                 <div class="col-2 mt-4">
                                     <b-form-checkbox v-model="cell.enabled" :value="true" :unchecked-value="false">
-                                        {{$t('common.enabled')}}
+                                        {{ $t('common.enabled') }}
                                     </b-form-checkbox>
                                 </div>
                                 <div class="col-2">
@@ -200,7 +200,7 @@
                                 </div>
                                 <div class="col-2 mt-4">
                                     <b-form-checkbox v-model="cell.enabled" :value="true" :unchecked-value="false">
-                                        {{$t('common.enabled')}}
+                                        {{ $t('common.enabled') }}
                                     </b-form-checkbox>
                                 </div>
                                 <div class="col-2">
@@ -212,11 +212,10 @@
                             <div class="row">
                                 <div class="col-12">
                                     <div class="editor">
-                                        <template  v-if="cell.operation.slug === 'execute-sql'">
-                                            <sql-editor
-                                                :query="cell.forms.query.value" @update="(v) => cell.forms.query.value = v"
-                                                ref="codeEditor" :tables="dataSources" :functions="functions"
-                                                :data-task="cell.id"
+                                        <template v-if="cell.operation.slug === 'execute-sql'">
+                                            <sql-editor :query="cell.forms.query.value"
+                                                @update="(v) => cell.forms.query.value = v" ref="codeEditor"
+                                                :tables="dataSources" :functions="functions" :data-task="cell.id"
                                                 :format="{ language: 'spark', tabWidth: 2, keywordCase: 'upper', linesBetweenQueries: 2 }" />
                                         </template>
                                         <python-editor v-else :query="cell.forms.code.value"
@@ -229,9 +228,10 @@
                             <div v-if="cell?.forms?.save?.value === 1" class="col-12 mt-1">
                                 <strong>Salvar habilitado. Pseudocódigo a ser executado:</strong>
                                 <div class="my-1">
-                                    <code class="text-left" style="white-space: pre-wrap">{{ getSaveCommand(cell) }}</code>
+                                    <code class="text-left"
+                                        style="white-space: pre-wrap">{{ getSaveCommand(cell) }}</code>
                                 </div>
-                                Modo de sobrescrita: {{cell.forms.mode.value}}
+                                Modo de sobrescrita: {{ cell.forms.mode.value }}
                             </div>
                             <div class="row">
                                 <div class="col-12 cell-status-bar">
@@ -277,7 +277,7 @@
         <sql-sample v-show="sample" :sample="sample" ref="modalSample" />
         <modal-workflow-variables ref="variablesModal" :simple="true" :workflow="workflowObj"
             :items="workflowObj.variables" />
-        <sql-editor-use-code-library v-if="showUseCodeLibrary" ref="modalUseCodeLibrary" :task="workflowObj"/>
+        <sql-editor-use-code-library v-if="showUseCodeLibrary" ref="modalUseCodeLibrary" :task="workflowObj" />
 
     </main>
 </template>
@@ -304,7 +304,7 @@ import { getCurrentInstance } from 'vue';
 import useDataSource from '@/composables/useDataSource.js';
 import useNotifier from '@/composables/useNotifier.js';
 
-import { SqlBuilderWorkflow, EXECUTE_SQL } from '../entities.js';
+import { SqlBuilderWorkflow, EXECUTE_SQL, DATA_READER } from '../entities.js';
 
 const vm = getCurrentInstance();
 const router = vm.proxy.$router;
@@ -535,7 +535,7 @@ const loadClusters = async () => {
     }
 };
 
-const executeWorkflow = async (taskId, only) => {
+const executeWorkflow = async (taskId, cached) => {
 
     if (!workflowObj.value.preferred_cluster_id) {
         error('Por favor, selecione um cluster para execução.');
@@ -555,6 +555,7 @@ const executeWorkflow = async (taskId, only) => {
 
     cloned.platform_id = META_PLATFORM_ID;
 
+
     cloned.tasks.forEach((task) => {
         task.operation = { id: task.operation.id };
         delete task.version;
@@ -566,25 +567,22 @@ const executeWorkflow = async (taskId, only) => {
     cloned.cells = cloned.cells.sort(c => c.display_order);
     cloned.tasks = [...cloned.dataSources, ...cloned.cells];
 
-    if (taskId) {
-        if (only) {
-            cloned.tasks = cloned.tasks.filter(t => t.id === taskId || t.operation.id != EXECUTE_SQL);
-        } else {
-            let found = false;
-            cloned.tasks = cloned.tasks.filter(task => {
-                if (task.operation.id !== EXECUTE_SQL) {
-                    return true;
-                }
-                if (found) {
-                    return false;
-                }
-                if (task.id === taskId) {
-                    found = true;
-                    return true;
-                }
+    const partial = !!taskId;
+    if (partial) {
+        let found = false;
+        cloned.tasks = cloned.tasks.filter(task => {
+            if (task.operation.id === DATA_READER) {
                 return true;
-            });
-        }
+            }
+            if (found) {
+                return false;
+            }
+            if (task.id === taskId) {
+                found = true;
+                return true;
+            }
+            return true;
+        });
     }
     delete cloned.dataSources;
     delete cloned.cells;
@@ -596,12 +594,11 @@ const executeWorkflow = async (taskId, only) => {
         persist: false, // do not save the job in db.
         app_configs: {
             verbosity: 0, sample_size: PAGE_SIZE, sample_page: 1,
-            //target_platform: 'scikit-learn',
-            //variant: 'polars',
-            sample_style: 'DATA_EXPLORER'
+            sample_style: 'DATA_EXPLORER',
+            partial,
+            cached,
         },
     };
-
     try {
         const response = await axios.post(`${standUrl}/jobs`, body);
         job.value = response.data.data;
@@ -783,14 +780,14 @@ const getCellClass = (cell) => {
     }
 };
 const indentString = (str, count, indent = " ") =>
-  str.replace(/^/gm, indent.repeat(count));
+    str.replace(/^/gm, indent.repeat(count));
 const getSaveCommand = (cell) => {
     const result = [];
-    const insert = `INSERT ${cell.forms.mode.value === 'overwrite' ?'OVERWRITE':'INTO'} "${cell.forms.new_name.value}"`;
+    const insert = `INSERT ${cell.forms.mode.value === 'overwrite' ? 'OVERWRITE' : 'INTO'} "${cell.forms.new_name.value}"`;
     const select = `${indentString(cell.forms?.query?.value?.trim(), 4)}`;
     if (cell.forms.mode.value === 'error' || cell.forms.mode.value === 'ignore') {
         result.push(`IF EXISTS TABLE "${cell.forms.new_name.value}"`);
-        if (cell.forms.mode.value === 'error'){
+        if (cell.forms.mode.value === 'error') {
             result.push('    ERROR');
         } else {
             result.push('    -- IGNORE');

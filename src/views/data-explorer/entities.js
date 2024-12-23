@@ -8,6 +8,7 @@ const META_PLATFORM_ID = 1000;
 const MODEL_BUILDER_CATEGORY = 2113;
 const EXECUTE_PYTHON = 82;
 const EXECUTE_SQL = 93;
+const DATA_READER = 2100;
 class Workflow {
     constructor({ id = null, platform = null, name = null, type = null,
         preferred_cluster_id = null, tasks = [], flows = [], version = null,
@@ -109,7 +110,7 @@ class Workflow {
     static buildDataExplorer(name, ds, i18n) {
         const dataReader = new Task({
             name: i18n.$tc('dataExplorer.readData'),
-            operation: new Operation({ id: 2100 }),
+            operation: new Operation({ id: DATA_READER }),
             display_order: 0,
         });
         dataReader.setProperty('data_source', ds);
@@ -129,7 +130,7 @@ class Workflow {
     static buildSqlBuilder(name, ds, i18n) {
         const dataReader = new Task({
             name: ds.labelValue.toLowerCase().replace(/[^A-Za-z0-9_]/g, "_"),
-            operation: new Operation({ id: 2100 }),
+            operation: new Operation({ id: DATA_READER }),
             display_order: 0,
         });
         dataReader.setProperty('data_source', ds);
@@ -147,7 +148,7 @@ class Workflow {
     static buildModelBuilder(name, ds, labelAttribute, method, taskType, i18n) {
         const dataReader = new Task({
             name: i18n.$tc('dataExplorer.readData'),
-            operation: new Operation({ id: 2100 }),
+            operation: new Operation({ id: DATA_READER }),
             display_order: 0,
         });
         dataReader.setProperty('data_source', ds);
@@ -166,7 +167,7 @@ class Workflow {
     static buildVisualizationBuilder(name, ds, type, method, i18n) {
         const dataReader = new Task({
             name: i18n.$tc('dataExplorer.readData'),
-            operation: new Operation({ id: 2100 }),
+            operation: new Operation({ id: DATA_READER }),
             display_order: 0,
         });
         dataReader.setProperty('data_source', ds);
@@ -401,7 +402,7 @@ class SqlBuilderWorkflow extends Workflow {
         const task = new Task({
             id: Operation.generateTaskId(),
             name: labelValue.replaceAll(/\W/gi, '_').substring(0, 10),
-            operation: new Operation({ id: 2100, slug: 'read-data' }),
+            operation: new Operation({ id: DATA_READER, slug: 'read-data' }),
             display_order: this.dataSources.length,
             forms,
             environment: 'DESIGN', // must be set!
@@ -801,5 +802,5 @@ export {
     Visualization,
     VisualizationBuilderWorkflow,
     YDimension, XDimension, Axis,
-    EXECUTE_SQL
+    EXECUTE_SQL, DATA_READER
 };

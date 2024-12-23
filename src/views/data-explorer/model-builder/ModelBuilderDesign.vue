@@ -238,6 +238,7 @@ export default {
                 socket.on('connect', () => { socket.emit('join', { cached: false, room: self.job.id }); });
 
                 socket.on('task result', (msg, callback) => { // eslint-disable-line no-unused-vars
+                    console.debug(msg)
                     //const task = self.workflowObj.getTaskById(msg.id);
                     this.jobs[0].results.push({
                         task_id: msg.id,

@@ -132,10 +132,7 @@
                                     Resultado da métrica
                                 </th>
                                 <th class="col-2">
-                                    Mais informações
-                                </th>
-                                <th class="col-6">
-                                    Saída
+                                    Mais informações/Saída
                                 </th>
                                 <th class="col-1">
                                     Duração (s)
@@ -143,19 +140,19 @@
                             </thead>
                             <tbody>
                                 <tr v-for="(result, counter) in results[1]" :key="counter">
-                                    <td :data-index="result.content.index">
+                                    <td :data-index="result.content.index" class="text-center">
                                         {{ counter + 1 }}
+                                        <div class="text-warning"><font-awesome-icon v-if="result.winner" icon="fa fa-trophy best" size="3x"/></div>
                                     </td>
                                     <td>
-                                        <font-awesome-icon v-if="result.winner" icon="fa fa-trophy best" />
                                         <span v-for="(value, param) in result.content.params" :key="param">
                                             {{ param }} = {{ value }}<br>
                                         </span>
                                     </td>
-                                    <td>
+                                    <td class="pt-4">
                                         <span v-if="result.content.metric">
                                             {{ result.content.metric.name }} =
-                                            {{ parseFloat(result.content.metric.value).toFixed(4) }}
+                                            <span :class="{'bg-warning text-dark': result.winner}" class="rounded bg-info p-1 text-white">{{ parseFloat(result.content.metric.value).toFixed(4) }}</span>
                                         </span>
                                     </td>
                                     <td>
@@ -169,7 +166,21 @@
                                             <div v-for="fi, inx in result.content.feature_importance">
                                                 <strong>{{ inx }}</strong>
                                                 <template v-if="isObject(fi)">
-                                                    <table class="table table-sm table-smallest m-0">
+                                                    <template v-if="Array.isArray(fi)">
+                                                        <table>
+                                                            <tr v-for="(elem, k) in [fi[0]]" :key="k">
+                                                                <template v-for="(value, key) in elem">
+                                                                    <td :key="key">{{ key }}</td>
+                                                                </template>
+                                                            </tr>
+                                                            <tr v-for="(elem, k) in fi" :key="k">
+                                                                <template v-for="(value, key) in elem">
+                                                                    <td :key="`${elem.class}${key}`">{{ (!parseFloat(value)) ? value : parseFloat(value).toFixed(2) }}</td>
+                                                                </template>
+                                                            </tr>
+                                                        </table>
+                                                    </template>
+                                                    <table v-else class="table table-sm table-smallest m-0">
                                                         <tr>
                                                             <template v-for="(value, key) in fi">
                                                                 <th :key="key">{{ key }}</th>
@@ -190,8 +201,6 @@
                                             </b-popover>
                                         -->
                                         </template>
-                                    </td>
-                                    <td>
                                         {{ result.content.error || result.content.message }}
                                     </td>
                                     <td>{{ parseFloat(result.content.t).toFixed(4) }}</td>
