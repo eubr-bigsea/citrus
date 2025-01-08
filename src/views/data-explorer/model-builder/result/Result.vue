@@ -51,30 +51,45 @@
                                 formatJsonDate }}</small>
                         </span>
                     </template>
-                    <div class="row pt-1 pb-4">
-                        <div v-if="!finalReport" class="col-12 loading">
+                    <div v-if="!finalReport" class="row pt-1 pb-4">
+                        <div class="col-12 loading">
                             <font-awesome-icon icon="spinner" pulse class="icon" />
                             Aguardando resultados ...
                         </div>
-                        <div v-if="finalReport" class="col-4 text-center">
-                            <b-card border-variant="primary">
-                                <strong>Resultado: </strong>
-                                {{ finalReport.content.task_name }}<br>
-                                {{ finalReport.content.metric_name }} =
-                                {{ finalReport.content.metric_value.toFixed(4) }}
+                    </div>
+                    <div v-else class="d-flex align-items-stretch">
+                        <div class="text-center px-1 flex-grow-1 border border-primary rounded px-2 py-1 mr-1 small">
+                            <strong><font-awesome-icon icon="fa fa-trophy" /> Melhor modelo: </strong>
+                            {{ finalReport.content.task_name }}<br>
+                            {{ finalReport.content.metric_name }} =
+                            {{ finalReport.content.metric_value.toFixed(4) }}
 
-                                <small v-if="finalReport.content.larger_better">(maior é melhor)</small>
-                                <small v-else>(menor é melhor)</small>
-                            </b-card>
+                            <small v-if="finalReport.content.larger_better">(maior é melhor)</small>
+                            <small v-else>(menor é melhor)</small>
                         </div>
-                        <div v-if="finalReport" class="col-8 text-center">
-                            <b-card border-variant="primary">
-                                <strong>Parâmetros</strong><br>
-                                <small v-for="(v, k) in finalReport.content.best" :key="k">
-                                    <span>{{ k }} = {{ v }}</span><br>
-                                </small>
-                            </b-card>
+                        <div class="text-center px-1 flex-grow-1 border border-primary rounded px-2 py-1 mr-1 small">
+                            <strong>Parâmetros</strong><br>
+                            <small v-for="(v, k) in finalReport.content.best" :key="k">
+                                <span>{{ k }} = {{ v }}</span><br>
+                            </small>
                         </div>
+                        <div class="px-1 flex-grow-1 border border-primary rounded px-2 py-1 small text-center">
+                            <strong>Registros de entrada, treino e teste:</strong>
+                            {{ finalReport.content.data_size }}
+                            (100%) |
+                            {{ finalReport.content.train_size }}
+                            ({{ Number(100.0 * finalReport.content.train_size /
+                                (finalReport.content.train_size + finalReport.content.test_size)).toLocaleString()
+                            }}%) |
+                            {{ finalReport.content.test_size }}
+                            ({{ Number(100.0 * finalReport.content.test_size /
+                                (finalReport.content.train_size + finalReport.content.test_size)).toLocaleString()
+                            }}%)
+                            <p class="small text-muted">({{finalReport.content.data_size - finalReport.content.train_size - finalReport.content.test_size}}
+                                    registro(s) descartado(s) pelo preprocessamento)</p>
+                        </div>
+                    </div>
+                    <div class="row mb-4">
                         <!-- Chart -->
                         <div v-if="finalReport" class="col-12 mt-2">
                             <b-card border-variant="primary">
@@ -142,7 +157,8 @@
                                 <tr v-for="(result, counter) in results[1]" :key="counter">
                                     <td :data-index="result.content.index" class="text-center">
                                         {{ counter + 1 }}
-                                        <div class="text-warning"><font-awesome-icon v-if="result.winner" icon="fa fa-trophy best" size="3x"/></div>
+                                        <div class="text-warning"><font-awesome-icon v-if="result.winner"
+                                                icon="fa fa-trophy best" size="3x" /></div>
                                     </td>
                                     <td>
                                         <span v-for="(value, param) in result.content.params" :key="param">
@@ -152,7 +168,9 @@
                                     <td class="pt-4">
                                         <span v-if="result.content.metric">
                                             {{ result.content.metric.name }} =
-                                            <span :class="{'bg-warning text-dark': result.winner}" class="rounded bg-info p-1 text-white">{{ parseFloat(result.content.metric.value).toFixed(4) }}</span>
+                                            <span :class="{ 'bg-warning text-dark': result.winner }"
+                                                class="rounded bg-info p-1 text-white">{{
+                                                    parseFloat(result.content.metric.value).toFixed(4) }}</span>
                                         </span>
                                     </td>
                                     <td>
@@ -175,7 +193,9 @@
                                                             </tr>
                                                             <tr v-for="(elem, k) in fi" :key="k">
                                                                 <template v-for="(value, key) in elem">
-                                                                    <td :key="`${elem.class}${key}`">{{ (!parseFloat(value)) ? value : parseFloat(value).toFixed(2) }}</td>
+                                                                    <td :key="`${elem.class}${key}`">{{
+                                                                        (!parseFloat(value)) ?
+                                                                            value : parseFloat(value).toFixed(2) }}</td>
                                                                 </template>
                                                             </tr>
                                                         </table>
@@ -188,7 +208,8 @@
                                                         </tr>
                                                         <tr>
                                                             <template v-for="(value, key) in fi">
-                                                            <td :key="`row-${key}`">{{ parseFloat(value).toFixed(2) }}</td>
+                                                                <td :key="`row-${key}`">{{ parseFloat(value).toFixed(2)
+                                                                    }}</td>
                                                             </template>
                                                         </tr>
                                                     </table>
