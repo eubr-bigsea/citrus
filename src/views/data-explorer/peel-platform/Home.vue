@@ -13,15 +13,75 @@
         <div class="row">
             <div class="col-12">
                 <b-card no-body>
-                    <b-tabs card>
-                        <b-tab title="Explicação">
-                            <div class="p-3">
-                                <b-form @submit.prevent="onSubmit">
-                                    <b-form-group id="input-group-1" label="Nome da Explicação:" label-for="input-name">
-                                        <b-form-input id="input-name" v-model="explanation.name"
-                                            placeholder="Preencha o nome" required></b-form-input>
-                                    </b-form-group>
+                    <div class="p-3">
+                        <b-form @submit.prevent="onSubmit">
+                            <b-form-group id="input-group-1" label="Nome da Explicação:" label-for="input-name">
+                                <b-form-input id="input-name" v-model="explanation.name" placeholder="Preencha o nome"
+                                    required></b-form-input>
+                            </b-form-group>
 
+                            <b-form-group id="input-group-2" label="Modelo:" label-for="input-model">
+
+                                <vue-select v-model="explanation.model.model" :filterable="false" :options="modelList"
+                                    label="name" class="w-100" @search="loadModelList">
+                                    <template #no-options="{}">
+                                        <small>Digite parte do nome para pesquisar...</small>
+                                    </template>
+                                    <template #option="option">
+                                        <b-container>
+                                            <b-row class="align-items-center">
+                                                {{ pad(option.id, 4, '&nbsp;') }} - {{ option.name }}
+                                            </b-row>
+                                        </b-container>
+                                    </template>
+                                    <template #default="option">
+                                        {{ pad(option.id, 4, '&nbsp;') }} - {{ option.name }}
+                                    </template>
+                                    <template #selected-option="option">
+                                        <div class="selected d-center">
+                                            {{ pad(option.id, 4, '&nbsp;') }} - {{ option.name }}
+                                        </div>
+                                    </template>
+                                </vue-select>
+
+                                <small class="text-muted">
+                                    Não encontrou o modelo?
+                                    <b-button variant="link" @click="showModal('modelModal')">Faça o upload
+                                        aqui</b-button>
+                                </small>
+                            </b-form-group>
+
+                            <b-form-group label="Fonte de Dados:" label-for="input-datasource">
+                                <vue-select v-model="explanation.datasource.datasource" :filterable="false"
+                                    :options="datasourceList" label="name" class="w-100" @search="loadDatasourceList">
+                                    <template #no-options="{}">
+                                        <small>Digite parte do nome para pesquisar...</small>
+                                    </template>
+                                    <template #option="option">
+                                        <b-container>
+                                            <b-row class="align-items-center">
+                                                {{ pad(option.id, 4, '&nbsp;') }} - {{ option.name }}
+                                            </b-row>
+                                        </b-container>
+                                    </template>
+                                    <template #default="option">
+                                        {{ pad(option.id, 4, '&nbsp;') }} - {{ option.name }}
+                                    </template>
+                                    <template #selected-option="option">
+                                        <div class="selected d-center">
+                                            {{ pad(option.id, 4, '&nbsp;') }} - {{ option.name }}
+                                        </div>
+                                    </template>
+                                </vue-select>
+
+                                <small class="text-muted">
+                                    Não encontrou a fonte de dados?
+                                    <b-button variant="link" @click="showModal('datasourceModal')">Faça o upload
+                                        aqui</b-button>
+                                </small>
+                            </b-form-group>
+
+                            <!--
                                     <b-form-group id="input-group-3" label="Escopo de Análise:"
                                         label-for="checkboxes-scope">
                                         <b-form-checkbox-group v-model="explanation.scope" id="checkbox-scope" required>
@@ -48,168 +108,85 @@
                                             </b-form-checkbox-group>
                                         </b-form-group>
                                     </div>
-                                </b-form>
-                            </div>
-                        </b-tab>
-                        <b-tab title="Modelo">
-                            <div class="p-3">
-                                <b-form @submit.prevent="onSubmit">
-                                    <b-form-group id="input-group-2" label="Modelo:" label-for="input-model">
+                                    -->
+                        </b-form>
+                    </div>
 
-                                        <vue-select v-model="explanation.model.model" :filterable="false"
-                                            :options="modelList" label="name" class="w-100" @search="loadModelList">
-                                            <template #no-options="{}">
-                                                <small>Digite parte do nome para pesquisar...</small>
-                                            </template>
-                                            <template #option="option">
-                                                <b-container>
-                                                    <b-row class="align-items-center">
-                                                        {{ pad(option.id, 4, '&nbsp;') }} - {{ option.name }}
-                                                    </b-row>
-                                                </b-container>
-                                            </template>
-                                            <template #default="option">
-                                                {{ pad(option.id, 4, '&nbsp;') }} - {{ option.name }}
-                                            </template>
-                                            <template #selected-option="option">
-                                                <div class="selected d-center">
-                                                    {{ pad(option.id, 4, '&nbsp;') }} - {{ option.name }}
-                                                </div>
-                                            </template>
-                                        </vue-select>
+                    <b-modal id="upload-modal" ref="modelModal" title="Fazer Upload do Modelo" @ok="submitModel">
+                        <b-form>
+                            <b-form-group label="Arquivo:" label-for="input-upload">
+                                <b-form-file id="input-upload" v-model="explanation.model.file"
+                                    @change="handleFileUpload($event, 'model')" accept=".pkl"
+                                    placeholder="Selecione um arquivo"></b-form-file>
+                            </b-form-group>
 
-                                        <small class="text-muted">
-                                            Não encontrou o modelo?
-                                            <b-button variant="link" @click="showModal('modelModal')">Faça o upload
-                                                aqui</b-button>
-                                        </small>
-                                    </b-form-group>
-                                </b-form>
-                            </div>
+                            <b-form-group label="Nome:" label-for="input-name">
+                                <b-form-input id="input-name" v-model="explanation.model.name" required />
+                            </b-form-group>
 
-                            <b-modal id="upload-modal" ref="modelModal" title="Fazer Upload do Modelo"
-                                @ok="submitModel">
-                                <b-form>
-                                    <b-form-group label="Arquivo:" label-for="input-upload">
-                                        <b-form-file id="input-upload" v-model="explanation.model.file"
-                                            @change="handleFileUpload($event, 'model')" accept=".pkl"
-                                            placeholder="Selecione um arquivo"></b-form-file>
-                                    </b-form-group>
+                            <b-form-group label="Descrição:" label-for="input-description">
+                                <b-form-input id="input-description" v-model="explanation.model.description" required />
+                            </b-form-group>
 
-                                    <b-form-group label="Nome:" label-for="input-name">
-                                        <b-form-input id="input-name" v-model="explanation.model.name" required />
-                                    </b-form-group>
+                            <b-form-group label="Tipo:" label-for="input-type">
+                                <b-form-input id="input-type" v-model="explanation.model.model_type" required />
+                            </b-form-group>
 
-                                    <b-form-group label="Descrição:" label-for="input-description">
-                                        <b-form-input id="input-description" v-model="explanation.model.description"
-                                            required />
-                                    </b-form-group>
+                            <b-form-group label="Classe:" label-for="input-class">
+                                <b-form-input id="input-class" v-model="explanation.model.class_name" required />
+                            </b-form-group>
 
-                                    <b-form-group label="Tipo:" label-for="input-type">
-                                        <b-form-input id="input-type" v-model="explanation.model.model_type" required />
-                                    </b-form-group>
+                            <b-form-group label="Versão:" label-for="input-version">
+                                <b-form-input id="input-version" v-model="explanation.model.version" required />
+                            </b-form-group>
 
-                                    <b-form-group label="Classe:" label-for="input-class">
-                                        <b-form-input id="input-class" v-model="explanation.model.class_name"
-                                            required />
-                                    </b-form-group>
+                            <b-form-group label="Digest:" label-for="input-digest">
+                                <b-form-input id="input-digest" v-model="explanation.model.digest" required />
+                            </b-form-group>
+                        </b-form>
+                        <template #modal-footer>
+                            <b-button variant="secondary" @click="handleCloseModelModal">Cancelar</b-button>
+                            <b-button variant="primary" @click="submitModel">Enviar</b-button>
+                        </template>
+                    </b-modal>
 
-                                    <b-form-group label="Versão:" label-for="input-version">
-                                        <b-form-input id="input-version" v-model="explanation.model.version" required />
-                                    </b-form-group>
+                    <b-modal id="upload-datasource-modal" ref="datasourceModal" title="Fazer Upload da Fonte de Dados"
+                        @ok="submitDatasource">
+                        <b-form>
+                            <b-form-group label="Arquivo:" label-for="input-upload-file">
+                                <b-form-file id="input-upload-file" v-model="explanation.datasource.file"
+                                    @change="handleFileUpload($event, 'datasource')" accept=".csv"
+                                    placeholder="Selecione um arquivo"></b-form-file>
+                            </b-form-group>
 
-                                    <b-form-group label="Digest:" label-for="input-digest">
-                                        <b-form-input id="input-digest" v-model="explanation.model.digest" required />
-                                    </b-form-group>
-                                </b-form>
-                                <template #modal-footer>
-                                    <b-button variant="secondary" @click="handleCloseModelModal">Cancelar</b-button>
-                                    <b-button variant="primary" @click="submitModel">Enviar</b-button>
-                                </template>
-                            </b-modal>
-                        </b-tab>
+                            <b-form-group label="Nome:" label-for="input-name">
+                                <b-form-input id="input-name" v-model="explanation.datasource.name" required />
+                            </b-form-group>
 
+                            <b-form-group label="Descrição:" label-for="input-description">
+                                <b-form-input id="input-description" v-model="explanation.datasource.description"
+                                    required />
+                            </b-form-group>
 
+                            <b-form-group label="Delimitador de Atributo:" label-for="input-attributed-delimiter">
+                                <b-form-input id="input-attributed-delimiter"
+                                    v-model="explanation.datasource.attributed_delimiter" required></b-form-input>
+                            </b-form-group>
 
-                        <b-tab title="Fonte de Dados">
-                            <div class="p-3">
-                                <b-form @submit.prevent="onSubmit">
-                                    <b-form-group label="Fonte de Dados:" label-for="input-datasource">
-                                        <vue-select v-model="explanation.datasource.datasource" :filterable="false"
-                                            :options="datasourceList" label="name" class="w-100" @search="loadDatasourceList">
-                                            <template #no-options="{}">
-                                                <small>Digite parte do nome para pesquisar...</small>
-                                            </template>
-                                            <template #option="option">
-                                                <b-container>
-                                                    <b-row class="align-items-center">
-                                                        {{ pad(option.id, 4, '&nbsp;') }} - {{ option.name }}
-                                                    </b-row>
-                                                </b-container>
-                                            </template>
-                                            <template #default="option">
-                                                {{ pad(option.id, 4, '&nbsp;') }} - {{ option.name }}
-                                            </template>
-                                            <template #selected-option="option">
-                                                <div class="selected d-center">
-                                                    {{ pad(option.id, 4, '&nbsp;') }} - {{ option.name }}
-                                                </div>
-                                            </template>
-                                        </vue-select>
+                            <b-form-group label="Delimitador de Registro:" label-for="input-record-delimiter">
+                                <b-form-input id="input-record-delimiter"
+                                    v-model="explanation.datasource.record_delimiter" required></b-form-input>
+                            </b-form-group>
 
-                                        <small class="text-muted">
-                                            Não encontrou a fonte de dados?
-                                            <b-button variant="link" @click="showModal('datasourceModal')">Faça o upload
-                                                aqui</b-button>
-                                        </small>
-                                    </b-form-group>
-                                </b-form>
-                            </div>
-
-                            <b-modal id="upload-datasource-modal" ref="datasourceModal"
-                                title="Fazer Upload da Fonte de Dados" @ok="submitDatasource">
-                                <b-form>
-                                    <b-form-group label="Arquivo:" label-for="input-upload-file">
-                                        <b-form-file id="input-upload-file" v-model="explanation.datasource.file"
-                                            @change="handleFileUpload($event, 'datasource')" accept=".csv"
-                                            placeholder="Selecione um arquivo"></b-form-file>
-                                    </b-form-group>
-
-                                    <b-form-group label="Nome:" label-for="input-name">
-                                        <b-form-input id="input-name" v-model="explanation.datasource.name" required />
-                                    </b-form-group>
-
-                                    <b-form-group label="Descrição:" label-for="input-description">
-                                        <b-form-input id="input-description"
-                                            v-model="explanation.datasource.description" required />
-                                    </b-form-group>
-
-                                    <b-form-group label="Delimitador de Atributo:"
-                                        label-for="input-attributed-delimiter">
-                                        <b-form-input id="input-attributed-delimiter"
-                                            v-model="explanation.datasource.attributed_delimiter"
-                                            required></b-form-input>
-                                    </b-form-group>
-
-                                    <b-form-group label="Delimitador de Registro:" label-for="input-record-delimiter">
-                                        <b-form-input id="input-record-delimiter"
-                                            v-model="explanation.datasource.record_delimiter" required></b-form-input>
-                                    </b-form-group>
-
-                                    <b-form-group label="Encoding:" label-for="input-encoding">
-                                        <b-form-input id="input-encoding" v-model="explanation.datasource.encoding"
-                                            required />
-                                    </b-form-group>
-                                </b-form>
-                                <template #modal-footer>
-                                    <b-button variant="secondary"
-                                        @click="handleCloseDataSourceModal">Cancelar</b-button>
-                                    <b-button variant="primary" @click="submitDatasource">Enviar</b-button>
-                                </template>
-                            </b-modal>
-                        </b-tab>
-
-                    </b-tabs>
+                            <b-form-group label="Encoding:" label-for="input-encoding">
+                                <b-form-input id="input-encoding" v-model="explanation.datasource.encoding" required />
+                            </b-form-group>
+                        </b-form>
+                        <template #modal-footer>
+                            <b-button variant="secondary" @click="handleCloseDataSourceModal">Cancelar</b-button>
+                            <b-button variant="primary" @click="submitDatasource">Enviar</b-button>
+                        </template>
+                    </b-modal>
                 </b-card>
                 <div class="mt-2 d-flex justify-content-end">
                     <b-link :to="{ name: 'index-explorer' }" class="btn btn-secondary btn-sm mr-1">
@@ -418,7 +395,7 @@ export default {
                     page: 0,
                     sort: 'name',
                 };
-                const response = await axios.get(url, { params });                
+                const response = await axios.get(url, { params });
                 this.modelList = response.data.data;
             } catch (error) {
                 console.error("Erro ao carregar os modelos:", error.response?.data || error.message);
