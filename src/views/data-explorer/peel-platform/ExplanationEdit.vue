@@ -22,339 +22,324 @@
 
             <div class="col-10">
                 <b-card no-body>
-                    <b-tabs card>
-                        <b-tab title="Configurações">
-                            <div v-if="currentOption === 'Marginal Local'">
-                                <b-card class="mb-1">
-                                    <b-card-body class="scrollable row">
-                                        <div v-for="(feature, index) in explanation.config.marginalLocal.features"
-                                            :key="index" class="bg-light col-3 mx-2 pd-2">
-                                            <b-form @submit.prevent="onSubmit">
-                                                <b-form-group label="Classe de Interesse:" label-for="input-model">
-                                                    <b-form-select id="input-model" v-model="feature.interestClass"
-                                                        :options="mockInfo" required />
-                                                </b-form-group>
-                                                <b-form-group label="Instância de Interesse:" label-for="input-model">
-                                                    <b-form-select id="input-model" v-model="feature.interestInstance"
-                                                        :options="mockInfo" required />
-                                                </b-form-group>
-                                                <b-form-group label="Conjunto Ruído:" label-for="input-model">
-                                                    <b-form-select id="input-model" v-model="feature.noiseSet"
-                                                        :options="mockInfo" required />
-                                                </b-form-group>
-                                                <b-form-group label="Margem de x:" label-for="input-name">
-                                                    <b-form-input id="input-name" v-model="feature.horizontalMargin"
-                                                        required></b-form-input>
-                                                </b-form-group>
-                                                <b-form-group label="Amostragem:" label-for="input-name">
-                                                    <b-form-input id="input-name" v-model="feature.sampling"
-                                                        required></b-form-input>
-                                                </b-form-group>
-                                                <b-form-group label="Algoritmo:" label-for="checkboxes-explainers">
-                                                    <b-form-checkbox-group v-model="feature.algorithm"
-                                                        id="checkbox-local-explainers" required>
-                                                        <b-form-checkbox value="partial-dependence-plot">Partial
-                                                            Dependence Plot</b-form-checkbox>
-                                                        <b-form-checkbox
-                                                            value="individual-conditional-expectation">Individual
-                                                            Conditional Expectation</b-form-checkbox>
-                                                        <b-form-checkbox value="accumulated-local-effects">Accumulated
-                                                            Local Effects</b-form-checkbox>
-                                                    </b-form-checkbox-group>
-                                                </b-form-group>
-                                            </b-form>
-                                            <div>
-                                                <button class="ml-1 btn btn-sm btn-danger" title="Excluir etapa"
-                                                    @click="deleteFeature('marginalLocal', index)"
-                                                    :disabled="explanation.config.marginalLocal.features.length == 1">
-                                                    <font-awesome-icon icon="trash" />
-                                                </button>
-                                                <button class="ml-1 btn btn-sm btn-primary" title="Adicionar etapa"
-                                                    @click="addFeature('marginalLocal')">
-                                                    <font-awesome-icon icon="plus" />
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </b-card-body>
-                                </b-card>
-                            </div>
+                    <div v-if="currentOption === 'Marginal Local'">
+                        <b-card class="mb-1">
+                            <b-card-body class="scrollable row">
+                                <div v-for="(feature, index) in explanation.config.marginalLocal.features" :key="index"
+                                    class="bg-light col-3 mx-2 pd-2">
+                                    <b-form @submit.prevent="onSubmit">
+                                        <b-form-group label="Classe de Interesse:" label-for="input-model">
+                                            <b-form-select id="input-model" v-model="feature.interestClass"
+                                                :options="mockInfo" required />
+                                        </b-form-group>
+                                        <b-form-group label="Instância de Interesse:" label-for="input-model">
+                                            <b-form-select id="input-model" v-model="feature.interestInstance"
+                                                :options="mockInfo" required />
+                                        </b-form-group>
+                                        <b-form-group label="Conjunto Ruído:" label-for="input-model">
+                                            <b-form-select id="input-model" v-model="feature.noiseSet"
+                                                :options="mockInfo" required />
+                                        </b-form-group>
+                                        <b-form-group label="Margem de x:" label-for="input-name">
+                                            <b-form-input id="input-name" v-model="feature.horizontalMargin"
+                                                required></b-form-input>
+                                        </b-form-group>
+                                        <b-form-group label="Amostragem:" label-for="input-name">
+                                            <b-form-input id="input-name" v-model="feature.sampling"
+                                                required></b-form-input>
+                                        </b-form-group>
+                                        <b-form-group label="Algoritmo:" label-for="checkboxes-explainers">
+                                            <b-form-checkbox-group v-model="feature.algorithm"
+                                                id="checkbox-local-explainers" required>
+                                                <b-form-checkbox value="partial-dependence-plot">Partial
+                                                    Dependence Plot</b-form-checkbox>
+                                                <b-form-checkbox value="individual-conditional-expectation">Individual
+                                                    Conditional Expectation</b-form-checkbox>
+                                                <b-form-checkbox value="accumulated-local-effects">Accumulated
+                                                    Local Effects</b-form-checkbox>
+                                            </b-form-checkbox-group>
+                                        </b-form-group>
+                                    </b-form>
+                                    <div>
+                                        <button class="ml-1 btn btn-sm btn-danger" title="Excluir etapa"
+                                            @click="deleteFeature('marginalLocal', index)"
+                                            :disabled="explanation.config.marginalLocal.features.length == 1">
+                                            <font-awesome-icon icon="trash" />
+                                        </button>
+                                        <button class="ml-1 btn btn-sm btn-primary" title="Adicionar etapa"
+                                            @click="addFeature('marginalLocal')">
+                                            <font-awesome-icon icon="plus" />
+                                        </button>
+                                        <button class="ml-1 btn btn-sm btn-success" title="Adicionar campo GPX"
+                                            @click="() => { }">
+                                            <font-awesome-icon icon="play" />
+                                        </button>
+                                    </div>
+                                </div>
+                            </b-card-body>
+                        </b-card>
+                    </div>
 
-                            <div v-else-if="currentOption === 'SQL Local'">
-                                <b-card class="mb-1">
-                                    <b-card-body class="scrollable row">
-                                        <div v-for="(feature, index) in explanation.config.sklLocal.features"
-                                            :key="index" class="bg-light col-3 mx-2 pd-2">
-                                            <b-form @submit.prevent="onSubmit">
-                                                <b-form-group label="Classe de Interesse:" label-for="input-model">
-                                                    <b-form-select id="input-model" v-model="feature.interestClass"
-                                                        :options="mockInfo" required />
-                                                </b-form-group>
-                                                <b-form-group label="Instância de Interesse:" label-for="input-model">
-                                                    <b-form-select id="input-model" v-model="feature.interestInstance"
-                                                        :options="mockInfo" required />
-                                                </b-form-group>
-                                                <b-form-group label="Conjunto Ruído:" label-for="input-model">
-                                                    <b-form-select id="input-model" v-model="feature.noiseSet"
-                                                        :options="mockInfo" required />
-                                                </b-form-group>
-                                                <b-form-group label="Margem de x:" label-for="input-name">
-                                                    <b-form-input id="input-name" v-model="feature.horizontalMargin"
-                                                        required></b-form-input>
-                                                </b-form-group>
-                                                <b-form-group label="Amostragem:" label-for="input-name">
-                                                    <b-form-input id="input-name" v-model="feature.sampling"
-                                                        required></b-form-input>
-                                                </b-form-group>
-                                                <b-form-group label="Métrica:" label-for="input-model">
-                                                    <b-form-select id="input-model" v-model="feature.metrics"
-                                                        :options="mockInfo" required />
-                                                </b-form-group>
-                                                <b-form-group label="Tolerância:" label-for="input-name">
-                                                    <b-form-input id="input-name" v-model="feature.tolerance"
-                                                        required></b-form-input>
-                                                </b-form-group>
-                                            </b-form>
-                                            <div>
-                                                <button class="ml-1 btn btn-sm btn-danger" title="Excluir etapa"
-                                                    @click="deleteFeature('sklLocal', index)"
-                                                    :disabled="explanation.config.sklLocal.features.length == 1">
-                                                    <font-awesome-icon icon="trash" />
-                                                </button>
-                                                <button class="ml-1 btn btn-sm btn-primary" title="Adicionar etapa"
-                                                    @click="addFeature('sklLocal')">
-                                                    <font-awesome-icon icon="plus" />
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </b-card-body>
-                                </b-card>
-                            </div>
+                    <div v-else-if="currentOption === 'SQL Local'">
+                        <b-card class="mb-1">
+                            <b-card-body class="scrollable row">
+                                <div v-for="(feature, index) in explanation.config.sklLocal.features" :key="index"
+                                    class="bg-light col-3 mx-2 pd-2">
+                                    <b-form @submit.prevent="onSubmit">
+                                        <b-form-group label="Classe de Interesse:" label-for="input-model">
+                                            <b-form-select id="input-model" v-model="feature.interestClass"
+                                                :options="mockInfo" required />
+                                        </b-form-group>
+                                        <b-form-group label="Instância de Interesse:" label-for="input-model">
+                                            <b-form-select id="input-model" v-model="feature.interestInstance"
+                                                :options="mockInfo" required />
+                                        </b-form-group>
+                                        <b-form-group label="Conjunto Ruído:" label-for="input-model">
+                                            <b-form-select id="input-model" v-model="feature.noiseSet"
+                                                :options="mockInfo" required />
+                                        </b-form-group>
+                                        <b-form-group label="Margem de x:" label-for="input-name">
+                                            <b-form-input id="input-name" v-model="feature.horizontalMargin"
+                                                required></b-form-input>
+                                        </b-form-group>
+                                        <b-form-group label="Amostragem:" label-for="input-name">
+                                            <b-form-input id="input-name" v-model="feature.sampling"
+                                                required></b-form-input>
+                                        </b-form-group>
+                                        <b-form-group label="Métrica:" label-for="input-model">
+                                            <b-form-select id="input-model" v-model="feature.metrics"
+                                                :options="mockInfo" required />
+                                        </b-form-group>
+                                        <b-form-group label="Tolerância:" label-for="input-name">
+                                            <b-form-input id="input-name" v-model="feature.tolerance"
+                                                required></b-form-input>
+                                        </b-form-group>
+                                    </b-form>
+                                    <div>
+                                        <button class="ml-1 btn btn-sm btn-danger" title="Excluir etapa"
+                                            @click="deleteFeature('sklLocal', index)"
+                                            :disabled="explanation.config.sklLocal.features.length == 1">
+                                            <font-awesome-icon icon="trash" />
+                                        </button>
+                                        <button class="ml-1 btn btn-sm btn-primary" title="Adicionar etapa"
+                                            @click="addFeature('sklLocal')">
+                                            <font-awesome-icon icon="plus" />
+                                        </button>
+                                        <button class="ml-1 btn btn-sm btn-success" title="Adicionar campo GPX"
+                                            @click="() => { }">
+                                            <font-awesome-icon icon="play" />
+                                        </button>
+                                    </div>
+                                </div>
+                            </b-card-body>
+                        </b-card>
+                    </div>
 
-                            <div v-else-if="currentOption === 'Marginal Global'">
-                                <b-card class="mb-1">
-                                    <b-card-body class="scrollable row">
-                                        <div v-for="(feature, index) in explanation.config.marginalGlobal.features"
-                                            :key="index" class="bg-light col-3 mx-2 pd-2">
-                                            <b-form @submit.prevent="onSubmit">
-                                                <b-form-group label="Classe de Interesse:" label-for="input-model">
-                                                    <b-form-select id="input-model" v-model="feature.interestClass"
-                                                        :options="mockInfo" required />
-                                                </b-form-group>
-                                                <b-form-group label="Algoritmo:" label-for="checkboxes-explainers">
-                                                    <b-form-checkbox-group v-model="feature.algorithm"
-                                                        id="checkbox-local-explainers" required>
-                                                        <b-form-checkbox value="partial-dependence-plot">Partial
-                                                            Dependence Plot</b-form-checkbox>
-                                                        <b-form-checkbox
-                                                            value="individual-conditional-expectation">Individual
-                                                            Conditional Expectation</b-form-checkbox>
-                                                        <b-form-checkbox value="accumulated-local-effects">Accumulated
-                                                            Local Effects</b-form-checkbox>
-                                                    </b-form-checkbox-group>
-                                                </b-form-group>
-                                            </b-form>
-                                            <div>
-                                                <button class="ml-1 btn btn-sm btn-danger" title="Excluir etapa"
-                                                    @click="deleteFeature('marginalGlobal', index)"
-                                                    :disabled="explanation.config.marginalGlobal.features.length == 1">
-                                                    <font-awesome-icon icon="trash" />
-                                                </button>
-                                                <button class="ml-1 btn btn-sm btn-primary" title="Adicionar etapa"
-                                                    @click="addFeature('marginalGlobal')">
-                                                    <font-awesome-icon icon="plus" />
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </b-card-body>
-                                </b-card>
-                            </div>
+                    <div v-else-if="currentOption === 'Marginal Global'">
+                        <b-card class="mb-1">
+                            <b-card-body class="scrollable row">
+                                <div v-for="(feature, index) in explanation.config.marginalGlobal.features" :key="index"
+                                    class="bg-light col-3 mx-2 pd-2">
+                                    <b-form @submit.prevent="onSubmit">
+                                        <b-form-group label="Classe de Interesse:" label-for="input-model">
+                                            <b-form-select id="input-model" v-model="feature.interestClass"
+                                                :options="mockInfo" required />
+                                        </b-form-group>
+                                        <b-form-group label="Algoritmo:" label-for="checkboxes-explainers">
+                                            <b-form-checkbox-group v-model="feature.algorithm"
+                                                id="checkbox-local-explainers" required>
+                                                <b-form-checkbox value="partial-dependence-plot">Partial
+                                                    Dependence Plot</b-form-checkbox>
+                                                <b-form-checkbox value="individual-conditional-expectation">Individual
+                                                    Conditional Expectation</b-form-checkbox>
+                                                <b-form-checkbox value="accumulated-local-effects">Accumulated
+                                                    Local Effects</b-form-checkbox>
+                                            </b-form-checkbox-group>
+                                        </b-form-group>
+                                    </b-form>
+                                    <div>
+                                        <button class="ml-1 btn btn-sm btn-danger" title="Excluir etapa"
+                                            @click="deleteFeature('marginalGlobal', index)"
+                                            :disabled="explanation.config.marginalGlobal.features.length == 1">
+                                            <font-awesome-icon icon="trash" />
+                                        </button>
+                                        <button class="ml-1 btn btn-sm btn-primary" title="Adicionar etapa"
+                                            @click="addFeature('marginalGlobal')">
+                                            <font-awesome-icon icon="plus" />
+                                        </button>
+                                        <button class="ml-1 btn btn-sm btn-success" title="Adicionar campo GPX"
+                                            @click="() => { }">
+                                            <font-awesome-icon icon="play" />
+                                        </button>
+                                    </div>
+                                </div>
+                            </b-card-body>
+                        </b-card>
+                    </div>
 
-                            <div v-else-if="currentOption === 'SHAP'">
-                                <b-card class="mb-1">
-                                    <b-card-body class="scrollable row">
-                                        <div v-for="(feature, index) in explanation.config.shap.features" :key="index"
-                                            class="bg-light col-3 mx-2 pd-2">
-                                            <b-form @submit.prevent="onSubmit">
-                                                <b-form-group label="Classe de Interesse:" label-for="input-feature">
-                                                    <b-form-select id="input-feature" v-model="feature.featureInterest"
-                                                        :options="mockInfo" required />
-                                                </b-form-group>
+                    <div v-else-if="currentOption === 'SHAP'">
+                        <b-card class="mb-1">
+                            <b-card-body class="scrollable row">
+                                <div v-for="(feature, index) in explanation.config.shap.features" :key="index"
+                                    class="bg-light col-3 mx-2 pd-2">
+                                    <b-form @submit.prevent="onSubmit">
+                                        <b-form-group label="Classe de Interesse:" label-for="input-feature">
+                                            <b-form-select id="input-feature" v-model="feature.featureInterest"
+                                                :options="mockInfo" required />
+                                        </b-form-group>
 
-                                                <b-form-group label="Tipo de Modelo:" label-for="input-model-type">
-                                                    <b-form-select id="input-model-type" v-model="feature.modelType"
-                                                        :options="mockInfo" required />
-                                                </b-form-group>
+                                        <b-form-group label="Tipo de Modelo:" label-for="input-model-type">
+                                            <b-form-select id="input-model-type" v-model="feature.modelType"
+                                                :options="mockInfo" required />
+                                        </b-form-group>
 
-                                                <b-form-group label="Tipo de Explicação:"
-                                                    label-for="input-explanation-type">
-                                                    <b-form-select id="input-explanation-type"
-                                                        v-model="feature.explanationType" :options="mockInfo"
-                                                        required />
-                                                </b-form-group>
+                                        <b-form-group label="Tipo de Explicação:" label-for="input-explanation-type">
+                                            <b-form-select id="input-explanation-type" v-model="feature.explanationType"
+                                                :options="mockInfo" required />
+                                        </b-form-group>
 
-                                                <b-form-group label="Máscara:" label-for="input-mask">
-                                                    <b-form-select id="input-mask" v-model="feature.mask"
-                                                        :options="mockInfo" required />
-                                                </b-form-group>
+                                        <b-form-group label="Máscara:" label-for="input-mask">
+                                            <b-form-select id="input-mask" v-model="feature.mask" :options="mockInfo"
+                                                required />
+                                        </b-form-group>
 
-                                                <b-form-group label="Amostragem:" label-for="input-sampling">
-                                                    <b-form-input id="input-sampling" v-model="feature.sampling"
-                                                        type="text" required />
-                                                </b-form-group>
-                                            </b-form>
-                                            <div>
-                                                <button class="ml-1 btn btn-sm btn-danger" title="Excluir campo SHAP"
-                                                    @click="deleteFeature('shap', index)"
-                                                    :disabled="explanation.config.shap.features.length == 1">
-                                                    <font-awesome-icon icon="trash" />
-                                                </button>
-                                                <button class="ml-1 btn btn-sm btn-primary" title="Adicionar campo SHAP"
-                                                    @click="addFeature('shap')">
-                                                    <font-awesome-icon icon="plus" />
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </b-card-body>
-                                </b-card>
-                            </div>
+                                        <b-form-group label="Amostragem:" label-for="input-sampling">
+                                            <b-form-input id="input-sampling" v-model="feature.sampling" type="text"
+                                                required />
+                                        </b-form-group>
+                                    </b-form>
+                                    <div>
+                                        <button class="ml-1 btn btn-sm btn-danger" title="Excluir campo SHAP"
+                                            @click="deleteFeature('shap', index)"
+                                            :disabled="explanation.config.shap.features.length == 1">
+                                            <font-awesome-icon icon="trash" />
+                                        </button>
+                                        <button class="ml-1 btn btn-sm btn-primary" title="Adicionar campo SHAP"
+                                            @click="addFeature('shap')">
+                                            <font-awesome-icon icon="plus" />
+                                        </button>
+                                        <button class="ml-1 btn btn-sm btn-success" title="Adicionar campo GPX"
+                                            @click="() => { }">
+                                            <font-awesome-icon icon="play" />
+                                        </button>
+                                    </div>
+                                </div>
+                            </b-card-body>
+                        </b-card>
+                    </div>
 
 
-                            <div v-else-if="currentOption === 'LIME'">
-                                <b-card class="mb-1">
-                                    <b-card-body class="scrollable row">
-                                        <div v-for="(feature, index) in explanation.config.lime.features" :key="index"
-                                            class="bg-light col-3 mx-2 pd-2">
-                                            <b-form @submit.prevent="onSubmit">
-                                                <b-form-group label="Tipo de tarefa:" label-for="input-lime-class">
-                                                    <b-form-select id="input-lime-class" v-model="feature.taskType"
-                                                        :options="mockInfo" required />
-                                                </b-form-group>
-                                                <b-form-group label="Instância de Interesse:"
-                                                    label-for="input-lime-instance">
-                                                    <b-form-select id="input-lime-instance"
-                                                        v-model="feature.interestInstance" :options="mockInfo"
-                                                        required />
-                                                </b-form-group>
-                                                <b-form-group label="Número de Amostras:"
-                                                    label-for="input-lime-samples">
-                                                    <b-form-input id="input-lime-samples" v-model="feature.numSamples"
-                                                        type="number" min="1" required />
-                                                </b-form-group>
-                                                <b-form-group label="Features categóricas:"
-                                                    label-for="input-lime-samples">
-                                                    <b-form-input id="input-lime-samples" v-model="feature.catFeat"
-                                                        type="number" min="1" required />
-                                                </b-form-group>
-                                                <b-form-group label="Número de features:"
-                                                    label-for="input-lime-samples">
-                                                    <b-form-input id="input-lime-samples" v-model="feature.numFeat"
-                                                        type="number" min="1" required />
-                                                </b-form-group>
-                                                <b-form-group label="Métrica:" label-for="input-lime-explanation-type">
-                                                    <b-form-select id="input-lime-explanation-type"
-                                                        v-model="feature.metric" :options="mockInfo" required />
-                                                </b-form-group>
-                                                <b-form-group label="Tolerância:"
-                                                    label-for="input-lime-explanation-type">
-                                                    <b-form-select id="input-lime-explanation-type"
-                                                        v-model="feature.tolerances" :options="mockInfo" required />
-                                                </b-form-group>
-                                            </b-form>
-                                            <div>
-                                                <button class="ml-1 btn btn-sm btn-danger" title="Excluir campo LIME"
-                                                    @click="deleteFeature('lime', index)"
-                                                    :disabled="explanation.config.lime.features.length == 1">
-                                                    <font-awesome-icon icon="trash" />
-                                                </button>
-                                                <button class="ml-1 btn btn-sm btn-primary" title="Adicionar campo LIME"
-                                                    @click="addFeature('lime')">
-                                                    <font-awesome-icon icon="plus" />
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </b-card-body>
-                                </b-card>
-                            </div>
+                    <div v-else-if="currentOption === 'LIME'">
+                        <b-card class="mb-1">
+                            <b-card-body class="scrollable row">
+                                <div v-for="(feature, index) in explanation.config.lime.features" :key="index"
+                                    class="bg-light col-3 mx-2 pd-2">
+                                    <b-form @submit.prevent="onSubmit">
+                                        <b-form-group label="Tipo de tarefa:" label-for="input-lime-class">
+                                            <b-form-select id="input-lime-class" v-model="feature.taskType"
+                                                :options="mockInfo" required />
+                                        </b-form-group>
+                                        <b-form-group label="Instância de Interesse:" label-for="input-lime-instance">
+                                            <b-form-select id="input-lime-instance" v-model="feature.interestInstance"
+                                                :options="mockInfo" required />
+                                        </b-form-group>
+                                        <b-form-group label="Número de Amostras:" label-for="input-lime-samples">
+                                            <b-form-input id="input-lime-samples" v-model="feature.numSamples"
+                                                type="number" min="1" required />
+                                        </b-form-group>
+                                        <b-form-group label="Features categóricas:" label-for="input-lime-samples">
+                                            <b-form-input id="input-lime-samples" v-model="feature.catFeat"
+                                                type="number" min="1" required />
+                                        </b-form-group>
+                                        <b-form-group label="Número de features:" label-for="input-lime-samples">
+                                            <b-form-input id="input-lime-samples" v-model="feature.numFeat"
+                                                type="number" min="1" required />
+                                        </b-form-group>
+                                        <b-form-group label="Métrica:" label-for="input-lime-explanation-type">
+                                            <b-form-select id="input-lime-explanation-type" v-model="feature.metric"
+                                                :options="mockInfo" required />
+                                        </b-form-group>
+                                        <b-form-group label="Tolerância:" label-for="input-lime-explanation-type">
+                                            <b-form-select id="input-lime-explanation-type" v-model="feature.tolerances"
+                                                :options="mockInfo" required />
+                                        </b-form-group>
+                                    </b-form>
+                                    <div>
+                                        <button class="ml-1 btn btn-sm btn-danger" title="Excluir campo LIME"
+                                            @click="deleteFeature('lime', index)"
+                                            :disabled="explanation.config.lime.features.length == 1">
+                                            <font-awesome-icon icon="trash" />
+                                        </button>
+                                        <button class="ml-1 btn btn-sm btn-primary" title="Adicionar campo LIME"
+                                            @click="addFeature('lime')">
+                                            <font-awesome-icon icon="plus" />
+                                        </button>
+                                        <button class="ml-1 btn btn-sm btn-success" title="Adicionar campo GPX"
+                                            @click="() => { }">
+                                            <font-awesome-icon icon="play" />
+                                        </button>
+                                    </div>
+                                </div>
+                            </b-card-body>
+                        </b-card>
+                    </div>
 
-                            <div v-else-if="currentOption === 'GPX'">
-                                <b-card class="mb-1">
-                                    <b-card-body class="scrollable row">
-                                        <div v-for="(feature, index) in explanation.config.gpx.features" :key="index"
-                                            class="bg-light col-3 mx-2 pd-2">
-                                            <b-form @submit.prevent="onSubmit">
-                                                <b-form-group label="Classe de Interesse:"
-                                                    label-for="input-interest-feature">
-                                                    <b-form-select id="input-interest-feature"
-                                                        v-model="feature.interestFeature" :options="mockInfo"
-                                                        required />
-                                                </b-form-group>
+                    <div v-else-if="currentOption === 'GPX'">
+                        <b-card class="mb-1">
+                            <b-card-body class="scrollable row">
+                                <div v-for="(feature, index) in explanation.config.gpx.features" :key="index"
+                                    class="bg-light col-3 mx-2 pd-2">
+                                    <b-form @submit.prevent="onSubmit">
+                                        <b-form-group label="Classe de Interesse:" label-for="input-interest-feature">
+                                            <b-form-select id="input-interest-feature" v-model="feature.interestFeature"
+                                                :options="mockInfo" required />
+                                        </b-form-group>
 
-                                                <b-form-group label="Programação Genética:"
-                                                    label-for="input-genetic-programming">
-                                                    <b-form-select id="input-genetic-programming"
-                                                        v-model="feature.geneticProgramming" :options="mockInfo"
-                                                        required />
-                                                </b-form-group>
+                                        <b-form-group label="Programação Genética:"
+                                            label-for="input-genetic-programming">
+                                            <b-form-select id="input-genetic-programming"
+                                                v-model="feature.geneticProgramming" :options="mockInfo" required />
+                                        </b-form-group>
 
-                                                <b-form-group label="Tipo de Explicação:"
-                                                    label-for="input-explanation-type">
-                                                    <b-form-select id="input-explanation-type"
-                                                        v-model="feature.explanationType" :options="mockInfo"
-                                                        required />
-                                                </b-form-group>
+                                        <b-form-group label="Tipo de Explicação:" label-for="input-explanation-type">
+                                            <b-form-select id="input-explanation-type" v-model="feature.explanationType"
+                                                :options="mockInfo" required />
+                                        </b-form-group>
 
-                                                <b-form-group label="Conjunto Ruído:" label-for="input-noise-set">
-                                                    <b-form-select id="input-noise-set" v-model="feature.noiseSet"
-                                                        :options="mockInfo" required />
-                                                </b-form-group>
+                                        <b-form-group label="Conjunto Ruído:" label-for="input-noise-set">
+                                            <b-form-select id="input-noise-set" v-model="feature.noiseSet"
+                                                :options="mockInfo" required />
+                                        </b-form-group>
 
-                                                <b-form-group label="Margem de x:" label-for="input-x-margin">
-                                                    <b-form-input id="input-x-margin" v-model="feature.xMargin"
-                                                        type="text" required />
-                                                </b-form-group>
+                                        <b-form-group label="Margem de x:" label-for="input-x-margin">
+                                            <b-form-input id="input-x-margin" v-model="feature.xMargin" type="text"
+                                                required />
+                                        </b-form-group>
 
-                                                <b-form-group label="Amostragem:" label-for="input-sampling">
-                                                    <b-form-input id="input-sampling" v-model="feature.sampling"
-                                                        type="text" required />
-                                                </b-form-group>
-                                            </b-form>
+                                        <b-form-group label="Amostragem:" label-for="input-sampling">
+                                            <b-form-input id="input-sampling" v-model="feature.sampling" type="text"
+                                                required />
+                                        </b-form-group>
+                                    </b-form>
 
-                                            <div>
-                                                <button class="ml-1 btn btn-sm btn-danger" title="Excluir campo GPX"
-                                                    @click="deleteFeature('gpx', index)"
-                                                    :disabled="explanation.config.gpx.features.length == 1">
-                                                    <font-awesome-icon icon="trash" />
-                                                </button>
-                                                <button class="ml-1 btn btn-sm btn-primary" title="Adicionar campo GPX"
-                                                    @click="addFeature('gpx')">
-                                                    <font-awesome-icon icon="plus" />
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </b-card-body>
-                                </b-card>
-                            </div>
-                        </b-tab>
-
-                        <b-tab title="Resultados">
-                        </b-tab>
-                    </b-tabs>
-                    <div class="card-footer">
-                        <div class="btn-group">
-                            <router-link :to="{ name: 'index-explorer' }"
-                                class="btn btn-outline-secondary d-print-none float-left btn-sm">
-                                <font-awesome-icon icon="fa-chevron-right" /> {{ $t('actions.back') }}
-                            </router-link>
-                            <button class="btn btn-sm btn-outline-secondary float-left" @click="() => { }">
-                                <font-awesome-icon icon="fa fa-eye" /> Visualizar
-                            </button>
-                            <button class="btn btn-sm btn-outline-primary float-left" @click="() => { }">
-                                <font-awesome-icon icon="fa-solid fa-play" /> Gerar
-                            </button>
-                            <button class="btn btn-sm btn-success" :disabled="!isDirty" @click="() => { }">
-                                <font-awesome-icon icon="fa fa-save" class="mr-1" /> {{ $tc('actions.save') }}
-                            </button>
-                        </div>
+                                    <div>
+                                        <button class="ml-1 btn btn-sm btn-danger" title="Excluir campo GPX"
+                                            @click="deleteFeature('gpx', index)"
+                                            :disabled="explanation.config.gpx.features.length == 1">
+                                            <font-awesome-icon icon="trash" />
+                                        </button>
+                                        <button class="ml-1 btn btn-sm btn-primary" title="Adicionar campo GPX"
+                                            @click="addFeature('gpx')">
+                                            <font-awesome-icon icon="plus" />
+                                        </button>
+                                        <button class="ml-1 btn btn-sm btn-success" title="Adicionar campo GPX"
+                                            @click="() => { }">
+                                            <font-awesome-icon icon="play" />
+                                        </button>
+                                    </div>
+                                </div>
+                            </b-card-body>
+                        </b-card>
                     </div>
                 </b-card>
             </div>
@@ -381,7 +366,7 @@ export default {
                     marginalGlobal: { features: [{}] },
                     shap: { features: [{}] },
                     lime: { features: [{}] },
-                    gpx: {features: [{}]}
+                    gpx: { features: [{}] }
                 }
             },
             isDirty: false,
