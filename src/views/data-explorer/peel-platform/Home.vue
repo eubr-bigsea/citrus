@@ -28,7 +28,7 @@
                             <b-form-group id="input-group-2" label="Modelo:" label-for="input-model">
 
                                 <vue-select v-model="explanation.selectedModel" :filterable="false" :options="modelList"
-                                    label="name" class="w-100" @search="loadModelList">
+                                    label="name" class="w-100" @search="onSearchModel">
                                     <template #no-options="{}">
                                         <small>Digite parte do nome para pesquisar...</small>
                                     </template>
@@ -58,7 +58,7 @@
 
                             <b-form-group label="Fonte de Dados:" label-for="input-datasource">
                                 <vue-select v-model="explanation.selectedDatasource" :filterable="false"
-                                    :options="datasourceList" label="name" class="w-100" @search="loadDatasourceList">
+                                    :options="datasourceList" label="name" class="w-100" @search="onSearchDatasource">
                                     <template #no-options="{}">
                                         <small>Digite parte do nome para pesquisar...</small>
                                     </template>
@@ -333,6 +333,14 @@ export default {
             } catch (error) {
                 console.error("Erro ao enviar a fonte de dados:", error.response?.data || error.message);
             }
+        },
+
+        async onSearchModel(searchQuery) {
+            await this.loadList("model", searchQuery);
+        },
+
+        async onSearchDatasource(searchQuery) {
+            await this.loadList("datasource", searchQuery);
         },
 
         async loadList(type, searchQuery) {
