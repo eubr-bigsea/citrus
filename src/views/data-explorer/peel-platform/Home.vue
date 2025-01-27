@@ -20,9 +20,14 @@
                                     required></b-form-input>
                             </b-form-group>
 
+                            <b-form-group id="input-group-1" label="Descrição:" label-for="input-name">
+                                <b-form-textarea id="input-name" v-model="explanation.description"
+                                    placeholder="Preencha a descrição" required></b-form-textarea>
+                            </b-form-group>
+
                             <b-form-group id="input-group-2" label="Modelo:" label-for="input-model">
 
-                                <vue-select v-model="explanation.model.model" :filterable="false" :options="modelList"
+                                <vue-select v-model="explanation.selectedModel" :filterable="false" :options="modelList"
                                     label="name" class="w-100" @search="loadModelList">
                                     <template #no-options="{}">
                                         <small>Digite parte do nome para pesquisar...</small>
@@ -52,7 +57,7 @@
                             </b-form-group>
 
                             <b-form-group label="Fonte de Dados:" label-for="input-datasource">
-                                <vue-select v-model="explanation.datasource.datasource" :filterable="false"
+                                <vue-select v-model="explanation.selectedDatasource" :filterable="false"
                                     :options="datasourceList" label="name" class="w-100" @search="loadDatasourceList">
                                     <template #no-options="{}">
                                         <small>Digite parte do nome para pesquisar...</small>
@@ -80,35 +85,6 @@
                                         aqui</b-button>
                                 </small>
                             </b-form-group>
-
-                            <!--
-                                    <b-form-group id="input-group-3" label="Escopo de Análise:"
-                                        label-for="checkboxes-scope">
-                                        <b-form-checkbox-group v-model="explanation.scope" id="checkbox-scope" required>
-                                            <b-form-checkbox value="local">Local</b-form-checkbox>
-                                            <b-form-checkbox value="global">Global</b-form-checkbox>
-                                        </b-form-checkbox-group>
-                                    </b-form-group>
-
-                                    <div class="bg-light p-3 my-1" v-if="explanation.scope.includes('local')">
-                                        <b-form-group id="input-group-4-1" label="Classe de Interesse:"
-                                            label-for="input-class">
-                                            <b-form-select id="input-class" v-model="explanation.config.interestClass"
-                                                :options="modelsList" required />
-                                        </b-form-group>
-                                        <b-form-group id="input-group-4-2" label="Explicador:"
-                                            label-for="checkboxes-explainers">
-                                            <b-form-checkbox-group v-model="explanation.config.explainer"
-                                                id="checkbox-local-explainers" required>
-                                                <b-form-checkbox value="local-skl">Skl Local</b-form-checkbox>
-                                                <b-form-checkbox value="local-marginal">Marginal</b-form-checkbox>
-                                                <b-form-checkbox value="local-shap">SHAP</b-form-checkbox>
-                                                <b-form-checkbox value="local-lime">LIME</b-form-checkbox>
-                                                <b-form-checkbox value="local-gpx">GPX</b-form-checkbox>
-                                            </b-form-checkbox-group>
-                                        </b-form-group>
-                                    </div>
-                                    -->
                         </b-form>
                     </div>
 
@@ -192,10 +168,9 @@
                     <b-link :to="{ name: 'index-explorer' }" class="btn btn-secondary btn-sm mr-1">
                         {{ $t('actions.cancel') }}
                     </b-link>
-                    <router-link :to="{ name: 'explanationEdit', params: { id: 1 } }"
-                        class="btn btn-sm btn-primary pr-4 pl-4">
+                    <b-button @click="onSubmit()" variant="primary" class="btn btn-sm btn-primary pr-4 pl-4">
                         {{ $tc('actions.create2') }}
-                    </router-link>
+                    </b-button>
                 </div>
             </div>
         </div>
@@ -209,6 +184,10 @@ import vSelect from "vue-select";
 import axios from "axios";
 
 const peelUrl = import.meta.env.VITE_PELL_URL;
+const API_HEADERS = {
+    Accept: "application/json",
+    "Content-Type": "application/json",
+};
 
 export default {
     name: "ExplanationCreate",
@@ -218,14 +197,11 @@ export default {
     mixins: [ExplanationModel, Notifier],
     data() {
         return {
-            modelList: [],
             explanation: {
                 name: "",
-                scope: [],
-                config: {
-                    interestClass: null,
-                    explainer: [],
-                },
+                description: "",
+                selectedModel: null,
+                selectedDatasource: null,
                 model: {
                     name: "",
                     description: "",
@@ -238,10 +214,13 @@ export default {
                 datasource: {
                     name: "",
                     description: "",
+                    attributed_delimiter: "",
+                    record_delimiter: "",
+                    encoding: "",
                     file: null,
                 },
             },
-            modelsList: [],
+            modelList: [],
             datasourceList: [],
         };
     },
@@ -257,38 +236,28 @@ export default {
         closeModal(ref) {
             this.$refs[ref]?.hide();
         },
-        resetModelForm() {
-            this.explanation.model = {
-                name: "",
-                description: "",
-                model: null,
-                file: null,
-                isUpload: false,
-                modelType: "",
-                version: "",
-                className: "",
-                digest: "",
+
+        resetForm(formType) {
+            const formData = {
+                model: {
+                    name: "",
+                    description: "",
+                    modelType: "",
+                    version: "",
+                    className: "",
+                    digest: "",
+                    file: null,
+                },
+                datasource: {
+                    name: "",
+                    description: "",
+                    attributed_delimiter: "",
+                    record_delimiter: "",
+                    encoding: "",
+                    file: null,
+                },
             };
-        },
-        resetDatasourceForm() {
-            this.explanation.datasource = {
-                name: "",
-                description: "",
-                file: null,
-                isUpload: false,
-                enabled: true,
-                attributed_delimiter: "",
-                record_delimiter: "",
-                encoding: "",
-            };
-        },
-        handleCloseModelModal() {
-            this.closeModal("modelModal");
-            this.resetModelForm();
-        },
-        handleCloseDataSourceModal() {
-            this.closeModal("datasourceModal");
-            this.resetDatasourceForm();
+            this.explanation[formType] = formData[formType];
         },
 
         handleFileUpload(event, type) {
@@ -303,15 +272,12 @@ export default {
 
             try {
                 const url = `${peelUrl}/upload/?type=${type}`;
-                const headers = {
-                    Accept: "application/json",
-                    "Content-Type": "multipart/form-data",
-                };
-
                 const formData = new FormData();
                 formData.append("file", file);
 
-                const response = await axios.post(url, formData, { headers });
+                const response = await axios.post(url, formData, {
+                    headers: { "Content-Type": "multipart/form-data" },
+                });
                 return response.data.uri;
             } catch (error) {
                 console.error("Erro ao enviar o arquivo:", error.response?.data || error.message);
@@ -322,17 +288,9 @@ export default {
         async submitModel() {
             try {
                 const uri = await this.uploadFile(this.explanation.model.file, "model");
-                if (!uri) {
-                    console.error("URI  não gerada.");
-                    return;
-                }
+                if (!uri) throw new Error("URI não gerada.");
 
                 const url = `${peelUrl}/model/`;
-                const headers = {
-                    Accept: "application/json",
-                    "Content-Type": "application/json",
-                };
-
                 const data = {
                     name: this.explanation.model.name,
                     description: this.explanation.model.description,
@@ -344,9 +302,9 @@ export default {
                     digest: this.explanation.model.digest,
                 };
 
-                const response = await axios.post(url, data, { headers });
+                await axios.post(url, data, { headers: API_HEADERS });
                 this.closeModal("modelModal");
-                this.resetModelForm();
+                this.resetForm("model");
             } catch (error) {
                 console.error("Erro ao enviar o modelo:", error.response?.data || error.message);
             }
@@ -355,17 +313,9 @@ export default {
         async submitDatasource() {
             try {
                 const uri = await this.uploadFile(this.explanation.datasource.file, "datasource");
-                if (!uri) {
-                    console.error("URI não gerada.");
-                    return;
-                }
+                if (!uri) throw new Error("URI não gerada.");
 
-                const url = peelUrl + "/datasource/";
-                const headers = {
-                    Accept: "application/json",
-                    "Content-Type": "application/json",
-                };
-
+                const url = `${peelUrl}/datasource/`;
                 const data = {
                     name: this.explanation.datasource.name,
                     description: this.explanation.datasource.description,
@@ -374,20 +324,20 @@ export default {
                     data_format: "csv",
                     attributed_delimiter: this.explanation.datasource.attributed_delimiter,
                     record_delimiter: this.explanation.datasource.record_delimiter,
-                    encoding: this.explanation.datasource.encoding
+                    encoding: this.explanation.datasource.encoding,
                 };
 
-                const response = await axios.post(url, data, { headers });
+                await axios.post(url, data, { headers: API_HEADERS });
                 this.closeModal("datasourceModal");
-                this.resetDatasourceForm();
+                this.resetForm("datasource");
             } catch (error) {
                 console.error("Erro ao enviar a fonte de dados:", error.response?.data || error.message);
             }
         },
 
-        async loadModelList(searchQuery) {
+        async loadList(type, searchQuery) {
             try {
-                const url = peelUrl + "/model/list"
+                const url = `${peelUrl}/${type}/list`;
                 const params = {
                     enabled: true,
                     name: searchQuery,
@@ -395,32 +345,30 @@ export default {
                     page: 0,
                     sort: 'name',
                 };
+
                 const response = await axios.get(url, { params });
-                this.modelList = response.data.data;
+                this[`${type}List`] = response.data.data;
             } catch (error) {
-                console.error("Erro ao carregar os modelos:", error.response?.data || error.message);
+                console.error(`Erro ao carregar ${type}:`, error.response?.data || error.message);
             }
         },
 
-        async loadDatasourceList(searchQuery) {
+        async onSubmit() {
             try {
-                const url = peelUrl + "/datasource/list"
+                const url = `${peelUrl}/understanding/`;
                 const params = {
+                    id_datasource: this.explanation.selectedDatasource.id,
+                    id_model: this.explanation.selectedModel.id,
+                    name: this.explanation.name,
+                    description: this.explanation.description,
                     enabled: true,
-                    name: searchQuery,
-                    limit: 10,
-                    page: 0,
-                    sort: 'name',
                 };
-                const response = await axios.get(url, { params });
-                this.datasourceList = response.data.data;
-            } catch (error) {
-                console.error("Erro ao carregar os fonte de dados:", error.response?.data || error.message);
-            }
-        },
 
-        onSubmit() {
-            console.log("Dados da explicação enviados:", this.explanation);
+                const response = await axios.post(url, params, { headers: API_HEADERS });
+                this.$router.push({ name: 'explanationEdit', params: { id: response.data.id } });
+            } catch (error) {
+                console.error("Erro ao criar explicação:", error.response?.data || error.message);
+            }
         },
     },
 };
