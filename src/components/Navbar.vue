@@ -27,7 +27,7 @@
                     <font-awesome-icon icon="fa fa-chart-line" class="text-success" /> {{ $tc('titles.dashboard', 2) }}
                 </b-nav-item>
 
-                <b-nav-item-dropdown v-if="isAdmin" right data-test="pipelines-menu">
+                <b-nav-item-dropdown v-if="hasAnyPermission(PIPELINE) || isAdmin" right data-test="pipelines-menu">
                     <template #button-content>
                         <font-awesome-icon icon="fa fa-circle-nodes" class="text-success" />
                         {{ $tc('titles.pipeline', 2) }}
@@ -210,6 +210,7 @@ export default {
             socket: null,
             room: null,
             APP_PERMISSIONS: ['APP_EDIT', 'APP_USE'],
+            PIPELINE: ['PIPELINE', 'PIPELINE_RUN',],
             DASHBOARD_PERMISSIONS: ['DASHBOARD_EDIT', 'DASHBOARD_EDIT_ANY',
                 'DASHBOARD_VIEW', 'DASHBOARD_VIEW_ANY'],
             DATA_SOURCE_PERMISSIONS: ['DATA_SOURCE_EDIT', 'DATA_SOURCE_LIST',
