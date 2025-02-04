@@ -105,7 +105,15 @@ export default {
             DATA_SOURCE: 'Fonte de dados | Fontes de dados',
             DASHBOARD: 'Dashboard | Dashboards',
             DEPLOYMENT: 'Implantação | Implantações',
+            EXPERIMENT: 'Experimento | Experimentos',
+            EXPERIMENT_EXPLORER: 'Experimento de exploração de dados | Experimentos de exploração de dados',
+            EXPERIMENT_MODEL: 'Experimento de criação de modelos | Experimentos de criação de modelos',
+            EXPERIMENT_SQL: 'Experimento de processamento de dados | Experimentos de processamento de dados',
+            EXPERIMENT_VISUALIZATION: 'Experimento de visualização de dados | Experimentos de visualização de dados',
+
             JOB: 'Execução | Execuções',
+            PIPELINE: 'Pipeline | Pipelines',
+            PIPELINE_RUN: 'Execução de pipeline | Execuções de pipeline ',
             SYSTEM: 'Sistema | Sistema',
             USER: 'Usuário | Usuários',
             WORKFLOW: 'Fluxo de trabalho | Fluxos de trabalho'
@@ -1125,10 +1133,18 @@ export default {
             DATA_SOURCE: 'Data source | Data Sources',
             DASHBOARD: 'Dashboard | Dashboards',
             DEPLOYMENT: 'Deployment | Deployments',
+            EXPERIMENT: 'Experiment | Experiments',
+            EXPERIMENT_EXPLORER: 'Data exploration experiment | Data exploration experiments',
+            EXPERIMENT_MODEL: 'Model criation experiment | Model criation experiments',
+            EXPERIMENT_SQL: 'Data processing experiment | experiments de processamento de dados',
+            EXPERIMENT_VISUALIZATION: 'Data visualization experiment | Data visualization experiments',
             JOB: 'Execution | Executions',
+            PIPELINE: 'Pipeline | Pipelines',
+            PIPELINE_RUN: 'Pipeline run| Pipeline runs',
             SYSTEM: 'System | System',
             USER: 'User | Users',
             WORKFLOW: 'Workflow | Workflows'
+
         },
         atmosphere: {
             transparency: 'Explain models'
