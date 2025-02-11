@@ -14,8 +14,7 @@
                 <font-awesome-icon icon="fa fa-dollar-sign" /> Variáveis
             </button>
         </div>
-        <div class="btn-group mr-2"
-             role="group">
+        <div v-if="canEditWorkflow"  class="btn-group mr-2" role="group">
             <button class="btn btn-sm btn-outline-success"
                     :title="$t('actions.save')"
                     @click.prevent="saveWorkflow" :disabled="!isDirty">
@@ -49,8 +48,7 @@
                 -->
             </b-dropdown>
         </div>
-        <div class="btn-group mr-2"
-             role="group">
+        <div v-if="canEditWorkflow"  class="btn-group mr-2" role="group">
             <button class="btn btn-sm btn-outline-dark"
                     :title="$t('actions.showProperties')"
                     @click.prevent="showProperties">
@@ -96,7 +94,8 @@ export default {
     name: 'WorkflowToolbar',
     props: {
         workflow: {type: Object, default: () => null},
-        isDirty: {type: Boolean, default: () => false}
+        isDirty: {type: Boolean, default: () => false},
+        canEditWorkflow: {type: Boolean, default: () => true}
     },
     computed: {
         ...mapGetters(['hasAnyPermission', 'isAdmin', 'user']),

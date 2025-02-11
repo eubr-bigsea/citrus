@@ -4,7 +4,8 @@
                :value="value"
                :size="titleSize"
                :maxlength="maxlength"
-               @input="$emit('input', $event.target.value)">
+               @input="$emit('input', $event.target.value)"
+               :disabled="disabled">
     </h2>
 </template>
 
@@ -13,7 +14,8 @@ export default {
     name: 'InputHeader',
     props: {
         value: {type: String, default: null},
-        maxlength: {type: Number}
+        maxlength: {type: Number},
+        disabled: {type: Boolean, default: false}
     },
     emits: ['input'],
     computed: {

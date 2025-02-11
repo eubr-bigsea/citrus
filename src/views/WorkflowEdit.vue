@@ -7,24 +7,27 @@
                 <div class="title">
                     <div class="float-right">
                         <workflow-toolbar v-if="loaded" :workflow="workflow" :isDirty="isDirty"
+                            :can-edit-workflow="canEditWorkflow"
                             @onsave-workflow="saveWorkflow(false)" @onshow-history="showHistory"
                             @onshow-executions="$refs.executionsModal.show()"
                             @onshow-variables="$refs.variablesModal.show()" @onsave-workflow-as="saveWorkflowAs"
                             @onshow-properties="showWorkflowProperties" @onsaveas-workflow="showSaveAs"
                             @onclick-execute="showExecuteWindow" @onclick-export="(format) => this.exportWorkflow(format)"
                             @onupdate-workflow-properties="saveWorkflowProperties" @onrestore-workflow="restore"
-                            @onsave-as-image="saveAsImage" 
+                            @onsave-as-image="saveAsImage"
+
                             />
                     </div>
 
                     <h6 class="header-pretitle">
                         {{ $tc('titles.workflow', 1) }} #{{ workflow.id }}
-                    </h6>
-                    <InputHeader v-model="workflow.name" />
+                        <span class="mt-3 p-2 badge badge-danger float-right">Você não tem permissão de editar este fluxo</span>
 
+                    </h6>
+                    <InputHeader v-model="workflow.name" :disabled="!canEditWorkflow"/>
                 </div>
 
-                <div v-show="showTasksPanel" class="toolbox">
+                <div v-show="showTasksPanel && canEditWorkflow" class="toolbox">
                     <div class="card">
                         <div class="card-header">
                             <h4 class="card-title">
@@ -49,19 +52,20 @@
 
                 <diagram v-if="loaded" id="main-diagram" ref="diagram" :workflow="workflow" :operations="operations"
                     :loaded="loaded" :version="workflow.version" tabindex="0"
+                    :showToolbar="canEditWorkflow"
                     :use-data-source="expandableOperations.length > 0" @ontoggle-tasksPanel="toggleTasksPanel"
-                    @ontoggle-dataSourcesPanel="toggleDataSourcesPanel" 
+                    @ontoggle-dataSourcesPanel="toggleDataSourcesPanel"
                     @onselect-image="selectImage" @onset-isDirty="setIsDirty" @onzoom="applyZoom" @addTask="addTask"
-                    @onclick-task="clickTask" 
+                    @onclick-task="clickTask"
                     @addFlow="addFlow" @removeFlow="removeFlow"
-                    @onclear-selection="clearSelection" 
+                    @onclear-selection="clearSelection"
                     @onblur-selection="blurSelection"/>
 
                 <div v-if="showProperties" class="diagram-properties">
                     <property-window v-if="selectedTask.task" :task="selectedTask.task"
                         :variables="workflow.variables || []" :suggestion-event="() => getSuggestions(selectedTask.task.id)"
                         :extended-suggestion-event="() => getExtendedSuggestions(selectedTask.task.id)"
-                        :publishing-enabled="workflow && workflow.publishing_enabled" 
+                        :publishing-enabled="workflow && workflow.publishing_enabled"
                         @update-form-field-value="updateFormFieldValue"/>
                 </div>
 
@@ -249,6 +253,15 @@ export default {
             exportTimeoutHandler: null,
         }
     },
+    computed: {
+        canEditWorkflow() {
+            const user = this.$store.getters.user;
+            const permissions = this.$store.getters.userPermissions;
+            return this.workflow.user_id === user.id ||
+                permissions.includes('ADMINISTRATOR') ||
+                permissions.includes('WORKFLOW_EDIT_ANY');
+        }
+    },
     watch: {
         '$route.params.id': function (id) {
             this.$refs.diagram.clearWorkflow();
@@ -271,7 +284,7 @@ export default {
         window.removeEventListener('beforeunload', this.leaving)
     },
     methods: {
-        // Forms 
+        // Forms
         updateFormFieldValue(field, value, labelValue){
             const self = this;
             if (self.selectedTask.task.forms[field.name]) {

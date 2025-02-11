@@ -4,6 +4,7 @@
             :use-data-source="useDataSource" @onclick-task="clickTask" @oncopy-tasks="_copy" @onpaste-tasks="_paste"
             @ontoggle-tasks="toggleTasks" @ondistribute-tasks="distribute" @onalign-tasks="align"
             @onremove-tasks="removeSelectedTasks" />
+        <div v-else class="border"></div>
         <div id="lemonade-container" :class="{'with-grid': showGrid, 'dark-mode': darkMode}"
             class="lemonade-container not-selectable" @click="diagramClick">
             <!--
@@ -1294,7 +1295,7 @@ export default DiagramComponent;
 
 .scroll-area {
     width: 100%;
-    height: 87vh;
+    height: 85vh;
     overflow: auto;
 }
 
