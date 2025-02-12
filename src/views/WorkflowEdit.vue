@@ -21,7 +21,7 @@
 
                     <h6 class="header-pretitle">
                         {{ $tc('titles.workflow', 1) }} #{{ workflow.id }}
-                        <span class="mt-3 p-2 badge badge-danger float-right">Você não tem permissão de editar este fluxo</span>
+                        <span v-if="!canEditWorkflow" class="mt-3 p-2 badge badge-danger float-right">Você não tem permissão de editar este fluxo</span>
 
                     </h6>
                     <InputHeader v-model="workflow.name" :disabled="!canEditWorkflow"/>
