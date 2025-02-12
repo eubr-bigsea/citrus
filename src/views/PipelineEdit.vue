@@ -124,9 +124,7 @@
                                             # {{ index + 1 }}
                                         </div>
                                         <div class="editPage-drag-column" :class="ident">
-                                            <span class="editPage-stepButton" @click="redirectToWorkflow(step)">
                                                 {{ step.name }}
-                                            </span>
                                         </div>
                                         <div class="editPage-drag-column">
                                             <div>
