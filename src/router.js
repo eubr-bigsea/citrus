@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
-
+import store from '@/store.js';
+import Unauthorized from '@/views/Unauthorized.vue'
 // import ProjectList from './views/Administration/ProjectList.vue';
 // import ProjectAdd from './views/Administration/ProjectAdd.vue';
 // import ProjectShow from './views/Administration/ProjectShow.vue';
@@ -143,6 +144,7 @@ let router = new VueRouter({
                 title: ['titles.home', 1]
             }
         },
+        /*
         {
             path: '/query',
             name: 'queryEdit',
@@ -151,7 +153,7 @@ let router = new VueRouter({
                 requiresAuth: true,
                 title: ['titles.query', 1]
             }
-        },
+        },*/
         {
             path: '/administration',
             name: 'admin-start',
@@ -159,8 +161,9 @@ let router = new VueRouter({
             meta: {
                 requiresAuth: true,
                 requiresRole: true,
+                requiredPermissions: ['ADMINISTRATOR'],
                 title: ['titles.role', 2]
-            }
+            },
         },
         {
             path: '/administration/roles',
@@ -169,6 +172,7 @@ let router = new VueRouter({
             meta: {
                 requiresAuth: true,
                 requiresRole: true,
+                requiredPermissions: ['ADMINISTRATOR'],
                 title: ['titles.role', 2]
             }
         },
@@ -180,6 +184,7 @@ let router = new VueRouter({
             meta: {
                 requiresAuth: true,
                 requiresRole: true,
+                requiredPermissions: ['ADMINISTRATOR'],
                 title: ['titles.role', 2]
             }
         },
@@ -190,10 +195,20 @@ let router = new VueRouter({
             meta: {
                 requiresAuth: true,
                 requiresRole: true,
+                requiredPermissions: ['ADMINISTRATOR'],
                 title: ['titles.role', 2]
             }
         },
-
+        {
+            path: '/administration/operations',
+            name: 'operations',
+            component: OperationList,
+            meta: {
+                requiredPermissions: ['ADMINISTRATOR'],
+                requiresAuth: true,
+                requiresRole: true
+            }
+        },
         {
             path: '/administration/users',
             name: 'AdministrationUserList',
@@ -201,6 +216,7 @@ let router = new VueRouter({
             meta: {
                 requiresAuth: true,
                 requiresRole: true,
+                requiredPermissions: ['ADMINISTRATOR'],
                 title: ['titles.user', 2]
             }
         },
@@ -211,6 +227,7 @@ let router = new VueRouter({
             meta: {
                 requiresAuth: true,
                 requiresRole: true,
+                requiredPermissions: ['ADMINISTRATOR'],
                 title: ['titles.user', 1]
             }
         },
@@ -221,6 +238,7 @@ let router = new VueRouter({
             meta: {
                 requiresAuth: true,
                 requiresRole: true,
+                requiredPermissions: ['ADMINISTRATOR'],
                 title: ['titles.user', 1]
             }
         },
@@ -231,6 +249,7 @@ let router = new VueRouter({
             meta: {
                 requiresAuth: true,
                 requiresRole: true,
+                requiredPermissions: ['ADMINISTRATOR'],
                 title: ['titles.user', 1]
             }
         },
@@ -241,6 +260,7 @@ let router = new VueRouter({
             component: SourceCodeEdit,
             meta: {
                 requiresAuth: true,
+                requiredPermissions: ['ADMINISTRATOR'],
                 title: ['titles.storage', 1]
             }
         },
@@ -251,6 +271,7 @@ let router = new VueRouter({
             meta: {
                 requiresAuth: true,
                 requiresRole: true,
+                requiredPermissions: ['ADMINISTRATOR'],
                 title: ['titles.user', 1]
             }
         },
@@ -315,6 +336,7 @@ let router = new VueRouter({
             component: ConfigurationList,
             meta: {
                 title: ['titles.configuration', 1],
+                requiredPermissions: ['ADMINISTRATOR'],
                 requiresAuth: true,
             }
         },
@@ -325,6 +347,9 @@ let router = new VueRouter({
             component: DataSourceList,
             meta: {
                 requiresAuth: true,
+                requiredPermissions: ['DATA_SOURCE_VIEW_ANY',
+                    'DATA_SOURCE_EDIT_ANY', 'DATA_SOURCE_VIEW',
+                    'DATA_SOURCE_EDIT'],
                 title: ['titles.dataSource', 2]
             }
         },
@@ -333,6 +358,7 @@ let router = new VueRouter({
             name: 'addDataSource',
             component: DataSourceAdd,
             meta: {
+                requiredPermissions: ['DATA_SOURCE_EDIT_ANY', 'DATA_SOURCE_EDIT'],
                 requiresAuth: true,
                 title: ['titles.dataSource', 1]
             }
@@ -343,6 +369,7 @@ let router = new VueRouter({
             component: DataSourceEdit,
             meta: {
                 requiresAuth: true,
+                requiredPermissions: ['DATA_SOURCE_EDIT_ANY', 'DATA_SOURCE_EDIT'],
                 title: ['titles.dataSource', 1]
             }
         },
@@ -352,6 +379,7 @@ let router = new VueRouter({
             component: DataSourceStorage,
             meta: {
                 requiresAuth: true,
+                requiredPermissions: ['ADMINISTRATOR'],
                 title: ['titles.dataSource', 1]
             }
         },
@@ -360,10 +388,12 @@ let router = new VueRouter({
             name: 'dataSourceAnalysis',
             component: DataSourceAnalysis,
             meta: {
+                requiredPermissions: ['DATA_SOURCE_EDIT_ANY', 'DATA_SOURCE_EDIT'],
                 requiresAuth: true,
                 title: ['titles.dataSource', 1]
             }
         },
+        /*
         {
             path: '/display/:id',
             name: 'displayHtml',
@@ -371,13 +401,14 @@ let router = new VueRouter({
             meta: {
                 requiresAuth: true,
             }
-        },
+        },*/
 
         {
             path: '/models',
             name: 'models',
             component: ModelList,
             meta: {
+                requiredPermissions: ['ADMINISTATOR'], //FIXME: Review
                 requiresAuth: true
             }
         },
@@ -387,6 +418,7 @@ let router = new VueRouter({
             component: ModelAdd,
             meta: {
                 requiresAuth: true,
+                requiredPermissions: ['ADMINISTATOR'], //FIXME: Review
                 title: ['titles.model', 2]
             }
         },
@@ -396,6 +428,7 @@ let router = new VueRouter({
             component: ModelEdit,
             meta: {
                 requiresAuth: true,
+                requiredPermissions: ['ADMINISTATOR'], //FIXME: Review
                 title: ['titles.model', 1]
             }
         },
@@ -432,6 +465,7 @@ let router = new VueRouter({
             component: JobList,
             meta: {
                 requiresAuth: true,
+                requiredPermissions: ['JOB_VIEW', 'JOB_VIEW_ANY'],
                 title: ['titles.job', 2]
             }
         },
@@ -440,6 +474,7 @@ let router = new VueRouter({
             name: 'jobDetail',
             component: JobDetail,
             meta: {
+                requiredPermissions: ['JOB_VIEW', 'JOB_VIEW_ANY'],
                 requiresAuth: true,
                 title: ['titles.job', 1]
             }
@@ -449,6 +484,7 @@ let router = new VueRouter({
             name: 'tracks',
             component: TrackPanel,
             meta: {
+                requiredPermissions: ['APP_EDIT', 'APP_USE'],
                 requiresAuth: true,
                 title: ['titles.track', 2]
             }
@@ -458,6 +494,7 @@ let router = new VueRouter({
             name: 'addTrack',
             component: TrackAdd,
             meta: {
+                requiredPermissions: ['APP_EDIT'],
                 requiresAuth: true,
                 title: ['titles.track', 2]
             }
@@ -467,6 +504,7 @@ let router = new VueRouter({
             name: 'trackParameter',
             component: Track,
             meta: {
+                requiredPermissions: ['APP_EDIT', 'APP_USE'],
                 requiresAuth: true,
                 title: ['titles.track', 2]
             }
@@ -485,6 +523,10 @@ let router = new VueRouter({
             name: 'workflows',
             component: WorkflowList,
             meta: {
+                requiredPermissions: ['WORKFLOW_EDIT', 'WORKFLOW_EDIT_ANY',
+                    'WORKFLOW_VIEW', 'WORKFLOW_VIEW_ANY', 'WORKFLOW_EXECUTE',
+                    'WORKFLOW_EXECUTE_ANY'
+                ],
                 requiresAuth: true,
                 title: ['titles.workflow', 2]
             }
@@ -494,6 +536,10 @@ let router = new VueRouter({
             name: 'editWorkflow',
             component: WorkflowEdit,
             meta: {
+                requiredPermissions: ['WORKFLOW_EDIT', 'WORKFLOW_EDIT_ANY',
+                    'WORKFLOW_VIEW', 'WORKFLOW_VIEW_ANY', 'WORKFLOW_EXECUTE',
+                    'WORKFLOW_EXECUTE_ANY'
+                ],
                 requiresAuth: true,
                 title: ['titles.workflow', 1]
             }
@@ -503,6 +549,7 @@ let router = new VueRouter({
             name: 'addWorkflow',
             component: WorkflowAdd,
             meta: {
+                requiredPermissions: ['WORKFLOW_EDIT', 'WORKFLOW_EDIT_ANY'],
                 requiresAuth: true,
                 title: ['titles.workflow', 1]
             }
@@ -513,6 +560,9 @@ let router = new VueRouter({
             name: 'dashboards',
             component: DashboardList,
             meta: {
+                requiredPermissions: ['DASHBOARD_EDIT', 'DASHBOARD_EDIT_ANY',
+                    'DASHBOARD_VIEW', 'DASHBOARD_VIEW_ANY'
+                ],
                 requiresAuth: true,
                 title: ['titles.dashboard', 2]
             }
@@ -522,6 +572,9 @@ let router = new VueRouter({
             name: 'dashboardDetail',
             component: DashboardDetail,
             meta: {
+                requiredPermissions: ['DASHBOARD_EDIT', 'DASHBOARD_EDIT_ANY',
+                    'DASHBOARD_VIEW', 'DASHBOARD_VIEW_ANY'
+                ],
                 requiresAuth: true,
                 title: ['titles.dashboard', 1]
             }
@@ -535,7 +588,7 @@ let router = new VueRouter({
                 title: ['titles.dashboard', 1]
             }
         },
-        {
+        /*{
             path: '/dashboards/builder',
             name: 'dashboardBuilder',
             component: DashboardBuilder,
@@ -543,7 +596,7 @@ let router = new VueRouter({
                 requiresAuth: false,
                 title: ['titles.dashboard', 1]
             }
-        },
+        },*/
         {
             path: '/user/profile',
             name: 'profile',
@@ -608,6 +661,7 @@ let router = new VueRouter({
                 title: ['titles.resetPassword', 2]
             }
         },
+        /*
         {
             path: '/about',
             name: 'about',
@@ -615,16 +669,8 @@ let router = new VueRouter({
             meta: {
                 title: ['titles.lemonade', 1]
             }
-        },
-        {
-            path: '/administration/operations',
-            name: 'operations',
-            component: OperationList,
-            meta: {
-                requiresAuth: true,
-                requiresRole: true
-            }
-        },
+        },*/
+
         /* Deployment */
         {
             path: '/deployment',
@@ -632,6 +678,7 @@ let router = new VueRouter({
             component: DeploymentList,
             meta: {
                 requiresAuth: true,
+                requiredPermissions: ['ADMINISTRATION'],
                 title: ['titles.deployment', 2]
             }
         },
@@ -641,6 +688,7 @@ let router = new VueRouter({
             props: { add: true },
             component: DeploymentEdit,
             meta: {
+                requiredPermissions: ['ADMINISTRATION'],
                 requiresAuth: true,
                 title: ['titles.deployment', 1]
             }
@@ -650,6 +698,7 @@ let router = new VueRouter({
             name: 'editDeployment',
             component: DeploymentEdit,
             meta: {
+                requiredPermissions: ['ADMINISTRATION'],
                 requiresAuth: true,
                 title: ['titles.deployment', 1]
             }
@@ -659,6 +708,7 @@ let router = new VueRouter({
             name: 'clusters',
             component: ClusterList,
             meta: {
+                requiredPermissions: ['ADMINISTRATION'],
                 requiresAuth: true,
                 title: ['titles.cluster', 2]
             }
@@ -670,6 +720,7 @@ let router = new VueRouter({
             component: ClusterEdit,
             meta: {
                 requiresAuth: true,
+                requiredPermissions: ['ADMINISTRATION'],
                 title: ['titles.cluster', 1]
             }
         },
@@ -678,6 +729,7 @@ let router = new VueRouter({
             name: 'editCluster',
             component: ClusterEdit,
             meta: {
+                requiredPermissions: ['ADMINISTRATION'],
                 requiresAuth: true,
                 title: ['titles.cluster', 1]
             }
@@ -687,6 +739,7 @@ let router = new VueRouter({
             name: 'storages',
             component: StorageList,
             meta: {
+                requiredPermissions: ['ADMINISTRATION'],
                 requiresAuth: true,
                 title: ['titles.storage', 2]
             }
@@ -697,6 +750,7 @@ let router = new VueRouter({
             props: { add: true },
             component: StorageEdit,
             meta: {
+                requiredPermissions: ['ADMINISTRATION'],
                 requiresAuth: true,
                 title: ['titles.storage', 1]
             }
@@ -706,6 +760,7 @@ let router = new VueRouter({
             name: 'editStorage',
             component: StorageEdit,
             meta: {
+                requiredPermissions: ['ADMINISTRATION'],
                 requiresAuth: true,
                 title: ['titles.storage', 1]
             }
@@ -717,6 +772,7 @@ let router = new VueRouter({
             component: PlatformList,
             meta: {
                 requiresAuth: true,
+                requiredPermissions: ['ADMINISTRATION'],
                 title: ['titles.platform', 2]
             }
         },
@@ -726,6 +782,7 @@ let router = new VueRouter({
             component: PlatformAdd,
             meta: {
                 requiresAuth: true,
+                requiredPermissions: ['ADMINISTRATION'],
                 title: ['titles.platform', 1]
             }
         },
@@ -734,6 +791,7 @@ let router = new VueRouter({
             name: 'editPlatform',
             component: PlatformEdit,
             meta: {
+                requiredPermissions: ['ADMINISTRATION'],
                 requiresAuth: true,
                 title: ['titles.platform', 1]
             }
@@ -753,6 +811,7 @@ let router = new VueRouter({
             component: WebSocketPing,
             meta: {
                 requiresAuth: true,
+                requiredPermissions: ['ADMINISTRATION'],
                 title: ['titles.administration', 1]
             }
         },
@@ -762,6 +821,7 @@ let router = new VueRouter({
             component: JsPlumbSandbox,
             meta: {
                 requiresAuth: true,
+                requiredPermissions: ['ADMINISTRATION'],
                 title: ['titles.administration', 1]
             }
         },
@@ -771,6 +831,7 @@ let router = new VueRouter({
             component: OpenIdSandbox,
             meta: {
                 requiresAuth: false,
+                requiredPermissions: ['ADMINISTRATION'],
                 title: ['titles.administration', 1]
             }
         },
@@ -780,6 +841,7 @@ let router = new VueRouter({
             component: DataExplorerStart,
             meta: {
                 requiresAuth: true,
+                requiredPermissions: ['EXPERIMENT_EXPLORER'],
                 title: ['titles.dataExplorer', 1]
             }
         },
@@ -788,6 +850,7 @@ let router = new VueRouter({
             name: 'sql-workflow',
             component: SqlWorkflowDesign,
             meta: {
+                requiredPermissions: ['EXPERIMENT_SQL'],
                 requiresAuth: true,
                 title: ['titles.sqlWorkflow', 1]
             }
@@ -798,6 +861,7 @@ let router = new VueRouter({
             component: Explorer,
             meta: {
                 requiresAuth: true,
+                requiredPermissions: ['EXPERIMENT_EXPLORER'],
                 title: ['titles.dataExplorer', 1]
             }
         },
@@ -806,6 +870,7 @@ let router = new VueRouter({
             name: 'index-explorer',
             component: ExplorerIndex,
             meta: {
+                requiredPermissions: ['EXPERIMENT'],
                 requiresAuth: true,
                 title: ['titles.dataExplorer', 1]
             }
@@ -816,6 +881,7 @@ let router = new VueRouter({
             component: ChooseTask,
             meta: {
                 requiresAuth: true,
+                requiredPermissions: ['EXPERIMENT_MODEL'],
                 title: ['titles.dataExplorer', 1]
             }
         },
@@ -825,6 +891,7 @@ let router = new VueRouter({
             component: ModelTraining,
             meta: {
                 requiresAuth: true,
+                requiredPermissions: ['EXPERIMENT_MODEL'],
                 title: ['titles.dataExplorer', 1]
             }
         },
@@ -834,6 +901,7 @@ let router = new VueRouter({
             component: Design,
             meta: {
                 requiresAuth: true,
+                requiredPermissions: ['EXPERIMENT_MODEL'],
                 title: ['titles.dataExplorer', 1]
             }
         },
@@ -843,6 +911,7 @@ let router = new VueRouter({
             component: VisualizationDesign,
             meta: {
                 requiresAuth: true,
+                requiredPermissions: ['EXPERIMENT_VISUALIZATION'],
                 title: ['titles.dataExplorer', 1]
             }
         },
@@ -851,6 +920,7 @@ let router = new VueRouter({
             name: 'new-visualization',
             component: CreateVisualization,
             meta: {
+                requiredPermissions: ['EXPERIMENT_VISUALIZATION'],
                 requiresAuth: true,
                 title: ['titles.dataExplorer', 1]
             }
@@ -860,6 +930,7 @@ let router = new VueRouter({
             name: 'experiment-test',
             component: TestEntities,
             meta: {
+                requiredPermissions: ['ADMINISTRATOR'],
                 requiresAuth: true,
                 title: ['titles.dataExplorer', 1]
             }
@@ -869,6 +940,7 @@ let router = new VueRouter({
             name: 'pipelines',
             component: PipelineList,
             meta: {
+                requiredPermissions: ['PIPELINE', 'PIPELINE_RUN'],
                 requiresAuth: true,
                 title: ['titles.pipeline', 2]
             }
@@ -878,6 +950,7 @@ let router = new VueRouter({
             name: 'pipelineEdit',
             component: PipelineEdit,
             meta: {
+                requiredPermissions: ['PIPELINE', 'PIPELINE_RUN'],
                 requiresAuth: true,
                 title: ['titles.pipeline', 1]
             }
@@ -887,6 +960,7 @@ let router = new VueRouter({
             name: 'pipelineTemplates',
             component: PipelineTemplates,
             meta: {
+                requiredPermissions: ['PIPELINE'],
                 requiresAuth: true,
                 title: ['pipeline.template.pipelineTemplates', 1]
             }
@@ -896,6 +970,7 @@ let router = new VueRouter({
             name: 'pipelineRunsList',
             component: PipelineRunsList,
             meta: {
+                requiredPermissions: ['PIPELINE', 'PIPELINE_RUN'],
                 requiresAuth: true,
                 title: ['titles.pipelineRuns', 2]
             }
@@ -905,8 +980,17 @@ let router = new VueRouter({
             name: 'pipelineRunDetail',
             component: PipelineRunDetail,
             meta: {
+                requiredPermissions: ['PIPELINE', 'PIPELINE_RUN'],
                 requiresAuth: true,
                 title: ['titles.pipelineRuns', 1]
+            }
+        },
+        {
+            path: '/unauthorized',
+            name: 'unauthorized',
+            component: Unauthorized,
+            meta: {
+                title: ['titles.unauthorized']
             }
         },
         {
@@ -924,5 +1008,26 @@ router.onError(error => {
     if (/loading chunk \d* failed./i.test(error.message)) {
         window.location.reload();
     }
+});
+router.beforeEach((to, from, next) => {
+    const user = store.getters.user;
+    const permissions = store.getters.userPermissions;
+    const requiredPermissions = to.meta.requiredPermissions;
+
+    if (to.meta.requiresAuth) {
+        if (!user || permissions === null) {
+            return next("/login"); // Redirect if not logged in
+        }
+        if (requiredPermissions) {
+            const hasPermission = requiredPermissions.some(
+                (perm) => permissions.includes(perm)) ||
+                permissions.includes('ADMINISTRATOR');
+            if (!hasPermission) {
+                return next("/unauthorized"); // Redirect if permission is missing
+            }
+        }
+    }
+
+    next(); // Proceed if all checks pass
 });
 export default router;
