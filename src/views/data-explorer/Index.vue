@@ -62,7 +62,7 @@
                                 </g>
                             </svg>
                         </div>
-                        <div class="col mt-2" @click="navigate('data-explorer', {sql: true})">
+                        <div class="col mt-2" @click="navigate('data-explorer', { sql: true })">
                             <h5>Usar SQL para analisar, tratar e transformar dados</h5>
                             <small>
                                 Utilize o poder da SQL para tratar os dados. Você terá liberdade para escrever
@@ -148,7 +148,8 @@
                         <label class="sr-only" for="search">{{ $tc('common.name') }}</label>
                         <input v-model="searchFilter" type="text" class="form-control m-2 w-25"
                             :placeholder="$tc('common.name')">
-                        <button ref="searchBtn" class="btn btn-secondary btn-sm mb-2 btn-spinner" @click.prevent="search">
+                        <button ref="searchBtn" class="btn btn-secondary btn-sm mb-2 btn-spinner"
+                            @click.prevent="search">
                             <font-awesome-icon icon="fa fa-search default-icon" /> {{ $t('actions.search') }}
                             <font-awesome-icon icon="spinner" pulse class="icon" />
                         </button>
@@ -203,6 +204,12 @@
                         <template #updated="props">
                             {{ props.row.updated | formatJsonDate }}
                         </template>
+                        <template #actions="props" class="text-center">
+                            <button class="btn btn-sm btn-danger" :title="$t('actions.delete')"
+                                @click="remove(props.row)">
+                                <font-awesome-icon icon="trash" />
+                            </button>
+                        </template>
                     </v-server-table>
                     <div v-show="totalRecords === 0">
                         {{ $t('common.noData') }}
@@ -234,6 +241,7 @@ export default {
                 'type',
                 'updated',
                 'version',
+                'actions',
             ],
             options: {
                 hidePerPageSelect: true,
@@ -250,6 +258,7 @@ export default {
                     type: this.$tc('common.type'),
                     updated: this.$tc('common.updated'),
                     version: this.$tc('common.version'),
+                    actions: this.$tc('common.action')
                 },
                 sortable: ['name', 'id', 'updated'],
                 //filterable: ['name', 'id'],
@@ -313,7 +322,7 @@ export default {
             }
         };
     },
-    beforeMount(){
+    beforeMount() {
         this.typeFilter = localStorage.getItem('experiments:list:type') || '';
         this.searchFilter = localStorage.getItem('experiments:list:search') || '';
     },
@@ -338,6 +347,28 @@ export default {
                 'VIS_BUILDER': 'fa-chart-bar',
                 'SQL': 'fa-database',
             }[row.type];
+        },
+        remove(workflow) {
+            this.confirm(
+                this.$t('actions.delete'),
+                this.$t('messages.doYouWantToDelete'),
+                async () => {
+                    this.$Progress.start();
+                    try {
+                        await axios.delete(`${tahitiUrl}/workflows/${workflow.id}`);
+                        this.success(
+                            this.$t('messages.successDeletion', {
+                                what: this.$tc('titles.workflow', 1)
+                            })
+                        );
+                        this.$refs.workflowList.getData();
+                    } catch (e) {
+                        this.error(e);
+                    } finally {
+                        this.$Progress.finish();
+                    }
+                }
+            );
         }
     },
 }
