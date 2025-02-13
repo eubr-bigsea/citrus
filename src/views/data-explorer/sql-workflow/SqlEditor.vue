@@ -18,6 +18,8 @@ import {
 } from '@codemirror/language'
 import { searchKeymap } from '@codemirror/search'
 import { EditorView, keymap, lineNumbers } from '@codemirror/view'
+import { StateField } from '@codemirror/state';
+
 import { defineEmits, defineExpose, defineProps, onMounted, ref } from "vue"
 
 import { format } from 'sql-formatter'
@@ -124,10 +126,27 @@ onMounted(() => {
             marginTop: "2px"
         }
     });
+    // Define StateField
+    const listenChangesExtension = StateField.define({
+        // we won't use the actual StateField value, null or undefined is fine
+        create: () => null,
+        update: (value, transaction) => {
+            console.debug('teste');
+            if (transaction.docChanged) {
+                const newValue = transaction.newDoc.toString();
+                debounce((newValue) => {
+                    console.debug('aqui', newValue);
+                    emit('update', newValue);
+                }, 400)
+            }
+            return null;
+        },
+    });
     editor.value = new EditorView({
         doc: props.query,
         extensions: [
             myTheme,
+            //listenChangesExtension,
             keymap.of([indentWithTab]),
             indentUnit.of("    "),
             lineNumbers(),
@@ -143,8 +162,14 @@ onMounted(() => {
             autocompletion({ override: [sqlCompletion] }),
             sql(),
             EditorView.lineWrapping,
-            EditorView.updateListener.of(debounce((v) => {
-                emit('update', v.state.doc.text.join('\n'));
+
+            EditorView.updateListener.of(debounce(({ view, docChanged }) => {
+                //emit('update', v.state.doc.text.join('\n'));
+                if (true || docChanged) {
+                    // Call the onChange callback
+                    const content = view.state.sliceDoc(0);
+                    emit('update', content);
+                }
             }, 200))
         ],
         parent: container.value
