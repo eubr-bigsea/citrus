@@ -614,6 +614,9 @@ const executeWorkflow = async (taskId, cached) => {
 const stop = async () => {
     try {
         const resp = await axios.post(`${standUrl}/jobs/${job.value.id}/stop?executor=true`)
+        loadingData.value = false;
+        jobStatus.value = {status: 'Cancelado'};
+        console.debug(loadingData.value, jobStatus.value)
         success(i18n.$t('messages.successStop', { what: i18n.$t('titles.job') }));
     } catch (e) {
         error(e, null, null, 10000, false);
