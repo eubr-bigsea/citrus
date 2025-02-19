@@ -24,27 +24,38 @@
             </b-modal>
         </div>
 
-        <div class="table-container">
-            <b-table striped hover small bordered :items="tableItems" :fields="tableFields">
-                <template #cell(editar)="row">
-                    <button class="btn-sm btn-primary" title="Editar" @click.stop="openEditModal(row.item)">
+        <div class="table-container ">
+            <v-server-table ref="explanationTable" :columns="columns" :options="options" name="explanationTablePell">
+                
+                <template #created="props">
+                    {{new Date(props.row.created).toLocaleString("pt-BR")}}
+                </template>
+
+                <template #updated="props">
+                    {{new Date(props.row.updated).toLocaleString("pt-BR")}}
+                </template>
+                
+                <template #editar="props">
+                    <button class="btn-sm btn-primary" title="Editar" @click.stop="openEditModal(props.row)">
                         <font-awesome-icon icon="edit" />
                     </button>
                 </template>
 
-                <template #cell(executar)="row">
+                <template #executar="props">
                     <b-spinner class="ml-2" v-if="loading" variant="primary" label="Spinning"></b-spinner>
-                    <button v-if="!loading" class="btn-sm btn-success"  title="Executar" @click.stop="runExplanation(row.item.id)">
+                    <button v-if="!loading" class="btn-sm btn-success" title="Executar"
+                        @click.stop="runExplanation(props.row.id)">
                         <font-awesome-icon icon="play" />
                     </button>
                 </template>
 
-                <template #cell(excluir)="row">
-                    <button class="btn-sm btn-danger" title="Excluir" @click.stop="deleteExplanation(row.item.id)">
+                <!-- Slot para personalizar a coluna "excluir" -->
+                <template #excluir="props">
+                    <button class="btn-sm btn-danger" title="Excluir" @click.stop="deleteExplanation(props.row.id)">
                         <font-awesome-icon icon="trash" />
                     </button>
                 </template>
-            </b-table>
+            </v-server-table>
         </div>
 
         <b-modal v-model="showEditModal" :title="`Editar ${selectedItem?.algorithm}`" hide-footer>
@@ -258,32 +269,57 @@ export default {
             showImageModal: false,
             showEditModal: false,
             selectedItem: null,
-            tableFields: [
-                { key: 'name', label: 'Nome' },
-                { key: 'algorithm', label: 'Algoritmo' },
-                { key: 'description', label: 'Descrição' },
-                { key: 'created', label: 'Criado em' },
-                { key: 'updated', label: 'Atualizado em' },
-                { key: 'editar', label: '', thStyle: { width: "5%" } },
-                { key: 'executar', label: '', thStyle: { width: "5%" } },
-                { key: 'excluir', label: '', thStyle: { width: "5%" } },
-            ],
-
+            columns: ['name', 'algorithm', 'description', 'created', 'updated', 'editar', 'executar', 'excluir'],
+            options: {
+                perPage: 5,
+                skin: 'table-sm table table-hover',
+                filterable: false,
+                preserveState: true,
+                saveState: true,
+                headings: {
+                    id: 'ID',
+                    name: "Nome",
+                    algorithm: "Algoritmo",
+                    description: "Descrição",
+                    created: "Criado",
+                    updated: "Atualizado",
+                },
+                requestFunction: function (data) {
+                    const self = this;
+                    const limit = data.limit;
+                    const page = data.page - 1;
+                    self.$Progress.start();
+                    return axios
+                        .get(`${peelUrl}/explanation/${self.$route.params.id}/list`, {
+                            params: {
+                                enabled: true,
+                                limit: limit,
+                                page: page,
+                            },
+                        })
+                        .then((response) => {
+                            self.$Progress.finish();
+                            self.totalRows = response.data.totalRows;
+                            return {
+                                data: response.data.data,
+                                count: response.data.totalRows,
+                            };
+                        })
+                        .catch((error) => {
+                            self.$Progress.finish();
+                            self.error(error);
+                        });
+                },
+                texts: {
+                    filter: this.$tc('common.filter'),
+                    count: this.$t('common.pagerShowing'),
+                    limit: this.$t('common.limit'),
+                    noResults: this.$t('common.noData'),
+                    loading: this.$t('common.loading'),
+                    filterPlaceholder: this.$t('common.filterPlaceholder')
+                },
+            },
         };
-    },
-    computed: {
-        tableItems() {
-            return this.explanations.map((explanation, index) => ({
-                id: explanation.id,
-                name: explanation.name,
-                algorithm: explanation.algorithm,
-                description: explanation.description,
-                created: new Date(explanation.created).toLocaleString("pt-BR"),
-                updated: new Date(explanation.updated).toLocaleString("pt-BR"),
-                feature: {},
-                _showDetails: false
-            }));
-        }
     },
     watch: {
         explanation: {
@@ -292,12 +328,11 @@ export default {
                 this.isDirty = true;
             },
             deep: true
-        }
+        },
     },
     async mounted() {
         this.load();
         await this.getUnderstanding();
-        await this.listExplanetions();
     },
     methods: {
         async load() {
@@ -319,11 +354,12 @@ export default {
             } catch (error) {
                 console.error('Erro ao excluir explicação:', error);
             } finally {
-                this.listExplanetions();
+                this.$refs.explanationTable.refresh()
             }
         },
-        addFeature(model) {
-            this.runAlgorithm(model);
+        async addFeature(model) {
+            await this.runAlgorithm(model);
+            this.$refs.explanationTable.refresh()
         },
         openEditModal(item) {
             this.selectedItem = item;
@@ -338,10 +374,14 @@ export default {
                 console.error('Erro ao listar explicações:', error);
             }
         },
-        async listExplanetions() {
+        async listExplanations() {
             try {
-                const response = await this.makeRequest('get', `${peelUrl}/explanation/${this.$route.params.id}/list?enabled=true&limit=10&page=0&sort=name&sort=id`);
+                const response = await this.makeRequest(
+                    'get',
+                    `${peelUrl}/explanation/${this.$route.params.id}/list?enabled=true&limit=${this.perPage}&page=${this.currentPage - 1}&sort=name&sort=id`
+                );
                 this.explanations = response.data;
+                this.totalRows = response.totalRows;
             } catch (error) {
                 console.error('Erro ao listar explicações:', error);
             }
@@ -363,7 +403,7 @@ export default {
 
             try {
                 const response = await this.makeRequest('post', `${peelUrl}/algorithms/${this.understanding.id}/algorithm/shap`, shapRequest, { 'Content-Type': 'application/json' });
-                this.listExplanetions()
+                this.$refs.explanationTable.refresh()
             } catch (error) {
                 console.error('Erro na execução do algoritmo SHAP:', error);
             }
@@ -375,7 +415,7 @@ export default {
                 await this.runResult(explanationId);
             } catch (error) {
                 console.error('Erro ao executar a explicação:', error);
-            }finally{
+            } finally {
                 this.loading = false;
             }
         },
@@ -426,6 +466,7 @@ export default {
             }
         },
     }
+
 };
 </script>
 
@@ -439,14 +480,13 @@ export default {
 }
 
 .table-container {
-    display: flex;
     justify-content: center;
     align-items: center;
-    width: 100%;
+    width: 90%;
     margin: 0 auto;
 }
 
 .table-container table {
-    width: 90%;
+    width: 100%;
 }
 </style>
