@@ -14,13 +14,32 @@
                 </b-dropdown-item>
             </b-dropdown>
 
-            <b-modal v-model="showImageModal" title="Resultado" hide-footer>
-                <div v-if="imageUrl">
-                    <img :src="imageUrl" class="img-fluid" />
+            <b-modal v-model="showImageModal" title="Resultado" hide-footer size="lg" centered>
+                <div v-if="imageUrl" class="text-center">
+                    <div class="mb-1 text-right">
+                        <b-button variant="success" @click="downloadImage(imageUrl)">
+                            <font-awesome-icon icon="download" class="mr-2" />
+                        </b-button>
+                    </div>
+                    <img :src="imageUrl" class="img-fluid rounded shadow" alt="Resultado da Explicação" />
                 </div>
-                <div v-else>
-                    <p>Carregando imagem...</p>
+                <div v-else-if="jsonResult" class="json-result-container">
+                    <div class="mb-1 text-right">
+                        <b-button variant="primary" @click="copyJson(jsonResult)">
+                            <font-awesome-icon icon="copy" class="mr-2" />
+                        </b-button>
+                    </div>
+                    <pre class="json-result">{{ jsonResult }}</pre>
                 </div>
+                <div v-else class="text-center">
+                    <b-spinner variant="primary" label="Carregando..."></b-spinner>
+                    <p class="mt-2">Carregando resultado...</p>
+                </div>
+            </b-modal>
+
+            <b-modal v-model="showDeleteConfirmation" title="Confirmar Exclusão" @ok="confirmDelete" ok-title="Excluir"
+                cancel-title="Cancelar" ok-variant="danger">
+                <p>Tem certeza de que deseja excluir esta explicação?</p>
             </b-modal>
         </div>
 
@@ -36,17 +55,45 @@
                 </template>
 
                 <template #executar="props">
-                    <b-spinner class="ml-2" v-if="loading" variant="primary" label="Spinning"></b-spinner>
-                    <button v-if="!loading" class="btn-sm btn-success" title="Executar"
-                        @click.stop="runResult(props.row.id);">
-                        <font-awesome-icon icon="play" />
-                    </button>
+                    <div class="d-flex align-items-center mb-4">
+                        <b-spinner class="ml-2" v-if="loading" variant="primary" label="Spinning"></b-spinner>
+                        <template v-if="props.row.algorithm == 'shap'">
+                            <b-dropdown variant="link" toggle-class="text-decoration-none p-0" no-caret>
+                                <template #button-content class="mt-2">
+                                    <button v-if="!loading" class="btn-sm btn-success" title="Executar">
+                                        <font-awesome-icon icon="play" />
+                                    </button>
+                                </template>
+                                <b-dropdown-item @click="runResult(props.row.id, 'image')">
+                                    <span class="ml-2">Imagem</span>
+                                </b-dropdown-item>
+                                <b-dropdown-item @click="runResult(props.row.id, 'raw')">
+                                    <font-awesome-icon icon="file-alt" />
+                                    <span class="ml-2">Texto</span>
+                                </b-dropdown-item>
+                            </b-dropdown>
+                        </template>
+                        <template v-else-if="props.row.algorithm == 'ale'">
+                            <button @click="runResult(props.row.id, 'image')" v-if="!loading" class="btn-sm btn-success"
+                                title="Executar">
+                                <font-awesome-icon icon="play" />
+                            </button>
+                        </template>
+                        <template v-else>
+                            <button @click="runResult(props.row.id, 'raw')" v-if="!loading" class="btn-sm btn-success"
+                                title="Executar">
+                                <font-awesome-icon icon="play" />
+                            </button>
+                        </template>
+                    </div>
                 </template>
 
                 <template #excluir="props">
-                    <button class="btn-sm btn-danger" title="Excluir" @click.stop="deleteExplanation(props.row.id)">
-                        <font-awesome-icon icon="trash" />
-                    </button>
+                    <div class="d-flex align-items-center">
+                        <button class="btn-sm btn-danger" title="Excluir" @click.stop="deleteExplanation(props.row.id)">
+                            <font-awesome-icon icon="trash" />
+                        </button>
+                    </div>
                 </template>
             </v-server-table>
         </div>
@@ -179,6 +226,8 @@ export default {
             instanceInput: "",
             explanations: [],
             understanding: {},
+            showDeleteConfirmation: false,
+            explanationToDelete: null,
             loading: false,
             menuOptions: [
                 { label: 'ALE', value: 'ale' },
@@ -190,6 +239,7 @@ export default {
                 { label: 'Tree', value: 'tree' }
             ],
             imageUrl: "",
+            jsonResult: null,
             showImageModal: false,
             columns: ['name', 'algorithm', 'description', 'created', 'updated', 'executar', 'excluir'],
             options: {
@@ -206,7 +256,7 @@ export default {
                     created: "Criado",
                     updated: "Atualizado",
                 },
-                requestFunction: function (data) {
+                requestFunction: async function (data) {
                     const self = this;
                     const limit = data.limit;
                     const page = data.page - 1;
@@ -259,13 +309,20 @@ export default {
                 this.error(e);
             }
         },
-        async deleteExplanation(id) {
-            try {
-                await this.makeRequest('delete', `${peelUrl}/explanation/${id}`);
-            } catch (error) {
-                console.error('Erro ao excluir explicação:', error);
-            } finally {
-                this.$refs.explanationTable.refresh()
+        deleteExplanation(id) {
+            this.explanationToDelete = id;
+            this.showDeleteConfirmation = true;
+        },
+        async confirmDelete() {
+            if (this.explanationToDelete) {
+                try {
+                    await this.makeRequest('delete', `${peelUrl}/explanation/${this.explanationToDelete}`);
+                } catch (error) {
+                    console.error('Erro ao excluir explicação:', error);
+                } finally {
+                    this.$refs.explanationTable.refresh();
+                    this.explanationToDelete = null; // Limpa o ID após a exclusão
+                }
             }
         },
         async addFeature(algorithm) {
@@ -289,7 +346,7 @@ export default {
                 }
             } else if (this.selectedAlgorithm == 'ensemble' || this.selectedAlgorithm == 'linear' || this.selectedAlgorithm == 'logit') {
                 this.newItem.arguments.n_feature = + this.newItem.arguments.n_feature
-            }else if (this.selectedAlgorithm == 'tree'){
+            } else if (this.selectedAlgorithm == 'tree') {
                 this.newItem.arguments.max_depth = + this.newItem.arguments.max_depth
             }
             this.addAlgorithm();
@@ -306,8 +363,19 @@ export default {
                 this.$refs.explanationTable.refresh();
                 this.showAddModal = false;
                 this.instanceInput = ''
+
+                this.$bvToast.toast('Algoritmo adicionado com sucesso!', {
+                    title: 'Sucesso',
+                    variant: 'success',
+                    solid: true,
+                });
             } catch (error) {
                 console.error('Erro ao adicionar algoritmo:', error);
+                this.$bvToast.toast('Erro ao adicionar algoritmo.', {
+                    title: 'Erro',
+                    variant: 'danger',
+                    solid: true,
+                });
             }
         },
         async getUnderstanding() {
@@ -329,7 +397,7 @@ export default {
                 this.loading = false;
             }
         },
-        async runResult(explanationId) {
+        async runResult(explanationId, resultType = "raw") {
             let attempts = 0;
             const maxAttempts = 10;
             const delay = 3000;
@@ -337,16 +405,22 @@ export default {
             while (attempts < maxAttempts) {
                 try {
                     const response = await axios.get(
-                        `${peelUrl}/explanation/${explanationId}/result?type=image`,
+                        `${peelUrl}/explanation/${explanationId}/result?type=${resultType}`,
                         {
                             headers: { accept: "application/json" },
-                            responseType: "blob",
+                            responseType: resultType === "image" ? "blob" : "json",
                         }
                     );
 
                     if (response.data.status === "PROCESSING") {
-                    } else if (response.headers["content-type"].startsWith("image/")) {
+                    } else if (resultType === "image" && response.headers["content-type"].startsWith("image/")) {
                         this.imageUrl = URL.createObjectURL(response.data);
+                        this.jsonResult = null; // Limpa o resultado JSON
+                        this.showImageModal = true;
+                        return;
+                    } else if (resultType === "raw") {
+                        this.jsonResult = JSON.stringify(response.data, null, 2); // Formata o JSON
+                        this.imageUrl = null; // Limpa a URL da imagem
                         this.showImageModal = true;
                         return;
                     }
@@ -360,6 +434,7 @@ export default {
             console.error("Tempo limite atingido. A tarefa não foi processada.");
             this.showImageModal = false;
             this.imageUrl = null;
+            this.jsonResult = null;
         },
         async makeRequest(method, url, data = null, headers = {}) {
             try {
@@ -375,6 +450,47 @@ export default {
                 throw error;
             }
         },
+        copyJson(json) {
+            navigator.clipboard.writeText(json)
+                .then(() => {
+                    this.$bvToast.toast('JSON copiado com sucesso!', {
+                        title: 'Sucesso',
+                        variant: 'success',
+                        solid: true,
+                    });
+                })
+                .catch((err) => {
+                    console.error('Erro ao copiar JSON:', err);
+                    this.$bvToast.toast('Erro ao copiar JSON.', {
+                        title: 'Erro',
+                        variant: 'danger',
+                        solid: true,
+                    });
+                });
+        },
+        downloadImage(imageUrl) {
+            try {
+                const link = document.createElement('a');
+                link.href = imageUrl;
+                link.download = `explicacao_${new Date().toISOString()}.png`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
+                this.$bvToast.toast('Imagem baixada com sucesso!', {
+                    title: 'Sucesso',
+                    variant: 'success',
+                    solid: true,
+                });
+            } catch (error) {
+                console.error('Erro ao baixar a imagem:', error);
+                this.$bvToast.toast('Erro ao baixar a imagem.', {
+                    title: 'Erro',
+                    variant: 'danger',
+                    solid: true,
+                });
+            }
+        },
     }
 
 };
@@ -384,13 +500,82 @@ export default {
 .btn {
     margin-right: 5px;
 }
+
 .table-container {
     justify-content: center;
     align-items: center;
     width: 90%;
     margin: 0 auto;
 }
+
+.table-container .btn {
+    vertical-align: middle;
+}
+
 .table-container table {
     width: 100%;
+}
+
+/* Estilo para o modal */
+.modal-content {
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.modal-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+.modal-title {
+    font-weight: 600;
+    color: #343a40;
+}
+
+.modal-body {
+    padding: 20px;
+}
+
+/* Estilo para a imagem */
+.img-fluid.rounded {
+    max-height: 70vh;
+    border: 1px solid #ddd;
+}
+
+/* Estilo para o JSON */
+.json-result-container {
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 15px;
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+.json-result {
+    background-color: #fff;
+    padding: 15px;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 14px;
+    color: #343a40;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    margin: 0;
+}
+
+/* Estilo para o spinner de carregamento */
+.text-center .spinner-border {
+    width: 3rem;
+    height: 3rem;
+}
+
+.text-center p {
+    font-size: 16px;
+    color: #6c757d;
+    margin-top: 10px;
 }
 </style>
