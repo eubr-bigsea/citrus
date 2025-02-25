@@ -1,179 +1,205 @@
 <template>
     <main role="main">
-        <div class="d-flex justify-content-between align-items-center">
-            <h1>Plataforma Peel</h1>
+        <div>
+            <div class="d-flex justify-content-between align-items-center">
+                <h1>Plataforma Peel</h1>
+            </div>
+            <hr>
         </div>
-        <hr>
-        <h6>Criar Explicação</h6>
-        <p>
-            Preencha os dados abaixo para iniciar o processo de criação de uma nova explicação e importe um modelo como
-            base de análises.
-        </p>
-
-        <div class="row">
-            <div class="col-12">
-                <b-card no-body>
-                    <div class="p-3">
-                        <b-form @submit.prevent="onSubmit">
-                            <b-form-group id="input-group-1" label="Nome da Explicação:" label-for="input-name">
-                                <b-form-input id="input-name" v-model="explanation.name" placeholder="Preencha o nome"
-                                    required></b-form-input>
-                            </b-form-group>
-
-                            <b-form-group id="input-group-1" label="Descrição:" label-for="input-name">
-                                <b-form-textarea id="input-name" v-model="explanation.description"
-                                    placeholder="Preencha a descrição" required></b-form-textarea>
-                            </b-form-group>
-
-                            <b-form-group id="input-group-2" label="Modelo:" label-for="input-model">
-
-                                <vue-select v-model="explanation.selectedModel" :filterable="false" :options="modelList"
-                                    label="name" class="w-100" @search="onSearchModel">
-                                    <template #no-options="{}">
-                                        <small>Digite parte do nome para pesquisar...</small>
-                                    </template>
-                                    <template #option="option">
-                                        <b-container>
-                                            <b-row class="align-items-center">
-                                                {{ pad(option.id, 4, '&nbsp;') }} - {{ option.name }}
-                                            </b-row>
-                                        </b-container>
-                                    </template>
-                                    <template #default="option">
-                                        {{ pad(option.id, 4, '&nbsp;') }} - {{ option.name }}
-                                    </template>
-                                    <template #selected-option="option">
-                                        <div class="selected d-center">
-                                            {{ pad(option.id, 4, '&nbsp;') }} - {{ option.name }}
-                                        </div>
-                                    </template>
-                                </vue-select>
-
-                                <small class="text-muted">
-                                    Não encontrou o modelo?
-                                    <b-button variant="link" @click="showModal('modelModal')">Faça o upload
-                                        aqui</b-button>
-                                </small>
-                            </b-form-group>
-
-                            <b-form-group label="Fonte de Dados:" label-for="input-datasource">
-                                <vue-select v-model="explanation.selectedDatasource" :filterable="false"
-                                    :options="datasourceList" label="name" class="w-100" @search="onSearchDatasource">
-                                    <template #no-options="{}">
-                                        <small>Digite parte do nome para pesquisar...</small>
-                                    </template>
-                                    <template #option="option">
-                                        <b-container>
-                                            <b-row class="align-items-center">
-                                                {{ pad(option.id, 4, '&nbsp;') }} - {{ option.name }}
-                                            </b-row>
-                                        </b-container>
-                                    </template>
-                                    <template #default="option">
-                                        {{ pad(option.id, 4, '&nbsp;') }} - {{ option.name }}
-                                    </template>
-                                    <template #selected-option="option">
-                                        <div class="selected d-center">
-                                            {{ pad(option.id, 4, '&nbsp;') }} - {{ option.name }}
-                                        </div>
-                                    </template>
-                                </vue-select>
-
-                                <small class="text-muted">
-                                    Não encontrou a fonte de dados?
-                                    <b-button variant="link" @click="showModal('datasourceModal')">Faça o upload
-                                        aqui</b-button>
-                                </small>
-                            </b-form-group>
-                        </b-form>
-                    </div>
-
-                    <b-modal id="upload-modal" ref="modelModal" title="Fazer Upload do Modelo" @ok="submitModel">
-                        <b-form>
-                            <b-form-group label="Arquivo:" label-for="input-upload">
-                                <b-form-file id="input-upload" v-model="explanation.model.file"
-                                    @change="handleFileUpload($event, 'model')" accept=".pkl"
-                                    placeholder="Selecione um arquivo"></b-form-file>
-                            </b-form-group>
-
-                            <b-form-group label="Nome:" label-for="input-name">
-                                <b-form-input id="input-name" v-model="explanation.model.name" required />
-                            </b-form-group>
-
-                            <b-form-group label="Descrição:" label-for="input-description">
-                                <b-form-input id="input-description" v-model="explanation.model.description" required />
-                            </b-form-group>
-
-                            <b-form-group label="Tipo:" label-for="input-type">
-                                <b-form-input id="input-type" v-model="explanation.model.model_type" required />
-                            </b-form-group>
-
-                            <b-form-group label="Classe:" label-for="input-class">
-                                <b-form-input id="input-class" v-model="explanation.model.class_name" required />
-                            </b-form-group>
-
-                            <b-form-group label="Versão:" label-for="input-version">
-                                <b-form-input id="input-version" v-model="explanation.model.version" required />
-                            </b-form-group>
-
-                            <b-form-group label="Digest:" label-for="input-digest">
-                                <b-form-input id="input-digest" v-model="explanation.model.digest" required />
-                            </b-form-group>
-                        </b-form>
-                        <template #modal-footer>
-                            <b-button variant="secondary" @click="handleCloseModelModal">Cancelar</b-button>
-                            <b-button variant="primary" @click="submitModel">Enviar</b-button>
+        <div class="card shadow-sm">
+            <div class="card-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">Explicações</h5>
+                    <button class="btn btn-success" @click="createExplanation">
+                        <font-awesome-icon icon="plus" />
+                        Adicionar
+                    </button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <v-server-table ref="undestandingTable" :columns="columns" :options="options" name="understandingTablePell" class="table table-striped">
+                        <template #created="props">
+                            {{ new Date(props.row.created).toLocaleString("pt-BR") }}
                         </template>
-                    </b-modal>
-
-                    <b-modal id="upload-datasource-modal" ref="datasourceModal" title="Fazer Upload da Fonte de Dados"
-                        @ok="submitDatasource">
-                        <b-form>
-                            <b-form-group label="Arquivo:" label-for="input-upload-file">
-                                <b-form-file id="input-upload-file" v-model="explanation.datasource.file"
-                                    @change="handleFileUpload($event, 'datasource')" accept=".csv"
-                                    placeholder="Selecione um arquivo"></b-form-file>
-                            </b-form-group>
-
-                            <b-form-group label="Nome:" label-for="input-name">
-                                <b-form-input id="input-name" v-model="explanation.datasource.name" required />
-                            </b-form-group>
-
-                            <b-form-group label="Descrição:" label-for="input-description">
-                                <b-form-input id="input-description" v-model="explanation.datasource.description"
-                                    required />
-                            </b-form-group>
-
-                            <b-form-group label="Delimitador de Atributo:" label-for="input-attributed-delimiter">
-                                <b-form-input id="input-attributed-delimiter"
-                                    v-model="explanation.datasource.attributed_delimiter" required></b-form-input>
-                            </b-form-group>
-
-                            <b-form-group label="Delimitador de Registro:" label-for="input-record-delimiter">
-                                <b-form-input id="input-record-delimiter"
-                                    v-model="explanation.datasource.record_delimiter" required></b-form-input>
-                            </b-form-group>
-
-                            <b-form-group label="Encoding:" label-for="input-encoding">
-                                <b-form-input id="input-encoding" v-model="explanation.datasource.encoding" required />
-                            </b-form-group>
-                        </b-form>
-                        <template #modal-footer>
-                            <b-button variant="secondary" @click="handleCloseDataSourceModal">Cancelar</b-button>
-                            <b-button variant="primary" @click="submitDatasource">Enviar</b-button>
+        
+                        <template #updated="props">
+                            {{ new Date(props.row.updated).toLocaleString("pt-BR") }}
                         </template>
-                    </b-modal>
-                </b-card>
-                <div class="mt-2 d-flex justify-content-end">
-                    <b-link :to="{ name: 'index-explorer' }" class="btn btn-secondary btn-sm mr-1">
-                        {{ $t('actions.cancel') }}
-                    </b-link>
-                    <b-button @click="onSubmit()" variant="primary" class="btn btn-sm btn-primary pr-4 pl-4">
-                        {{ $tc('actions.create2') }}
-                    </b-button>
+        
+                        <template #view="props">
+                            <router-link :to="{ name: 'explanationEdit', params: { id: props.row.id } }">
+                                <button class="btn btn-sm btn-primary">
+                                    <font-awesome-icon icon="eye" />
+                                </button>
+                            </router-link>
+                        </template>
+        
+                        <template #edit="props">
+                            <button class="btn btn-sm btn-warning" @click="openEditPopup(props.row)">
+                                <font-awesome-icon icon="edit" />
+                            </button>
+                        </template>
+        
+                        <template #delete="props">
+                            <button class="btn btn-sm btn-danger" @click="openDeleteConfirmation(props.row)">
+                                <font-awesome-icon icon="trash" />
+                            </button>
+                        </template>
+                    </v-server-table>
                 </div>
             </div>
         </div>
+
+        <b-button :to="{ name: 'index-explorer'}" class="mt-3">Voltar</b-button>
+
+        <b-modal v-model="showEditPopup" title="Editar Explicação" @ok="saveExplanation" ok-title="Salvar"
+            cancel-title="Cancelar" size="lg">
+            <b-form @submit.prevent="saveExplanation">
+                <b-form-group id="input-group-1" label="Nome da Explicação:" label-for="input-name">
+                    <b-form-input id="input-name" v-model="selectedExplanation.name" placeholder="Preencha o nome"
+                        required></b-form-input>
+                </b-form-group>
+
+                <b-form-group id="input-group-2" label="Descrição:" label-for="input-description">
+                    <b-form-textarea id="input-description" v-model="selectedExplanation.description"
+                        placeholder="Preencha a descrição" required></b-form-textarea>
+                </b-form-group>
+
+                <b-form-group id="input-group-3" label="Modelo:" label-for="input-model">
+                    <vue-select v-model="selectedExplanation.selectedModel" :filterable="false" :options="modelList"
+                        label="name" class="w-100" @search="onSearchModel">
+                        <template #no-options>
+                            <small>Digite parte do nome para pesquisar...</small>
+                        </template>
+                        <template #option="option">
+                            <b-container>
+                                <b-row class="align-items-center">
+                                    {{ pad(option.id, 4, '&nbsp;') }} - {{ option.name }}
+                                </b-row>
+                            </b-container>
+                        </template>
+                        <template #selected-option="option">
+                            <div class="selected d-center">
+                                {{ pad(option.id, 4, '&nbsp;') }} - {{ option.name }}
+                            </div>
+                        </template>
+                    </vue-select>
+
+                    <small class="text-muted">
+                        Não encontrou o modelo?
+                        <b-button variant="link" @click="showModal('modelModal')">Faça o upload aqui</b-button>
+                    </small>
+                </b-form-group>
+
+                <b-form-group id="input-group-4" label="Fonte de Dados:" label-for="input-datasource">
+                    <vue-select v-model="selectedExplanation.selectedDatasource" :filterable="false"
+                        :options="datasourceList" label="name" class="w-100" @search="onSearchDatasource">
+                        <template #no-options>
+                            <small>Digite parte do nome para pesquisar...</small>
+                        </template>
+                        <template #option="option">
+                            <b-container>
+                                <b-row class="align-items-center">
+                                    {{ pad(option.id, 4, '&nbsp;') }} - {{ option.name }}
+                                </b-row>
+                            </b-container>
+                        </template>
+                        <template #selected-option="option">
+                            <div class="selected d-center">
+                                {{ pad(option.id, 4, '&nbsp;') }} - {{ option.name }}
+                            </div>
+                        </template>
+                    </vue-select>
+
+                    <small class="text-muted">
+                        Não encontrou a fonte de dados?
+                        <b-button variant="link" @click="showModal('datasourceModal')">Faça o upload aqui</b-button>
+                    </small>
+                </b-form-group>
+            </b-form>
+        </b-modal>
+
+        <b-modal id="upload-modal" ref="modelModal" title="Fazer Upload do Modelo" @ok="submitModel">
+            <b-form>
+                <b-form-group label="Arquivo:" label-for="input-upload">
+                    <b-form-file id="input-upload" v-model="selectedExplanation.model.file"
+                        @change="handleFileUpload($event, 'model')" accept=".pkl"
+                        placeholder="Selecione um arquivo"></b-form-file>
+                </b-form-group>
+
+                <b-form-group label="Nome:" label-for="input-name">
+                    <b-form-input id="input-name" v-model="selectedExplanation.model.name" required />
+                </b-form-group>
+
+                <b-form-group label="Descrição:" label-for="input-description">
+                    <b-form-input id="input-description" v-model="selectedExplanation.model.description" required />
+                </b-form-group>
+
+                <b-form-group label="Tipo:" label-for="input-type">
+                    <b-form-input id="input-type" v-model="selectedExplanation.model.model_type" required />
+                </b-form-group>
+
+                <b-form-group label="Classe:" label-for="input-class">
+                    <b-form-input id="input-class" v-model="selectedExplanation.model.class_name" required />
+                </b-form-group>
+
+                <b-form-group label="Versão:" label-for="input-version">
+                    <b-form-input id="input-version" v-model="selectedExplanation.model.version" required />
+                </b-form-group>
+
+                <b-form-group label="Digest:" label-for="input-digest">
+                    <b-form-input id="input-digest" v-model="selectedExplanation.model.digest" required />
+                </b-form-group>
+            </b-form>
+            <template #modal-footer>
+                <b-button variant="secondary" @click="handleCloseModelModal">Cancelar</b-button>
+                <b-button variant="primary" @click="submitModel">Enviar</b-button>
+            </template>
+        </b-modal>
+
+        <b-modal id="upload-datasource-modal" ref="datasourceModal" title="Fazer Upload da Fonte de Dados"
+            @ok="submitDatasource">
+            <b-form>
+                <b-form-group label="Arquivo:" label-for="input-upload-file">
+                    <b-form-file id="input-upload-file" v-model="selectedExplanation.datasource.file"
+                        @change="handleFileUpload($event, 'datasource')" accept=".csv"
+                        placeholder="Selecione um arquivo"></b-form-file>
+                </b-form-group>
+
+                <b-form-group label="Nome:" label-for="input-name">
+                    <b-form-input id="input-name" v-model="selectedExplanation.datasource.name" required />
+                </b-form-group>
+
+                <b-form-group label="Descrição:" label-for="input-description">
+                    <b-form-input id="input-description" v-model="selectedExplanation.datasource.description"
+                        required />
+                </b-form-group>
+
+                <b-form-group label="Delimitador de Atributo:" label-for="input-attributed-delimiter">
+                    <b-form-input id="input-attributed-delimiter"
+                        v-model="selectedExplanation.datasource.attributed_delimiter" required></b-form-input>
+                </b-form-group>
+
+                <b-form-group label="Delimitador de Registro:" label-for="input-record-delimiter">
+                    <b-form-input id="input-record-delimiter" v-model="selectedExplanation.datasource.record_delimiter"
+                        required></b-form-input>
+                </b-form-group>
+
+                <b-form-group label="Encoding:" label-for="input-encoding">
+                    <b-form-input id="input-encoding" v-model="selectedExplanation.datasource.encoding" required />
+                </b-form-group>
+            </b-form>
+            <template #modal-footer>
+                <b-button variant="secondary" @click="handleCloseDataSourceModal">Cancelar</b-button>
+                <b-button variant="primary" @click="submitDatasource">Enviar</b-button>
+            </template>
+        </b-modal>
+
+        <b-modal v-model="showDeleteConfirmation" title="Confirmar Exclusão" @ok="confirmDelete" ok-title="Excluir"
+            cancel-title="Cancelar" ok-variant="danger">
+            <p>Tem certeza de que deseja excluir este algoritmo?</p>
+        </b-modal>
     </main>
 </template>
 
@@ -197,20 +223,78 @@ export default {
     mixins: [ExplanationModel, Notifier],
     data() {
         return {
-            explanation: {
+            showDeleteConfirmation: false,
+            explanationToDelete: null,
+            columns: ['id', 'name', 'description', 'created', 'updated', 'view', 'edit', 'delete'],
+            options: {
+                perPage: 10,
+                perPageValues: [10],
+                skin: 'table-sm table table-hover',
+                filterable: false,
+                preserveState: true,
+                saveState: true,
+                headings: {
+                    id: 'ID',
+                    name: "Nome",
+                    description: "Descrição",
+                    created: "Criado",
+                    updated: "Atualizado",
+                    view: "Visualizar",
+                    edit: "Editar",
+                    delete: "Excluir",
+                },
+                requestFunction: async function (data) {
+                    const self = this;
+                    const limit = data.limit;
+                    const page = data.page - 1;
+                    self.$Progress.start();
+                    return axios
+                        .get(`${peelUrl}/understanding/list`, {
+                            params: {
+                                enabled: true,
+                                limit: limit,
+                                page: page,
+                            },
+                        })
+                        .then((response) => {
+                            self.$Progress.finish();
+                            self.totalRows = response.data.totalRows;
+                            return {
+                                data: response.data.data,
+                                count: response.data.totalRows,
+                            };
+                        })
+                        .catch((error) => {
+                            self.$Progress.finish();
+                            self.error(error);
+                        });
+                },
+                texts: {
+                    filter: this.$tc('common.filter'),
+                    count: this.$t('common.pagerShowing'),
+                    limit: this.$t('common.limit'),
+                    noResults: this.$t('common.noData'),
+                    loading: this.$t('common.loading'),
+                    filterPlaceholder: this.$t('common.filterPlaceholder')
+                },
+            },
+            showEditPopup: false,
+            selectedExplanation: {
+                id: null,
                 name: "",
                 description: "",
-                selectedModel: null,
-                selectedDatasource: null,
+                selectedModel: 1,
+                selectedDatasource: 1,
                 model: {
                     name: "",
                     description: "",
-                    modelType: "",
+                    model_type: "",
                     version: "",
-                    className: "",
+                    class_name: "",
                     digest: "",
                     file: null,
                 },
+
                 datasource: {
                     name: "",
                     description: "",
@@ -224,7 +308,11 @@ export default {
             datasourceList: [],
         };
     },
+
     methods: {
+        createExplanation() {
+            this.$router.push({ name: "explanationCreate" });
+        },
         pad(num, places, ch = "0") {
             return String(num).padStart(places, ch);
         },
@@ -236,15 +324,18 @@ export default {
         closeModal(ref) {
             this.$refs[ref]?.hide();
         },
-
+        openDeleteConfirmation(explanation) {
+            this.explanationToDelete = explanation; // Armazena a explicação selecionada
+            this.showDeleteConfirmation = true; // Abre o modal de confirmação
+        },
         resetForm(formType) {
             const formData = {
                 model: {
                     name: "",
                     description: "",
-                    modelType: "",
+                    model_type: "",
                     version: "",
-                    className: "",
+                    class_name: "",
                     digest: "",
                     file: null,
                 },
@@ -257,13 +348,13 @@ export default {
                     file: null,
                 },
             };
-            this.explanation[formType] = formData[formType];
+            this.selectedExplanation[formType] = formData[formType];
         },
 
         handleFileUpload(event, type) {
             const file = event.target.files[0];
             if (file) {
-                this.explanation[type].file = file;
+                this.selectedExplanation[type].file = file;
             }
         },
 
@@ -287,19 +378,19 @@ export default {
 
         async submitModel() {
             try {
-                const uri = await this.uploadFile(this.explanation.model.file, "model");
+                const uri = await this.uploadFile(this.selectedExplanation.model.file, "model");
                 if (!uri) throw new Error("URI não gerada.");
 
                 const url = `${peelUrl}/model/`;
                 const data = {
-                    name: this.explanation.model.name,
-                    description: this.explanation.model.description,
+                    name: this.selectedExplanation.model.name,
+                    description: this.selectedExplanation.model.description,
                     enabled: true,
                     uri,
-                    model_type: this.explanation.model.modelType,
-                    version: this.explanation.model.version,
-                    class_name: this.explanation.model.className,
-                    digest: this.explanation.model.digest,
+                    model_type: this.selectedExplanation.model.model_type,
+                    version: this.selectedExplanation.model.version,
+                    class_name: this.selectedExplanation.model.class_name,
+                    digest: this.selectedExplanation.model.digest,
                 };
 
                 await axios.post(url, data, { headers: API_HEADERS });
@@ -312,19 +403,19 @@ export default {
 
         async submitDatasource() {
             try {
-                const uri = await this.uploadFile(this.explanation.datasource.file, "datasource");
+                const uri = await this.uploadFile(this.selectedExplanation.datasource.file, "datasource");
                 if (!uri) throw new Error("URI não gerada.");
 
                 const url = `${peelUrl}/datasource/`;
                 const data = {
-                    name: this.explanation.datasource.name,
-                    description: this.explanation.datasource.description,
+                    name: this.selectedExplanation.datasource.name,
+                    description: this.selectedExplanation.datasource.description,
                     enabled: true,
                     uri,
                     data_format: "csv",
-                    attributed_delimiter: this.explanation.datasource.attributed_delimiter,
-                    record_delimiter: this.explanation.datasource.record_delimiter,
-                    encoding: this.explanation.datasource.encoding,
+                    attributed_delimiter: this.selectedExplanation.datasource.attributed_delimiter,
+                    record_delimiter: this.selectedExplanation.datasource.record_delimiter,
+                    encoding: this.selectedExplanation.datasource.encoding,
                 };
 
                 await axios.post(url, data, { headers: API_HEADERS });
@@ -361,23 +452,88 @@ export default {
             }
         },
 
-        async onSubmit() {
+        async openEditPopup(explanation) {
             try {
-                const url = `${peelUrl}/understanding/`;
-                const params = {
-                    id_datasource: this.explanation.selectedDatasource.id,
-                    id_model: this.explanation.selectedModel.id,
-                    name: this.explanation.name,
-                    description: this.explanation.description,
+                const response = await axios.get(`${peelUrl}/understanding/${explanation.id}`);
+                const explanationDetails = response.data;
+
+                this.selectedExplanation = {
+                    ...explanationDetails,
+                    selectedModel: explanationDetails.model, // Associa o modelo original
+                    selectedDatasource: explanationDetails.datasource, // Associa a fonte de dados original
+                };
+
+                await this.loadList("model");
+                await this.loadList("datasource");
+
+                this.showEditPopup = true;
+            } catch (error) {
+                console.error("Erro ao carregar os detalhes da explicação:", error);
+            }
+        },
+
+        async saveExplanation() {
+            try {
+                const url = `${peelUrl}/understanding/${this.selectedExplanation.id}`;
+                const data = {
+                    name: this.selectedExplanation.name,
+                    description: this.selectedExplanation.description,
+                    id_model: this.selectedExplanation.selectedModel?.id,
+                    id_datasource: this.selectedExplanation.selectedDatasource?.id,
                     enabled: true,
                 };
 
-                const response = await axios.post(url, params, { headers: API_HEADERS });
-                this.$router.push({ name: 'explanationEdit', params: { id: response.data.id } });
+                await axios.patch(url, data, { headers: API_HEADERS });
+                this.$refs.undestandingTable.refresh();
+                this.showEditPopup = false;
             } catch (error) {
-                console.error("Erro ao criar explicação:", error.response?.data || error.message);
             }
+        },
+
+        async confirmDelete() {
+            if (this.explanationToDelete) {
+                try {
+                    const url = `${peelUrl}/understanding/${this.explanationToDelete.id}`;
+                    const data = {
+                        ...this.explanationToDelete,
+                        enabled: false,
+                    };
+                    await axios.patch(url, data, { headers: API_HEADERS });
+                    this.$refs.undestandingTable.refresh();
+                } catch (error) {
+                    console.error("Erro ao excluir a explicação:", error);
+                } finally {
+                    this.showDeleteConfirmation = false;
+                    this.explanationToDelete = null;
+                }
+            }
+        },
+
+        handleCloseDataSourceModal() {
+            this.closeModal("datasourceModal");
+            this.resetForm("datasource");
+        },
+
+        handleCloseModelModal() {
+            this.closeModal("modelModal");
+            this.resetForm("model");
         },
     },
 };
 </script>
+<style scoped>
+.table-container {
+    justify-content: center;
+    align-items: center;
+    width: 90%;
+    margin: 0 auto;
+}
+
+.table-container .btn {
+    vertical-align: middle;
+}
+
+.table-container table {
+    width: 100%;
+}
+</style>

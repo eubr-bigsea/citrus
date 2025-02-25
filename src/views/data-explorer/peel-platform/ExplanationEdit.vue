@@ -1,18 +1,15 @@
 <template>
     <div>
-        <div class="d-flex justify-content-between align-items-center mb-2">
-            <div class="mt-2">
-                <h6 class="header-pretitle">Explicação #{{ understanding.id }}</h6>
-                <h1>
-                    <InputHeader v-model="understanding.name" @input="isDirty = true" :maxlength="50" />
-                </h1>
+        <div class="mt-2">
+            <div>
+                <div class="d-flex flex-column ">
+                    <h6 class="header-pretitle">Explicação #{{ understanding.id }}</h6>
+                    <h1>
+                        <h1>{{ understanding.name }}</h1>
+                    </h1>
+                </div>
+                <hr>
             </div>
-
-            <b-dropdown text="Adicionar" variant="primary" class="m-2" boundary="viewport">
-                <b-dropdown-item v-for="(item, index) in menuOptions" :key="index" @click="addFeature(item.value)">
-                    {{ item.label }}
-                </b-dropdown-item>
-            </b-dropdown>
 
             <b-modal v-model="showImageModal" title="Resultado" hide-footer size="lg" centered>
                 <div v-if="imageUrl" class="text-center">
@@ -39,64 +36,83 @@
 
             <b-modal v-model="showDeleteConfirmation" title="Confirmar Exclusão" @ok="confirmDelete" ok-title="Excluir"
                 cancel-title="Cancelar" ok-variant="danger">
-                <p>Tem certeza de que deseja excluir esta explicação?</p>
+                <p>Tem certeza de que deseja excluir este algoritimo?</p>
             </b-modal>
         </div>
 
-        <div class="table-container ">
-            <v-server-table ref="explanationTable" :columns="columns" :options="options" name="explanationTablePell">
+        <div class="card shadow-sm">
+            <div class="card-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">Algoritmos</h5>
+                    <b-dropdown text="Adicionar" variant="success" class="m-2" boundary="viewport">
+                        <b-dropdown-item v-for="(item, index) in menuOptions" :key="index"
+                            @click="addFeature(item.value)">
+                            {{ item.label }}
+                        </b-dropdown-item>
+                    </b-dropdown>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <v-server-table ref="explanationTable" :columns="columns" :options="options"
+                        name="explanationTablePell">
 
-                <template #created="props">
-                    {{ new Date(props.row.created).toLocaleString("pt-BR") }}
-                </template>
+                        <template #created="props">
+                            {{ new Date(props.row.created).toLocaleString("pt-BR") }}
+                        </template>
 
-                <template #updated="props">
-                    {{ new Date(props.row.updated).toLocaleString("pt-BR") }}
-                </template>
+                        <template #updated="props">
+                            {{ new Date(props.row.updated).toLocaleString("pt-BR") }}
+                        </template>
 
-                <template #executar="props">
-                    <div class="d-flex align-items-center mb-4">
-                        <b-spinner class="ml-2" v-if="loading" variant="primary" label="Spinning"></b-spinner>
-                        <template v-if="props.row.algorithm == 'shap'">
-                            <b-dropdown variant="link" toggle-class="text-decoration-none p-0" no-caret>
-                                <template #button-content class="mt-2">
-                                    <button v-if="!loading" class="btn-sm btn-success" title="Executar">
+                        <template #executar="props">
+                            <div class="d-flex align-items-center mb-4">
+                                <b-spinner class="ml-2" v-if="loading" variant="primary" label="Spinning"></b-spinner>
+                                <template v-if="props.row.algorithm == 'shap'">
+                                    <b-dropdown variant="link" toggle-class="text-decoration-none p-0" no-caret>
+                                        <template #button-content class="mt-2">
+                                            <button v-if="!loading" class="btn-sm btn-success" title="Executar">
+                                                <font-awesome-icon icon="play" />
+                                            </button>
+                                        </template>
+                                        <b-dropdown-item @click="runResult(props.row.id, 'image')">
+                                            <span class="ml-2">Imagem</span>
+                                        </b-dropdown-item>
+                                        <b-dropdown-item @click="runResult(props.row.id, 'raw')">
+                                            <font-awesome-icon icon="file-alt" />
+                                            <span class="ml-2">Texto</span>
+                                        </b-dropdown-item>
+                                    </b-dropdown>
+                                </template>
+                                <template v-else-if="props.row.algorithm == 'ale'">
+                                    <button @click="runResult(props.row.id, 'image')" v-if="!loading"
+                                        class="btn-sm btn-success" title="Executar">
                                         <font-awesome-icon icon="play" />
                                     </button>
                                 </template>
-                                <b-dropdown-item @click="runResult(props.row.id, 'image')">
-                                    <span class="ml-2">Imagem</span>
-                                </b-dropdown-item>
-                                <b-dropdown-item @click="runResult(props.row.id, 'raw')">
-                                    <font-awesome-icon icon="file-alt" />
-                                    <span class="ml-2">Texto</span>
-                                </b-dropdown-item>
-                            </b-dropdown>
+                                <template v-else>
+                                    <button @click="runResult(props.row.id, 'raw')" v-if="!loading"
+                                        class="btn-sm btn-success" title="Executar">
+                                        <font-awesome-icon icon="play" />
+                                    </button>
+                                </template>
+                            </div>
                         </template>
-                        <template v-else-if="props.row.algorithm == 'ale'">
-                            <button @click="runResult(props.row.id, 'image')" v-if="!loading" class="btn-sm btn-success"
-                                title="Executar">
-                                <font-awesome-icon icon="play" />
-                            </button>
-                        </template>
-                        <template v-else>
-                            <button @click="runResult(props.row.id, 'raw')" v-if="!loading" class="btn-sm btn-success"
-                                title="Executar">
-                                <font-awesome-icon icon="play" />
-                            </button>
-                        </template>
-                    </div>
-                </template>
 
-                <template #excluir="props">
-                    <div class="d-flex align-items-center">
-                        <button class="btn-sm btn-danger" title="Excluir" @click.stop="deleteExplanation(props.row.id)">
-                            <font-awesome-icon icon="trash" />
-                        </button>
-                    </div>
-                </template>
-            </v-server-table>
+                        <template #excluir="props">
+                            <div class="d-flex align-items-center">
+                                <button class="btn-sm btn-danger" title="Excluir"
+                                    @click.stop="deleteExplanation(props.row.id)">
+                                    <font-awesome-icon icon="trash" />
+                                </button>
+                            </div>
+                        </template>
+                    </v-server-table>
+                </div>
+            </div>
         </div>
+
+        <b-button :to="{ name: 'peel-home'}" class="mt-3">Voltar</b-button>
 
         <b-modal v-model="showAddModal" :title="`Adicionar ${selectedAlgorithm}`" hide-footer>
             <b-form @submit.prevent="onAddSubmit">
@@ -196,7 +212,7 @@
                     </b-form-group>
                 </div>
 
-                <b-button type="submit" variant="primary">Adicionar</b-button>
+                <b-button type="submit" variant="primary" class="float-right">Adicionar</b-button>
             </b-form>
 
         </b-modal>
@@ -241,7 +257,7 @@ export default {
             imageUrl: "",
             jsonResult: null,
             showImageModal: false,
-            columns: ['name', 'algorithm', 'description', 'created', 'updated', 'executar', 'excluir'],
+            columns: ['id','name', 'algorithm', 'description', 'created', 'updated', 'executar', 'excluir'],
             options: {
                 perPage: 5,
                 skin: 'table-sm table table-hover',
@@ -516,7 +532,6 @@ export default {
     width: 100%;
 }
 
-/* Estilo para o modal */
 .modal-content {
     border-radius: 10px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
@@ -538,13 +553,11 @@ export default {
     padding: 20px;
 }
 
-/* Estilo para a imagem */
 .img-fluid.rounded {
     max-height: 70vh;
     border: 1px solid #ddd;
 }
 
-/* Estilo para o JSON */
 .json-result-container {
     background-color: #f8f9fa;
     border: 1px solid #dee2e6;
@@ -567,7 +580,6 @@ export default {
     margin: 0;
 }
 
-/* Estilo para o spinner de carregamento */
 .text-center .spinner-border {
     width: 3rem;
     height: 3rem;
