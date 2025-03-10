@@ -272,10 +272,14 @@ export default {
                     created: "Criado",
                     updated: "Atualizado",
                 },
+                filterable: ['id', 'name'],
+                sortable: ['id', 'name', 'description', 'created', 'updated'],
                 requestFunction: async function (data) {
                     const self = this;
                     const limit = data.limit;
                     const page = data.page - 1;
+                    const filter = data.query || "";
+                    const orderBy = data.orderBy || "name";
                     self.$Progress.start();
                     return axios
                         .get(`${peelUrl}/explanation/${self.$route.params.id}/list`, {
@@ -283,6 +287,8 @@ export default {
                                 enabled: true,
                                 limit: limit,
                                 page: page,
+                                name: filter,
+                                sort: orderBy,
                             },
                         })
                         .then((response) => {

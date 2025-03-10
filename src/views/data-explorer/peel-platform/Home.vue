@@ -18,15 +18,17 @@
             </div>
             <div class="card-body">
                 <div class="table-responsive">
-                    <v-server-table ref="undestandingTable" :columns="columns" :options="options" name="understandingTablePell" class="table table-striped">
+                    <v-server-table ref="undestandingTable" :columns="columns" :options="options"
+                        name="understandingTablePell" class="table table-striped">
+
                         <template #created="props">
                             {{ new Date(props.row.created).toLocaleString("pt-BR") }}
                         </template>
-        
+
                         <template #updated="props">
                             {{ new Date(props.row.updated).toLocaleString("pt-BR") }}
                         </template>
-        
+
                         <template #view="props">
                             <router-link :to="{ name: 'explanationEdit', params: { id: props.row.id } }">
                                 <button class="btn btn-sm btn-primary">
@@ -34,13 +36,13 @@
                                 </button>
                             </router-link>
                         </template>
-        
+
                         <template #edit="props">
                             <button class="btn btn-sm btn-warning" @click="openEditPopup(props.row)">
                                 <font-awesome-icon icon="edit" />
                             </button>
                         </template>
-        
+
                         <template #delete="props">
                             <button class="btn btn-sm btn-danger" @click="openDeleteConfirmation(props.row)">
                                 <font-awesome-icon icon="trash" />
@@ -51,7 +53,7 @@
             </div>
         </div>
 
-        <b-button :to="{ name: 'index-explorer'}" class="mt-3">Voltar</b-button>
+        <b-button :to="{ name: 'index-explorer' }" class="mt-3">Voltar</b-button>
 
         <b-modal v-model="showEditPopup" title="Editar Explicação" @ok="saveExplanation" ok-title="Salvar"
             cancel-title="Cancelar" size="lg">
@@ -230,7 +232,6 @@ export default {
                 perPage: 10,
                 perPageValues: [10],
                 skin: 'table-sm table table-hover',
-                filterable: false,
                 preserveState: true,
                 saveState: true,
                 headings: {
@@ -243,10 +244,15 @@ export default {
                     edit: "Editar",
                     delete: "Excluir",
                 },
+                filterable: ['id', 'name'],
+                sortable: ['id', 'name', 'description', 'created', 'updated'],
                 requestFunction: async function (data) {
                     const self = this;
                     const limit = data.limit;
                     const page = data.page - 1;
+                    const filter = data.query || "";
+                    const orderBy = data.orderBy || "name";
+                
                     self.$Progress.start();
                     return axios
                         .get(`${peelUrl}/understanding/list`, {
@@ -254,6 +260,8 @@ export default {
                                 enabled: true,
                                 limit: limit,
                                 page: page,
+                                name: filter,
+                                sort: orderBy,
                             },
                         })
                         .then((response) => {
@@ -325,8 +333,8 @@ export default {
             this.$refs[ref]?.hide();
         },
         openDeleteConfirmation(explanation) {
-            this.explanationToDelete = explanation; // Armazena a explicação selecionada
-            this.showDeleteConfirmation = true; // Abre o modal de confirmação
+            this.explanationToDelete = explanation;
+            this.showDeleteConfirmation = true;
         },
         resetForm(formType) {
             const formData = {
