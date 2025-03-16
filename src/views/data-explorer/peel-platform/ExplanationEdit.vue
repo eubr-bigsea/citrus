@@ -1,44 +1,55 @@
 <template>
     <div>
+
         <div class="mt-2">
-            <div>
-                <div class="d-flex flex-column ">
-                    <h6 class="header-pretitle">Entendimento #{{ understanding.id }}</h6>
-                    <h1>
-                        <h1>{{ understanding.name }}</h1>
-                    </h1>
-                </div>
-                <hr>
+            <div class="d-flex flex-column">
+                <h6>Entendimento #{{ understanding.id }}</h6>
+                <h1>{{ understanding.name }}</h1>
             </div>
-
-            <b-modal v-model="showImageModal" title="Resultado" hide-footer size="lg" centered>
-                <div v-if="imageUrl" class="text-center">
-                    <div class="mb-1 text-right">
-                        <b-button variant="success" @click="downloadImage(imageUrl)">
-                            <font-awesome-icon icon="download" class="mr-2" />
-                        </b-button>
-                    </div>
-                    <img :src="imageUrl" class="img-fluid rounded shadow" alt="Resultado da Explicação" />
-                </div>
-                <div v-else-if="jsonResult" class="json-result-container">
-                    <div class="mb-1 text-right">
-                        <b-button variant="primary" @click="copyJson(jsonResult)">
-                            <font-awesome-icon icon="copy" class="mr-2" />
-                        </b-button>
-                    </div>
-                    <pre class="json-result">{{ jsonResult }}</pre>
-                </div>
-                <div v-else class="text-center">
-                    <b-spinner variant="primary" label="Carregando..."></b-spinner>
-                    <p class="mt-2">Carregando resultado...</p>
-                </div>
-            </b-modal>
-
-            <b-modal v-model="showDeleteConfirmation" title="Confirmar Exclusão" @ok="confirmDelete" ok-title="Excluir"
-                cancel-title="Cancelar" ok-variant="danger">
-                <p>Tem certeza de que deseja excluir este algoritimo?</p>
-            </b-modal>
+            <hr>
         </div>
+
+
+        <div class="my-2">
+            <ul class="list-group">
+                <li class="list-group-item">
+                    <strong>Modelo:</strong> <span class="text-secondary">{{ understanding.model }}</span>
+                </li>
+                <li class="list-group-item">
+                    <strong>Fonte de Dados:</strong> <span class="text-secondary">{{
+                        understanding.datasource }}</span>
+                </li>
+            </ul>
+        </div>
+
+        <b-modal v-model="showImageModal" title="Resultado" hide-footer size="lg" centered>
+            <div v-if="imageUrl" class="text-center">
+                <div class="mb-1 text-right">
+                    <b-button variant="success" @click="downloadImage(imageUrl)">
+                        <font-awesome-icon icon="download" class="mr-2" />
+                    </b-button>
+                </div>
+                <img :src="imageUrl" class="img-fluid rounded shadow" alt="Resultado da Explicação" />
+            </div>
+            <div v-else-if="jsonResult" class="json-result-container">
+                <div class="mb-1 text-right">
+                    <b-button variant="primary" @click="copyJson(jsonResult)">
+                        <font-awesome-icon icon="copy" class="mr-2" />
+                    </b-button>
+                </div>
+                <pre class="json-result">{{ jsonResult }}</pre>
+            </div>
+            <div v-else class="text-center">
+                <b-spinner variant="primary" label="Carregando..."></b-spinner>
+                <p class="mt-2">Carregando resultado...</p>
+            </div>
+        </b-modal>
+
+        <b-modal v-model="showDeleteConfirmation" title="Confirmar Exclusão" @ok="confirmDelete" ok-title="Excluir"
+            cancel-title="Cancelar" ok-variant="danger">
+            <p>Tem certeza de que deseja excluir este algoritimo?</p>
+        </b-modal>
+
 
         <div class="card shadow-sm">
             <div class="card-header">
@@ -112,7 +123,7 @@
             </div>
         </div>
 
-        <b-button :to="{ name: 'peel-home'}" class="mt-3">Voltar</b-button>
+        <b-button :to="{ name: 'peel-home' }" class="mt-3">Voltar</b-button>
 
         <b-modal v-model="showAddModal" :title="`Adicionar ${selectedAlgorithm}`" hide-footer>
             <b-form @submit.prevent="onAddSubmit">
@@ -257,7 +268,7 @@ export default {
             imageUrl: "",
             jsonResult: null,
             showImageModal: false,
-            columns: ['id','name', 'algorithm', 'description', 'created', 'updated', 'executar', 'excluir'],
+            columns: ['id', 'name', 'algorithm', 'description', 'created', 'updated', 'executar', 'excluir'],
             options: {
                 perPage: 5,
                 skin: 'table-sm table table-hover',
@@ -325,7 +336,7 @@ export default {
             try {
                 setTimeout(1000);
                 this.$Progress.finish();
-                this.understanding = { id: '', name: '' };
+                this.understanding = { id: '', name: '', datasource: '', model: '' };
             } catch (e) {
                 this.$Progress.finish();
                 this.error(e);
@@ -343,7 +354,7 @@ export default {
                     console.error('Erro ao excluir explicação:', error);
                 } finally {
                     this.$refs.explanationTable.refresh();
-                    this.explanationToDelete = null; 
+                    this.explanationToDelete = null;
                 }
             }
         },
@@ -403,8 +414,10 @@ export default {
         async getUnderstanding() {
             try {
                 const response = await this.makeRequest('get', `${peelUrl}/understanding/${this.$route.params.id}`);
-                this.understanding.id = response.id
-                this.understanding.name = response.name
+                this.understanding.id = response.id;
+                this.understanding.name = response.name;
+                this.understanding.datasource = response.datasource.name;
+                this.understanding.model = response.model.name;
             } catch (error) {
                 console.error('Erro ao listar explicações:', error);
             }
@@ -437,12 +450,12 @@ export default {
                     if (response.data.status === "PROCESSING") {
                     } else if (resultType === "image" && response.headers["content-type"].startsWith("image/")) {
                         this.imageUrl = URL.createObjectURL(response.data);
-                        this.jsonResult = null; 
+                        this.jsonResult = null;
                         this.showImageModal = true;
                         return;
                     } else if (resultType === "raw") {
                         this.jsonResult = JSON.stringify(response.data, null, 2);
-                        this.imageUrl = null; 
+                        this.imageUrl = null;
                         this.showImageModal = true;
                         return;
                     }
