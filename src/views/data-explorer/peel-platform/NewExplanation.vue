@@ -4,9 +4,9 @@
             <h1>Plataforma Peel</h1>
         </div>
         <hr>
-        <h6>Criar Explicação</h6>
+        <h6>Criar Entendimentos</h6>
         <p>
-            Preencha os dados abaixo para iniciar o processo de criação de uma nova explicação e importe um modelo como
+            Preencha os dados abaixo para iniciar o processo de criação de um novo entendimentos e importe um modelo como
             base de análises.
         </p>
 
@@ -15,7 +15,7 @@
                 <b-card no-body>
                     <div class="p-3">
                         <b-form @submit.prevent="onSubmit">
-                            <b-form-group id="input-group-1" label="Nome da Explicação:" label-for="input-name">
+                            <b-form-group id="input-group-1" label="Nome:" label-for="input-name">
                                 <b-form-input id="input-name" v-model="explanation.name" placeholder="Preencha o nome"
                                     required></b-form-input>
                             </b-form-group>
@@ -375,7 +375,7 @@ export default {
                 const response = await axios.post(url, params, { headers: API_HEADERS });
                 this.$router.push({ name: 'explanationEdit', params: { id: response.data.id } });
             } catch (error) {
-                console.error("Erro ao criar explicação:", error.response?.data || error.message);
+                console.error("Erro ao criar entendimento:", error.response?.data || error.message);
             }
         },
         handleCloseDataSourceModal() {

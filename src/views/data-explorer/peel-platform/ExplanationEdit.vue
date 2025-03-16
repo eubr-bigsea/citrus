@@ -3,7 +3,7 @@
         <div class="mt-2">
             <div>
                 <div class="d-flex flex-column ">
-                    <h6 class="header-pretitle">Explicação #{{ understanding.id }}</h6>
+                    <h6 class="header-pretitle">Entendimento #{{ understanding.id }}</h6>
                     <h1>
                         <h1>{{ understanding.name }}</h1>
                     </h1>
@@ -43,7 +43,7 @@
         <div class="card shadow-sm">
             <div class="card-header">
                 <div class="d-flex justify-content-between align-items-center">
-                    <h5 class="card-title mb-0">Algoritmos</h5>
+                    <h5 class="card-title mb-0">Explicações</h5>
                     <b-dropdown text="Adicionar" variant="success" class="m-2" boundary="viewport">
                         <b-dropdown-item v-for="(item, index) in menuOptions" :key="index"
                             @click="addFeature(item.value)">
@@ -343,7 +343,7 @@ export default {
                     console.error('Erro ao excluir explicação:', error);
                 } finally {
                     this.$refs.explanationTable.refresh();
-                    this.explanationToDelete = null; // Limpa o ID após a exclusão
+                    this.explanationToDelete = null; 
                 }
             }
         },
@@ -437,12 +437,12 @@ export default {
                     if (response.data.status === "PROCESSING") {
                     } else if (resultType === "image" && response.headers["content-type"].startsWith("image/")) {
                         this.imageUrl = URL.createObjectURL(response.data);
-                        this.jsonResult = null; // Limpa o resultado JSON
+                        this.jsonResult = null; 
                         this.showImageModal = true;
                         return;
                     } else if (resultType === "raw") {
-                        this.jsonResult = JSON.stringify(response.data, null, 2); // Formata o JSON
-                        this.imageUrl = null; // Limpa a URL da imagem
+                        this.jsonResult = JSON.stringify(response.data, null, 2);
+                        this.imageUrl = null; 
                         this.showImageModal = true;
                         return;
                     }

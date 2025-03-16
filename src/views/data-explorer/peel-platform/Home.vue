@@ -9,7 +9,7 @@
         <div class="card shadow-sm">
             <div class="card-header">
                 <div class="d-flex justify-content-between align-items-center">
-                    <h5 class="card-title mb-0">Explicações</h5>
+                    <h5 class="card-title mb-0">Entendimentos</h5>
                     <button class="btn btn-success" @click="createExplanation">
                         <font-awesome-icon icon="plus" />
                         Adicionar
@@ -55,10 +55,10 @@
 
         <b-button :to="{ name: 'index-explorer' }" class="mt-3">Voltar</b-button>
 
-        <b-modal v-model="showEditPopup" title="Editar Explicação" @ok="saveExplanation" ok-title="Salvar"
+        <b-modal v-model="showEditPopup" title="Editar Entendimento" @ok="saveExplanation" ok-title="Salvar"
             cancel-title="Cancelar" size="lg">
             <b-form @submit.prevent="saveExplanation">
-                <b-form-group id="input-group-1" label="Nome da Explicação:" label-for="input-name">
+                <b-form-group id="input-group-1" label="Nome:" label-for="input-name">
                     <b-form-input id="input-name" v-model="selectedExplanation.name" placeholder="Preencha o nome"
                         required></b-form-input>
                 </b-form-group>
@@ -476,7 +476,7 @@ export default {
 
                 this.showEditPopup = true;
             } catch (error) {
-                console.error("Erro ao carregar os detalhes da explicação:", error);
+                console.error("Erro ao carregar os detalhes do entendimento:", error);
             }
         },
 
@@ -509,7 +509,7 @@ export default {
                     await axios.patch(url, data, { headers: API_HEADERS });
                     this.$refs.undestandingTable.refresh();
                 } catch (error) {
-                    console.error("Erro ao excluir a explicação:", error);
+                    console.error("Erro ao excluir entendimento:", error);
                 } finally {
                     this.showDeleteConfirmation = false;
                     this.explanationToDelete = null;
