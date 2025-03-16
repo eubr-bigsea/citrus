@@ -223,7 +223,7 @@
                     </b-form-group>
                     <b-form-group label="Instância (valores separados por vírgula):" label-for="input-instance">
                         <b-form-textarea id="input-instance" v-model="instanceInput" type="text" required
-                            :disabled="isViewMode" />
+                            :disabled="isViewMode"  placeholder="0.012723853338673763, 0.273891752138409, 0.6372544571103208, 0.5043717331554985" />
                     </b-form-group>
                 </div>
                 <div v-if="selectedAlgorithm === 'tree'">
