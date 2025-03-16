@@ -37,12 +37,6 @@
                             </router-link>
                         </template>
 
-                        <template #edit="props">
-                            <button class="btn btn-sm btn-warning" @click="openEditPopup(props.row)">
-                                <font-awesome-icon icon="edit" />
-                            </button>
-                        </template>
-
                         <template #delete="props">
                             <button class="btn btn-sm btn-danger" @click="openDeleteConfirmation(props.row)">
                                 <font-awesome-icon icon="trash" />
@@ -54,74 +48,7 @@
         </div>
 
         <b-button :to="{ name: 'index-explorer' }" class="mt-3">Voltar</b-button>
-
-        <b-modal v-model="showEditPopup" title="Editar Entendimento" @ok="saveExplanation" ok-title="Salvar"
-            cancel-title="Cancelar" size="lg">
-            <b-form @submit.prevent="saveExplanation">
-                <b-form-group id="input-group-1" label="Nome:" label-for="input-name">
-                    <b-form-input id="input-name" v-model="selectedExplanation.name" placeholder="Preencha o nome"
-                        required></b-form-input>
-                </b-form-group>
-
-                <b-form-group id="input-group-2" label="Descrição:" label-for="input-description">
-                    <b-form-textarea id="input-description" v-model="selectedExplanation.description"
-                        placeholder="Preencha a descrição" required></b-form-textarea>
-                </b-form-group>
-
-                <b-form-group id="input-group-3" label="Modelo:" label-for="input-model">
-                    <vue-select v-model="selectedExplanation.selectedModel" :filterable="false" :options="modelList"
-                        label="name" class="w-100" @search="onSearchModel">
-                        <template #no-options>
-                            <small>Digite parte do nome para pesquisar...</small>
-                        </template>
-                        <template #option="option">
-                            <b-container>
-                                <b-row class="align-items-center">
-                                    {{ pad(option.id, 4, '&nbsp;') }} - {{ option.name }}
-                                </b-row>
-                            </b-container>
-                        </template>
-                        <template #selected-option="option">
-                            <div class="selected d-center">
-                                {{ pad(option.id, 4, '&nbsp;') }} - {{ option.name }}
-                            </div>
-                        </template>
-                    </vue-select>
-
-                    <small class="text-muted">
-                        Não encontrou o modelo?
-                        <b-button variant="link" @click="showModal('modelModal')">Faça o upload aqui</b-button>
-                    </small>
-                </b-form-group>
-
-                <b-form-group id="input-group-4" label="Fonte de Dados:" label-for="input-datasource">
-                    <vue-select v-model="selectedExplanation.selectedDatasource" :filterable="false"
-                        :options="datasourceList" label="name" class="w-100" @search="onSearchDatasource">
-                        <template #no-options>
-                            <small>Digite parte do nome para pesquisar...</small>
-                        </template>
-                        <template #option="option">
-                            <b-container>
-                                <b-row class="align-items-center">
-                                    {{ pad(option.id, 4, '&nbsp;') }} - {{ option.name }}
-                                </b-row>
-                            </b-container>
-                        </template>
-                        <template #selected-option="option">
-                            <div class="selected d-center">
-                                {{ pad(option.id, 4, '&nbsp;') }} - {{ option.name }}
-                            </div>
-                        </template>
-                    </vue-select>
-
-                    <small class="text-muted">
-                        Não encontrou a fonte de dados?
-                        <b-button variant="link" @click="showModal('datasourceModal')">Faça o upload aqui</b-button>
-                    </small>
-                </b-form-group>
-            </b-form>
-        </b-modal>
-
+        
         <b-modal id="upload-modal" ref="modelModal" title="Fazer Upload do Modelo" @ok="submitModel">
             <b-form>
                 <b-form-group label="Arquivo:" label-for="input-upload">
@@ -227,7 +154,7 @@ export default {
         return {
             showDeleteConfirmation: false,
             explanationToDelete: null,
-            columns: ['id', 'name', 'description', 'created', 'updated', 'view', 'edit', 'delete'],
+            columns: ['id', 'name', 'description', 'created', 'updated', 'view', 'delete'],
             options: {
                 perPage: 10,
                 perPageValues: [10],
@@ -457,26 +384,6 @@ export default {
                 this[`${type}List`] = response.data.data;
             } catch (error) {
                 console.error(`Erro ao carregar ${type}:`, error.response?.data || error.message);
-            }
-        },
-
-        async openEditPopup(explanation) {
-            try {
-                const response = await axios.get(`${peelUrl}/understanding/${explanation.id}`);
-                const explanationDetails = response.data;
-
-                this.selectedExplanation = {
-                    ...explanationDetails,
-                    selectedModel: explanationDetails.model, // Associa o modelo original
-                    selectedDatasource: explanationDetails.datasource, // Associa a fonte de dados original
-                };
-
-                await this.loadList("model");
-                await this.loadList("datasource");
-
-                this.showEditPopup = true;
-            } catch (error) {
-                console.error("Erro ao carregar os detalhes do entendimento:", error);
             }
         },
 
