@@ -103,22 +103,6 @@
                             <b-form-group label="Descrição:" label-for="input-description">
                                 <b-form-input id="input-description" v-model="explanation.model.description" required />
                             </b-form-group>
-
-                            <b-form-group label="Tipo:" label-for="input-type">
-                                <b-form-input id="input-type" v-model="explanation.model.model_type" required />
-                            </b-form-group>
-
-                            <b-form-group label="Classe:" label-for="input-class">
-                                <b-form-input id="input-class" v-model="explanation.model.class_name" required />
-                            </b-form-group>
-
-                            <b-form-group label="Versão:" label-for="input-version">
-                                <b-form-input id="input-version" v-model="explanation.model.version" required />
-                            </b-form-group>
-
-                            <b-form-group label="Digest:" label-for="input-digest">
-                                <b-form-input id="input-digest" v-model="explanation.model.digest" required />
-                            </b-form-group>
                         </b-form>
                         <template #modal-footer>
                             <b-button variant="secondary" @click="handleCloseModelModal">Cancelar</b-button>
@@ -142,20 +126,6 @@
                             <b-form-group label="Descrição:" label-for="input-description">
                                 <b-form-input id="input-description" v-model="explanation.datasource.description"
                                     required />
-                            </b-form-group>
-
-                            <b-form-group label="Delimitador de Atributo:" label-for="input-attributed-delimiter">
-                                <b-form-input id="input-attributed-delimiter"
-                                    v-model="explanation.datasource.attributed_delimiter" required></b-form-input>
-                            </b-form-group>
-
-                            <b-form-group label="Delimitador de Registro:" label-for="input-record-delimiter">
-                                <b-form-input id="input-record-delimiter"
-                                    v-model="explanation.datasource.record_delimiter" required></b-form-input>
-                            </b-form-group>
-
-                            <b-form-group label="Encoding:" label-for="input-encoding">
-                                <b-form-input id="input-encoding" v-model="explanation.datasource.encoding" required />
                             </b-form-group>
                         </b-form>
                         <template #modal-footer>
@@ -296,10 +266,10 @@ export default {
                     description: this.explanation.model.description,
                     enabled: true,
                     uri,
-                    model_type: this.explanation.model.modelType,
-                    version: this.explanation.model.version,
-                    class_name: this.explanation.model.className,
-                    digest: this.explanation.model.digest,
+                    model_type: "",
+                    version: "",
+                    class_name: "",
+                    digest: "",
                 };
 
                 await axios.post(url, data, { headers: API_HEADERS });
@@ -322,9 +292,9 @@ export default {
                     enabled: true,
                     uri,
                     data_format: "csv",
-                    attributed_delimiter: this.explanation.datasource.attributed_delimiter,
-                    record_delimiter: this.explanation.datasource.record_delimiter,
-                    encoding: this.explanation.datasource.encoding,
+                    attributed_delimiter: "",
+                    record_delimiter: "",
+                    encoding: "",
                 };
 
                 await axios.post(url, data, { headers: API_HEADERS });
