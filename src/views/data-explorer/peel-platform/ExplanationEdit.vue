@@ -76,6 +76,15 @@
                             {{ new Date(props.row.updated).toLocaleString("pt-BR") }}
                         </template>
 
+                        <template #detalhes="props">
+                            <div class="d-flex align-items-center">
+                                <button class="btn-sm btn-primary" title="Detalhes"
+                                    @click.stop="viewDetails(props.row.id)">
+                                    <font-awesome-icon icon="circle-info" style="color: white;" />
+                                </button>
+                            </div>
+                        </template>
+
                         <template #executar="props">
                             <div class="d-flex align-items-center mb-4">
                                 <b-spinner class="ml-2" v-if="loading" variant="primary" label="Spinning"></b-spinner>
@@ -125,105 +134,114 @@
 
         <b-button :to="{ name: 'peel-home' }" class="mt-3">Voltar</b-button>
 
-        <b-modal v-model="showAddModal" :title="`Adicionar ${selectedAlgorithm}`" hide-footer>
+        <b-modal v-model="showAddModal" :title="modalTitle" hide-footer>
             <b-form @submit.prevent="onAddSubmit">
                 <div v-if="selectedAlgorithm === 'ale'">
                     <b-form-group label="Nome:" label-for="input-feature">
-                        <b-form-input id="input-x-margin" v-model="newItem.metadata.name" type="text" required />
+                        <b-form-input id="input-x-margin" v-model="newItem.metadata.name" type="text" required
+                            :disabled="isViewMode" />
                     </b-form-group>
                     <b-form-group label="Descrição:" label-for="input-feature">
-                        <b-form-textarea id="input-x-margin" v-model="newItem.metadata.description" type="text"
-                            required />
+                        <b-form-textarea id="input-x-margin" v-model="newItem.metadata.description" type="text" required
+                            :disabled="isViewMode" />
                     </b-form-group>
                     <b-form-group label="Recurso" label-for="input-feature">
-                        <b-form-input id="input-x-margin" v-model="newItem.arguments.which_feature" type="text"
-                            required />
+                        <b-form-input id="input-x-margin" v-model="newItem.arguments.which_feature" type="text" required
+                            :disabled="isViewMode" />
                     </b-form-group>
                 </div>
                 <div v-if="selectedAlgorithm === 'ensemble'">
                     <b-form-group label="Nome:" label-for="input-feature">
-                        <b-form-input id="input-x-margin" v-model="newItem.metadata.name" type="text" required />
+                        <b-form-input id="input-x-margin" v-model="newItem.metadata.name" type="text" required
+                            :disabled="isViewMode" />
                     </b-form-group>
                     <b-form-group label="Descrição:" label-for="input-feature">
-                        <b-form-textarea id="input-x-margin" v-model="newItem.metadata.description" type="text"
-                            required />
+                        <b-form-textarea id="input-x-margin" v-model="newItem.metadata.description" type="text" required
+                            :disabled="isViewMode" />
                     </b-form-group>
                     <b-form-group label="Numero de recurso" label-for="input-feature">
-                        <b-form-input id="input-x-margin" v-model="newItem.arguments.n_feature" type="number"
-                            required />
+                        <b-form-input id="input-x-margin" v-model="newItem.arguments.n_feature" type="number" required
+                            :disabled="isViewMode" />
                     </b-form-group>
                 </div>
                 <div v-if="selectedAlgorithm === 'gpx'">
                     <b-form-group label="Nome:" label-for="input-feature">
-                        <b-form-input id="input-x-margin" v-model="newItem.metadata.name" type="text" required />
+                        <b-form-input id="input-x-margin" v-model="newItem.metadata.name" type="text" required
+                            :disabled="isViewMode" />
                     </b-form-group>
                     <b-form-group label="Descrição:" label-for="input-feature">
-                        <b-form-textarea id="input-x-margin" v-model="newItem.metadata.description" type="text"
-                            required />
+                        <b-form-textarea id="input-x-margin" v-model="newItem.metadata.description" type="text" required
+                            :disabled="isViewMode" />
                     </b-form-group>
                     <b-form-group label="Instância (valores separados por vírgula):" label-for="input-instance">
-                        <b-form-textarea id="input-instance" v-model="instanceInput" type="text" required />
+                        <b-form-textarea id="input-instance" v-model="instanceInput" type="text" required
+                            :disabled="isViewMode" />
                     </b-form-group>
                 </div>
                 <div v-if="selectedAlgorithm === 'linear'">
                     <b-form-group label="Nome:" label-for="input-feature">
-                        <b-form-input id="input-x-margin" v-model="newItem.metadata.name" type="text" required />
+                        <b-form-input id="input-x-margin" v-model="newItem.metadata.name" type="text" required
+                            :disabled="isViewMode" />
                     </b-form-group>
                     <b-form-group label="Descrição:" label-for="input-feature">
-                        <b-form-textarea id="input-x-margin" v-model="newItem.metadata.description" type="text"
-                            required />
+                        <b-form-textarea id="input-x-margin" v-model="newItem.metadata.description" type="text" required
+                            :disabled="isViewMode" />
                     </b-form-group>
                     <b-form-group label="Numero de recurso" label-for="input-feature">
-                        <b-form-input id="input-x-margin" v-model="newItem.arguments.n_feature" type="number"
-                            required />
+                        <b-form-input id="input-x-margin" v-model="newItem.arguments.n_feature" type="number" required
+                            :disabled="isViewMode" />
                     </b-form-group>
                 </div>
                 <div v-if="selectedAlgorithm === 'logit'">
                     <b-form-group label="Nome:" label-for="input-feature">
-                        <b-form-input id="input-x-margin" v-model="newItem.metadata.name" type="text" required />
+                        <b-form-input id="input-x-margin" v-model="newItem.metadata.name" type="text" required
+                            :disabled="isViewMode" />
                     </b-form-group>
                     <b-form-group label="Descrição:" label-for="input-feature">
-                        <b-form-textarea id="input-x-margin" v-model="newItem.metadata.description" type="text"
-                            required />
+                        <b-form-textarea id="input-x-margin" v-model="newItem.metadata.description" type="text" required
+                            :disabled="isViewMode" />
                     </b-form-group>
                     <b-form-group label="Numero de recurso" label-for="input-feature">
-                        <b-form-input id="input-x-margin" v-model="newItem.arguments.n_feature" type="number"
-                            required />
+                        <b-form-input id="input-x-margin" v-model="newItem.arguments.n_feature" type="number" required
+                            :disabled="isViewMode" />
                     </b-form-group>
                 </div>
                 <div v-if="selectedAlgorithm === 'shap'">
                     <b-form-group label="Nome:" label-for="input-feature">
-                        <b-form-input id="input-x-margin" v-model="newItem.metadata.name" type="text" required />
+                        <b-form-input id="input-x-margin" v-model="newItem.metadata.name" type="text" required
+                            :disabled="isViewMode" />
                     </b-form-group>
                     <b-form-group label="Descrição:" label-for="input-feature">
-                        <b-form-textarea id="input-x-margin" v-model="newItem.metadata.description" type="text"
-                            required />
+                        <b-form-textarea id="input-x-margin" v-model="newItem.metadata.description" type="text" required
+                            :disabled="isViewMode" />
                     </b-form-group>
                     <b-form-group label="Forma:" label-for="input-interest-feature">
                         <b-form-select id="input-interest-feature" v-model="newItem.arguments.shap_type_xai" :options="[
                             { value: 'waterfall', text: 'Cascata' },
                             { value: 'bar', text: 'Barra' },
-                        ]" required />
+                        ]" required :disabled="isViewMode" />
                     </b-form-group>
                     <b-form-group label="Instância (valores separados por vírgula):" label-for="input-instance">
-                        <b-form-textarea id="input-instance" v-model="instanceInput" type="text" required />
+                        <b-form-textarea id="input-instance" v-model="instanceInput" type="text" required
+                            :disabled="isViewMode" />
                     </b-form-group>
                 </div>
                 <div v-if="selectedAlgorithm === 'tree'">
                     <b-form-group label="Nome:" label-for="input-feature">
-                        <b-form-input id="input-x-margin" v-model="newItem.metadata.name" type="text" required />
+                        <b-form-input id="input-x-margin" v-model="newItem.metadata.name" type="text" required
+                            :disabled="isViewMode" />
                     </b-form-group>
                     <b-form-group label="Descrição:" label-for="input-feature">
-                        <b-form-textarea id="input-x-margin" v-model="newItem.metadata.description" type="text"
-                            required />
+                        <b-form-textarea id="input-x-margin" v-model="newItem.metadata.description" type="text" required
+                            :disabled="isViewMode" />
                     </b-form-group>
                     <b-form-group label="Profundidade máxima" label-for="input-feature">
-                        <b-form-input id="input-x-margin" v-model="newItem.arguments.max_depth" type="number"
-                            required />
+                        <b-form-input id="input-x-margin" v-model="newItem.arguments.max_depth" type="number" required
+                            :disabled="isViewMode" />
                     </b-form-group>
                 </div>
 
-                <b-button type="submit" variant="primary" class="float-right">Adicionar</b-button>
+                <b-button v-if="!isViewMode" type="submit" variant="primary" class="float-right">Adicionar</b-button>
             </b-form>
 
         </b-modal>
@@ -251,6 +269,8 @@ export default {
                 arguments: {}
             },
             instanceInput: "",
+            isViewMode: false,
+            modalTitle: "Adicionar",
             explanations: [],
             understanding: {},
             showDeleteConfirmation: false,
@@ -268,7 +288,7 @@ export default {
             imageUrl: "",
             jsonResult: null,
             showImageModal: false,
-            columns: ['id', 'name', 'algorithm', 'description', 'created', 'updated', 'executar', 'excluir'],
+            columns: ['id', 'name', 'algorithm', 'description', 'created', 'updated', 'detalhes', 'executar', 'excluir'],
             options: {
                 perPage: 5,
                 skin: 'table-sm table table-hover',
@@ -358,12 +378,40 @@ export default {
                 }
             }
         },
+        async viewDetails(id) {
+            try {
+                const response = await this.makeRequest('get', `${peelUrl}/explanation/${id}`);
+
+                const parsedArguments = JSON.parse(response.arguments.replace(/'/g, '"')); 
+
+                this.selectedAlgorithm = response.algorithm;
+                this.newItem = {
+                    metadata: {
+                        name: response.name,
+                        description: response.description,
+                        enabled: response.enabled,
+                    },
+                    arguments: parsedArguments,
+                };
+
+                this.instanceInput = parsedArguments.instance ? parsedArguments.instance.join(",") : "";
+
+                this.isViewMode = true;
+                this.modalTitle = `Detalhes da Explicação #${id}`;
+                this.showAddModal = true;
+            } catch (error) {
+                console.error('Erro ao carregar detalhes da explicação:', error);
+            }
+        },
         async addFeature(algorithm) {
             this.selectedAlgorithm = algorithm;
+            this.instanceInput = "";
             this.newItem = {
                 metadata: { enabled: true },
                 arguments: {},
             };
+            this.isViewMode = false;
+            this.modalTitle = `Adicionar ${algorithm}`;
             this.showAddModal = true;
         },
         onAddSubmit() {
