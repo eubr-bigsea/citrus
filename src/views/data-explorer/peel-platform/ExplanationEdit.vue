@@ -191,6 +191,24 @@
                             :disabled="isViewMode" />
                     </b-form-group>
                 </div>
+                <div v-if="selectedAlgorithm === 'lime'">
+                    <b-form-group label="Nome:" label-for="input-feature">
+                        <b-form-input id="input-x-margin" v-model="newItem.metadata.name" type="text" required
+                            :disabled="isViewMode" />
+                    </b-form-group>
+                    <b-form-group label="Descrição:" label-for="input-feature">
+                        <b-form-textarea id="input-x-margin" v-model="newItem.metadata.description" type="text" required
+                            :disabled="isViewMode" />
+                    </b-form-group>
+                    <b-form-group label="Número de atributos máximo" label-for="input-feature">
+                        <b-form-input id="input-x-margin" v-model="newItem.arguments.n_feature" type="number" :min="1"
+                            :max="attributes.length" required :disabled="isViewMode" />
+                    </b-form-group>
+                    <b-form-group label="Instância (valores separados por vírgula):" label-for="input-instance">
+                        <b-form-textarea id="input-instance" v-model="instanceInput" type="text" required
+                            :disabled="isViewMode" />
+                    </b-form-group>
+                </div>
                 <div v-if="selectedAlgorithm === 'linear'">
                     <b-form-group label="Nome:" label-for="input-feature">
                         <b-form-input id="input-x-margin" v-model="newItem.metadata.name" type="text" required
@@ -294,6 +312,7 @@ export default {
                 { label: 'ALE', value: 'ale' },
                 { label: 'Ensemble', value: 'ensemble' },
                 { label: 'GPX', value: 'gpx' },
+                { label: 'Lime', value: 'lime' },
                 { label: 'Linear', value: 'linear' },
                 { label: 'Logit', value: 'logit' },
                 { label: 'Shap', value: 'shap' },
