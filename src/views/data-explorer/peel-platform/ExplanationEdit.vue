@@ -86,6 +86,15 @@
                         </template>
 
                         <template #executar="props">
+                            <div class="d-flex align-items-center">
+                                <button class="btn-sm btn-secondary" title="Executar"
+                                    @click.stop="runExplanation(props.row.id)">
+                                    <font-awesome-icon icon="circle-info" style="color: white;" />
+                                </button>
+                            </div>
+                        </template>
+
+                        <template #resultado="props">
                             <div class="d-flex align-items-center mb-4">
                                 <b-spinner class="ml-2" v-if="loading" variant="primary" label="Spinning"></b-spinner>
                                 <template v-if="props.row.algorithm == 'shap'">
@@ -118,6 +127,8 @@
                                 </template>
                             </div>
                         </template>
+
+
 
                         <template #excluir="props">
                             <div class="d-flex align-items-center">
@@ -223,7 +234,8 @@
                     </b-form-group>
                     <b-form-group label="Instância (valores separados por vírgula):" label-for="input-instance">
                         <b-form-textarea id="input-instance" v-model="instanceInput" type="text" required
-                            :disabled="isViewMode"  placeholder="0.012723853338673763, 0.273891752138409, 0.6372544571103208, 0.5043717331554985" />
+                            :disabled="isViewMode"
+                            placeholder="0.012723853338673763, 0.273891752138409, 0.6372544571103208, 0.5043717331554985" />
                     </b-form-group>
                 </div>
                 <div v-if="selectedAlgorithm === 'tree'">
@@ -288,7 +300,7 @@ export default {
             imageUrl: "",
             jsonResult: null,
             showImageModal: false,
-            columns: ['id', 'name', 'algorithm', 'description', 'created', 'updated', 'detalhes', 'executar', 'excluir'],
+            columns: ['id', 'name', 'algorithm', 'description', 'created', 'updated', 'detalhes', 'executar', 'resultado', 'excluir'],
             options: {
                 perPage: 5,
                 skin: 'table-sm table table-hover',
@@ -382,7 +394,7 @@ export default {
             try {
                 const response = await this.makeRequest('get', `${peelUrl}/explanation/${id}`);
 
-                const parsedArguments = JSON.parse(response.arguments.replace(/'/g, '"')); 
+                const parsedArguments = JSON.parse(response.arguments.replace(/'/g, '"'));
 
                 this.selectedAlgorithm = response.algorithm;
                 this.newItem = {
@@ -440,7 +452,7 @@ export default {
                     this.newItem,
                     { 'Content-Type': 'application/json' }
                 );
-                await this.runExplanation(response.id);
+                //await this.runExplanation(response.id);
                 this.$refs.explanationTable.refresh();
                 this.showAddModal = false;
                 this.instanceInput = ''
@@ -470,54 +482,60 @@ export default {
                 console.error('Erro ao listar explicações:', error);
             }
         },
-        async runExplanation(explanationId) {
+        async runExplanation(id) {
             try {
-                this.loading = true;
-                await this.makeRequest('get', `${peelUrl}/explanation/${explanationId}/run`);
+                const response = await this.makeRequest('get', `${peelUrl}/explanation/${id}/run`);
+                this.$bvToast.toast('Execução do algoritmo iniciada com sucesso!', {
+                    title: 'Sucesso',
+                    variant: 'success',
+                    solid: true,
+                });
+                console.log(response);
             } catch (error) {
-                console.error('Erro ao executar a explicação:', error);
-            } finally {
-                this.loading = false;
+                console.error('Erro ao carregar detalhes da explicação:', error);
+                this.$bvToast.toast('Erro ao iniciar a execução do algoritmo.', {
+                    title: 'Erro',
+                    variant: 'danger',
+                    solid: true,
+                });
             }
         },
+
         async runResult(explanationId, resultType = "raw") {
-            let attempts = 0;
-            const maxAttempts = 10;
-            const delay = 3000;
-
-            while (attempts < maxAttempts) {
-                try {
-                    const response = await axios.get(
-                        `${peelUrl}/explanation/${explanationId}/result?type=${resultType}`,
-                        {
-                            headers: { accept: "application/json" },
-                            responseType: resultType === "image" ? "blob" : "json",
-                        }
-                    );
-
-                    if (response.data.status === "PROCESSING") {
-                    } else if (resultType === "image" && response.headers["content-type"].startsWith("image/")) {
-                        this.imageUrl = URL.createObjectURL(response.data);
-                        this.jsonResult = null;
-                        this.showImageModal = true;
-                        return;
-                    } else if (resultType === "raw") {
-                        this.jsonResult = JSON.stringify(response.data, null, 2);
-                        this.imageUrl = null;
-                        this.showImageModal = true;
-                        return;
+            try {
+                const response = await axios.get(
+                    `${peelUrl}/explanation/${explanationId}/result?type=${resultType}`,
+                    {
+                        headers: { accept: "application/json" },
+                        responseType: resultType === "image" ? "blob" : "json",
                     }
-                } catch (error) {
-                    console.error("Erro ao buscar resultado da explicação:", error);
-                }
-                attempts++;
-                await new Promise(resolve => setTimeout(resolve, delay));
-            }
+                );
 
-            console.error("Tempo limite atingido. A tarefa não foi processada.");
-            this.showImageModal = false;
-            this.imageUrl = null;
-            this.jsonResult = null;
+                if (response.data.status === "PROCESSING") {
+                    this.$bvToast.toast('O resultado ainda está sendo processado.', {
+                        title: 'Processando',
+                        variant: 'info',
+                        solid: true,
+                    });
+                } else if (resultType === "image" && response.headers["content-type"].startsWith("image/")) {
+                    this.imageUrl = URL.createObjectURL(response.data);
+                    this.jsonResult = null;
+                    this.showImageModal = true;
+                    return;
+                } else if (resultType === "raw") {
+                    this.jsonResult = JSON.stringify(response.data, null, 2);
+                    this.imageUrl = null;
+                    this.showImageModal = true;
+                    return;
+                }
+            } catch (error) {
+                this.$bvToast.toast('Erro ao buscar o resultado da explicação.', {
+                    title: 'Erro',
+                    variant: 'danger',
+                    solid: true,
+                });
+                console.error("Erro ao buscar resultado da explicação:", error);
+            }
         },
         async makeRequest(method, url, data = null, headers = {}) {
             try {
