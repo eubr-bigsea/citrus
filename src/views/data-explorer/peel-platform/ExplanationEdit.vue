@@ -157,13 +157,8 @@
                             :disabled="isViewMode" />
                     </b-form-group>
                     <b-form-group label="Atributo" label-for="input-feature">
-                        <b-form-select 
-                            id="input-x-margin" 
-                            v-model="newItem.arguments.which_feature" 
-                            :options="attributes" 
-                            :disabled="isViewMode" 
-                            required
-                        ></b-form-select>
+                        <b-form-select id="input-x-margin" v-model="newItem.arguments.which_feature"
+                            :options="attributes" :disabled="isViewMode" required></b-form-select>
                     </b-form-group>
                 </div>
                 <div v-if="selectedAlgorithm === 'ensemble'">
@@ -175,10 +170,12 @@
                         <b-form-textarea id="input-x-margin" v-model="newItem.metadata.description" type="text" required
                             :disabled="isViewMode" />
                     </b-form-group>
-                    <b-form-group label="Numero de recurso" label-for="input-feature">
-                        <b-form-input id="input-x-margin" v-model="newItem.arguments.n_feature" type="number" required
-                            :disabled="isViewMode" />
+                    <b-form-group label="Número de atributos máximo" label-for="input-feature">
+                        <b-form-input id="input-x-margin" v-model="newItem.arguments.n_feature" type="number" :min="1"
+                            :max="attributes.length" required :disabled="isViewMode" />
                     </b-form-group>
+
+
                 </div>
                 <div v-if="selectedAlgorithm === 'gpx'">
                     <b-form-group label="Nome:" label-for="input-feature">
@@ -203,9 +200,9 @@
                         <b-form-textarea id="input-x-margin" v-model="newItem.metadata.description" type="text" required
                             :disabled="isViewMode" />
                     </b-form-group>
-                    <b-form-group label="Numero de recurso" label-for="input-feature">
-                        <b-form-input id="input-x-margin" v-model="newItem.arguments.n_feature" type="number" required
-                            :disabled="isViewMode" />
+                    <b-form-group label="Número de atributos máximo" label-for="input-feature">
+                        <b-form-input id="input-x-margin" v-model="newItem.arguments.n_feature" type="number" :min="1"
+                            :max="attributes.length" required :disabled="isViewMode" />
                     </b-form-group>
                 </div>
                 <div v-if="selectedAlgorithm === 'logit'">
@@ -217,9 +214,9 @@
                         <b-form-textarea id="input-x-margin" v-model="newItem.metadata.description" type="text" required
                             :disabled="isViewMode" />
                     </b-form-group>
-                    <b-form-group label="Numero de recurso" label-for="input-feature">
-                        <b-form-input id="input-x-margin" v-model="newItem.arguments.n_feature" type="number" required
-                            :disabled="isViewMode" />
+                    <b-form-group label="Número de atributos máximo" label-for="input-feature">
+                        <b-form-input id="input-x-margin" v-model="newItem.arguments.n_feature" type="number" :min="1"
+                            :max="attributes.length" required :disabled="isViewMode" />
                     </b-form-group>
                 </div>
                 <div v-if="selectedAlgorithm === 'shap'">
