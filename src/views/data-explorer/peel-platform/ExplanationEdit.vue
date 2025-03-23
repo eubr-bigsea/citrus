@@ -156,9 +156,14 @@
                         <b-form-textarea id="input-x-margin" v-model="newItem.metadata.description" type="text" required
                             :disabled="isViewMode" />
                     </b-form-group>
-                    <b-form-group label="Recurso" label-for="input-feature">
-                        <b-form-input id="input-x-margin" v-model="newItem.arguments.which_feature" type="text" required
-                            :disabled="isViewMode" />
+                    <b-form-group label="Atributo" label-for="input-feature">
+                        <b-form-select 
+                            id="input-x-margin" 
+                            v-model="newItem.arguments.which_feature" 
+                            :options="attributes" 
+                            :disabled="isViewMode" 
+                            required
+                        ></b-form-select>
                     </b-form-group>
                 </div>
                 <div v-if="selectedAlgorithm === 'ensemble'">
@@ -297,6 +302,7 @@ export default {
                 { label: 'Shap', value: 'shap' },
                 { label: 'Tree', value: 'tree' }
             ],
+            attributes: [],
             imageUrl: "",
             jsonResult: null,
             showImageModal: false,
@@ -478,6 +484,12 @@ export default {
                 this.understanding.name = response.name;
                 this.understanding.datasource = response.datasource.name;
                 this.understanding.model = response.model.name;
+
+                const featuresString = response.datasource.features;
+                const featuresObject = JSON.parse(featuresString.replace(/'/g, '"')); // Substitui aspas simples por aspas duplas
+                this.attributes = Object.keys(featuresObject); // Extrai as chaves do objeto
+
+                console.log(this.attributes); // Exibe o ar
             } catch (error) {
                 console.error('Erro ao listar explicações:', error);
             }
