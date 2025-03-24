@@ -87,9 +87,9 @@
 
                         <template #executar="props">
                             <div class="d-flex align-items-center">
-                                <button class="btn-sm btn-secondary" title="Executar"
+                                <button class="btn-sm btn-success" title="Executar"
                                     @click.stop="runExplanation(props.row.id)">
-                                    <font-awesome-icon icon="circle-info" style="color: white;" />
+                                    <font-awesome-icon icon="play" style="color: white;" />
                                 </button>
                             </div>
                         </template>
@@ -100,29 +100,28 @@
                                 <template v-if="props.row.algorithm == 'shap'">
                                     <b-dropdown variant="link" toggle-class="text-decoration-none p-0" no-caret>
                                         <template #button-content class="mt-2">
-                                            <button v-if="!loading" class="btn-sm btn-success" title="Executar">
-                                                <font-awesome-icon icon="play" />
+                                            <button v-if="!loading" class="btn-sm btn-primary" title="Resultado">
+                                                <font-awesome-icon icon="file" />
                                             </button>
                                         </template>
                                         <b-dropdown-item @click="runResult(props.row.id, 'image')">
                                             <span class="ml-2">Imagem</span>
                                         </b-dropdown-item>
                                         <b-dropdown-item @click="runResult(props.row.id, 'raw')">
-                                            <font-awesome-icon icon="file-alt" />
                                             <span class="ml-2">Texto</span>
                                         </b-dropdown-item>
                                     </b-dropdown>
                                 </template>
                                 <template v-else-if="props.row.algorithm == 'ale'">
                                     <button @click="runResult(props.row.id, 'image')" v-if="!loading"
-                                        class="btn-sm btn-success" title="Executar">
-                                        <font-awesome-icon icon="play" />
+                                        class="btn-sm btn-primary" title="Resultado">
+                                        <font-awesome-icon icon="file" />
                                     </button>
                                 </template>
                                 <template v-else>
                                     <button @click="runResult(props.row.id, 'raw')" v-if="!loading"
-                                        class="btn-sm btn-success" title="Executar">
-                                        <font-awesome-icon icon="play" />
+                                        class="btn-sm btn-primary" title="Resultado">
+                                        <font-awesome-icon icon="file" />
                                     </button>
                                 </template>
                             </div>
@@ -502,10 +501,10 @@ export default {
                 this.understanding.model = response.model.name;
 
                 const featuresString = response.datasource.features;
-                const featuresObject = JSON.parse(featuresString.replace(/'/g, '"')); // Substitui aspas simples por aspas duplas
-                this.attributes = Object.keys(featuresObject); // Extrai as chaves do objeto
+                const featuresObject = JSON.parse(featuresString.replace(/'/g, '"'));
+                this.attributes = Object.keys(featuresObject);
 
-                console.log(this.attributes); // Exibe o ar
+                console.log(this.attributes);
             } catch (error) {
                 console.error('Erro ao listar explicações:', error);
             }
@@ -530,41 +529,83 @@ export default {
         },
 
         async runResult(explanationId, resultType = "raw") {
-            try {
-                const response = await axios.get(
-                    `${peelUrl}/explanation/${explanationId}/result?type=${resultType}`,
-                    {
-                        headers: { accept: "application/json" },
-                        responseType: resultType === "image" ? "blob" : "json",
-                    }
-                );
-
-                if (response.data.status === "PROCESSING") {
-                    this.$bvToast.toast('O resultado ainda está sendo processado.', {
-                        title: 'Processando',
-                        variant: 'info',
-                        solid: true,
-                    });
-                } else if (resultType === "image" && response.headers["content-type"].startsWith("image/")) {
-                    this.imageUrl = URL.createObjectURL(response.data);
-                    this.jsonResult = null;
-                    this.showImageModal = true;
-                    return;
-                } else if (resultType === "raw") {
-                    this.jsonResult = JSON.stringify(response.data, null, 2);
-                    this.imageUrl = null;
-                    this.showImageModal = true;
-                    return;
+            const response = await axios.get(
+                `${peelUrl}/explanation/${explanationId}/result?type=${resultType}`,
+                {
+                    headers: { accept: "application/json" },
+                    responseType: resultType === "image" ? "blob" : "json",
                 }
-            } catch (error) {
+            ).catch(error => error.response);
+
+            if (!response) {
                 this.$bvToast.toast('Erro ao buscar o resultado da explicação.', {
                     title: 'Erro',
                     variant: 'danger',
                     solid: true,
                 });
-                console.error("Erro ao buscar resultado da explicação:", error);
+                return;
+            }
+
+            if (response.status === 404) {
+                if (resultType === "image") {
+                    const textData = await response.data.text();
+                    if (textData.includes("TASK NOT PROCESSED")) {
+                        this.$bvToast.toast('Execute a explicação primeiro.', {
+                            title: 'Aviso',
+                            variant: 'warning',
+                            solid: true,
+                        });
+                        return;
+                    }
+                } else if (response.data?.status === "TASK NOT PROCESSED") {
+                    this.$bvToast.toast('Execute a explicação primeiro.', {
+                        title: 'Aviso',
+                        variant: 'warning',
+                        solid: true,
+                    });
+                    return;
+                }
+
+                this.$bvToast.toast('Explicação não encontrada', {
+                    title: 'Erro 404',
+                    variant: 'danger',
+                    solid: true,
+                });
+                return;
+            }
+
+            if (response.data?.status === "PROCESSING") {
+                this.$bvToast.toast('O resultado ainda está sendo processado.', {
+                    title: 'Processando',
+                    variant: 'info',
+                    solid: true,
+                });
+                return;
+            }
+
+            if (resultType === "image") {
+                const contentType = response.headers["content-type"] || "";
+                if (contentType.startsWith("image/")) {
+                    this.imageUrl = URL.createObjectURL(response.data);
+                    this.jsonResult = null;
+                    this.showImageModal = true;
+                } else {
+                    this.$bvToast.toast('O resultado ainda está sendo processado.', {
+                        title: 'Processando',
+                        variant: 'info',
+                        solid: true,
+                    });
+                }
+                return;
+            }
+
+            if (resultType === "raw") {
+                this.jsonResult = JSON.stringify(response.data, null, 2);
+                this.imageUrl = null;
+                this.showImageModal = true;
             }
         },
+
         async makeRequest(method, url, data = null, headers = {}) {
             try {
                 const response = await axios({
