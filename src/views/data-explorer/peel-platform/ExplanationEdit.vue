@@ -448,7 +448,19 @@ export default {
             this.showAddModal = true;
         },
         onAddSubmit() {
-            if (this.selectedAlgorithm == 'shap' || this.selectedAlgorithm == 'gpx') {
+            if (this.selectedAlgorithm == 'lime') {
+                this.newItem.arguments.instance = this.instanceInput
+                    .split(",")
+                    .map(value => parseFloat(value.trim()))
+                    .filter(value => !isNaN(value));
+
+                if (this.newItem.arguments.instance.length === 0) {
+                    alert("Por favor, insira valores numéricos válidos para a instância.");
+                    return;
+                }
+
+                this.newItem.arguments.n_feature = + this.newItem.arguments.n_feature
+            } else if (this.selectedAlgorithm == 'shap' || this.selectedAlgorithm == 'gpx') {
                 this.newItem.arguments.instance = this.instanceInput
                     .split(",")
                     .map(value => parseFloat(value.trim()))
