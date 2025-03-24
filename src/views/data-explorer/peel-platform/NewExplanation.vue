@@ -97,11 +97,11 @@
                             </b-form-group>
 
                             <b-form-group label="Nome:" label-for="input-name">
-                                <b-form-input id="input-name" v-model="explanation.model.name" required />
+                                <b-form-input id="input-name" v-model="explanation.model.name"/>
                             </b-form-group>
 
                             <b-form-group label="Descrição:" label-for="input-description">
-                                <b-form-input id="input-description" v-model="explanation.model.description" required />
+                                <b-form-input id="input-description" v-model="explanation.model.description"/>
                             </b-form-group>
                         </b-form>
                         <template #modal-footer>
@@ -272,7 +272,11 @@ export default {
                     digest: "",
                 };
 
-                await axios.post(url, data, { headers: API_HEADERS });
+                const reponse = await axios.post(url, data, { headers: API_HEADERS });
+                const newModel = reponse.data;
+                await this.loadList("model", "");
+                this.explanation.selectedModel = this.modelList.find(model => model.id === newModel.id);
+
                 this.closeModal("modelModal");
                 this.resetForm("model");
             } catch (error) {
@@ -297,7 +301,11 @@ export default {
                     encoding: "",
                 };
 
-                await axios.post(url, data, { headers: API_HEADERS });
+                const response = await axios.post(url, data, { headers: API_HEADERS });
+                const newDatasource = response.data;
+                await this.loadList("datasource", "");
+                this.explanation.selectedDatasource = this.datasourceList.find(ds => ds.id === newDatasource.id);
+
                 this.closeModal("datasourceModal");
                 this.resetForm("datasource");
             } catch (error) {
