@@ -113,6 +113,7 @@
                         </div>
                     </div>
                 </b-card>
+                <!-- 
                 <b-card class="clickable m-1" role="button" @click="navigate('new-visualization')">
                     <div class="row">
                         <div class="rounded-option bg-dark">
@@ -125,7 +126,9 @@
                             </small>
                         </div>
                     </div>
-                </b-card>
+                </b-card> 
+                -->
+                
                 <!--
                 <b-card class="clickable m-1">
                     <div class="row">
