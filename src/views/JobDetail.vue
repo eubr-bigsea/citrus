@@ -29,8 +29,8 @@
                     </div>
                     <div>
                         <b-tabs nav-class="custom-tab mb-0">
-                            <b-tab active :title="$tc('titles.job')" :title-link-class="'small-nav-link'">
-                                <div>
+                            <b-tab v-if="workflow.type !== 'SQL'" active :title="$tc('titles.job')" :title-link-class="'small-nav-link'">
+                                <div class="pt-1">
                                     <diagram v-if="loaded" id="main-diagram" ref="diagram" :workflow="workflow"
                                              :operations="operations" :version="job.id" :show-toolbar="false"
                                              :editable="false" :shink="true" :loaded="loaded" :show-task-decoration="true"
@@ -156,6 +156,39 @@
                                     </b-card>
                                 </div>
                             </b-tab>
+                            <b-tab v-else-if="workflow.type === 'SQL'" active :title="$tc('titles.job')" :title-link-class="'small-nav-link'">
+                                <div>
+                                    <div>
+                                        <div class="alert my-2" :class="{
+                                            'alert-success': job.status=='COMPLETED',
+                                            'alert-danger': job.status=='ERROR',
+                                            'alert-warning': job.status=='WAITING',
+                                        }">
+                                            {{job.status_text}}
+                                        </div>
+                                    </div>
+                                    <div v-for="tt, inx in workflow.tasks" :key="tt.id" class="border p-2 mt-1 mb-1 rounded">
+                                        <h5>{{tt?.name}}
+                                            <div class="badge float-right mt-2" :class="{
+                                                'bg-success': job.steps[inx].status=='COMPLETED',
+                                                'bg-danger': job.steps[inx].status=='ERROR',
+                                                'bg-warning': job.steps[inx].status=='WAITING',}">
+                                                {{job.steps[inx].status}}
+                                            </div>
+                                        </h5>
+                                        <em v-if="tt.forms.comment?.value">{{tt?.forms.comment.value}}</em>
+                                        <span v-if="tt.operation.slug === 'read-data'">Ler dados de <strong>{{ tt.forms.data_source?.labelValue }}</strong></span>
+                                        <span v-if="tt.operation.slug === 'execute-python'">
+                                            Executar código Python
+                                        </span>
+                                        <span v-if="tt.operation.slug === 'execute-sql'">Executar SQL</span>
+                                        <div v-for="log in job.steps[inx].logs" :key="log.id" class="pb-1">
+                                            <span class="html-div mr-2">{{log.date|formatJsonDate}}</span>
+                                            <span class="html-div" v-html="log.message"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </b-tab>
                             <!--
                             <b-tab v-if="false" :title="$tc('job.results', 2)">
                                 <div v-for="(step, inx) in job.steps" :key="inx" class="row">
@@ -205,7 +238,7 @@
                                 </div>
                             </b-tab>
                             -->
-                            <b-tab :title="$tc('job.results', 2)" :title-link-class="'small-nav-link'">
+                            <b-tab v-if="workflow.type !== 'SQL'" :title="$tc('job.results', 2)" :title-link-class="'small-nav-link'">
                                 <div class="row">
                                     <div class="col-md-3 pt-3 result-area">
                                         <b-list-group>
@@ -448,7 +481,7 @@ export default {
                             self.operationsLookup[op.id] = op;
                         });
                         workflow.tasks.forEach(task => {
-                            task.operation = self.operationsLookup[task.operation.id];
+                            task.operation = self.operationsLookup[task.operation.id]??task.operation;
                             task.status = task.status || '';
                         });
 
