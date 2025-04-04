@@ -42,10 +42,22 @@
                     <span>
                         {{ pipelineRun.updated | formatJsonDate }}
                     </span>
+                    <button v-if="pipelineRun.context_data?.length" class="btn btn-link btn-sm p-0 mt-2"
+                        @click="showVariables = !showVariables">
+                        <font-awesome-icon icon="fa fa-dollar"/> {{showVariables? 'Ocultar variáveis': 'Exibir variáveis'}}
+                    </button>
+                    <p v-if="showVariables" class="context-data">
+                        <table class="table table-sm table-smallest">
+                        <tr v-for="vr in pipelineRun.context_data" :key="vr.name">
+                            <td>{{vr.name}}</td>
+                            <td>{{vr.value}}</td>
+                        </tr>
+                        </table>
+                    </p>
                 </div>
                 <div class="border p-2 mt-2">
                     <h6>Notificações</h6>
-                    <pipeline-run-notifications :notifications="notifications" height="61vh" />
+                    <pipeline-run-notifications :notifications="notifications" :height="showVariables? '45.5vh': '63.3vh'" />
                 </div>
             </div>
             <div class="col-5">
@@ -314,14 +326,17 @@ const cancelRun = () => {
     confirm('Cancelar execução', 'Você quer realmente cancelar esta execução?',
         callback);
 };
-
+const showVariables = ref(false)
 </script>
 
 <style lang="scss" scoped>
 .status-small {
     font-size: 8pt;
 }
-
+.context-data {
+    height: 16vh;
+    overflow-y: auto
+}
 .execution-report,
 .pipeline-run-steps {
     height: 75vh;

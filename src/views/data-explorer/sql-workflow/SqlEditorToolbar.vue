@@ -57,7 +57,6 @@ import { ref, nextTick } from 'vue';
 
 import SqlEditorSaveAsModal from './SqlEditorSaveAsModal.vue';
 
-const lixo = ref([1, 2])
 const status = ref(false);
 const emit = defineEmits(['on-add', 'on-remove', 'on-move', 'on-execute',
     'on-toggle-use-hwc']);

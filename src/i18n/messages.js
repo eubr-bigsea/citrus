@@ -345,9 +345,7 @@ export default {
             toLowerCase: 'Converter para minúsculas',
             toUpperCase: 'Converter para maiúsculas',
         },
-        pipeline: {
-            step: 'Etapa | Etapas',
-        },
+
         dataTypes: {
             BINARY: 'Verdadeiro ou falso',
             BOOLEAN: 'Verdadeiro ou falso',
@@ -836,6 +834,7 @@ export default {
             variables: 'Variável | Variáveis',
         },
         pipeline: {
+            step: 'Etapa | Etapas',
             alerts: {
                 pipelineCreationSuccess: 'Pipeline criada com sucesso',
                 pipelineEditionSuccess: 'Pipeline editada com sucesso',
@@ -1773,6 +1772,7 @@ export default {
             variables: 'Variable | Variables',
         },
         pipeline: {
+            step: 'Step|Steps',
             alerts: {
                 pipelineCreationSuccess: 'Pipeline successfully created',
                 pipelineEditionSuccess: 'Pipeline successfully edited',
