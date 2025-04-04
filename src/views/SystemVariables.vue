@@ -32,6 +32,8 @@
         <dd>Respectivamente, o login do usuário, seu nome, e-mail e identificador.</dd>
         <dt><code>${workflow_id} e ${workflow_name}</code></dt>
         <dd>Identificador e nome do fluxo</dd>
+        <dt><code>${pipeline_run_id}</code></dt>
+        <dd>Identificador da execução de pipeline</dd>
 
     </dl>
 </template>

@@ -65,7 +65,7 @@ const props = defineProps({
     showMoveUp: { type: Boolean, default: true },
     showMoveDown: { type: Boolean, default: true },
     task: { type: Object, required: true },
-    useHWC: { type: String, default: null },
+    useHWC: { type: [String, Boolean], default: null },
 });
 const useHWCVal = ref(props.useHWC)
 const modalSaveAs = ref();
