@@ -84,7 +84,7 @@
                                         class="form-control" rows="1"></textarea>
                                 </div>
                                 -->
-                                    <div v-if="!simple" class="col-md-12">
+                                    <!-- <div v-if="!simple" class="col-md-12">
                                         <label>Lista de valores personalizados (use JSON):</label>
                                         <textarea v-model="selected.parameters.values" maxlength="300"
                                             autocomplete="off" class="form-control form-control-sm" rows="3" />
@@ -97,7 +97,7 @@
                                         <br>
                                         O valor de <code>key</code> será atribuído à variável e <code>value</code> é
                                         exibido.
-                                    </div>
+                                    </div> -->
                             </div>
                         </div>
                         <div v-else>

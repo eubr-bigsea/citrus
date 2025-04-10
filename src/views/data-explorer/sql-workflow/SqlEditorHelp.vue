@@ -71,7 +71,7 @@
                     <dd>Permite criar uma variável que é visível para os fluxos subsequentes em uma execução de pipeline.
                         Útil quando um fluxo de trabalho precisa gerar um valor e mais tarde, em outro fluxo na mesma
                         execução de pipeline, este valor é necessário. Pode usar a variável <code>pipeline_run_id</code>:
-                        <p><code>set_pipeline_run_variable_data({{ pipeline_run_id }}, "destinatario", "test@example.com")</code></p>
+                        <p><code>set_pipeline_run_variable_data(${ pipeline_run_id }, "destinatario", "test@example.com")</code></p>
 
                         <p>Nos fluxos subsequentes, a variável poderá ser lida como uma variável normal, por exemplo ${destinatario}.</p>
                     </dd>
