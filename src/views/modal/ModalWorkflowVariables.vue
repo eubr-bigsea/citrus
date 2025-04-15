@@ -175,7 +175,8 @@ export default {
             const value = {
                 name: '', description: '', help: '',
                 type: 'CHARACTER', label: '', default_value: '',
-                parameters: { values: [], display_index: null }, index: 0,
+                parameters: '', //FIXME { values: [], display_index: null },
+                index: 0,
             };
             this.selected = value;
             value.index = this.items.length;
