@@ -312,7 +312,7 @@ export default {
             selectedFreqOpt: null,
             selectFreqOpt: [
                 { value: null, text: this.$t('pipeline.edit.scheduler.selectFrequency') },
-                //{ value: 'immediately', text: this.$t('pipeline.edit.scheduler.immediately') },
+                { value: 'immediately', text: this.$t('pipeline.edit.scheduler.immediately') },
                 //{ value: 'once', text: this.$t('pipeline.edit.scheduler.once') },
                 //{ value: 'daily', text: this.$t('pipeline.edit.daily') },
                 //{ value: 'weekly', text: this.$t('pipeline.edit.weekly') },
