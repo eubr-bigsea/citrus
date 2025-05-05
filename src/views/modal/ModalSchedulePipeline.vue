@@ -1,6 +1,6 @@
 <template>
-    <b-modal ref="scheduleModal" title="Agendar pipeline" button-size="sm"
-    @ok="confirm" @cancel="handleCancel" :ok-disabled="testFormOk" size="lg">
+    <b-modal ref="scheduleModal" title="Agendar pipeline" button-size="sm" @ok="confirm" @cancel="handleCancel"
+        :ok-disabled="testFormOk" size="lg">
 
         <h6>{{ id }} - {{ name }}</h6>
         <p>
@@ -31,28 +31,15 @@
         </div>
         <div class="row mt-3">
             <div class="col-12">
-                <label>Variáveis de contexto</label>
+                <label>Dados de contexto</label>
                 <div class="contextData">
-                    <div v-if="contextData" v-for="(pair, index) in contextData" :key="index" class="d-flex align-items-center mb-2">
-                        <input
-                            type="text"
-                            class="form-control form-control-sm mr-2"
-                            v-model="pair.key"
-                            placeholder="nome"
-                            maxlength="50"
-                        />
-                        <input
-                            type="text"
-                            class="form-control form-control-sm mr-2"
-                            v-model="pair.value"
-                            placeholder="valor"
-                            maxlength="200"
-                        />
-                        <button
-                            type="button"
-                            class="btn btn-sm btn-danger ml-2"
-                            @click="removeContextData(index)"
-                        >
+                    <div v-if="contextData" v-for="(pair, index) in contextData" :key="index"
+                        class="d-flex align-items-center mb-2">
+                        <input type="text" class="form-control form-control-sm mr-2" v-model="pair.name"
+                            placeholder="nome" maxlength="50" />
+                        <input type="text" class="form-control form-control-sm mr-2" v-model="pair.value"
+                            placeholder="valor" maxlength="200" />
+                        <button type="button" class="btn btn-sm btn-danger ml-2" @click="removeContextData(index)">
                             <font-awesome-icon icon="fa fa-trash" />
                         </button>
                     </div>
@@ -60,11 +47,7 @@
                         Nenhum dado de contexto adicionado.
                     </div>
                 </div>
-                <button
-                    type="button"
-                    class="btn btn-sm btn-primary"
-                    @click="addContextData"
-                >
+                <button type="button" class="btn btn-sm btn-primary" @click="addContextData">
                     Adicionar
                 </button>
             </div>
@@ -83,7 +66,7 @@
 </template>
 
 <script setup>
-import { ref, computed, defineExpose } from 'vue';
+import { ref, computed, defineExpose, defineEmits } from 'vue';
 import { BModal } from 'bootstrap-vue';
 import { pt } from 'date-fns/locale';
 import { format } from 'date-fns';
@@ -117,20 +100,23 @@ const getYears = computed(() => {
     return years;
 });
 
-const show = (modalRef, modalId, modalName) => {
+const show = (modalId, modalName) => {
+
     id.value = modalId;
     name.value = modalName;
     scheduleModal.value.show();
 };
 const testFormOk = computed(() => {
-    console.debug(!month.value, !year.value , contextData.value.some(data => !data.key || !data.value))
-    return (!month.value || !year.value || contextData.value.some(data => !data.key || !data.value))
+    return (!month.value || !year.value || contextData.value.some(data => !data.name || !data.value))
 });
-const confirm = (emit) => {
+const emit = defineEmits(['on-schedule-pipeline']);
+const confirm = () => {
     emit('on-schedule-pipeline', id.value,
         // In JS, months start from 0 !!!
         new Date(year.value, month.value - 1, 1),
-        new Date(year.value, month.value, 0));
+        new Date(year.value, month.value, 0),
+        contextData.value
+    );
 };
 
 const handleCancel = () => {
@@ -152,7 +138,7 @@ const dateDisabled = (type) => {
 };
 const contextData = ref([]);
 const addContextData = () => {
-    contextData.value.push({ key: '', value: '' });
+    contextData.value.push({ name: '', value: '' });
 };
 const removeContextData = (index) => {
     contextData.value.splice(index, 1);

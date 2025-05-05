@@ -1,7 +1,7 @@
 <template>
     <main role="main">
         <div class="d-flex justify-content-between align-items-center pb-2 mb-2 border-bottom">
-            <h1>{{$tc('titles.pipeline', 2)}}</h1>
+            <h1>{{ $tc('titles.pipeline', 2) }}</h1>
             <div>
                 <router-link :to="{ name: 'pipelineRunsList' }" class="btn btn-outline-secondary float-left ml-2">
                     <font-awesome-icon icon="fa fa-history" /> Execuções
@@ -14,7 +14,7 @@
 
         <ModalCreatePipeline ref="addModal" :pipeline-templates="pipelineTemplates"
             :template-options="templateOptions" />
-        <ModalSchedulePipeline ref="scheduleModal" @on-schedule-pipeline="schedulePipeline"/>
+        <ModalSchedulePipeline ref="scheduleModal" @on-schedule-pipeline="schedulePipeline" />
 
         <div class="card pipelineList-body">
             <div class="card-body pipelineList-container">
@@ -159,17 +159,17 @@ export default {
             this.loadTemplates();
             this.$refs.addModal.show();
         },
-        openScheduleModal(id, name){
+        openScheduleModal(id, name) {
             this.$refs.scheduleModal.show(id, name);
         },
-        async schedulePipeline(id, start, finish){
+        async schedulePipeline(id, start, finish, context) {
             //console.debug(JSON.stringify({id, start, end}));
             try {
                 const resp = await axios.post(`${standUrl}/pipeline-runs/create`,
-                    {id, start, finish});
+                    { id, start, finish, context });
                 this.success(
                     `Agendamento de pipeline criado com sucesso, com id=${resp.data.id}`)
-            }catch(e) {
+            } catch (e) {
                 this.error(e);
             }
 
@@ -218,4 +218,3 @@ export default {
 };
 
 </script>
-
