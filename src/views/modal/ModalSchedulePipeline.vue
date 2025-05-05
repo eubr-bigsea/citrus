@@ -74,8 +74,9 @@ export default {
             const years = [];
             let currentYear = new Date().getYear();
             let maxYears = 5;
+            years.push(currentYear + 1901); //First year in JS is 1900! Add next year
             do {
-                years.push(currentYear + 1900); //First year in JS is 1900!
+                years.push(currentYear + 1900);
                 currentYear--;
                 maxYears--;
             } while (maxYears > 0);
