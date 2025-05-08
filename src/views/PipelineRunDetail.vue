@@ -69,18 +69,19 @@
                         <b-popover target="popover-trigger" triggers="hover">
                             Selecione uma das etapas abaixo para mostrar seus detalhes da execução.
                         </b-popover>
-                        <table class="table">
+                        <table class="table text-center table-striped table-sm">
                             <thead>
                                 <tr>
                                     <th> Ordem </th>
                                     <th> {{ $tc('common.name') }} </th>
-                                    <th class="text-center"> Tentativas </th>
-                                    <th class="text-center"> {{ $tc('common.status') }} </th>
-                                    <th class="text-center"> {{ $tc('common.action', 2) }} </th>
+                                    <th>Modo de disparo</th>
+                                    <th> Tentativas </th>
+                                    <th> {{ $tc('common.status') }} </th>
+                                    <th> {{ $tc('common.action', 2) }} </th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr v-for="(step, index) in pipelineRun.steps" :key="step.id" class="steps-body"
+                                <tr v-for="(step, index) in pipelineRun.steps" :key="step.id" class="steps-body text-center"
                                     :class="{ 'table-selected': selectedStep.id === step.id }"
                                     @click="setSelectedStep(step)" role="button">
                                     <td>
@@ -89,7 +90,10 @@
                                     <td>
                                         {{ step.name }}
                                     </td>
-                                    <td class="text-center">
+                                    <td>
+                                        {{ triggerModeDescription(step.trigger_mode) }}
+                                    </td>
+                                    <td>
                                         {{ step.jobs.length }}
                                     </td>
                                     <td class="text-center">
@@ -100,7 +104,7 @@
                                             {{ $tc(`status.${step.status}`) }}
                                         </div>
                                     </td>
-                                    <td class="text-center">
+                                    <td>
                                         <div>
                                             <button class="btn btn-sm btn-primary" :title="$tc('actions.execute')"
                                                 @click="execute(step.id, step.name)">
@@ -219,6 +223,15 @@ onBeforeMount(async () => {
 onUnmounted(() => {
     disconnectWebSocket();
 });
+const triggerModeDescription = (mode) => {
+    const descriptions = {
+        manual: 'Manual',
+        user: 'Usuário',
+        immediately: 'Imediato',
+        scheduled: 'Agendado'
+    };
+    return descriptions[mode] || 'Desconhecido';
+}
 onMounted(() => {
     const eventHandlers = {
         'connect': () => {
