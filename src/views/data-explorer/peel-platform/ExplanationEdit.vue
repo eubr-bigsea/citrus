@@ -32,12 +32,11 @@
                 <img :src="imageUrl" class="img-fluid rounded shadow" alt="Resultado da Explicação" />
             </div>
             <div v-else-if="jsonResult" class="json-result-container">
-                <div class="mb-1 text-right">
-                    <b-button variant="primary" @click="copyJson(jsonResult)">
-                        <font-awesome-icon icon="copy" class="mr-2" />
-                    </b-button>
+                <div ref="plotDiv"></div>
+                <div v-if="showingLime">
+                    <h5 class="m-2">Regras de associação geradas pelo LIME.</h5>
+                    <b-table :items="limeItems"></b-table>
                 </div>
-                <pre class="json-result">{{ jsonResult }}</pre>
             </div>
             <div v-else class="text-center">
                 <b-spinner variant="primary" label="Carregando..."></b-spinner>
@@ -78,7 +77,7 @@
 
                         <template #detalhes="props">
                             <div class="d-flex align-items-center">
-                                <button class="btn-sm btn-primary" title="Detalhes"
+                                <button class="btn-sm btn-info" title="Detalhes"
                                     @click.stop="viewDetails(props.row.id)">
                                     <font-awesome-icon icon="circle-info" style="color: white;" />
                                 </button>
@@ -104,22 +103,22 @@
                                                 <font-awesome-icon icon="file" />
                                             </button>
                                         </template>
-                                        <b-dropdown-item @click="runResult(props.row.id, 'image')">
-                                            <span class="ml-2">Imagem</span>
+                                        <b-dropdown-item @click="runResult(props.row, 'image')">
+                                            <span class="ml-2">SHAP Plot</span>
                                         </b-dropdown-item>
-                                        <b-dropdown-item @click="runResult(props.row.id, 'raw')">
-                                            <span class="ml-2">Texto</span>
+                                        <b-dropdown-item @click="runResult(props.row, 'raw')">
+                                            <span class="ml-2">Gráfico dinâmico</span>
                                         </b-dropdown-item>
                                     </b-dropdown>
                                 </template>
                                 <template v-else-if="props.row.algorithm == 'ale'">
-                                    <button @click="runResult(props.row.id, 'image')" v-if="!loading"
+                                    <button @click="runResult(props.row, 'image')" v-if="!loading"
                                         class="btn-sm btn-primary" title="Resultado">
                                         <font-awesome-icon icon="file" />
                                     </button>
                                 </template>
                                 <template v-else>
-                                    <button @click="runResult(props.row.id, 'raw')" v-if="!loading"
+                                    <button @click="runResult(props.row, 'raw')" v-if="!loading"
                                         class="btn-sm btn-primary" title="Resultado">
                                         <font-awesome-icon icon="file" />
                                     </button>
@@ -145,6 +144,9 @@
         <b-button :to="{ name: 'peel-home' }" class="mt-3">Voltar</b-button>
 
         <b-modal v-model="showAddModal" :title="modalTitle" hide-footer>
+            <div v-if="selectedAlgorithm" v-html="algorithms[selectedAlgorithm][1]" class="mb-2">
+            </div>
+            <hr>
             <b-form @submit.prevent="onAddSubmit">
                 <div v-if="selectedAlgorithm === 'ale'">
                     <b-form-group label="Nome:" label-for="input-feature">
@@ -306,8 +308,9 @@
 import Notifier from '../../../mixins/Notifier.js';
 import InputHeader from '../../../components/InputHeader.vue';
 import axios from "axios";
+import Plotly from 'plotly.js-dist-min';
 
-const peelUrl = import.meta.env.VITE_PELL_URL;
+const peelUrl = import.meta.env.VITE_PEEL_URL;
 
 export default {
     components: {
@@ -318,6 +321,16 @@ export default {
         return {
             showAddModal: false,
             selectedAlgorithm: null,
+            algorithms: {
+                ale: ["ALE","<b>ALE</b> (Accumulative Local Effects) explica como cada característica influencia as previsões de um modelo, considerando o efeito médio de pequenas variações nos dados."],
+                ensemble: ["Ensemble","<b>Ensemble</b> combina diversos modelos simples para formar um modelo mais robusto e preciso, como uma votação onde vários especialistas opinam antes de tomar uma decisão."],
+                gpx: ["GPX","<b>GPX</b> explica como cada uma das características afetam a previsão do modelo em uma instância específica, analisando a vizinhança do ponto escolhido."],
+                lime: ["LIME","<b>LIME</b> (Local Interpretable Model-agnostic Explanations) explica a previsão de um modelo em casos específicos, simulando como ele se comportaria perto de um ponto analisado."],
+                linear: ["Linear","<b>Linear</b> refere-se à regressão linear, que busca uma linha reta que melhor descreve a relação entre as variáveis, sendo uma das formas mais simples de prever resultados."],
+                logit: ["Logit","<b>Logit</b> ou regressão logística é usado para prever resultados que são categorias, como 'sim' ou 'não', com base nas características dos dados."],
+                shap: ["SHAP","<b>SHAP</b> (SHapley Additive exPlanations) mostra quanto cada variável contribui para uma previsão, de forma justa e baseada em teoria matemática de jogos."],
+                tree: ["Tree","<b>Árvore</b> de decisão é um modelo que faz previsões seguindo uma série de perguntas em forma de ramificações, parecido com um jogo de 20 perguntas até chegar a uma resposta."]
+            },
             newItem: {
                 metadata: { enabled: true },
                 arguments: {}
@@ -331,15 +344,17 @@ export default {
             showDeleteConfirmation: false,
             explanationToDelete: null,
             loading: false,
+            showingLime: false,
+            limeItems: [],
             menuOptions: [
                 { label: 'ALE', value: 'ale' },
                 { label: 'Ensemble', value: 'ensemble' },
                 { label: 'GPX', value: 'gpx' },
                 { label: 'Lime', value: 'lime' },
-                { label: 'Linear', value: 'linear' },
-                { label: 'Logit', value: 'logit' },
+                //{ label: 'Linear', value: 'linear' }, # deprecado
+                //{ label: 'Logit', value: 'logit' }, # deprecado
                 { label: 'Shap', value: 'shap' },
-                { label: 'Tree', value: 'tree' }
+                //{ label: 'Tree', value: 'tree' } # deprecado
             ],
             attributes: [],
             imageUrl: "",
@@ -423,6 +438,75 @@ export default {
             this.explanationToDelete = id;
             this.showDeleteConfirmation = true;
         },
+        createGeralFeatImpPlot(data){
+            const importances = data.feature_importance[0]
+            const features = data.feature_importance[1]
+
+            const trace = {
+                x: features,
+                y: importances,
+                type: 'bar',
+            }
+
+            const layout = {
+                title: "Importância das Características",
+                xaxis: { title: "Características" },
+                yaxis: { title: "Importância" }
+            }
+
+            Plotly.newPlot(this.$refs.plotDiv, [trace], layout);
+        },
+
+        createClassFeatImpPlot(data){
+            const allFeaturesSet = new Set();
+            const classes = [];
+            const featureImportanceByClass = {};
+
+            for (const [className, values, features] of data.feature_importance) {
+                classes.push(className);
+                const classMap = {};
+                for (let i = 0; i < features.length; i++) {
+                    allFeaturesSet.add(features[i]);
+                    classMap[features[i]] = values[i];
+                }
+                featureImportanceByClass[className] = classMap;
+            }
+
+            const allFeatures = Array.from(allFeaturesSet);
+
+            const traces = classes.map(className => {
+                const classMap = featureImportanceByClass[className];
+                return {
+                    name: className,
+                    x: allFeatures,
+                    y: allFeatures.map(f => classMap[f] ?? 0),
+                    type: 'bar'
+                };
+            });
+
+            const layout = {
+                title: 'Importância das Características por Classe',
+                barmode: 'group',
+                xaxis: { title: 'Características' },
+                yaxis: { title: 'Importância' }
+            };
+
+            Plotly.newPlot(this.$refs.plotDiv, traces, layout);
+        },
+
+        createPlot(algorithm, data) {
+            this.showingLime = false
+            if (["gpx","shap"].includes(algorithm)){
+                this.createGeralFeatImpPlot(data)
+            } else if (algorithm == "ensemble") {
+                this.createClassFeatImpPlot(data)
+            } else if (algorithm == "lime") {
+                this.limeItems = data.result.map(a => ({ Regra: a[0], Valor: a[1].toFixed(4) }))
+                this.showingLime = true
+            }
+            
+            
+        },
         async confirmDelete() {
             if (this.explanationToDelete) {
                 try {
@@ -475,7 +559,7 @@ export default {
                 arguments: {},
             };
             this.isViewMode = false;
-            this.modalTitle = `Adicionar ${algorithm}`;
+            this.modalTitle = `Adicionar ${this.algorithms[algorithm][0]}`;
             this.showAddModal = true;
         },
 
@@ -572,7 +656,8 @@ export default {
             }
         },
 
-        async runResult(explanationId, resultType = "raw") {
+        async runResult(props, resultType = "raw") {
+            const explanationId = props.id
             const response = await axios.get(
                 `${peelUrl}/explanation/${explanationId}/result?type=${resultType}`,
                 {
@@ -647,6 +732,9 @@ export default {
                 this.jsonResult = JSON.stringify(response.data, null, 2);
                 this.imageUrl = null;
                 this.showImageModal = true;
+                this.$nextTick(() => {
+                    this.createPlot(props.algorithm, response.data);
+                });
             }
         },
 

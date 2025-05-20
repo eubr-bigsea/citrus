@@ -11,7 +11,7 @@
         </p>
 
         <div class="row">
-            <div class="col-12">
+            <div class="col-6">
                 <b-card no-body>
                     <div class="p-3">
                         <b-form @submit.prevent="onSubmit">
@@ -153,7 +153,7 @@ import ExplanationModel from "../../../mixins/ExplanationModel.js";
 import vSelect from "vue-select";
 import axios from "axios";
 
-const peelUrl = import.meta.env.VITE_PELL_URL;
+const peelUrl = import.meta.env.VITE_PEEL_URL;
 const API_HEADERS = {
     Accept: "application/json",
     "Content-Type": "application/json",
