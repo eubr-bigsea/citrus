@@ -185,9 +185,17 @@
                         <b-form-textarea id="input-x-margin" v-model="newItem.metadata.description" type="text" required
                             :disabled="isViewMode" />
                     </b-form-group>
-                    <b-form-group label="Instância (valores separados por vírgula):" label-for="input-instance">
-                        <b-form-textarea id="input-instance" v-model="instanceInput" type="text" required
-                            :disabled="isViewMode" />
+                    <b-form-group label="Instância:" label-for="input-instance">
+                        <b-card class="mb-3">
+                            <b-card-text>
+                                <div v-for="(attr, index) in attributes" :key="index" class="mb-2">
+                                    <label :for="'input-attr-' + index">{{ attr }}</label>
+                                    <b-form-input :id="'input-attr-' + index" v-model="instanceValues[index]"
+                                        type="number" step="any" required :disabled="isViewMode" class="mt-1"
+                                        @input="updateInstanceInput" />
+                                </div>
+                            </b-card-text>
+                        </b-card>
                     </b-form-group>
                 </div>
                 <div v-if="selectedAlgorithm === 'lime'">
@@ -203,9 +211,17 @@
                         <b-form-input id="input-x-margin" v-model="newItem.arguments.n_feature" type="number" :min="1"
                             :max="attributes.length" required :disabled="isViewMode" />
                     </b-form-group>
-                    <b-form-group label="Instância (valores separados por vírgula):" label-for="input-instance">
-                        <b-form-textarea id="input-instance" v-model="instanceInput" type="text" required
-                            :disabled="isViewMode" />
+                    <b-form-group label="Instância:" label-for="input-instance">
+                        <b-card class="mb-3">
+                            <b-card-text>
+                                <div v-for="(attr, index) in attributes" :key="index" class="mb-2">
+                                    <label :for="'input-attr-' + index">{{ attr }}</label>
+                                    <b-form-input :id="'input-attr-' + index" v-model="instanceValues[index]"
+                                        type="number" step="any" required :disabled="isViewMode" class="mt-1"
+                                        @input="updateInstanceInput" />
+                                </div>
+                            </b-card-text>
+                        </b-card>
                     </b-form-group>
                 </div>
                 <div v-if="selectedAlgorithm === 'linear'">
@@ -251,10 +267,17 @@
                             { value: 'bar', text: 'Barra' },
                         ]" required :disabled="isViewMode" />
                     </b-form-group>
-                    <b-form-group label="Instância (valores separados por vírgula):" label-for="input-instance">
-                        <b-form-textarea id="input-instance" v-model="instanceInput" type="text" required
-                            :disabled="isViewMode"
-                            placeholder="0.012723853338673763, 0.273891752138409, 0.6372544571103208, 0.5043717331554985" />
+                    <b-form-group label="Instância:" label-for="input-instance">
+                        <b-card class="mb-3">
+                            <b-card-text>
+                                <div v-for="(attr, index) in attributes" :key="index" class="mb-2">
+                                    <label :for="'input-attr-' + index">{{ attr }}</label>
+                                    <b-form-input :id="'input-attr-' + index" v-model="instanceValues[index]"
+                                        type="number" step="any" required :disabled="isViewMode" class="mt-1"
+                                        @input="updateInstanceInput" />
+                                </div>
+                            </b-card-text>
+                        </b-card>
                     </b-form-group>
                 </div>
                 <div v-if="selectedAlgorithm === 'tree'">
@@ -299,6 +322,7 @@ export default {
                 metadata: { enabled: true },
                 arguments: {}
             },
+            instanceValues: [],
             instanceInput: "",
             isViewMode: false,
             modalTitle: "Adicionar",
@@ -427,7 +451,13 @@ export default {
                     arguments: parsedArguments,
                 };
 
-                this.instanceInput = parsedArguments.instance ? parsedArguments.instance.join(",") : "";
+                if (parsedArguments.instance) {
+                    this.instanceValues = parsedArguments.instance.map(String);
+                    this.instanceInput = parsedArguments.instance.join(",");
+                } else {
+                    this.instanceValues = this.attributes.map(() => '');
+                    this.instanceInput = '';
+                }
 
                 this.isViewMode = true;
                 this.modalTitle = `Detalhes da Explicação #${id}`;
@@ -436,8 +466,9 @@ export default {
                 console.error('Erro ao carregar detalhes da explicação:', error);
             }
         },
-        async addFeature(algorithm) {
+        addFeature(algorithm) {
             this.selectedAlgorithm = algorithm;
+            this.instanceValues = this.attributes.map(() => '');
             this.instanceInput = "";
             this.newItem = {
                 metadata: { enabled: true },
@@ -447,6 +478,11 @@ export default {
             this.modalTitle = `Adicionar ${algorithm}`;
             this.showAddModal = true;
         },
+
+        updateInstanceInput() {
+            this.instanceInput = this.instanceValues.join(',');
+        },
+
         onAddSubmit() {
             if (this.selectedAlgorithm == 'lime') {
                 this.newItem.arguments.instance = this.instanceInput
@@ -485,7 +521,6 @@ export default {
                     this.newItem,
                     { 'Content-Type': 'application/json' }
                 );
-                //await this.runExplanation(response.id);
                 this.$refs.explanationTable.refresh();
                 this.showAddModal = false;
                 this.instanceInput = ''
@@ -515,8 +550,6 @@ export default {
                 const featuresString = response.datasource.features;
                 const featuresObject = JSON.parse(featuresString.replace(/'/g, '"'));
                 this.attributes = Object.keys(featuresObject);
-
-                console.log(this.attributes);
             } catch (error) {
                 console.error('Erro ao listar explicações:', error);
             }
@@ -529,7 +562,6 @@ export default {
                     variant: 'success',
                     solid: true,
                 });
-                console.log(response);
             } catch (error) {
                 console.error('Erro ao carregar detalhes da explicação:', error);
                 this.$bvToast.toast('Erro ao iniciar a execução do algoritmo.', {
