@@ -194,7 +194,7 @@
                                     <label :for="'input-attr-' + index">{{ attr }}</label>
                                     <b-form-input :id="'input-attr-' + index" v-model="instanceValues[index]"
                                         type="number" step="any" required :disabled="isViewMode" class="mt-1"
-                                        @input="updateInstanceInput" />
+                                        @input="updateInstanceInput" @paste="handlePaste($event, index)" />
                                 </div>
                             </b-card-text>
                         </b-card>
@@ -220,7 +220,7 @@
                                     <label :for="'input-attr-' + index">{{ attr }}</label>
                                     <b-form-input :id="'input-attr-' + index" v-model="instanceValues[index]"
                                         type="number" step="any" required :disabled="isViewMode" class="mt-1"
-                                        @input="updateInstanceInput" />
+                                        @input="updateInstanceInput" @paste="handlePaste($event, index)" />
                                 </div>
                             </b-card-text>
                         </b-card>
@@ -276,7 +276,7 @@
                                     <label :for="'input-attr-' + index">{{ attr }}</label>
                                     <b-form-input :id="'input-attr-' + index" v-model="instanceValues[index]"
                                         type="number" step="any" required :disabled="isViewMode" class="mt-1"
-                                        @input="updateInstanceInput" />
+                                        @input="updateInstanceInput" @paste="handlePaste($event, index)" />
                                 </div>
                             </b-card-text>
                         </b-card>
@@ -566,7 +566,21 @@ export default {
         updateInstanceInput() {
             this.instanceInput = this.instanceValues.join(',');
         },
+        handlePaste(event, index) {
+            if (index !== 0) return;
 
+            const pastedText = (event.clipboardData || window.clipboardData).getData('text');
+            const values = pastedText.split(',').map(v => v.trim());
+
+            event.preventDefault();
+
+            for (let i = 0; i < values.length && i < this.instanceValues.length; i++) {
+                const num = parseFloat(values[i]);
+                if (!isNaN(num)) {
+                    this.$set(this.instanceValues, i, num);
+                }
+            }
+        },
         onAddSubmit() {
             if (this.selectedAlgorithm == 'lime') {
                 this.newItem.arguments.instance = this.instanceInput
