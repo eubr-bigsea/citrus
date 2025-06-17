@@ -1,34 +1,34 @@
 import axios from 'axios';
 import { debounce } from "../util.js";
 
-const tahitiUrl = import.meta.env.VITE_TAHITI_URL;
+const limoneroUrl = import.meta.env.VITE_LIMONERO_URL;
 
 export default {
     data() {
         return {
-            workflowList: [],
+            modelList: [],
         };
     },
     methods: {
         pad: (num, places, ch) => String(num).padStart(places, ch),
-        loadWorkflowList: debounce(function (search, loading) {
+        loadModelList: debounce(function (search, loading) {
             if (search) {
-                this.asyncLoadWorkflowList(search, loading);
+                this.loadModelList(search, loading);
             }
         }, 800),
-        async asyncLoadWorkflowList(search, loading) {
+        async loadModelList(search, loading) {
             this.$Progress.start();
             const params = {
-                sort: 'name', size: 10, name: search,
-                types: 'SQL',
+                sort: 'name', size: 10, query: search,
+                //types: 'SQL',
                 enabled: 1, simple: true, fields: 'id,name,type',
-                platform: 'META'
+                //platform: 'META'
             };
             try {
-                const workflowList = await axios.get(
-                    `${tahitiUrl}/workflows`, { params });
-                this.workflowList = workflowList.data.data;
-                console.log(this.workflowList);
+                const modelList = await axios.get(
+                    `${limoneroUrl}/models`, { params });
+                this.modelList = modelList.data.data;
+                console.log(this.modelList);
             } catch (e) {
                 this.error(e);
             } finally {

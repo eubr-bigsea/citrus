@@ -112,6 +112,9 @@ const Design = () => import('./views/data-explorer/model-builder/ModelBuilderDes
 const VisualizationDesign = () => import('./views/data-explorer/vis-builder/VisualizationDesign.vue');
 const CreateVisualization = () => import('./views/data-explorer/vis-builder/CreateVisualization.vue');
 
+const PeelHome = () => import('./views/data-explorer/peel-platform/Home.vue')
+const NewExplanation = () => import('./views/data-explorer/peel-platform/NewExplanation.vue')
+const ExplanationEdit = () => import('./views/data-explorer/peel-platform/ExplanationEdit.vue')
 
 const TestEntities = () => import('./views/data-explorer/TestEntities.vue');
 
@@ -923,6 +926,33 @@ let router = new VueRouter({
                 requiredPermissions: ['EXPERIMENT_VISUALIZATION'],
                 requiresAuth: true,
                 title: ['titles.dataExplorer', 1]
+            }
+        },
+        {
+            path: '/experiments/peel',
+            name: 'peel-home',
+            component: PeelHome,
+            meta: {
+                requiresAuth: true,
+                title: ['titles.peelPlatform', 1]
+            }
+        },
+        {
+            path: '/experiments/peel/create',
+            name: 'explanationCreate',
+            component: NewExplanation,
+            meta: {
+                requiresAuth: true,
+                title: ['titles.peelPlatform', 1]
+            }
+        },
+        {
+            path: '/experiments/peel/explanation/:id',
+            name: 'explanationEdit',
+            component: ExplanationEdit,
+            meta: {
+                requiresAuth: true,
+                title: ['titles.peelPlatform', 1]
             }
         },
         {
