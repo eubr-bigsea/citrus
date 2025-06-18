@@ -309,8 +309,9 @@ import Notifier from '../../../mixins/Notifier.js';
 import InputHeader from '../../../components/InputHeader.vue';
 import axios from "axios";
 import Plotly from 'plotly.js-dist-min';
+import { fetchPeelUrl } from './utils.js';
 
-const peelUrl = import.meta.env.VITE_PEEL_URL;
+const peelUrl = await fetchPeelUrl();
 
 export default {
     components: {
