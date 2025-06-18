@@ -3,7 +3,7 @@ import axios from "axios";
 export async function fetchPeelUrl() {
 
     const thornUrl = import.meta.env.VITE_THORN_URL;
-    const thornPeelVariable = 'SERVER_BASE_URL'
+    const thornPeelVariable = 'PEEL_HOST'
 
     try {
         const response = await axios.get(
