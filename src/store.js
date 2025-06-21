@@ -155,9 +155,13 @@ export default new Vuex.Store({
         /* web socket state*/
         socket: null,
         connected: false,
-        eventListeners: []
+        eventListeners: [],
+        peelUrl: null,
     }),
     mutations: {
+        set_peel_url(state, value) {
+            state.peelUrl = value;
+        },
         set_connected(state, value) {
             state.connected = value;
         },
@@ -361,12 +365,33 @@ export default new Vuex.Store({
                 delete axios.defaults.headers.common['Authorization'];
                 resolve();
             });
-        }
+        },
+        async fetchPeelUrl({state, commit}) {
+            if (state.peelUrl) return state.peelUrl;
+
+            const thornUrl = import.meta.env.VITE_THORN_URL
+            const thornPeelVariable = 'PEEL_HOME'
+
+            try {
+                const res = await axios.get(
+                    `${thornUrl}/configurations?query=&limit=50&ascending=1&page=1&byColumn=0&asc=true&size=50&name=&fields=name,value`
+                );
+                const peelUrl = res.data.data.find(obj => obj.name === thornPeelVariable)?.value
+
+                commit('set_peel_url', peelUrl)
+                return peelUrl
+            } catch (err) {
+                console.error('Erro ao buscar peelUrl:', err)
+                return null
+            }
+
+        },
     },
     getters: {
         isLoggedIn: state => !!state.token,
         authStatus: state => state.status,
         user: state => state.user || {},
+        peelUrl: state => state.peelUrl,
         isAdmin: state => state.user?.roles?.map(r => r.name).includes('admin'),
         isManager: state => state.user.roles.map(r => r.name).includes('manager'),
         isMonitor: state => state.user.roles.map(r => r.name).includes('monitor'),

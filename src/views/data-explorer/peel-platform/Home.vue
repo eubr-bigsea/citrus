@@ -138,9 +138,7 @@ import ExplanationModel from "../../../mixins/ExplanationModel.js";
 import vSelect from "vue-select";
 import axios from "axios";
 
-import { fetchPeelUrl } from './utils.js';
 
-const peelUrl = await fetchPeelUrl();
 const API_HEADERS = {
     Accept: "application/json",
     "Content-Type": "application/json",
@@ -148,12 +146,17 @@ const API_HEADERS = {
 
 export default {
     name: "ExplanationCreate",
-    components: {
+    components: {   
         "vue-select": vSelect,
     },
     mixins: [ExplanationModel, Notifier],
+    async created() {
+        this.peelUrl = await this.$store.dispatch('fetchPeelUrl');
+        this.$refs.undestandingTable.refresh();
+    },
     data() {
         return {
+            peelUrl: null,
             showDeleteConfirmation: false,
             explanationToDelete: null,
             columns: ['id', 'name', 'description', 'created', 'updated', 'view', 'delete'],
@@ -175,37 +178,7 @@ export default {
                 },
                 filterable: ['id', 'name'],
                 sortable: ['id', 'name', 'description', 'created', 'updated'],
-                requestFunction: async function (data) {
-                    const self = this;
-                    const limit = data.limit;
-                    const page = data.page - 1;
-                    const filter = data.query || "";
-                    const orderBy = data.orderBy || "name";
-                
-                    self.$Progress.start();
-                    return axios
-                        .get(`${peelUrl}/understanding/list`, {
-                            params: {
-                                enabled: true,
-                                limit: limit,
-                                page: page,
-                                name: filter,
-                                sort: orderBy,
-                            },
-                        })
-                        .then((response) => {
-                            self.$Progress.finish();
-                            self.totalRows = response.data.totalRows;
-                            return {
-                                data: response.data.data,
-                                count: response.data.totalRows,
-                            };
-                        })
-                        .catch((error) => {
-                            self.$Progress.finish();
-                            self.error(error);
-                        });
-                },
+                requestFunction: this.requestFunction,
                 texts: {
                     filter: this.$tc('common.filter'),
                     count: this.$t('common.pagerShowing'),
@@ -247,6 +220,41 @@ export default {
     },
 
     methods: {
+        async requestFunction(data) {
+            if (!this.peelUrl) {
+                console.warn("peelUrl ainda não carregado");
+                return { data: [], count: 0 };
+            }
+
+            const limit = data.limit;
+            const page = data.page - 1;
+            const filter = data.query || "";
+            const orderBy = data.orderBy || "name";
+
+            this.$Progress.start();
+
+            try {
+                const response = await axios.get(`${this.peelUrl}/understanding/list`, {
+                    params: {
+                        enabled: true,
+                        limit,
+                        page,
+                        name: filter,
+                        sort: orderBy,
+                    },
+                });
+
+                this.$Progress.finish();
+                this.totalRows = response.data.totalRows;
+                return {
+                    data: response.data.data,
+                    count: response.data.totalRows,
+                };
+            } catch (error) {
+                this.$Progress.finish();
+                this.error(error);
+            }
+        },
         createExplanation() {
             this.$router.push({ name: "explanationCreate" });
         },
@@ -299,7 +307,7 @@ export default {
             if (!file) return null;
 
             try {
-                const url = `${peelUrl}/upload/?type=${type}`;
+                const url = `${this.peelUrl}/upload/?type=${type}`;
                 const formData = new FormData();
                 formData.append("file", file);
 
@@ -318,7 +326,7 @@ export default {
                 const uri = await this.uploadFile(this.selectedExplanation.model.file, "model");
                 if (!uri) throw new Error("URI não gerada.");
 
-                const url = `${peelUrl}/model/`;
+                const url = `${this.peelUrl}/model/`;
                 const data = {
                     name: this.selectedExplanation.model.name,
                     description: this.selectedExplanation.model.description,
@@ -343,7 +351,7 @@ export default {
                 const uri = await this.uploadFile(this.selectedExplanation.datasource.file, "datasource");
                 if (!uri) throw new Error("URI não gerada.");
 
-                const url = `${peelUrl}/datasource/`;
+                const url = `${this.peelUrl}/datasource/`;
                 const data = {
                     name: this.selectedExplanation.datasource.name,
                     description: this.selectedExplanation.datasource.description,
@@ -373,7 +381,7 @@ export default {
 
         async loadList(type, searchQuery) {
             try {
-                const url = `${peelUrl}/${type}/list`;
+                const url = `${this.peelUrl}/${type}/list`;
                 const params = {
                     enabled: true,
                     name: searchQuery,
@@ -391,7 +399,7 @@ export default {
 
         async saveExplanation() {
             try {
-                const url = `${peelUrl}/understanding/${this.selectedExplanation.id}`;
+                const url = `${this.peelUrl}/understanding/${this.selectedExplanation.id}`;
                 const data = {
                     name: this.selectedExplanation.name,
                     description: this.selectedExplanation.description,
@@ -410,7 +418,7 @@ export default {
         async confirmDelete() {
             if (this.explanationToDelete) {
                 try {
-                    const url = `${peelUrl}/understanding/${this.explanationToDelete.id}`;
+                    const url = `${this.peelUrl}/understanding/${this.explanationToDelete.id}`;
                     const data = {
                         ...this.explanationToDelete,
                         enabled: false,

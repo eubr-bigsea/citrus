@@ -309,17 +309,21 @@ import Notifier from '../../../mixins/Notifier.js';
 import InputHeader from '../../../components/InputHeader.vue';
 import axios from "axios";
 import Plotly from 'plotly.js-dist-min';
-import { fetchPeelUrl } from './utils.js';
-
-const peelUrl = await fetchPeelUrl();
 
 export default {
     components: {
         InputHeader,
     },
     mixins: [Notifier],
+    async created() {
+        this.peelUrl = await this.$store.dispatch('fetchPeelUrl');
+        this.load();
+        await this.getUnderstanding();
+        this.$refs.explanationTable.refresh();
+    },
     data() {
         return {
+            peelUrl: null,
             showAddModal: false,
             selectedAlgorithm: null,
             algorithms: {
@@ -378,36 +382,7 @@ export default {
                 },
                 filterable: ['id', 'name'],
                 sortable: ['id', 'name', 'description', 'created', 'updated'],
-                requestFunction: async function (data) {
-                    const self = this;
-                    const limit = data.limit;
-                    const page = data.page - 1;
-                    const filter = data.query || "";
-                    const orderBy = data.orderBy || "name";
-                    self.$Progress.start();
-                    return axios
-                        .get(`${peelUrl}/explanation/${self.$route.params.id}/list`, {
-                            params: {
-                                enabled: true,
-                                limit: limit,
-                                page: page,
-                                name: filter,
-                                sort: orderBy,
-                            },
-                        })
-                        .then((response) => {
-                            self.$Progress.finish();
-                            self.totalRows = response.data.totalRows;
-                            return {
-                                data: response.data.data,
-                                count: response.data.totalRows,
-                            };
-                        })
-                        .catch((error) => {
-                            self.$Progress.finish();
-                            self.error(error);
-                        });
-                },
+                requestFunction: this.requestFunction,
                 texts: {
                     filter: this.$tc('common.filter'),
                     count: this.$t('common.pagerShowing'),
@@ -420,10 +395,43 @@ export default {
         };
     },
     async mounted() {
-        this.load();
-        await this.getUnderstanding();
     },
     methods: {
+        async requestFunction(data) {
+            if (!this.peelUrl) {
+                console.warn("peelUrl ainda não carregado");
+                return { data: [], count: 0 };
+            }
+
+            const limit = data.limit;
+            const page = data.page - 1;
+            const filter = data.query || "";
+            const orderBy = data.orderBy || "name";
+
+            this.$Progress.start();
+
+            try {
+                const response = await axios.get(`${this.peelUrl}/explanation/${this.understanding.id}/list`, {
+                    params: {
+                        enabled: true,
+                        limit:limit,
+                        page:page,
+                        name: filter,
+                        sort: orderBy,
+                    },
+                });
+
+                this.$Progress.finish();
+                this.totalRows = response.data.totalRows;
+                return {
+                    data: response.data.data,
+                    count: response.data.totalRows,
+                };
+            } catch (error) {
+                this.$Progress.finish();
+                this.error(error);
+            }
+        },
         async load() {
             this.$Progress.start();
             try {
@@ -511,7 +519,7 @@ export default {
         async confirmDelete() {
             if (this.explanationToDelete) {
                 try {
-                    await this.makeRequest('delete', `${peelUrl}/explanation/${this.explanationToDelete}`);
+                    await this.makeRequest('delete', `${this.peelUrl}/explanation/${this.explanationToDelete}`);
                 } catch (error) {
                     console.error('Erro ao excluir explicação:', error);
                 } finally {
@@ -522,7 +530,7 @@ export default {
         },
         async viewDetails(id) {
             try {
-                const response = await this.makeRequest('get', `${peelUrl}/explanation/${id}`);
+                const response = await this.makeRequest('get', `${this.peelUrl}/explanation/${id}`);
 
                 const parsedArguments = JSON.parse(response.arguments.replace(/'/g, '"'));
 
@@ -616,7 +624,7 @@ export default {
             try {
                 const response = await this.makeRequest(
                     'post',
-                    `${peelUrl}/algorithms/${this.understanding.id}/algorithm/${this.selectedAlgorithm}`,
+                    `${this.peelUrl}/algorithms/${this.understanding.id}/algorithm/${this.selectedAlgorithm}`,
                     this.newItem,
                     { 'Content-Type': 'application/json' }
                 );
@@ -640,7 +648,7 @@ export default {
         },
         async getUnderstanding() {
             try {
-                const response = await this.makeRequest('get', `${peelUrl}/understanding/${this.$route.params.id}`);
+                const response = await this.makeRequest('get', `${this.peelUrl}/understanding/${this.$route.params.id}`);
                 this.understanding.id = response.id;
                 this.understanding.name = response.name;
                 this.understanding.datasource = response.datasource.name;
@@ -655,7 +663,7 @@ export default {
         },
         async runExplanation(id) {
             try {
-                const response = await this.makeRequest('get', `${peelUrl}/explanation/${id}/run`);
+                const response = await this.makeRequest('get', `${this.peelUrl}/explanation/${id}/run`);
                 this.$bvToast.toast('Execução do algoritmo iniciada com sucesso!', {
                     title: 'Sucesso',
                     variant: 'success',
@@ -674,7 +682,7 @@ export default {
         async runResult(props, resultType = "raw") {
             const explanationId = props.id
             const response = await axios.get(
-                `${peelUrl}/explanation/${explanationId}/result?type=${resultType}`,
+                `${this.peelUrl}/explanation/${explanationId}/result?type=${resultType}`,
                 {
                     headers: { accept: "application/json" },
                     responseType: resultType === "image" ? "blob" : "json",
