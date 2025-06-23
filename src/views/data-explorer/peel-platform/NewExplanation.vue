@@ -153,9 +153,6 @@ import ExplanationModel from "../../../mixins/ExplanationModel.js";
 import vSelect from "vue-select";
 import axios from "axios";
 
-import { fetchPeelUrl } from './utils.js';
-
-const peelUrl = await fetchPeelUrl();
 const API_HEADERS = {
     Accept: "application/json",
     "Content-Type": "application/json",
@@ -167,8 +164,12 @@ export default {
         "vue-select": vSelect,
     },
     mixins: [ExplanationModel, Notifier],
+    async created() {
+        this.peelUrl = await this.$store.dispatch('fetchPeelUrl');
+    },
     data() {
         return {
+            peelUrl: null,
             explanation: {
                 name: "",
                 description: "",
@@ -243,7 +244,7 @@ export default {
             if (!file) return null;
 
             try {
-                const url = `${peelUrl}/upload/?type=${type}`;
+                const url = `${this.peelUrl}/upload/?type=${type}`;
                 const formData = new FormData();
                 formData.append("file", file);
 
@@ -262,7 +263,7 @@ export default {
                 const uri = await this.uploadFile(this.explanation.model.file, "model");
                 if (!uri) throw new Error("URI não gerada.");
 
-                const url = `${peelUrl}/model/`;
+                const url = `${this.peelUrl}/model/`;
                 const data = {
                     name: this.explanation.model.name,
                     description: this.explanation.model.description,
@@ -291,7 +292,7 @@ export default {
                 const uri = await this.uploadFile(this.explanation.datasource.file, "datasource");
                 if (!uri) throw new Error("URI não gerada.");
 
-                const url = `${peelUrl}/datasource/`;
+                const url = `${this.peelUrl}/datasource/`;
                 const data = {
                     name: this.explanation.datasource.name,
                     description: this.explanation.datasource.description,
@@ -325,7 +326,7 @@ export default {
 
         async loadList(type, searchQuery) {
             try {
-                const url = `${peelUrl}/${type}/list`;
+                const url = `${this.peelUrl}/${type}/list`;
                 const params = {
                     enabled: true,
                     name: searchQuery,
@@ -343,7 +344,7 @@ export default {
 
         async onSubmit() {
             try {
-                const url = `${peelUrl}/understanding/`;
+                const url = `${this.peelUrl}/understanding/`;
                 const params = {
                     id_datasource: this.explanation.selectedDatasource.id,
                     id_model: this.explanation.selectedModel.id,
