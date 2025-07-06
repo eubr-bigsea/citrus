@@ -29,11 +29,6 @@
                                         class="form-control">
                                 </div>
                                 <div class="col-md-4">
-                                    <label>{{ $t('variables.defaultValue') }}:</label>
-                                    <input v-model="selected.default_value" maxlength="40" autocomplete="off"
-                                        class="form-control">
-                                </div>
-                                <div class="col-md-4">
                                     <label>{{ $t('variables.type') }}:</label>
                                     <select v-model="selected.type" class="form-control">
                                         <option />
@@ -41,6 +36,11 @@
                                             {{ $t('dataTypes.' + dt) }}
                                         </option>
                                     </select>
+                                </div>
+                                <div class="col-md-12">
+                                    <label>{{ $t('variables.defaultValue') }}:</label>
+                                    <input v-model="selected.default_value" maxlength="250" autocomplete="off"
+                                        class="form-control">
                                 </div>
                                 <template v-if="!simple">
                                     <div class="col-md-4">
