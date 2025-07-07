@@ -1,7 +1,7 @@
 <!-- Pagination.vue -->
 <template>
     <nav class="pagination">
-        <ul>
+        <ul v-if="totalPages > 1">
             <li :class="{ disabled: currentPage === 1 }" @click="gotoPage(1)">
                 «
             </li>
@@ -21,7 +21,7 @@
         </ul>
     </nav>
 </template>
-  
+
 <script setup>
 import { ref, onMounted, computed, } from 'vue';
 
@@ -74,7 +74,7 @@ onMounted(() => {
     }
 });
 </script>
-  
+
 <style scoped>
 .pagination {
     margin-top: 10px;
@@ -113,4 +113,3 @@ li.disabled {
     opacity: 0.6;
 }
 </style>
-  

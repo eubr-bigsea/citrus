@@ -824,7 +824,7 @@ const defaultValues = Object.fromEntries(
         'locations', 'geo_json_url', 'feature_id_key'
     ].map((attr) => [attr, { value: null }]));
 
-editableVisualization.value = structuredClone({ ...defaultValues, ...props.value });
+editableVisualization.value = JSON.parse(JSON.stringify({ ...defaultValues, ...props.value }));
 
 const handleAddY = () => editableVisualization.value.y.value.push(new YDimension({}));
 const handleAddX = () => editableVisualization.value.x.value.push(new XDimension({}));
@@ -882,10 +882,10 @@ watch(
             }
         });
 
-        editableVisualization.value = structuredClone({
+        editableVisualization.value = JSON.parse(JSON.stringify({
             ...defaultValues,
             ...props.value
-        });
+        }));
         toEmit.value = false;
     }, { deep: true, immediate: true });
 

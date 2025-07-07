@@ -97,7 +97,7 @@
                 </form>
             </div>
         </div>
-        <div v-if="visualizationObj" class="options-main">
+        <div v-if="false && visualizationObj" class="options-main">
             <chart-builder-axis v-model="axis" v-model:xLabel="visualizationObj.x_axis.value.label" v-model:x="visualizationObj.x.value"
                                 v-model:y="visualizationObj.y.value" v-model:xLowerBound="visualizationObj.x_axis.value.lowerBound" v-model:xUpperBound="visualizationObj.x_axis.value.upperBound"
                                 v-model:xLogScale="visualizationObj.x_axis.value.logScale" v-model:xDisplay="visualizationObj.x_axis.value.display"
