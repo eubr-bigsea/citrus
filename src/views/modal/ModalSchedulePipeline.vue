@@ -66,7 +66,6 @@
 
 <script setup>
 import { ref, computed, defineExpose, defineEmits } from 'vue';
-import { BModal } from 'bootstrap-vue';
 import { pt } from 'date-fns/locale';
 import { format } from 'date-fns';
 

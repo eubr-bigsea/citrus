@@ -2,32 +2,26 @@
     <main role="main">
         <div class="row">
             <div class="col">
-                <TahitiSuggester />
-
-                <div class="title">
-                    <div class="float-right">
-                        <workflow-toolbar v-if="loaded" :workflow="workflow" :isDirty="isDirty"
-                            :can-edit-workflow="canEditWorkflow"
-                            @onsave-workflow="saveWorkflow(false)" @onshow-history="showHistory"
-                            @onshow-executions="$refs.executionsModal.show()"
-                            @onshow-variables="$refs.variablesModal.show()" @onsave-workflow-as="saveWorkflowAs"
-                            @onshow-properties="showWorkflowProperties" @onsaveas-workflow="showSaveAs"
-                            @onclick-execute="showExecuteWindow" @onclick-export="(format) => this.exportWorkflow(format)"
-                            @onupdate-workflow-properties="saveWorkflowProperties" @onrestore-workflow="restore"
-                            @onsave-as-image="saveAsImage"
-
-                            />
+                <div class="row">
+                    <div class="col-6">
+                        <h6 class="header-pretitle">
+                            {{$t('titles.workflow', 1)}} #{{workflow.id}}
+                        </h6>
+                        <input-header v-model="workflow.name" />
                     </div>
-
-                    <h6 class="header-pretitle">
-                        {{ $tc('titles.workflow', 1) }} #{{ workflow.id }}
-                        <span v-if="!canEditWorkflow" class="mt-3 p-2 badge badge-danger float-right">Você não tem permissão de editar este fluxo</span>
-
-                    </h6>
-                    <InputHeader v-model="workflow.name" :disabled="!canEditWorkflow"/>
+                    <div class="col-6 text-end">
+                        <workflow-toolbar v-if="loaded" :workflow="workflow" :is-dirty="isDirty" :total-jobs="totalJobs"
+                                          @onsave-workflow="saveWorkflow(false)" @onshow-history="showHistory"
+                                          @onshow-executions="$refs.executionsModal.show()"
+                                          @onshow-variables="$refs.variablesModal.show()" @onsave-workflow-as="saveWorkflowAs"
+                                          @onshow-properties="showWorkflowProperties" @onsaveas-workflow="showSaveAs"
+                                          @onclick-execute="showExecuteWindow" @onclick-export="(format) => exportWorkflow(format)"
+                                          @onupdate-workflow-properties="saveWorkflowProperties" @onrestore-workflow="restore"
+                                          @onsave-as-image="saveAsImage" />
+                    </div>
                 </div>
 
-                <div v-show="showTasksPanel && canEditWorkflow" class="toolbox">
+                <div v-show="showTasksPanel" class="toolbox">
                     <div class="card">
                         <div class="card-header">
                             <h4 class="card-title">
@@ -50,23 +44,30 @@
                     </div>
                 </div>
 
-                <diagram v-if="loaded" id="main-diagram" ref="diagram" :workflow="workflow" :operations="operations"
-                    :loaded="loaded" :version="workflow.version" tabindex="0"
-                    :showToolbar="canEditWorkflow"
-                    :use-data-source="expandableOperations.length > 0" @ontoggle-tasksPanel="toggleTasksPanel"
-                    @ontoggle-dataSourcesPanel="toggleDataSourcesPanel"
-                    @onselect-image="selectImage" @onset-isDirty="setIsDirty" @onzoom="applyZoom" @addTask="addTask"
-                    @onclick-task="clickTask"
-                    @addFlow="addFlow" @removeFlow="removeFlow"
-                    @onclear-selection="clearSelection"
-                    @onblur-selection="blurSelection"/>
+                <diagram v-if="loaded" id="main-diagram" ref="diagram" :workflow="workflow"
+                         :operations="operations"
+                         :loaded="loaded" :version="workflow.version" tabindex="0"
+                         :use-data-source="expandableOperations.length > 0" @ontoggle-tasks-panel="toggleTasksPanel"
+                         @ontoggle-data-sources-panel="toggleDataSourcesPanel" @onselect-image="selectImage"
+                         @onset-is-dirty="setIsDirty" @onzoom="applyZoom" @add-task="addTask" @onclick-task="clickTask"
+                         @add-flow="addFlow" @remove-flow="removeFlow" @onclear-selection="clearSelection"
+                         @onblur-selection="blurSelection" @remove-task="removeTask" />
 
+                <div v-else>
+                    <div class="preview-loading">
+                        <font-awesome-icon icon="spinner" size="1x" spin class="text-success" />
+                        {{$t('common.loading')}}
+                    </div>
+                    <div class="skeleton skeleton-text skeleton-animate-wave" style="width: 100%; height: 40px" />
+                </div>
                 <div v-if="showProperties" class="diagram-properties">
                     <property-window v-if="selectedTask.task" :task="selectedTask.task"
-                        :variables="workflow.variables || []" :suggestion-event="() => getSuggestions(selectedTask.task.id)"
-                        :extended-suggestion-event="() => getExtendedSuggestions(selectedTask.task.id)"
-                        :publishing-enabled="workflow && workflow.publishing_enabled"
-                        @update-form-field-value="updateFormFieldValue"/>
+                                     :variables="workflow.variables || []" :suggestion-event="() => getSuggestions(selectedTask.task.id)"
+                                     :extended-suggestion-event="() => getExtendedSuggestions(selectedTask.task.id)"
+                                     :publishing-enabled="workflow && workflow.publishing_enabled"
+                                     @update-form-field-value="updateFormFieldValue"
+                                     @update-task-name="(name) => selectedTask.task.name = name"
+                                     @toggle-task="(value) => selectedTask.task.enabled = value" />
                 </div>
 
                 <!--
@@ -260,16 +261,9 @@ export default {
             },
             expandableOperations: [],
             exportTimeoutHandler: null,
-        }
-    },
-    computed: {
-        canEditWorkflow() {
-            const user = this.$store.getters.user;
-            const permissions = this.$store.getters.userPermissions;
-            return this.workflow.user_id === user.id ||
-                permissions.includes('ADMINISTRATOR') ||
-                permissions.includes('WORKFLOW_EDIT_ANY');
-        }
+            suggestion: null,
+
+        };
     },
     watch: {
         '$route.params.id': function (id) {
@@ -297,8 +291,16 @@ export default {
     },
 
     methods: {
+        handleUpdateVariables(v) {
+            debugger;
+            this.workflow.variables = v;
+            this.isDirty = true;
+        },
+        handleJobsHistoryLoaded(total) {
+            this.totalJobs = total;
+        },
         // Forms
-        updateFormFieldValue(field, value, labelValue){
+        updateFormFieldValue(field, value, labelValue) {
             const self = this;
             if (self.selectedTask.task.forms[field.name]) {
                 if (self.selectedTask.task.forms[field.name].value !== value) {

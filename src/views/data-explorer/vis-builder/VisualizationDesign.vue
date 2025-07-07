@@ -176,7 +176,6 @@ import Plotly from '@/components/visualization/Plotly.vue';
 import useNotifier from '@/composables/useNotifier.js';
 import useDataSource from '@/composables/useDataSource.js';
 
-import { Operation, VisualizationBuilderWorkflow, Visualization } from '../entities.js';
 import axios from 'axios';
 import VueSelect from 'vue-select';
 import { Operation, Visualization, VisualizationBuilderWorkflow } from '../entities.js';

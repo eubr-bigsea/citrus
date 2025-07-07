@@ -1,7 +1,7 @@
 <template>
     <b-nav vertical class="model-builder-sidebar">
-        <template v-for="header in menus" class="header">
-            <b-nav-text :key="header.name">
+        <template v-for="header in menus" class="header" :key="header.name">
+            <b-nav-text>
                 {{ header.name }}
             </b-nav-text>
             <b-nav-item v-for="menu in header.items" :class="{ active: selected === menu.action }"

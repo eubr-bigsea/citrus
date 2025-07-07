@@ -30,10 +30,10 @@
                         </router-link>
                     </template>
                     <template #created="props">
-                        {{props.row.created | formatJsonDate}}
+                        {{$filters.formatJsonDate(props.row.created)}}
                     </template>
                     <template #updated="props">
-                        {{props.row.updated | formatJsonDate}}
+                        {{$filters.formatJsonDate(props.row.updated)}}
                     </template>
                     <template #version="props">
                         {{props.row.version}}
