@@ -6,10 +6,10 @@
                     Pipeline #{{ pipeline.id }}
                 </h6>
                 <h1>
-                    <InputHeader v-model="pipeline.name" @input="isDirty = true"
-                        :maxlength="50"/>
+                    <InputHeader v-model="pipeline.name" @input="isDirty = true" :maxlength="50" />
                 </h1>
             </div>
+
             <div class="btn-group">
                 <router-link :to="{ name: 'pipelines' }"
                     class="btn btn-outline-secondary d-print-none float-left btn-sm">
@@ -35,6 +35,11 @@
                     </h5>
                     <b-card class="editPage-infos">
 
+                        <div class="mt-2 mb-4">
+                            <label for="identifier" class="font-weight-bold">Identificador:</label>
+                            <input type="text" id="identifier" class="form-control form-control-sm"
+                                v-model="pipeline.identifier" @input="isDirty = true" />
+                        </div>
                         <div class="d-flex flex-row">
                             <div class="font-weight-bold mr-2">
                                 <div>Criado em:</div>
@@ -48,7 +53,7 @@
                         <div class="mt-4">
                             <span class="font-weight-bold">Descrição:</span>
                             <textarea v-model="pipeline.description" @input="isDirty = true" rows="4"
-                                class="form-control form-control-sm" maxlength="200"/>
+                                class="form-control form-control-sm" maxlength="200" />
                         </div>
                         <div class="mt-4">
                             <b-form-checkbox v-model="pipeline.enabled" class="d-flex align-items-center"
@@ -124,7 +129,7 @@
                                             # {{ index + 1 }}
                                         </div>
                                         <div class="editPage-drag-column" :class="ident">
-                                                {{ step.name }}
+                                            {{ step.name }}
                                         </div>
                                         <div class="editPage-drag-column">
                                             <div>
