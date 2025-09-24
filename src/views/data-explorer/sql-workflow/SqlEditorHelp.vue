@@ -145,7 +145,6 @@
     </b-tabs>
 </template>
 <script setup>
-import { defineProps } from 'vue';
 
 const props = defineProps({
     dataSources: { type: Array, default: () => [] },

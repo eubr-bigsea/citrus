@@ -67,7 +67,7 @@
 
 <script setup>
 import axios from 'axios';
-import { defineExpose, defineProps, onBeforeMount, ref } from 'vue';
+import { onBeforeMount, ref } from 'vue';
 const handleSubmit = () => { };
 const modal = ref({});
 const valid = ref(true);

@@ -91,7 +91,7 @@
 
 <script setup>
 import axios from 'axios';
-import { defineProps, onBeforeMount, ref, watch } from 'vue';
+import { onBeforeMount, ref, watch } from 'vue';
 
 const modal = ref({})
 

@@ -17,7 +17,7 @@ import {
 } from '@codemirror/language';
 import { searchKeymap } from '@codemirror/search';
 import { EditorView, keymap, lineNumbers } from '@codemirror/view';
-import { defineEmits, defineExpose, defineProps, onMounted, ref } from "vue";
+import { defineEmits, onMounted, ref } from "vue";
 
 const emit = defineEmits(['update']);
 const props = defineProps({

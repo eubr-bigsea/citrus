@@ -32,7 +32,7 @@
 <script setup>
 import { Modal } from 'bootstrap';
 import { reactive, onMounted, computed } from 'vue';
-import { ref, defineProps, defineExpose } from 'vue';
+import { ref} from 'vue';
 
 const state = reactive({
     modal: null,

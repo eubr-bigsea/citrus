@@ -12,7 +12,7 @@
     </b-nav>
 </template>
 <script setup>
-import { defineProps, defineEmits, ref } from 'vue';
+import { defineEmits, ref } from 'vue';
 
 const menus = [
     {

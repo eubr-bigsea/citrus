@@ -82,7 +82,7 @@ import { debounce } from '@/util.js';
 import SpinnerDisplay from '@/components/SpinnerDisplay.vue';
 import PagerComponent from '@/components/PagerComponent.vue';
 
-import { ref, onMounted, computed, defineProps, watch, shallowRef } from 'vue';
+import { ref, onMounted, computed, watch, shallowRef } from 'vue';
 
 const props = defineProps({
     options: { type: Object, required: true },

@@ -637,7 +637,7 @@
     </div>
 </template>
 <script setup>
-import { ref, watch, defineProps, defineEmits, computed } from "vue";
+import { ref, watch, defineEmits, computed } from "vue";
 import ChartTypes from '../../views/data-explorer/vis-builder/visualizations.js';
 
 import vSelect from 'vue-select';

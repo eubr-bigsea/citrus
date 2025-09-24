@@ -683,7 +683,7 @@
     </div>
 </template>
 <script setup>
-import { ref, computed, watch, defineProps, defineEmits, onBeforeMount } from "vue";
+import { ref, computed, watch, defineEmits, onBeforeMount } from "vue";
 import { XDimension, YDimension } from '../../views/data-explorer/entities.js';
 import Draggable from 'vuedraggable';
 import ChartBuilderAttributeSelector from './ChartBuilderAttributeSelector.vue';

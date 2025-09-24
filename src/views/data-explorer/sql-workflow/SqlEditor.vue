@@ -19,7 +19,7 @@ import { searchKeymap } from '@codemirror/search'
 import { EditorView, keymap, lineNumbers } from '@codemirror/view'
 import { StateField } from '@codemirror/state';
 
-import { defineEmits, defineExpose, defineProps, onMounted, ref } from "vue"
+import { defineEmits, onMounted, ref } from "vue"
 
 import { format } from 'sql-formatter';
 

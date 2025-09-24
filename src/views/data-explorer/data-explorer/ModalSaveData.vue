@@ -59,7 +59,7 @@
 </template>
 <script setup>
 import axios from 'axios';
-import { ref, defineProps, onMounted, defineExpose, computed } from "vue";
+import { ref, onMounted, computed } from "vue";
 
 const emit = defineEmits(['complete', 'confirm']);
 

@@ -27,7 +27,7 @@
 
 <script setup>
 import axios from 'axios';
-import { defineExpose, defineProps, onBeforeMount, ref } from 'vue';
+import { onBeforeMount, ref } from 'vue';
 
 const tahitiUrl = import.meta.env.VITE_TAHITI_URL;
 const props = defineProps({

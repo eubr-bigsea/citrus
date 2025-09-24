@@ -22,7 +22,7 @@
 </template>
   
 <script setup>
-import { ref, computed, defineProps } from 'vue';
+import { ref, computed } from 'vue';
 const emits = defineEmits(['row-clicked', 'row-contextmenu']);
 const props = defineProps({
     'headers': { type: Array, required: true },

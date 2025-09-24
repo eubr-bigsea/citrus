@@ -65,7 +65,7 @@
 </template>
 
 <script setup>
-import { ref, computed, defineExpose, defineEmits } from 'vue';
+import { ref, computed, defineEmits } from 'vue';
 import { pt } from 'date-fns/locale';
 import { format } from 'date-fns';
 
