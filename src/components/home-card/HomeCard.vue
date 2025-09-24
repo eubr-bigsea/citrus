@@ -45,7 +45,7 @@ export default {
 </script>
 
 <style scoped>
-.home-card-item>>>img {
+.home-card-item :deep(img) {
     width: 21px;
     height: 21px;
     border-radius: 50%;
@@ -53,7 +53,7 @@ export default {
     vertical-align: middle;
     border: 1px solid #ccc;
 }
-.home-card-item>>>a  {
+.home-card-item :deep(a) {
     color: #77a640;
     text-decoration: none;
 }
@@ -65,11 +65,11 @@ export default {
     margin: 4px;
 }
 
-.home-card>>>.card {
+.home-card:deep(.card) {
     min-height: 690px;
 }
 
-.home-card>>>.card-header {
+.home-card:deep(.card-header) {
     display: flex;
 }
 

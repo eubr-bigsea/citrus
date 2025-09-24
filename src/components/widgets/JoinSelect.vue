@@ -173,15 +173,15 @@ input {
     overflow: auto;
 }
 
-.selection>>>input {
+.selection :deep(input) {
     margin-bottom: 0 !important;
 }
 
-.selection>>>td {
+.selection :deep(td) {
     line-height: 10pt !important
 }
 
-.selection>>>small {
+.selection :deep(small) {
     font-size: 8pt;
     color: #888
 }

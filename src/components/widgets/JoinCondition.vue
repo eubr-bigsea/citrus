@@ -162,7 +162,10 @@ export default {
     }
 </style>
 <style scoped>
->>> {
+:deep(.vs__dropdown-toggle),
+:deep(.vs__dropdown-menu),
+:deep(.vs__selected),
+:deep(.vs__dropdown-option) {
     --vs-font-size: .8rem;
     --vs-line-height: .8;
     --vs-dropdown-option-padding: 2px 10px;

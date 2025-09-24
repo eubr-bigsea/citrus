@@ -3,7 +3,7 @@
         <div>
             <div class="d-flex justify-content-between align-items-center">
                 <h1>
-                    <font-awesome-icon icon="fa fa-vial" /> {{$t('dataExplorer.tagline', 1)}}
+                    <font-awesome-icon icon="fa fa-vial" /> {{ $t('dataExplorer.tagline', 1) }}
                 </h1>
             </div>
             <hr>
@@ -29,8 +29,8 @@
                     <div class="row">
                         <div class="col-2 rounded-option bg-warning">
                             <svg id="Capa_1" fill="#ffffff" version="1.1" xmlns="http://www.w3.org/2000/svg"
-                                 xmlns:xlink="http://www.w3.org/1999/xlink" width="50px" height="50px"
-                                 viewBox="0 0 550.801 550.801" xml:space="preserve">
+                                xmlns:xlink="http://www.w3.org/1999/xlink" width="50px" height="50px"
+                                viewBox="0 0 550.801 550.801" xml:space="preserve">
                                 <g>
                                     <g>
                                         <path d="M277.425,402.116c-20.208,0-31.87,19.833-31.87,44.317c-0.2,24.88,11.853,43.934,31.681,43.934
@@ -136,84 +136,84 @@
                 <b-card>
                     <h5>Ou você quer editar algo existente?</h5>
                     <form class="d-flex flex-row align-items-center flex-wrap">
-                        <label class="sr-only" for="type">{{$t('common.type')}}</label>
+                        <label class="sr-only" for="type">{{ $t('common.type') }}</label>
                         <select v-model="typeFilter" class="form-select w-25">
                             <option selected value="" />
                             <option value="DATA_EXPLORER">
-                                {{$t('dataExplorer.experiments.DATA_EXPLORER')}}
+                                {{ $t('dataExplorer.experiments.DATA_EXPLORER') }}
                             </option>
                             <option value="MODEL_BUILDER">
-                                {{$t('dataExplorer.experiments.MODEL_BUILDER')}}
+                                {{ $t('dataExplorer.experiments.MODEL_BUILDER') }}
                             </option>
                             <option value="VIS_BUILDER">
-                                {{$t('dataExplorer.experiments.VIS_BUILDER')}}
+                                {{ $t('dataExplorer.experiments.VIS_BUILDER') }}
                             </option>
                             <option value="SQL">
-                                {{$t('dataExplorer.experiments.SQL')}}
+                                {{ $t('dataExplorer.experiments.SQL') }}
                             </option>
                         </select>
-                        <label class="sr-only" for="search">{{$t('common.name')}}</label>
+                        <label class="sr-only" for="search">{{ $t('common.name') }}</label>
                         <input v-model="searchFilter" type="text" class="form-control m-2 w-25"
-                               :placeholder="$t('common.name')">
+                            :placeholder="$t('common.name')">
                         <button ref="searchBtn" class="btn btn-secondary btn-sm mb-2 btn-spinner"
-                                @click.prevent="search">
-                            <font-awesome-icon icon="fa fa-search default-icon" /> {{$t('actions.search')}}
+                            @click.prevent="search">
+                            <font-awesome-icon icon="fa fa-search default-icon" /> {{ $t('actions.search') }}
                             <font-awesome-icon icon="spinner" pulse class="icon" />
                         </button>
                     </form>
 
 
                     <v-server-table v-show="totalRecords > 0" ref="workflowList" :columns="columns" :options="options"
-                                    name="workflowListDataExperiments">
+                        name="workflowListDataExperiments">
                         <template #id="props">
                             <router-link v-if="props.row.type === 'DATA_EXPLORER'"
-                                         :to="{ name: 'data-explorer-panel', params: { id: props.row.id } }">
-                                {{props.row.id}}
+                                :to="{ name: 'data-explorer-panel', params: { id: props.row.id } }">
+                                {{ props.row.id }}
                             </router-link>
                             <router-link v-if="props.row.type === 'MODEL_BUILDER'"
-                                         :to="{ name: 'model-design', params: { id: props.row.id } }">
-                                {{props.row.id}}
+                                :to="{ name: 'model-design', params: { id: props.row.id } }">
+                                {{ props.row.id }}
                             </router-link>
                             <router-link v-if="props.row.type === 'VIS_BUILDER'"
-                                         :to="{ name: 'visualization-design', params: { id: props.row.id } }">
-                                {{props.row.id}}
+                                :to="{ name: 'visualization-design', params: { id: props.row.id } }">
+                                {{ props.row.id }}
                             </router-link>
                             <router-link v-if="props.row.type === 'SQL'"
-                                         :to="{ name: 'sql-workflow', params: { id: props.row.id } }">
-                                {{props.row.id}}
+                                :to="{ name: 'sql-workflow', params: { id: props.row.id } }">
+                                {{ props.row.id }}
                             </router-link>
                         </template>
                         <template #type="props">
                             <font-awesome-icon :icon="getIcon(props.row)" />
-                            {{$t(`dataExplorer.experiments.${props.row.type}`)}}
+                            {{ $t(`dataExplorer.experiments.${props.row.type}`) }}
                         </template>
                         <template #user="props">
-                            {{props.row.user.name}}
+                            {{ props.row.user.name }}
                         </template>
                         <template #name="props">
                             <router-link v-if="props.row.type === 'DATA_EXPLORER'"
-                                         :to="{ name: 'data-explorer-panel', params: { id: props.row.id } }">
-                                {{props.row.name}}
+                                :to="{ name: 'data-explorer-panel', params: { id: props.row.id } }">
+                                {{ props.row.name }}
                             </router-link>
                             <router-link v-if="props.row.type === 'MODEL_BUILDER'"
-                                         :to="{ name: 'model-design', params: { id: props.row.id } }">
-                                {{props.row.name}}
+                                :to="{ name: 'model-design', params: { id: props.row.id } }">
+                                {{ props.row.name }}
                             </router-link>
                             <router-link v-if="props.row.type === 'VIS_BUILDER'"
-                                         :to="{ name: 'visualization-design', params: { id: props.row.id } }">
-                                {{props.row.name}}
+                                :to="{ name: 'visualization-design', params: { id: props.row.id } }">
+                                {{ props.row.name }}
                             </router-link>
                             <router-link v-if="props.row.type === 'SQL'"
-                                         :to="{ name: 'sql-workflow', params: { id: props.row.id } }">
-                                {{props.row.name}}
+                                :to="{ name: 'sql-workflow', params: { id: props.row.id } }">
+                                {{ props.row.name }}
                             </router-link>
                         </template>
                         <template #updated="props">
-                            {{$filters.formatJsonDate(props.row.updated)}}
+                            {{ $filters.formatJsonDate(props.row.updated) }}
                         </template>
                     </v-server-table>
                     <div v-show="totalRecords === 0">
-                        {{$t('common.noData')}}
+                        {{ $t('common.noData') }}
                     </div>
                 </b-card>
             </div>
@@ -407,13 +407,13 @@ export default {
 };
 </script>
 <style scoped>
-.custom-table>>>.VueTables .row:first-child {
+.custom-table :deep(.VueTables .row:first-child) {
     margin: initial !important;
     background-color: white;
     padding-top: 0;
 }
 
-.custom-table>>>.VueTables .row:first-child {
+.custom-table :deep(.VueTables .row:first-child) {
     margin: initial !important;
     background-color: white;
     padding-top: 0;

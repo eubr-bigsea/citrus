@@ -60,28 +60,28 @@ export default {
 };
 </script>
 <style scoped>
-    .preview-menu>>>.nav-pills a.dropdown-toggle {
+    .preview-menu :deep(.nav-pills a.dropdown-toggle) {
         border-radius: 0 !important;
         padding: 1px inherit;
         font-size: 10pt;
     }
 
-    .preview-menu>>>li {
+    .preview-menu :deep(li) {
         font-size: 10pt;
         padding: 1px inherit;
     }
 
-    .preview-menu>>>.dropdown-menu li {
+    .preview-menu :deep(.dropdown-menu li) {
         font-size: 10pt;
         padding: 0px;
         margin: 0px;
     }
 
-    .preview-menu>>>.dropdown-menu li a {
+    .preview-menu :deep(.dropdown-menu li a) {
         padding: 3px 24px;
     }
 
-    .preview-menu>>>li hr {
+    .preview-menu :deep(li hr){
         padding: 0;
         margin: 0;
     }

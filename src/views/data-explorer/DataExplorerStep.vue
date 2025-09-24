@@ -269,35 +269,35 @@ export default {
     font-style: italic;
 }
 
-.step-description>>>input {
+.step-description :deep(input) {
     vertical-align: middle;
     position: relative;
     bottom: 2px;
 }
 
 
-.step-description>>>i {
+.step-description :deep(i) {
     color: #0074D9;
 }
 
-.step-description>>>code {
+.step-description :deep(code) {
     color: #222;
     font-weight: lighter;
     font-size: 8pt;
 }
 
-.zoom-buttom>>>.btn {
+.zoom-buttom :deep(.btn){
     font-size: 9pt;
     padding: 2px;
 }
 
-.zoom-buttom>>>.dropdown-menu {
+.zoom-buttom :deep(.dropdown-menu) {
     font-size: 9pt;
 }
 
-.step-properties>>>textarea,
-.step-properties>>>input,
-.step-properties>>>select {
+.step-properties :deep(textarea),
+.step-properties :deep(input),
+.step-properties :deep(select) {
     font-size: .9em;
 }
 

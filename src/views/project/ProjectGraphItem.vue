@@ -145,7 +145,7 @@ export default {
         border: 1px dashed #222;
     }
 
-    .item>>>.item-icon {
+    .item :deep(.item-icon) {
         background-color: var(--color-nav);
         border-radius: 40px;
         min-width: 50px;
@@ -157,35 +157,35 @@ export default {
         /*color: var(--forecolor-nav);*/
     }
 
-    .item>>>.item-icon.item-database {
+    .item :deep(.item-icon.item-database) {
         background-color: green;
     }
 
-    .item>>>.item-icon.item-check-square {
+    .item :deep(.item-icon.item-check-square) {
         background-color: goldenrod;
     }
 
-    .item>>>.item-icon.item-robot {
+    .item :deep(.item-icon.item-robot) {
         background-color: orange;
     }
 
-    .item>>>.item-icon.item-table {
+    .item :deep(.item-icon.item-table) {
         background-color: blueviolet;
     }
 
-    .item>>>.item-icon.item-project-diagram {
+    .item :deep(.item-icon.item-project-diagram) {
         background-color: red;
     }
 
-    .item>>>.item-icon.item-chart-line {
+    .item :deep(.item-icon.item-chart-line) {
         background-color: blue;
     }
 
-    .item>>>.item-icon.item-server {
+    .item :deep(.item-icon.item-server) {
         background-color: black;
     }
 
-    .item>>>.item-icon.item-python {
+    .item :deep(.item-icon.item-python) {
         background-color: white;
         border: 1px solid #aaa;
     }

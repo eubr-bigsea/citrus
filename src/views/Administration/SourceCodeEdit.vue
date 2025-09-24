@@ -175,10 +175,10 @@ const focusTextarea = (event) => {
 };
 </script>
 <style scoped>
-.code2>>>textarea,
-.code3>>>textarea,
-.code2>>>pre,
-.code3>>>pre {
+.code2 :deep(textarea),
+.code3 :deep(textarea),
+.code2 :deep(pre),
+.code3 :deep(pre) {
     font-family: Fira code, Fira Mono, Consolas, Menlo, Courier, monospace !important;
     font-size: 14px !important;
     line-height: 1.5;

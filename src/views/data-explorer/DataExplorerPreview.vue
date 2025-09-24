@@ -575,13 +575,13 @@ export default {
 </style>
 
 <style scoped>
-div.menu>>>li {
+div.menu :deep(li) {
     font-size: .9em;
     margin: 0;
     min-width: 200px;
 }
 
-div.menu>>>li.ctx-item>span {
+div.menu :deep(li.ctx-item>span) {
     margin-right: 5px
 }
 
@@ -590,11 +590,11 @@ div.table-preview {
     max-width: calc(95vw - 301px);
 }
 
-/* .table-preview>>>table {
+/* .table-preview :deep(table) {
         min-width: 100% !important;
         width: 1500px;
     } */
-.table-preview>>>td {
+.table-preview :deep(td) {
     white-space: pre;
 }
 
@@ -608,26 +608,26 @@ div.table-preview {
         user-select: none*/
 }
 
-.table-preview>>>td.invalid-data {
+.table-preview :deep(td.invalid-data) {
     background-color: #fee;
 }
 
-.table-preview>>>td.missing-data {
+.table-preview :deep(td.missing-data) {
     background-color: #fffdeb;
 }
 
-.table-preview>>>td:hover {
+.table-preview :deep(td:hover) {
     background-color: #666;
     color: #fff;
 }
 
-.table-preview>>>th {
+.table-preview :deep(th) {
     background-color: #fff;
     padding: 0;
     flex-direction: column;
 }
 
-.table-preview>>>th>div {
+.table-preview :deep(th>div) {
     border-bottom: 1px solid #888;
     padding: 5px;
 }
@@ -641,7 +641,7 @@ div.table-preview {
     display: inline-block;
 }
 
-.table-preview>>>td {
+.table-preview :deep(td) {
     font-size: 9pt;
     /*min-width: 150px;*/
     padding: 1px 4px;

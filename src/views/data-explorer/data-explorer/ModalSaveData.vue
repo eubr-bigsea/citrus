@@ -131,7 +131,7 @@ defineExpose({
     padding: 5px;
 
 }
-.related-data-source>>>small {
+.related-data-source :deep(small) {
     font-size: .7em;
 }
 </style>

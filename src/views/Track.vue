@@ -702,8 +702,8 @@ export default {
     zoom: 90%;
 }
 
-.lemonade-widgets>>>.label .required {
-    font-weight: bold !important;
+.lemonade-widgets :deep(.label .required) {
+  font-weight: bold !important;
 }
 
 .lemonade-widgets {

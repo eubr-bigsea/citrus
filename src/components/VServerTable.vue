@@ -268,7 +268,7 @@ div.table-area {
     height: 100%;
     overflow: auto;
 }
-.server-table>>>td{
+.server-table :deep(td){
     padding: 10px 5px 0 2px;
     font-size: .9em;
 }
@@ -301,8 +301,8 @@ div.table-area {
     border-top: 1px solid #eee;
 }
 
-.filters>>>label {
-    font-weight: bold;
+.filters :deep(label) {
+  font-weight: bold;
 }
 
 </style>

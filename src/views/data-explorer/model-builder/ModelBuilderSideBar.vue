@@ -84,24 +84,24 @@ const edit = (item) => {
 
 </script>
 <style scoped>
-.model-builder-sidebar>>>.nav-item {
+.model-builder-sidebar :deep(.nav-item) {
     margin-bottom: 0px;
     padding: 0
 }
 
-.model-builder-sidebar>>>.nav-item a {
+.model-builder-sidebar :deep(.nav-item a) {
     color: #444;
     padding: 1px 0px 1px 10px;
     margin: 3px 0;
     font-size: .85em;
 }
 
-.model-builder-sidebar>>>.nav-item.active a {
+.model-builder-sidebar :deep(.nav-item.active a) {
     border-left: 5px solid green;
     padding-left: 5px !important;
 }
 
-.model-builder-sidebar>>>.header {
+.model-builder-sidebar :deep(.header) {
     color: #555;
     font-size: .9em;
     font-weight: bold;

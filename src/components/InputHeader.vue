@@ -38,8 +38,8 @@ export default {
 </script>
 
 <style scoped>
-.input-header>>>h2 {
-    display: inline
+.input-header :deep(h2) {
+  display: inline;
 }
 
 input:placeholder-shown {
