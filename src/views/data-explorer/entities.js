@@ -109,7 +109,7 @@ class Workflow {
     }
     static buildDataExplorer(name, ds, i18n) {
         const dataReader = new Task({
-            name: i18n.$tc('dataExplorer.readData'),
+            name: i18n.$t('dataExplorer.readData'),
             operation: new Operation({ id: DATA_READER }),
             display_order: 0,
         });
@@ -147,7 +147,7 @@ class Workflow {
     }
     static buildModelBuilder(name, ds, labelAttribute, method, taskType, i18n) {
         const dataReader = new Task({
-            name: i18n.$tc('dataExplorer.readData'),
+            name: i18n.$t('dataExplorer.readData'),
             operation: new Operation({ id: DATA_READER }),
             display_order: 0,
         });
@@ -166,7 +166,7 @@ class Workflow {
     }
     static buildVisualizationBuilder(name, ds, type, method, i18n) {
         const dataReader = new Task({
-            name: i18n.$tc('dataExplorer.readData'),
+            name: i18n.$t('dataExplorer.readData'),
             operation: new Operation({ id: DATA_READER }),
             display_order: 0,
         });

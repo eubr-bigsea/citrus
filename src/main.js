@@ -166,6 +166,24 @@ import {utcToZonedTime} from 'date-fns-tz';
 import { enUS, ptBR } from 'date-fns/locale';
 
 const locales = { en: enUS, pt: ptBR };
+
+import VueProgressBar from '@aacassandra/vue3-progressbar';
+
+const options = {
+  color: '#568f32',
+  failedColor: '#874b4b',
+  thickness: '5px',
+  transition: {
+    speed: '0.5s',
+    opacity: '0.2s',
+    termination: 300
+  },
+  autoRevert: true,
+  location: 'top',
+  inverse: false
+};
+
+
 /*
 const locales = {
     en: require('date-fns/locale/en-US'),
@@ -396,6 +414,7 @@ openIdService.loadConfig(store).then(() => {
     app.use(store);
     app.use(i18n);
     app.use(router);
+    app.use(VueProgressBar, options);
 
     const toast = useToast();
     app.config.globalProperties.$snotify = {

@@ -6,7 +6,7 @@
                     <h1>Construção de Modelos</h1>
                 </div>
                 <form class="float-right form-inline w-50 d-flex justify-content-end">
-                    <label>{{ $tc('common.name') }}:</label>
+                    <label>{{ $t('common.name') }}:</label>
                     <input v-model="workflowObj.name" type="text" class="form-control form-control-sm ml-1 w-50"
                         :placeholder="$tc('common.name')" maxlength="100">
                     <button class="btn btn-sm btn-outline-success ml-1 float-right" @click.prevent="saveWorkflow">

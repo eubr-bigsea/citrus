@@ -20,7 +20,7 @@
                     <font-awesome-icon icon="fa fa-history" /> Histórico
                 </button>
                 <button class="btn btn-sm btn-success" :disabled="!isDirty" @click="saveChanges">
-                    <font-awesome-icon icon="fa fa-save" class="mr-1" /> {{ $tc('actions.save') }}
+                    <font-awesome-icon icon="fa fa-save" class="mr-1" /> {{ $t('actions.save') }}
                 </button>
 
             </div>
