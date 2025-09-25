@@ -3,24 +3,24 @@
         <div class="d-flex justify-content-between align-items-center mb-4">
             <div class="mt-2">
                 <h6 class="pretitle">
-                    Execução #{{pipelineRunId}}
+                    Execução #{{ pipelineRunId }}
                 </h6>
                 <h1 v-if="pipelineRun">
                     <span class="pipeline-runs-status" :class="pipelineRun.status.toLowerCase()">
                         <font-awesome-icon v-if="pipelineRun.status === 'RUNNING'" icon="fa fa-refresh" spin />
-                        {{$t(`status.${pipelineRun.status}`)}}
-                    </span> <span class="ms-2">{{pipelineRun.pipeline_name}}</span>
+                        {{ $t(`status.${pipelineRun.status}`) }}
+                    </span> <span class="ms-2">{{ pipelineRun.pipeline_name }}</span>
                 </h1>
             </div>
             <div>
                 <router-link v-if="true || pipelineRunId" :to="{ name: 'pipelineRunsList' }"
-                             class="btn btn-outline-secondary d-print-none float-left btn-sm">
+                    class="btn btn-outline-secondary d-print-none float-left btn-sm">
                     <font-awesome-icon icon="fa-chevron-right" />
-                    {{$t('actions.back', 2)}}
+                    {{ $t('actions.back', 2) }}
                 </router-link>
                 <button v-if="pipelineRun.status !== 'CANCELED'" class="btn btn-sm btn-outline-danger ms-2"
-                        @click="cancelRun">
-                    <font-awesome-icon icon="fa fa-ban" class="" /> {{$t('actions.cancel')}}
+                    @click="cancelRun">
+                    <font-awesome-icon icon="fa fa-ban" class="" /> {{ $t('actions.cancel') }}
                 </button>
             </div>
         </div>
@@ -28,36 +28,36 @@
             <div class="col-2">
                 <div class="border p-3">
                     <label class="font-weight-bold">
-                        {{$t('common.period')}}:
+                        {{ $t('common.period') }}:
                     </label>
                     <span>
-                        {{pipelineRun.start | formatJsonDate('dd/MM/yyyy')}} a
-
-                        {{pipelineRun.finish | formatJsonDate('dd/MM/yyyy')}}
+                        {{ $filters.formatJsonDate(pipelineRun.start, 'dd/MM/yyyy') }} a
+                        {{ $filters.formatJsonDate(pipelineRun.finish, 'dd/MM/yyyy') }}
                     </span>
                     <br>
                     <label class="font-weight-bold">
-                        {{$t('common.updated')}}:
+                        {{ $t('common.updated') }}:
                     </label>
                     <span>
-                        {{pipelineRun.updated | formatJsonDate}}
+                        {{ $filters.formatJsonDate(pipelineRun.updated) }}
                     </span>
                     <button v-if="pipelineRun.context_data?.length" class="btn btn-link btn-sm p-0 mt-2"
                         @click="showVariables = !showVariables">
-                        <font-awesome-icon icon="fa fa-dollar"/> {{showVariables? 'Ocultar variáveis': 'Exibir variáveis'}}
+                        <font-awesome-icon icon="fa fa-dollar" /> {{ showVariables ? 'Ocultar variáveis' : 'Exibir variáveis'}}
                     </button>
                     <p v-if="showVariables" class="context-data">
-                        <table class="table table-sm table-smallest">
+                    <table class="table table-sm table-smallest">
                         <tr v-for="vr in pipelineRun.context_data" :key="vr.name">
-                            <td>{{vr.name}}</td>
-                            <td>{{vr.value}}</td>
+                            <td>{{ vr.name }}</td>
+                            <td>{{ vr.value }}</td>
                         </tr>
-                        </table>
+                    </table>
                     </p>
                 </div>
                 <div class="border p-2 mt-2">
                     <h6>Notificações</h6>
-                    <pipeline-run-notifications :notifications="notifications" :height="showVariables? '45.5vh': '63.3vh'" />
+                    <pipeline-run-notifications :notifications="notifications"
+                        :height="showVariables ? '45.5vh' : '63.3vh'" />
                 </div>
             </div>
             <div class="col-5">
@@ -73,43 +73,44 @@
                             <thead>
                                 <tr>
                                     <th> Ordem </th>
-                                    <th> {{$t('common.name')}} </th>
+                                    <th> {{ $t('common.name') }} </th>
                                     <th class="text-center">
                                         Tentativas
                                     </th>
                                     <th class="text-center">
-                                        {{$t('common.status')}}
+                                        {{ $t('common.status') }}
                                     </th>
                                     <th class="text-center">
-                                        {{$t('common.action', 2)}}
+                                        {{ $t('common.action', 2) }}
                                     </th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr v-for="(step, index) in pipelineRun.steps" :key="step.id" class="steps-body text-center"
-                                    :class="{ 'table-selected': selectedStep.id === step.id }"
-                                    role="button" @click="setSelectedStep(step)">
+                                <tr v-for="(step, index) in pipelineRun.steps" :key="step.id"
+                                    class="steps-body text-center"
+                                    :class="{ 'table-selected': selectedStep.id === step.id }" role="button"
+                                    @click="setSelectedStep(step)">
                                     <td>
-                                        # {{index + 1}}
+                                        # {{ index + 1 }}
                                     </td>
                                     <td>
-                                        {{step.name}}
+                                        {{ step.name }}
                                     </td>
                                     <td class="text-center">
-                                        {{step.jobs.length}}
+                                        {{ step.jobs.length }}
                                     </td>
                                     <td class="text-center">
                                         <div :class="step.status.toLowerCase()"
-                                             class="pipeline-runs-status status-small">
+                                            class="pipeline-runs-status status-small">
                                             <font-awesome-icon v-if="step.status === 'RUNNING'" icon="fa fa-refresh"
-                                                               spin />
-                                            {{$t(`status.${step.status}`)}}
+                                                spin />
+                                            {{ $t(`status.${step.status}`) }}
                                         </div>
                                     </td>
                                     <td>
                                         <div>
                                             <button class="btn btn-sm btn-primary" :title="$t('actions.execute')"
-                                                    @click="execute(step.id, step.name)">
+                                                @click="execute(step.id, step.name)">
                                                 <font-awesome-icon icon="fa-play" />
                                             </button>
                                         </div>
@@ -126,13 +127,13 @@
                         <div v-for="(job, index) in orderedJobs" :key="index" class="mb-3 border-left border-info ps-2">
                             <div v-b-toggle="`collapse-${index.toString()}`" class="d-flex">
                                 <div class="text-start font-weight-bold">
-                                    Tentativa #{{orderedJobs.length - index}}
+                                    Tentativa #{{ orderedJobs.length - index }}
                                 </div>
                                 <div class="flex-grow-1 d-flex justify-content-end" role="button">
                                     <div :class="job.status.toLowerCase()"
-                                         class="pipeline-runs-status small text-right">
+                                        class="pipeline-runs-status small text-right">
                                         <font-awesome-icon v-if="job.status === 'RUNNING'" icon="fa fa-refresh" spin />
-                                        {{$t(`status.${job.status}`)}}
+                                        {{ $t(`status.${job.status}`) }}
                                     </div>
                                     <div v-if="job.steps && job.steps.length">
                                         <font-awesome-icon icon="fa-chevron-down" />
@@ -141,22 +142,23 @@
                             </div>
                             <div>
                                 <div class="p-2 small">
-                                    Início: {{job.started | formatJsonDate('dd/MM/yyyy HH:mm:ss')}}
+                                    Início: {{ $filters.formatJsonDate(job.started, 'dd/MM/yyyy HH:mm:ss') }}
                                     <span v-if="job.finished">
-                                        | Fim: {{job.finished | formatJsonDate('dd/MM/yyyy HH:mm:ss')}} |
+                                        | Fim: {{ $filters.formatJsonDate(job.finished, 'dd/MM/yyyy HH:mm:ss') }} |
                                         Tempo:
-                                        {{job.finished | elapsedMinutes(job.started)}}:{{job.finished |
-                                            elapsedSeconds(job.started)}}
+                                        {{ $filters.elapsedMinutes(job.finished, job.started) }}:{{
+                                            $filters.elapsedSeconds(job.finished, job.started) }}
                                     </span>
                                 </div>
 
                                 <b-collapse v-if="job.steps && job.steps.length" :id="`collapse-${index.toString()}`"
-                                            :visible="index === 0">
+                                    :visible="index === 0">
                                     <div v-for="step, counter_step in job.steps" :key="counter_step"
-                                         class="border-bottom mb-3 ps-4 job-step">
+                                        class="border-bottom mb-3 ps-4 job-step">
                                         <div class="flex-grow-1 d-flex justify-content-start">
                                             <h6>
-                                                Tarefa #{{counter_step + 1}}: <span class="font-weight-normal">{{step.operation.name}}</span>
+                                                Tarefa #{{ counter_step + 1 }}: <span class="font-weight-normal">{{
+                                                    step.operation.name }}</span>
                                             </h6>
                                             <!--
                                         <span class="pipeline-runs-status" :class="step.status.toLowerCase()">
@@ -168,20 +170,20 @@
                                         </div>
                                         <div v-for="log, counter_log in step.logs" :key="counter_log">
                                             <span v-if="log.type === 'TEXT'">
-                                                {{log.message}}
+                                                {{ log.message }}
                                             </span>
                                             <span v-else-if="log.type === 'HTML'" v-html="log.message" />
                                             <span v-else-if="log.type === 'OBJECT'">
-                                                {{log.message}}
+                                                {{ log.message }}
                                             </span>
                                             <span v-else-if="log.type === 'USER'" class="text-info">
-                                                {{log.message}}
+                                                {{ log.message }}
                                             </span>
                                         </div>
                                     </div>
                                     <code v-if="job.exception_stack">
                                         <pre>
-                                                {{job.exception_stack}}
+                                                {{ job.exception_stack }}
                                             </pre>
                                     </code>
                                 </b-collapse>
@@ -288,7 +290,7 @@ const pipelineRun = ref({ status: '' });
 // Methods
 const execute = async (id, name) => {
     const callback = async (result) => {
-        if (result){
+        if (result) {
             const url = `${standUrl}/pipeline-runs/execute`;
             const payload = {
                 id,
@@ -347,10 +349,12 @@ const showVariables = ref(false)
 .status-small {
     font-size: 8pt;
 }
+
 .context-data {
     height: 16vh;
     overflow-y: auto
 }
+
 .execution-report,
 .pipeline-run-steps {
     height: 75vh;

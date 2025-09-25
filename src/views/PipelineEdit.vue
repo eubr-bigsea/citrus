@@ -46,8 +46,8 @@
                                 <div>Atualizado em:</div>
                             </div>
                             <div>
-                                <div>{{ pipeline.created | formatJsonDate }}</div>
-                                <div>{{ pipeline.updated | formatJsonDate }}</div>
+                                <div>{{ $filters.formatJsonDate(pipeline.created) }}</div>
+                                <div>{{ $filters.formatJsonDate(pipeline.updated) }}</div>
                             </div>
                         </div>
                         <div class="mt-4">

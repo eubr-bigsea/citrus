@@ -87,11 +87,10 @@
                                         </router-link>
                                     </template>
                                     <template #period="props">
-                                        {{props.row.start | formatJsonDate('dd/MM/yyyy')}} até {{props.row.finish |
-                                            formatJsonDate('dd/MM/yyyy')}}
+                                       {{ $filters.formatJsonDate(props.row.start) }} at{{ $filters.formatJsonDate(props.row.finish) }}
                                     </template>
                                     <template #updated="props">
-                                        {{props.row.updated | formatJsonDate('dd/MM/yyyy HH:mm:SS')}}
+                                        {{ $filters.formatJsonDate(props.row.update) }}
                                     </template>
                                     <template #status="props">
                                         <div class="pipeline-runs-status" :class="props.row.status.toLowerCase()"
