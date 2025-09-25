@@ -224,6 +224,7 @@ import { onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 
 import Notifier from '../notifier.js';
+
 import axios from 'axios';
 ;
 let limoneroUrl = import.meta.env.VITE_LIMONERO_URL;
@@ -232,6 +233,7 @@ export default {
     setup() {
         const router = useRouter();
         const { t } = useI18n();
+        const notifier = new Notifier(router, t);
         
         const step = ref(1);
         const dataSource = ref({ format: '', storage_id: null, command: null, url: 'placeholder', name:''});
@@ -312,6 +314,7 @@ export default {
 
         const setupResumable = async () => {
             const headers = {... axios.defaults.headers.common }; // < same auth headers
+            const notifier = new Notifier();
 
             const token = localStorage.getItem('token');
             if (token) {

@@ -37,36 +37,36 @@ export default class {
                 callback,
                 position: 'centerTop',
                 buttons: [
-                    { text: this.$t('common.yes'), action: (toast) => { callback(); this.$snotify.remove(toast.id); }, },
-                    { text: this.$t('common.no'), action: (toast) => { console.log('Clicked: No'); this.$snotify.remove(toast.id); }, bold: true },
+                    { text: this.$t('common.yes'), action: (toast) => { callback(); toast.remove(toast.id); }, },
+                    { text: this.$t('common.no'), action: (toast) => { console.log('Clicked: No'); toast.remove(toast.id); }, bold: true },
                 ],
                 closeOnClick: true
             }
         );
     }
     success(msg, timeout, bodyMaxLength) {
-        this.$snotify.success(
+        toast.success(
             msg,
             this.$t('titles.success'),
             { timeout: timeout || 5000, bodyMaxLength: bodyMaxLength || 150 }
         );
     }
     info(msg, timeout, bodyMaxLength) {
-        this.$snotify.info(
+        toast.info(
             msg,
             this.$t('titles.info', 2),
             { timeout: timeout || 5000, bodyMaxLength: bodyMaxLength || 150 }
         );
     }
     warning(msg, timeout, bodyMaxLength) {
-        this.$snotify.warning(
+        toast.warning(
             msg,
             this.$t('titles.warning'),
             { timeout: timeout || 5000, bodyMaxLength: bodyMaxLength || 150 }
         );
     }
     html(msg, title, timeout, bodyMaxLength) {
-        this.$snotify.html(
+        toast.html(
             `<div class="snotifyToast__title">${title}</div>
                  <div class="snotifyToast__body">${msg}</div>`,
             { timeout: timeout || 5000, bodyMaxLength: bodyMaxLength || 150 }
@@ -75,7 +75,7 @@ export default class {
     error(e, msg, timeout, bodyMaxLength) {
         if (e) {
             if (e.name === 'NetworkError' || e.message == 'Network Error') {
-                this.$snotify.error(
+                toast.error(
                     this.$t('errors.disconnected'), this.$t('titles.error'),
                     { timeout: timeout || 20000, bodyMaxLength: bodyMaxLength || 150 }
                 );
@@ -84,42 +84,42 @@ export default class {
                 if (responseData.message === 'Invalid data') {
                     let errorMessage = `<strong>${this.$t('errors.validation')}</strong><br/>`
                         + JSON.stringify(responseData.errors);
-                    this.$snotify.html(errorMessage,
+                    toast.html(errorMessage,
                         { timeout: timeout || 15000, bodyMaxLength: bodyMaxLength || 150 }
                     );
                 } else if (e.response.status === 404) {
-                    this.$snotify.error(
+                    toast.error(
                         this.$t('errors.notFound'), this.$t('titles.error'),
                         { timeout: timeout || 5000, bodyMaxLength: bodyMaxLength || 150 }
                     );
                     //this.$router.push({ name: 'home' });
                 } else if (e.response.status === 401) {
-                    this.$snotify.error(
+                    toast.error(
                         this.$t('errors.accessDenied'), this.$t('titles.error'),
                         { timeout: timeout || 5000, bodyMaxLength: bodyMaxLength || 150 }
                     );
                     this.$router.push({ name: 'home' });
                 } else if (e.response.status === 502) {
-                    this.$snotify.error(
+                    toast.error(
                         this.$t('errors.badGateway'), this.$t('titles.error'),
                         { timeout: timeout || 5000, bodyMaxLength: bodyMaxLength || 150 }
                     );
                     this.$router.push({ name: 'home' });
                 } else {
-                    this.$snotify.error(
+                    toast.error(
                         e.response.data.message, this.$t('titles.error'),
                         { timeout: timeout || 5000, bodyMaxLength: bodyMaxLength || 150 }
                     );
                 }
             } else {
-                this.$snotify.error(
+                toast.error(
                     e.message, this.$t('titles.error'),
                     { timeout: timeout || 5000, bodyMaxLength: bodyMaxLength || 150 }
                 );
                 console.debug(e);
             }
         } else {
-            this.$snotify.error(msg, this.$t('titles.error'),
+            toast.error(msg, this.$t('titles.error'),
                 { timeout: timeout || 5000, bodyMaxLength: bodyMaxLength || 150 });
         }
     }
