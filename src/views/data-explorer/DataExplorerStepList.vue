@@ -37,7 +37,7 @@
     </div>
 </template>
 <script>
-import Draggable from 'vuedraggable';
+import { VueDraggableNext as Draggable } from 'vue-draggable-next'
 import Step from './DataExplorerStep.vue';
 import DropdownButton from '@/components/DropdownButton.vue';
 

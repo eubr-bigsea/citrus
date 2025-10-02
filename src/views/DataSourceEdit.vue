@@ -519,7 +519,7 @@ import UserVariables from './UserVariables.vue'
 import SystemVariables from './SystemVariables.vue'
 import DataSourceOptions from '@/components/data-source/DataSourceOptions.vue';
 import { debounce } from '@/util.js';
-import draggable from 'vuedraggable';
+import { VueDraggableNext as draggable } from 'vue-draggable-next'
 import { nextTick } from 'vue';
 
 const limoneroUrl = import.meta.env.VITE_LIMONERO_URL;

@@ -14,8 +14,8 @@
         <component :is="visualizationComponent" v-if="visualizationComponent !== 'plotly'"
                    :visualization-data="visualizationData" :public-route="publicRoute" :height="height" 
                    @update-value="(v) => visualizationData = v" 
-                   @on-save="(id, data, callback) => emit('on-save', id, data, callback)"
-                   @on-delete="(id) => emit('on-delete', id)" />
+                   @on-save="(id, data, callback) => $emit('on-save', id, data, callback)"
+                   @on-delete="(id) => $emit('on-delete', id)" />
         <div v-else>
             <plotly :data="visualizationData.data.data" :display-mode-bar="true" :auto-resize="true"
                     :layout="{ ...visualizationData.data.layout, autosize: true, height: height }" />

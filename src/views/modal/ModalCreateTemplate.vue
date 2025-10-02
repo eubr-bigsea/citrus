@@ -76,7 +76,7 @@
 
 <script>
 import axios from 'axios';
-import draggable from 'vuedraggable';
+import { VueDraggableNext as draggable } from 'vue-draggable-next'
 import Notifier from '../../mixins/Notifier.js';
 
 let tahitiUrl = import.meta.env.VITE_TAHITI_URL;

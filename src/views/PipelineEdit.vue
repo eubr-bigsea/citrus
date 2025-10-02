@@ -195,7 +195,7 @@ import EditPipelineStep from '../components/EditPipelineStep.vue';
 import ModalAddPipelineStep from './modal/ModalAddPipelineStep.vue';
 import PipelineStepScheduler from '../components/PipelineStepScheduler.vue';
 import axios from 'axios';
-import draggable from 'vuedraggable';
+import { VueDraggableNext } from 'vue-draggable-next'
 import InputHeader from '../components/InputHeader.vue';
 import TextAreaCustom from '../components/TextAreaCustom.vue';
 import Notifier from '../mixins/Notifier.js';
@@ -204,7 +204,7 @@ let tahitiUrl = import.meta.env.VITE_TAHITI_URL;
 
 export default {
     components: {
-        draggable,
+        draggable: VueDraggableNext,
         InputHeader,
         TextAreaCustom,
         EditPipelineStep,

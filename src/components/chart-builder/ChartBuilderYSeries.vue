@@ -173,7 +173,7 @@
 <script setup>
 import { computed } from 'vue';
 import ChartBuilderAttributeSelector from './ChartBuilderAttributeSelector.vue';
-import Draggable from 'vuedraggable';
+import { VueDraggableNext as draggable } from 'vue-draggable-next'
 import DropdownButton from '@/components/DropdownButton.vue';
 import vSelect from 'vue-select';
 const props = defineProps({

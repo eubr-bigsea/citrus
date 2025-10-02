@@ -146,7 +146,7 @@
 <script setup>
 import { computed, onBeforeMount } from 'vue';
 import ChartBuilderAttributeSelector from './ChartBuilderAttributeSelector.vue';
-import Draggable from 'vuedraggable';
+import { VueDraggableNext as draggable } from 'vue-draggable-next'
 import DropdownButton from '@/components/DropdownButton.vue';
 
 const attributesMap = {};

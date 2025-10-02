@@ -685,7 +685,7 @@
 <script setup>
 import { ref, computed, watch, defineEmits, onBeforeMount } from "vue";
 import { XDimension, YDimension } from '../../views/data-explorer/entities.js';
-import Draggable from 'vuedraggable';
+import { VueDraggableNext as draggable } from 'vue-draggable-next'
 import ChartBuilderAttributeSelector from './ChartBuilderAttributeSelector.vue';
 import ChartBuilderGeoJsonSelect from './ChartBuilderGeoJsonSelect.vue';
 
