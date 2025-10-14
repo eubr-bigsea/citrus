@@ -115,6 +115,14 @@
                                             @click.prevent="handleAddSqlFromDataSource('insert', dataSource.forms.data_source.value)">
                                             INSERT
                                         </button>
+
+                                        <button title="Criar INSERT para fonte de dados"
+                                            class="btn btn-sm btn-light ml-1"
+                                            @click.prevent="handleAddSqlFromDataSource('stage', dataSource.forms.data_source.value)">
+                                            CRIAR STAGE
+                                        </button>
+                                      
+                                        
                                     </div>
                                 </li>
                             </ul>
@@ -727,6 +735,8 @@ const handleAddSqlFromDataSource = (type, dataSourceId) => {
             }
             cmd.push(`   ${ds.alias}.${ds.attributes.slice(-1)[0].name}`);
             cmd.push(`FROM ${ds.alias}`)
+            handleAdd(null, 'sql', cmd.join('\n'));
+
         } else if (type === 'insert') {
             cmd.push(`INSERT INTO ${ds.alias}(`)
             for (const attr of ds.attributes.slice(0, -1)) {
@@ -735,8 +745,41 @@ const handleAddSqlFromDataSource = (type, dataSourceId) => {
             cmd.push(`   ${ds.attributes.slice(-1)[0].name}`);
             cmd.push(')')
             cmd.push('VALUES()')
+            handleAdd(null, 'sql', cmd.join('\n'));
         }
-        handleAdd(null, 'sql', cmd.join('\n'));
+        else if (type === 'stage') {
+            cmd.push(`stage_table_name ='stage.${ds.name}'`)
+            cmd.push(`query = f"""`)
+            cmd.push(`CREATE TABLE IF NOT EXISTS {stage_table_name}(`)
+            cmd.push('metadata_linha string,')
+            for (const attr of ds.attributes.slice(0, -1)) {
+                cmd.push(`   ${attr.name} string,`)
+            }
+            cmd.push(`   ${ds.attributes.slice(-1)[0].name} string,`);
+            cmd.push('metadata_arquivo string,')
+            cmd.push('metadata_data_ingestao timestamp')
+            cmd.push(')')
+            cmd.push('"""')
+            cmd.push("hive=get_hwc_connection(spark_session)")
+            cmd.push('hive.executeUpdate(query)')
+            cmd.push('select_query= f"""')
+            cmd.push("SELECT")
+            cmd.push("ROW_NUMBER() OVER (")
+            cmd.push("ORDER BY monotonically_increasing_id() ) AS metadata_linha,")
+            for (const attr of ds.attributes.slice(0, -1)) {
+                cmd.push(`   ${ds.alias}.${attr.name},`)
+            }
+            cmd.push(`   ${ds.alias}.${ds.attributes.slice(-1)[0].name},`);
+            cmd.push(' \'${raw_src}\' AS metadata_arquivo,')
+            cmd.push('FROM_UNIXTIME(UNIX_TIMESTAMP()) as metadata_data_ingestao')
+            cmd.push(`FROM ${ds.alias} """`)
+            cmd.push('df = spark_session.sql(select_query)')
+            cmd.push('df.write.mode(\'overwrite\').format(HiveWarehouseSession.HIVE_WAREHOUSE_CONNECTOR).option(\'table\', stage_table_name).save()')
+            handleAdd(null, 'python', cmd.join('\n'));
+
+      
+        }
+        
     }
 }
 const handleChangeAlias = () => {
