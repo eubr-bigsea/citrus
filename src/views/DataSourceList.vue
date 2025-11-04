@@ -171,7 +171,7 @@ export default {
                 (toCSV ? '&to_csv=true' : '');
         }
         const visualizable = (ds) => {
-            return ['JDBC', 'CSV', 'HIVE', 'PARQUET'].includes(ds.format);
+            return ['JDBC', 'CSV', 'HIVE', 'PARQUET', 'ICEBERG'].includes(ds.format);
         }
 
         return {

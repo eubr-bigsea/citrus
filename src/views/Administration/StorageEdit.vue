@@ -95,7 +95,7 @@ export default {
     data(){
         return {
             storage: {},
-            types: ['HDFS', 'HIVE', 'HIVE_WAREHOUSE', 'JDBC', 'KAFKA',
+            types: ['ICEBERG_CATALOG','HDFS', 'HIVE', 'HIVE_WAREHOUSE', 'JDBC', 'KAFKA',
                 'LOCAL']
         };
     },
