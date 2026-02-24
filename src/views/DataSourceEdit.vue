@@ -617,8 +617,9 @@ export default {
         },
         loggedUserIsOwnerOrAdmin() {
             const user = this.$store.getters.user;
+            const permissions = this.$store.getters.userPermissions; 
             return this.dataSource.user_id === user.id
-                || user.roles.indexOf('admin') >= 0;
+                || permissions.indexOf('ADMINISTRATOR') >= 0;
         }
     },
     watch: {

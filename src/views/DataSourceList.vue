@@ -80,7 +80,8 @@ export default {
         const { t } = useI18n();
         const store = Vue.prototype.$legacyStore;
         const user = store.getters.user;
-        const isAdmin = user.roles.indexOf('admin') >= 0;
+        const permissions = store.getters.userPermissions;
+        const isAdmin = permissions.indexOf('ADMINISTRATOR') >= 0;
         const notifier = new Notifier(Vue.prototype.$snotify, t);
 
         //#region Listing
