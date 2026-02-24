@@ -19,7 +19,7 @@
                 <div class="runsList-body">
                     <div class="runsList-container custom-table">
                         <div class="row">
-                            <div class="col-10">
+                            <div class="col-12">
                                 <form class="form-row list-filter">
                                     <div class="form-group col-3">
                                         <label for="search">Id ou {{ $tc('common.name') }} da pipeline:</label>
@@ -66,6 +66,7 @@
                                         </button>
                                     </div>
                                 </form>
+
                                 <v-server-table ref="runsList" :columns="columns" :options="options" name="runsList"
                                     :key="key" id="runsList">
                                     <template #id="props">
@@ -76,7 +77,8 @@
                                     <template #pipeline_name="props">
                                         <router-link
                                             :to="{ name: 'pipelineEdit', params: { id: props.row.pipeline_id } }">
-                                            {{ props.row.pipeline_id }} -
+                                            <font-awesome-icon icon="fa fa-circle-nodes" class="text-success" /> {{
+                                                props.row.pipeline_id }} -
                                             {{ props.row.pipeline_name }}
                                         </router-link>
                                     </template>
@@ -84,26 +86,93 @@
                                         {{ props.row.start | formatJsonDate('dd/MM/yyyy') }} até {{ props.row.finish |
                                             formatJsonDate('dd/MM/yyyy') }}
                                     </template>
-                                    <template #updated="props">
+                                    <template #updated="props" class="text-center">
+
+                                        <font-awesome-icon icon="fa fa-calendar-alt"
+                                            :title="props.row.updated | formatJsonDate('dd/MM/yyyy HH:mm:SS')"
+                                            class="text-info" />
                                         {{ props.row.updated | formatJsonDate('dd/MM/yyyy HH:mm:SS') }}
+
+                                    </template>
+                                    <template #comment="props">
+                                        <div class="">
+                                            <font-awesome-icon icon="fa fa-info-circle" :title="props.row.comment"
+                                                class="text-primary" size="2x" />
+                                        </div>
                                     </template>
                                     <template #status="props">
-                                        <div class="pipeline-runs-status" :class="props.row.status.toLowerCase()"
-                                            :data-id="props.row.id">
-                                            {{ $tc(`status.${props.row.status}`) }}
+                                        <!-- Arrow Steps -->
+                                        <div class="d-flex flex-wrap gap-2 pb-2">
+                                            <div v-for="step in props.row.steps" :key="step.id" class="arrow-step d-flex flex-column align-items-center
+                                                justify-content-center text-center mb-1 text-truncate"
+                                                :class="step.status.toLowerCase()" :id="'tooltip-target-' + step.id">
+                                                <div>
+                                                    <div class="fw-bold text-uppercase" style="font-size: 0.65rem;">{{
+                                                        step.name }}</div>
+                                                    <div style="font-size: 0.55rem; opacity: 0.9;">{{
+                                                        $tc(`status.${step.status}`) }}
+                                                    </div>
+                                                </div>
+                                                <b-tooltip :target="'tooltip-target-' + step.id" triggers="hover"
+                                                    custom-class="tooltip-large">
+                                                    <div>
+                                                        <strong>Atualização:</strong> {{ step.updated |
+                                                            formatJsonDate('dd/MM/yyyy HH:mm:SS') }} <br>
+                                                        <router-link
+                                                            :to="{ name: 'editWorkflow', params: { id: step.workflow_id, platform: 2 } }">
+                                                            Ir para o fluxo de trabalho #{{ step.workflow_id }}
+                                                        </router-link>
+                                                    </div>
+                                                </b-tooltip>
+                                            </div>
+                                            <!--
+                                            <div
+                                            class="arrow-step completed d-flex flex-column align-items-center justify-content-center text-center">
+                                            <small class="fw-bold text-uppercase" style="font-size: 0.65rem;">Etapa
+                                                    1</small>
+                                                <small style="font-size: 0.55rem; opacity: 0.9;">Iniciação</small>
+                                            </div>
+                                            <div
+                                                class="arrow-step completed d-flex flex-column align-items-center justify-content-center text-center">
+                                                <small class="fw-bold text-uppercase" style="font-size: 0.65rem;">Etapa
+                                                    2</small>
+                                                <small style="font-size: 0.55rem; opacity: 0.9;">Planejamento</small>
+                                            </div>
+
+                                            <div
+                                                class="arrow-step in-progress d-flex flex-column align-items-center justify-content-center text-center">
+                                                <small class="fw-bold text-uppercase" style="font-size: 0.65rem;">Etapa
+                                                    3</small>
+                                                <small style="font-size: 0.55rem; opacity: 0.9;">Execução</small>
+                                            </div>
+
+                                            <div
+                                            class="arrow-step pending d-flex flex-column align-items-center justify-content-center text-center">
+                                            <small class="fw-bold text-uppercase" style="font-size: 0.65rem;">Etapa
+                                                4</small>
+                                                <small style="font-size: 0.55rem; opacity: 0.9;">Monitoramento</small>
+                                            </div>
+
+                                            <div
+                                                class="arrow-step pending d-flex flex-column align-items-center justify-content-center text-center">
+                                                <small class="fw-bold text-uppercase" style="font-size: 0.65rem;">Etapa
+                                                    5</small>
+                                                <small style="font-size: 0.55rem; opacity: 0.9;">Encerramento</small>
+                                            </div>
+                                        -->
+
                                         </div>
                                     </template>
                                 </v-server-table>
                             </div>
-                            <div class="col-2 border-left">
-                                <h6>Notificações</h6>
-                                <pipeline-run-notifications :notifications="notifications" />
-                            </div>
+                        </div>
+                        <div class="col-12 border-left">
+                            <h6>Notificações</h6>
+                            <pipeline-run-notifications :notifications="notifications" />
                         </div>
                     </div>
                 </div>
             </div>
-
         </div>
     </main>
 </template>
@@ -146,7 +215,7 @@ export default {
                 'pipeline_name',
                 'period',
                 'updated',
-                'last_executed_step',
+                //'last_executed_step',
                 'comment',
                 'status',
             ],
@@ -186,6 +255,7 @@ export default {
                     loading: this.$t('common.loading'),
                 },
                 requestFunction: this.load,
+                width: ['5%', '25%', '10%', '10%', '10%', '40%'],
             },
             orderBy: null,
             ascending: null,
@@ -201,7 +271,7 @@ export default {
                 joinRoom('pipeline_runs', true);
             },
             'update pipeline run': (msg) => {
-                if (! msg.pipeline_run) {
+                if (!msg.pipeline_run) {
                     return;
                 }
                 this.notifications.unshift({
@@ -246,11 +316,11 @@ export default {
     beforeMount() {
         this.filters = JSON.parse(localStorage.getItem('pipeline_run:list:filters') || '{}');
     },
-    unmounted(){
+    unmounted() {
         debugger
     },
     watch: {
-        '$route': function(to, from) {
+        '$route': function (to, from) {
             debugger
             disconnectWebSocket();
         }
@@ -260,6 +330,9 @@ export default {
             const query = {};
             this.$router.replace({ query }).catch(() => { });
             this.$refs.runsList.refresh();
+        },
+        detail(step) {
+            console.debug(step)
         },
         async load(data) {
             localStorage.setItem('pipeline_run:list:filters', JSON.stringify(this.filters));
@@ -313,5 +386,60 @@ export default {
 
 .highlight {
     animation: highlightRow 5s forwards;
+}
+
+.arrow-step {
+    position: relative;
+    background: #6c757d;
+    color: white;
+    padding: 1px 10px 1px 10px;
+    margin-right: 1px;
+    clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 50%, calc(100% - 8px) 100%, 0 100%, 8px 50%);
+    min-width: 120px;
+    min-height: 35px;
+    cursor: pointer;
+}
+
+.arrow-step:first-child {
+    clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 50%, calc(100% - 8px) 100%, 0 100%);
+    padding-left: 10px;
+}
+
+.arrow-step:last-child {
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 8px 50%);
+    padding-right: 10px;
+    margin-right: 0;
+}
+
+.arrow-step.completed {
+    background: linear-gradient(35deg, #28a745 0%, #40fffd 100%);
+}
+
+.arrow-step.in-progress {
+    background: linear-gradient(35deg, #ffc107 0%, #ffb300 100%);
+}
+
+.arrow-step.pending {
+    background: linear-gradient(35deg, #6c757d 0%, #5a6268 100%);
+}
+
+.arrow-step.running {
+    background: linear-gradient(35deg, #5555ff 20%, #aa00ff 100%);
+}
+
+.arrow-step.error {
+    background: linear-gradient(35deg, #aa2222 20%, #ff4444 100%);
+    color: white;
+}
+
+.tooltip-large .tooltip-inner {
+    min-width: 300px;
+    white-space: pre-wrap;
+    font-size: 0.95rem;
+    background-color: #333;
+}
+.tooltip-large .tooltip-inner a {
+    color: white;
+    text-decoration: underline;
 }
 </style>
