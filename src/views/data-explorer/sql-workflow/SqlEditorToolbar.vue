@@ -37,6 +37,7 @@
                 </template>
                 <b-dropdown-item href="#"  @click="emit('on-add', task.id, 'sql')">SQL</b-dropdown-item>
                 <b-dropdown-item href="#"  @click="emit('on-add', task.id, 'python')">Python</b-dropdown-item>
+                <b-dropdown-item href="#"  @click="emit('on-add', task.id, 'script')">Script externo</b-dropdown-item>
             </b-dropdown>
             <b-dropdown variant="outline-success" right size="sm" no-caret  :title="$t('actions.execute')">
                 <template #button-content>
@@ -45,6 +46,9 @@
                 <b-dropdown-item href="#" @click="emit('on-execute', task.id, true)">Até esta célula (usando dados do cache)</b-dropdown-item>
                 <b-dropdown-item href="#" @click="emit('on-execute', task.id, false)">Até esta célula (sem uso de dados do cache)</b-dropdown-item>
             </b-dropdown>
+            <button class="btn btn-sm btn-outline-secondary" title="Fechar" @click="emit('on-toggle', task.id)">
+                <font-awesome-icon :icon="opened ? 'fa fa-compress' : 'fa fa-expand'" />
+            </button>
         </b-button-group>
         <sql-editor-save-as-modal v-if="showSaveAs" ref="modalSaveAs" :task="task"/>
         <div v-if="status" class="text-center text-info" style="line-height:15px">
@@ -63,8 +67,10 @@ const emit = defineEmits(['on-add', 'on-remove', 'on-move', 'on-execute',
 const props = defineProps({
     showMoveUp: { type: Boolean, default: true },
     showMoveDown: { type: Boolean, default: true },
+    opened: { type: Boolean, default: true },
     task: { type: Object, required: true },
     useHWC: { type: [String, Boolean], default: null },
+
 });
 const useHWCVal = ref(props.useHWC)
 const modalSaveAs = ref();

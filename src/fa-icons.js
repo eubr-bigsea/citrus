@@ -37,6 +37,7 @@ import {
     faCoffee,
     faCog,
     faCogs,
+
     faColumns,
     faCopy,
     faCropAlt,
@@ -52,6 +53,7 @@ import {
     faExclamation,
     faExclamationCircle,
     faExclamationTriangle,
+    faExpand,
     faExternalLinkAlt,
     faEye,
     faEyeSlash,
@@ -158,7 +160,8 @@ import {
     faClock,
     faCircleXmark,
     faFolder,
-    faFile
+    faFile,
+    faCompress
 } from '@fortawesome/free-solid-svg-icons';
 
 library.add(
@@ -207,7 +210,9 @@ library.add(
     faCoffee,
     faCog,
     faCogs,
+
     faColumns,
+    faCompress,
     faCopy,
     faCropAlt,
     faDatabase,
@@ -222,6 +227,7 @@ library.add(
     faExclamation,
     faExclamationCircle,
     faExclamationTriangle,
+    faExpand,
     faFileExport,
     faExternalLinkAlt,
     faEye,
