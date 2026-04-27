@@ -151,6 +151,8 @@
                         <font-awesome-icon icon="fa fa-plus" /> {{ $t('actions.add') }} SQL</button>
                     <button @click="handleAdd(null, 'python', '\n')" class="btn btn-secondary btn-sm ml-3">
                         <font-awesome-icon icon="fa fa-plus" /> {{ $t('actions.add') }} Python</button>
+                    <button @click="handleAdd(null, 'script', '\n')" class="btn btn-secondary btn-sm ml-3">
+                        <font-awesome-icon icon="fa fa-plus" /> {{ $t('actions.add') }} Script Externo</button>
                     <blockquote class="blockquote">
                         <p class="mb-0">Nenhum comando ainda.</p>
                         Escolha uma das opções acima para iniciar.
