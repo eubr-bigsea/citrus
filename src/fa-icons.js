@@ -39,6 +39,7 @@ import {
     faCogs,
 
     faColumns,
+    faCommentAlt,
     faCopy,
     faCropAlt,
     faDatabase,
@@ -211,6 +212,7 @@ library.add(
     faCog,
     faCogs,
 
+    faCommentAlt,
     faColumns,
     faCompress,
     faCopy,
