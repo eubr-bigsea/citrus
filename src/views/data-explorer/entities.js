@@ -8,6 +8,7 @@ const META_PLATFORM_ID = 1000;
 const MODEL_BUILDER_CATEGORY = 2113;
 const EXECUTE_PYTHON = 82;
 const EXECUTE_SQL = 93;
+const EXECUTE_SCRIPT = 146;
 const DATA_READER = 2100;
 class Workflow {
     constructor({ id = null, platform = null, name = null, type = null,
@@ -305,12 +306,20 @@ class SqlBuilderWorkflow extends Workflow {
                     mode: { value: 'error' },
                     tags: { value: [] },
                     useHWC: {value: false},
+                    opened: {value: true},
                     ...cell.forms
+                }
+            } else if (cell.operation.slug == 'execute-script'){
+                cell.forms = {
+                    script: {value: ''},
+                    opened: {value: true},
+                    comment: { value: '' }, ...cell.forms
                 }
             } else {
                 cell.forms = {
                     code: { value: '' },
                     comment: { value: '' },
+                    opened: {value: true},
                     code_libraries: { value: [] },
                     ... cell.forms
                 }
@@ -341,6 +350,7 @@ class SqlBuilderWorkflow extends Workflow {
             useHWC: {value: 'spark'},
             type: {value: 'sql'},
             mode: { value: 'error' },
+            opened: {value: true},
         };
         const task = new Task({
             id: Operation.generateTaskId(),
@@ -367,11 +377,38 @@ class SqlBuilderWorkflow extends Workflow {
             comment: { value: '' },
             code_libraries: { value: [] },
             type: {value: 'python'},
+            opened: {value: true},
         };
         const task = new Task({
             id: Operation.generateTaskId(),
             name: `python${this.tasks.length}`,
             operation: new Operation({ id: EXECUTE_PYTHON, slug: 'execute-python' }),
+            display_order: this.tasks.length,
+            environment: 'DESIGN', // must be set!
+            forms
+        });
+        if (taskId) {
+            const inx = this.tasks.findIndex(t => t.id === taskId);
+            if (inx > -1) {
+                this.tasks.splice(inx + 1, 0, task);
+                this.updateLists();
+            }
+        } else {
+            this.tasks.push(task);
+            this.updateLists();
+        }
+    }
+    addScriptTask(taskId, command) {
+        const forms = {
+            script: { value: command },
+            comment: { value: '' },
+            type: {value: 'script'},
+            opened: {value: true},
+        };
+        const task = new Task({
+            id: Operation.generateTaskId(),
+            name: `script${this.tasks.length}`,
+            operation: new Operation({ id: EXECUTE_SCRIPT, slug: 'execute-script' }),
             display_order: this.tasks.length,
             environment: 'DESIGN', // must be set!
             forms

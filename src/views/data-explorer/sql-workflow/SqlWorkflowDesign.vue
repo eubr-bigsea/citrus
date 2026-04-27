@@ -71,7 +71,7 @@
                                 <label>Escolha uma fonte de dados</label>
                                 <vue-select :filterable="false" :options="dataSourceList" :reduce="(opt) => opt.id"
                                     label="name" @search="loadDataSourceList" @input="handleAddDataSource">
-                                    <template #no-options="{}">
+                                    <template #no-options="{ }">
                                         <small>Digite parte do nome pesquisar ...</small>
                                     </template>
                                     <template #option="option">
@@ -121,8 +121,8 @@
                                             @click.prevent="handleAddSqlFromDataSource('stage', dataSource.forms.data_source.value)">
                                             CRIAR STAGE
                                         </button>
-                                      
-                                        
+
+
                                     </div>
                                 </li>
                             </ul>
@@ -132,7 +132,7 @@
                 </div>
                 <div>
                     <span class="px-3 lemonade-job" :class="jobStatus.status.toLowerCase()">{{ jobStatus.status
-                        }}</span>
+                    }}</span>
                     {{ jobStatus.message }}
                     <div v-if="jobStatus.exception_stack" class="exception-stack scroll-area">
                         <pre class="exception mt-4">{{ jobStatus.exception_stack }}</pre>
@@ -140,7 +140,12 @@
                 </div>
             </div>
             <div class="layout-center pt-2">
-                <h4>Comandos ({{ workflowObj.cells?.length }})</h4>
+                <div class="d-flex justify-content-end align-items-center py-1">
+                    <h4 class="m-0 me-auto mr-auto">Comandos ({{ workflowObj.cells?.length }})</h4>
+                    <div><button @click="handleExpandAll" class="btn btn-secondary btn-sm mx-2">Expandir células <font-awesome-icon icon="fa fa-expand"/></button></div>
+                    <div><button @click="handleCollapseAll" class="btn btn-secondary btn-sm">Fechar céluas <font-awesome-icon icon="fa fa-compress"/></button></div>
+                </div>
+
                 <div v-if="workflowObj.cells?.length === 0">
                     <button @click="handleAdd(null, 'sql', '\n')" class="btn btn-secondary btn-sm">
                         <font-awesome-icon icon="fa fa-plus" /> {{ $t('actions.add') }} SQL</button>
@@ -153,18 +158,19 @@
                 </div>
                 <div class="scroll-area commands pb-5 mb-4">
                     <transition-group name="fade" @after-enter="handleCodeAppear">
-                        <div v-for="cell, i in workflowObj.cells" class="mb-3 editors" :key="cell.id"
-                            :class="{ 'disabled-cell': !cell.enabled }">
+                        <div v-for="cell, i in workflowObj.cells" class="border border mb-2 editors" :key="cell.id"
+                            :class="{ 'disabled-cell': !cell.enabled }" >
                             <div class="row" v-if="cell.operation.slug === 'execute-sql'" :data-cell="cell.id">
                                 <div class="col-12">
                                     <div class="button-toolbar">
                                         <sql-editor-toolbar ref="toolbar" :task="cell" :show-move-up="i > 0"
                                             :data-task="cell.id" :show-move-down="i < workflowObj.cells.length - 1"
                                             :useHWC="cell.forms.useHWC.value" @on-move="handleMove"
+                                            :opened="cell.forms?.opened.value"
                                             @on-remove="handleRemoveSql" @on-add="handleAdd"
                                             @on-indent="handleIndent(cell.id)"
                                             @on-execute="(taskId, value) => executeWorkflow(cell.id, value)"
-                                            @on-toggle-use-hwc="handleToggleHWC" />
+                                            @on-toggle-use-hwc="handleToggleHWC" @on-toggle="handleToggle(cell)" />
                                     </div>
                                 </div>
                                 <div class="col-4"
@@ -190,15 +196,45 @@
                                         class="form-control form-control-sm w-24" />
                                 </div>
                             </div>
-                            <div class="row" v-else>
+                            <div class="row" v-else-if="cell.operation.slug === 'execute-script'">
+                                <div class="col-12">
+                                    <div class="button-toolbb">
+                                        <sql-editor-toolbar ref="toolbar" :task="cell" :show-move-up="i > 0"
+                                            :data-task="cell.id" :show-move-down="i < workflowObj.cells.length - 1"
+                                            :opened="cell.forms?.opened.value"
+                                            @on-move="handleMove" @on-remove="handleRemoveSql" @on-add="handleAdd"
+                                            @on-indent="handleIndent(cell.id)"
+                                            @on-execute="(taskId, value) => executeWorkflow(cell.id, value)"
+                                            @on-toggle-use-hwc="handleToggleHWC" @on-toggle="handleToggle(cell)" />
+                                    </div>
+                                </div>
+                                <div class="col-8">
+                                    <span class="form-text">{{ $t('titles.comment') }}:</span> <input
+                                        class="form-control form-control-sm mb-1" maxlength="100"
+                                        v-model="cell.forms.comment.value" />
+                                </div>
+                                <div class="col-2 mt-4">
+                                    <b-form-checkbox v-model="cell.enabled" :value="true" :unchecked-value="false">
+                                        {{ $t('common.enabled') }}
+                                    </b-form-checkbox>
+                                </div>
+                                <div class="col-2">
+                                    <span class="form-text">Tipo:</span>
+                                    <input type="text" readonly :value="cell.operation.slug.substring(8)"
+                                    class="form-control form-control-sm w-24" />
+                                </div>
+
+                            </div>
+                            <div class="row" v-else-if="cell.operation.slug === 'execute-python'">
                                 <div class="col-12">
                                     <div class="button-toolbar">
                                         <sql-editor-toolbar ref="toolbar" :task="cell" :show-move-up="i > 0"
                                             :data-task="cell.id" :show-move-down="i < workflowObj.cells.length - 1"
+                                            :opened="cell.forms?.opened.value"
                                             @on-move="handleMove" @on-remove="handleRemoveSql" @on-add="handleAdd"
                                             @on-indent="handleIndent(cell.id)"
                                             @on-execute="(taskId, value) => executeWorkflow(cell.id, value)"
-                                            @on-toggle-use-hwc="handleToggleHWC" />
+                                            @on-toggle-use-hwc="handleToggleHWC" @on-toggle="handleToggle(cell)" />
                                     </div>
                                 </div>
                                 <div class="col-8">
@@ -219,18 +255,28 @@
                             </div>
                             <div class="row">
                                 <div class="col-12">
-                                    <div class="editor">
+                                    <div class="editor border p-2" style="overflow:hidden" :style="{display: cell.forms?.opened?.value ? '': 'none'}">
                                         <template v-if="cell.operation.slug === 'execute-sql'">
                                             <sql-editor :query="cell.forms.query.value"
                                                 @update="(v) => cell.forms.query.value = v" ref="codeEditor"
                                                 :tables="dataSources" :functions="functions" :data-task="cell.id"
                                                 :format="{ language: 'spark', tabWidth: 2, keywordCase: 'upper', linesBetweenQueries: 2 }" />
                                         </template>
-                                        <python-editor v-else :query="cell.forms.code.value"
+                                        <template v-else-if="cell.operation.slug === 'execute-script'">
+                                            <label>Caminho completo para o arquivo (visível no servidor)</label>
+                                            <input class="form-control form-control-sm" type="text"
+                                                v-model="cell.forms.script.value" maxlength="400" />
+                                        </template>
+                                        <python-editor v-else-if="cell.operation.slug === 'execute-python'" :query="cell.forms.code.value"
                                             @update="(v) => cell.forms.code.value = v" ref="codeEditor"
                                             :tables="dataSources" :functions="functions" :data-task="cell.id"
                                             :format="{ language: 'spark', tabWidth: 2, keywordCase: 'upper', linesBetweenQueries: 2 }" />
-                                    </div>
+                                        </div>
+                                        <div class="text-center p-2 bg-white" v-if="!cell.forms?.opened.value">
+                                            <button class="btn btn-sm " @click="handleToggle(cell)" title="Expandir">
+                                                Expandir <font-awesome-icon icon="fa fa-expand"/>
+                                            </button>
+                                        </div>
                                 </div>
                             </div>
                             <div v-if="cell?.forms?.save?.value === 1" class="col-12 mt-1">
@@ -241,14 +287,14 @@
                                 </div>
                                 Modo de sobrescrita: {{ cell.forms.mode.value }}
                             </div>
-                            <div class="row">
+                            <div class="row" v-if="cell.status && cell.status != ''">
                                 <div class="col-12 cell-status-bar">
                                     <!--
                                         <font-awesome-icon v-if="taskStatuses[cell.id] === 'RUNNING'" icon="fas fa-sync" class="text-primary fa-spin" spin />
                                         <font-awesome-icon v-if="taskStatuses[cell.id] === 'COMPLETED'" icon="fa-check-circle" class="text-success " />
                                         <font-awesome-icon v-if="taskStatuses[cell.id] === 'ERROR'" icon="fa-stop" class="text-danger" />
                                         -->
-                                    <span v-if="cell.status && cell.status != ''">
+                                    <span>
                                         {{ cell.message }}
                                         <font-awesome-icon icon="fa" :icon="getCellIcon(cell)"
                                             :class="getCellClass(cell)" />
@@ -623,8 +669,7 @@ const stop = async () => {
     try {
         const resp = await axios.post(`${standUrl}/jobs/${job.value.id}/stop?executor=true`)
         loadingData.value = false;
-        jobStatus.value = {status: 'Cancelado'};
-        console.debug(loadingData.value, jobStatus.value)
+        jobStatus.value = { status: 'Cancelado' };
         success(i18n.$t('messages.successStop', { what: i18n.$t('titles.job') }));
     } catch (e) {
         error(e, null, null, 10000, false);
@@ -668,6 +713,8 @@ const showSample = () => {
 const handleAdd = (taskId, type, command) => {
     if (type === 'sql' || type === undefined) {
         workflowObj.value.addSqlTask(taskId, command || '\n');
+    } else if (type === 'script') {
+        workflowObj.value.addScriptTask(taskId, command);
     } else {
         workflowObj.value.addPythonTask(taskId, command);
     }
@@ -777,9 +824,9 @@ const handleAddSqlFromDataSource = (type, dataSourceId) => {
             cmd.push('df.write.mode(\'overwrite\').format(HiveWarehouseSession.HIVE_WAREHOUSE_CONNECTOR).option(\'table\', stage_table_name).save()')
             handleAdd(null, 'python', cmd.join('\n'));
 
-      
+
         }
-        
+
     }
 }
 const handleChangeAlias = () => {
@@ -788,6 +835,19 @@ const handleChangeAlias = () => {
 }
 const handleToggleHWC = (task, value) => {
     task.forms.useHWC.value = value
+}
+const handleToggle = (task) => {
+    task.forms.opened.value = !task.forms?.opened?.value
+}
+const handleExpandAll = () => {
+    workflowObj.value.cells.forEach(task => {
+        task.forms.opened.value = true;
+    })
+}
+const handleCollapseAll = () => {
+    workflowObj.value.cells.forEach(task => {
+        task.forms.opened.value = false;
+    })
 }
 const toolbar = ref();
 
@@ -920,8 +980,7 @@ table.dataframe {
 }
 
 .button-toolbar {
-    background-color: #f3f3f3;
-    border-radius: 2px;
+    background-color: #fff;
     display: flex;
     justify-content: end;
     padding-bottom: 5px;
@@ -936,8 +995,8 @@ table.dataframe {
 }
 
 .editors {
-    background-color: #f3f3f3;
-    padding: 10px;
+    background-color: #fff;
+    padding: 6px 10px;
 }
 
 .editors .editor {
