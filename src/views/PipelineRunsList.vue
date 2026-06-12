@@ -163,6 +163,11 @@
 
                                         </div>
                                     </template>
+                                    <template #actions="props">
+                                        <button class="btn btn-sm btn-danger" @click="remove(props.row.id)">
+                                            <font-awesome-icon icon="trash" />
+                                        </button>
+                                    </template>
                                 </v-server-table>
                             </div>
                         </div>
@@ -181,6 +186,7 @@
 import axios from 'axios';
 import { useWebSocket } from '@/composables/websocket.js';
 import PipelineRunNotifications from '@/components/PipelineRunNotifications.vue';
+import Notifier from '@/mixins/Notifier.js';
 
 const standUrl = import.meta.env.VITE_STAND_URL;
 const standNamespace = import.meta.env.VITE_STAND_NAMESPACE;
@@ -193,6 +199,7 @@ export default {
     components: {
         PipelineRunNotifications
     },
+    mixins: [Notifier],
     data() {
         return {
             notifications: [],
@@ -218,6 +225,7 @@ export default {
                 //'last_executed_step',
                 'comment',
                 'status',
+                'actions',
             ],
             options: {
                 skin: 'table-sm table table-hover',
@@ -366,6 +374,29 @@ export default {
                 this.$Progress.finish();
             }
         },
+        remove(id) {
+            this.confirm(
+                this.$t('actions.delete'),
+                this.$t('messages.doYouWantToDelete'),
+                () => {
+                    axios
+                        .delete(`${standUrl}/pipeline-runs/${id}`, {})
+                        .then(() => {
+                            this.success(
+                                this.$t('messages.successDeletion', {
+                                    what: 'Execução Pipeline'
+                                })
+                            );
+                            this.$refs.runsList.refresh();
+                        })
+                        .catch(
+                            function (e) {
+                                this.error(e);
+                            }.bind(this)
+                        );
+                }
+            );
+        }
     }
 };
 
@@ -438,6 +469,7 @@ export default {
     font-size: 0.95rem;
     background-color: #333;
 }
+
 .tooltip-large .tooltip-inner a {
     color: white;
     text-decoration: underline;
