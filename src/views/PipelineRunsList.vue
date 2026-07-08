@@ -81,6 +81,9 @@
                                                 props.row.pipeline_id }} -
                                             {{ props.row.pipeline_name }}
                                         </router-link>
+                                        <div v-if="props.row.context_data && props.row.context_data.length > 0" class="mt-1" title="Variáveis de contexto">
+                                                <span v-for="data in props.row.context_data" :key="data.name" class="text-muted mr-2 small">{{ data.name }}={{ data.value }}</span>
+                                        </div>
                                     </template>
                                     <template #period="props">
                                         {{ props.row.start | formatJsonDate('dd/MM/yyyy') }} até {{ props.row.finish |
@@ -100,7 +103,7 @@
                                                 class="text-primary" size="2x" />
                                         </div>
                                     </template>
-                                    <template #status="props">
+                                    <template #statusStatus="props">
                                         <!-- Arrow Steps -->
                                         <div class="d-flex flex-wrap gap-2 pb-2">
                                             <div v-for="step in props.row.steps" :key="step.id" class="arrow-step d-flex flex-column align-items-center
@@ -163,6 +166,16 @@
 
                                         </div>
                                     </template>
+                                    <template #status="props">
+                                        <div class="lemonade-job" :class="props.row.status.toLowerCase()">
+                                            {{$t(`status.${props.row.status}`).toUpperCase()}}
+                                        </div>
+                                    </template>
+                                    <template #context="props">
+                                        <a v-if="props.row.context_data" :href="`/pipeline-runs/${props.row.id}/context`" target="_blank">
+                                            <font-awesome-icon icon="fa fa-gear" class="text-info" size="2x"/>
+                                        </a>
+                                    </template>
                                     <template #actions="props">
                                         <button class="btn btn-sm btn-danger" @click="remove(props.row.id)">
                                             <font-awesome-icon icon="trash" />
@@ -220,11 +233,13 @@ export default {
                 'id',
                 //'pipeline_id',
                 'pipeline_name',
+                'status',
                 'period',
                 'updated',
                 //'last_executed_step',
                 'comment',
-                'status',
+                //'context',
+                'statusStatus',
                 'actions',
             ],
             options: {
@@ -244,7 +259,8 @@ export default {
                     last_executed_step: 'Última Etapa',
                     status: this.$tc('common.status'),
                     actions: this.$tc('titles.action', 2),
-                    comment: this.$tc('titles.comment', 2)
+                    comment: this.$tc('titles.comment', 2),
+                    context: 'Variáveis',
                 },
                 sortable: ['id', 'pipeline_id', 'pipeline_name', 'period', 'updated',],
                 filterable: false,
