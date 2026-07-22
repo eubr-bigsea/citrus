@@ -145,8 +145,9 @@
                                         </div>
                                     </div>
                                 </draggable>
-                                <ModalAddPipelineStep ref="addStepModal" :pipeline="pipeline"
-                                    @onupdate-pipeline="updatePipeline" />
+                                <ModalAddPipelineStep ref="addStepModal" :pipeline="pipeline" :step-order="stepOrder"
+                                    @onadd-step="addStep" />
+
                             </div>
 
                             <div class="editPage-right-container">
@@ -282,7 +283,7 @@ export default {
                     .get(`${tahitiUrl}/pipelines/${this.$route.params.id}`);
                 this.$Progress.finish();
                 this.pipeline = resp.data.data[0];
-                console.log(this.pipeline);
+                this.pipeline.steps.sort((a, b) => a.order - b.order);
                 if (this.pipeline.steps.length !== 0) {
                     this.setSelectedStep(this.pipeline.steps[0], 0);
                 } else {
@@ -299,6 +300,16 @@ export default {
         openAddStepModal(stepOrder) {
             this.$refs.addStepModal.show();
             this.stepOrder = stepOrder;
+        },
+        addStep(newStep, stepOrder) {
+            this.pipeline.steps.sort((a, b) => a.order - b.order);
+            newStep.order = stepOrder;
+            this.pipeline.steps.splice(stepOrder, 0, newStep);
+            //updates steps after adding a new step to ensure the order is correct
+            this.pipeline.steps.forEach((step, index) => {
+                step.order = index + 1;
+            });
+            this.editPipeline('Etapa adicionada com sucesso.');
         },
         setSelectedStep(step, index) {
             this.editedStep.id = step.id;
@@ -346,6 +357,7 @@ export default {
                 });
         },
         editPipeline(msg) {
+            this.pipeline.steps.sort((a, b) => a.order - b.order);
             axios
                 .patch(`${tahitiUrl}/pipelines/${this.pipeline.id}`, this.pipeline)
                 .then((resp) => {

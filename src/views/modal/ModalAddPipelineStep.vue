@@ -9,7 +9,7 @@
         <div class="configPage-card-modal">
             <div>
                 <label for="nome">{{ $tc('common.name') }}:</label>
-                <input id="nome" v-model="newStep.name" class="form-control form-control-sm" type="text"
+                <input id="nome" v-model="newStep.name" class="form-control form-control-sm focus" type="text" focus
                        placeholder="Nome da etapa" maxlength="50"/>
             </div>
 
@@ -123,8 +123,9 @@ export default {
     mixins: [PipelineEditMixin, Notifier],
     props: {
         pipeline: { type: Object, default: () => {} },
+        stepOrder: { type: Number, default: 0 },
     },
-    emits: ['onupdate-pipeline'],
+    emits: ['onupdate-pipeline', 'onadd-step'],
     data() {
         return {
             newStep: { name: '', description: '', enabled: true, order: null },
@@ -155,6 +156,7 @@ export default {
             if(step.workflow === undefined) this.warning('Etapa não associada a um fluxo de trabalho.');
             else this.$router.push({ name: 'editWorkflow', params: { id: step.workflow.id, platform: 1 } });
         },
+        /*
         editPipeline(msg) {
             const changedPipeline = { ...this.pipeline };
             axios
@@ -171,19 +173,18 @@ export default {
                         this.error(e);
                     }.bind(this)
                 );
-        },
+        },*/
         addStep() {
             this.newStep.order = this.pipeline.steps.length+1;
 
             if (this.selectedWorkflow !== null) this.newStep.workflow_id = this.selectedWorkflow.id;
 
             const copy = {... this.newStep};
-            // this.pipeline.steps.splice(this.stepOrder, 0, copy);
-
-            // eslint-disable-next-line vue/no-mutating-props
-            this.pipeline.steps.push(copy);
-
-            this.editPipeline('Etapa adicionada com sucesso.');
+            // insert the new step at the specified order position
+            //this.pipeline.steps.splice(this.stepOrder, 0, copy);
+            //this.pipeline.steps.push(copy);
+            //this.editPipeline('Etapa adicionada com sucesso.');
+            this.$emit('onadd-step', copy, this.stepOrder);
         },
         createWorkflow() {
             const workflow = {
