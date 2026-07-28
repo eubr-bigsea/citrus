@@ -39,7 +39,7 @@
                 </b-button>
             </div>
         </div>
-        <div class="layout-container xsource-code-pro-font">
+        <div class="layout-container xsource-code-pro-font" id="workflow-design" ref="workflowDesign">
             <div class="layout">
                 <div>
                     <form class="clearfix">
@@ -142,7 +142,18 @@
             <div class="layout-center pt-2">
                 <div class="d-flex justify-content-end align-items-center py-1">
                     <h4 class="m-0 me-auto mr-auto">Comandos ({{ workflowObj.cells?.length }})</h4>
-                    <div><button @click="handleExpandAll" class="btn btn-secondary btn-sm mx-2">Expandir células <font-awesome-icon icon="fa fa-expand"/></button></div>
+                    <div>
+                        <button @click="toggleExpand" class="btn btn-sm" :class="{'btn-info': expandedArea, 'btn-light': !expandedArea}">
+                            <span v-if="expandedArea">
+                                Restaurar área central <font-awesome-icon icon="fa fa-minimize"/>
+                            </span>
+                            <span v-else>
+                                Maximizar área central <font-awesome-icon icon="fa fa-maximize"/>
+                            </span>
+                        </button>
+                    </div>
+
+                    <div><button @click="toggleExpandAll" class="btn btn-secondary btn-sm mx-2">Expandir células <font-awesome-icon icon="fa fa-expand"/></button></div>
                     <div><button @click="handleCollapseAll" class="btn btn-secondary btn-sm">Fechar céluas <font-awesome-icon icon="fa fa-compress"/></button></div>
                 </div>
 
@@ -391,6 +402,7 @@ const jobStatus = ref({ status: '' });
 const loaded = ref(false);
 const loadingData = ref(false);
 const clusterRef = ref(null);
+const expandedArea = ref(false);
 
 const targetPlatform = ref(4);
 const workflowObj = ref({ variables: [], forms: { $meta: { value: { target: '', taskType: '' } } } });
@@ -461,6 +473,7 @@ router.beforeEach(function (to, from, next) {
 const cluster = ref(null);
 const codeEditor = ref();
 const previewWindow = ref();
+const workflowDesign = ref();
 
 /** Web socket  */
 const { connectWebSocket, disconnectWebSocket, socketEmit, joinRoom } = useWebSocket();
@@ -736,6 +749,7 @@ const handleRemoveSql = (taskId) => {
 const handleMove = (taskId, direction) => {
     workflowObj.value.moveTask(taskId, direction);
 }
+
 /* Data source related */
 const addingDataSource = ref(false);
 const dataSourceList = ref([]);
@@ -841,7 +855,24 @@ const handleToggleHWC = (task, value) => {
 const handleToggle = (task) => {
     task.forms.opened.value = !task.forms?.opened?.value
 }
-const handleExpandAll = () => {
+const toggleExpand = () => {
+    const leftChild = workflowDesign.value.children[0];
+    const midChild = workflowDesign.value.children[1];
+    const rightChild = workflowDesign.value.children[2];
+
+    expandedArea.value = !expandedArea.value;
+    if (expandedArea.value) {
+        leftChild.style.display = 'none';
+        midChild.style.flex = '1 1 auto';
+        rightChild.style.display = 'none';
+    } else {
+        leftChild.style.display = '';
+        midChild.style.flex = '';
+        rightChild.style.display = '';
+    }
+
+}
+const toggleExpandAll = () => {
     workflowObj.value.cells.forEach(task => {
         task.forms.opened.value = true;
     })
