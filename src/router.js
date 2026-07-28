@@ -55,6 +55,8 @@ const UserEdit = () => import(/* webpackChunkName: "group-user" */ './views/Admi
 const SourceCodeEdit = () => import('./views/Administration/SourceCodeEdit.vue');
 const SourceCodeList = () => import('./views/Administration/SourceCodeList.vue');
 
+const GlobalVariableList = () => import('./views/Administration/GlobalVariableList.vue');
+
 const ClusterList = () => import(/* webpackChunkName: "group-cluster" */ './views/Administration/ClusterList.vue');
 const ClusterEdit = () => import(/* webpackChunkName: "group-cluster" */ './views/Administration/ClusterEdit.vue');
 
@@ -271,6 +273,17 @@ let router = new VueRouter({
             path: '/administration/source-code/:id',
             name: 'sourceCodeEdit',
             component: SourceCodeEdit,
+            meta: {
+                requiresAuth: true,
+                requiresRole: true,
+                requiredPermissions: ['ADMINISTRATOR'],
+                title: ['titles.user', 1]
+            }
+        },
+        {
+            path: '/administration/global-variables',
+            name: 'globalVariableList',
+            component: GlobalVariableList,
             meta: {
                 requiresAuth: true,
                 requiresRole: true,
