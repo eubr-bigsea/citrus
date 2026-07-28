@@ -135,6 +135,8 @@ import {
     faUndoAlt,
     faUpload,
     faUser,
+    faUsers,
+    faUserGroup,
     faUserEdit,
     faUserLock,
     faVial,
@@ -142,7 +144,6 @@ import {
     faWarehouse,
     faBox,
     faKey,
-    faUserGroup,
     faCaretUp,
     faCaretDown,
     faArrowDown,
@@ -163,7 +164,8 @@ import {
     faCircleXmark,
     faFolder,
     faFile,
-    faCompress
+    faCompress,
+    faSeedling,
 } from '@fortawesome/free-solid-svg-icons';
 
 library.add(
@@ -291,6 +293,8 @@ library.add(
     faSave,
     faScaleBalanced,
     faSearch,
+    faSeedling,
+
     faServer,
     faSearchDollar,
     faShapes,
@@ -318,6 +322,8 @@ library.add(
     faUndoAlt,
     faUpload,
     faUser,
+    faUsers,
+    faUserGroup,
     faUserEdit,
     faUserGroup,
     faUserLock,

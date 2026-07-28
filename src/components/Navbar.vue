@@ -48,35 +48,50 @@
                         {{ $tc('titles.administration', 2) }}
                     </template>
                     <b-dropdown-item :to="{ name: 'AdministrationUserList' }">
+                        <font-awesome-icon icon="fa fa-users" class="text-success"/>
                         {{ $tc('titles.user', 2) }}
                     </b-dropdown-item>
                     <b-dropdown-item :to="{ name: 'AdministrationRoleList' }">
+                        <font-awesome-icon icon="fa fa-user-group" class="text-success" />
                         {{ $tc('titles.role', 2) }}
                     </b-dropdown-item>
                     <b-dropdown-item :to="{ name: 'configuration' }">
+                        <font-awesome-icon icon="fa fa-cog" class="text-success" />
                         {{ $tc('titles.configuration', 2) }}
                     </b-dropdown-item>
                     <b-dropdown-divider />
                     <b-dropdown-item :to="{ name: 'clusters' }">
+                        <font-awesome-icon icon="fa fa-server" class="text-success"/>
                         {{ $tc('titles.cluster', 2) }}
                     </b-dropdown-item>
                     <b-dropdown-item :to="{ name: 'storages' }">
+                        <font-awesome-icon icon="fa fa-database" class="text-success"/>
                         {{ $tc('titles.storage', 2) }}
                     </b-dropdown-item>
                     <b-dropdown-item :to="{ name: 'platforms' }">
+                        <font-awesome-icon icon="fa fa-cogs" class="text-success"/>
                         {{ $tc('titles.platform', 2) }}
                     </b-dropdown-item>
                     <b-dropdown-item :to="{ name: 'models' }">
+                        <font-awesome-icon icon="fa fa-shapes" class="text-success"/>
                         {{ $tc('titles.model', 2) }}
                     </b-dropdown-item>
+                    <b-dropdown-divider />
                     <b-dropdown-item :to="{ name: 'pipelineTemplates' }" data-test="pipelineTemplates-item">
+                        <font-awesome-icon icon="fa fa-circle-nodes" class="text-success" />
                         Template Pipeline
                     </b-dropdown-item>
                     <b-dropdown-item :to="{ name: 'sourceCodeList' }">
+                        <font-awesome-icon icon="fa fa-code" class="text-success" />
                         Biblioteca de códigos
+                    </b-dropdown-item>
+                    <b-dropdown-item :to="{ name: 'globalVariableList' }">
+                        <font-awesome-icon icon="fa fa-x" class="text-success" />
+                        Variáveis globais
                     </b-dropdown-item>
                     <b-dropdown-divider />
                     <b-dropdown-item :to="{ name: 'deployments' }">
+                        <font-awesome-icon icon="fa fa-seedling" class="text-success" />
                         {{ $tc('titles.deployment', 2) }}
                     </b-dropdown-item>
                     <b-dropdown-divider />
@@ -86,7 +101,6 @@
                     <b-dropdown-item :to="{ name: 'webSocketPing' }">
                         Test Websocket
                     </b-dropdown-item>
-                    <b-dropdown-divider />
                 </b-nav-item-dropdown>
             </b-navbar-nav>
             <b-navbar-nav class="ml-auto">
