@@ -506,7 +506,7 @@ export default {
             ],
             formats: [
                 'CSV', 'CUSTOM', 'GEO_JSON', 'HAR_IMAGE_FOLDER', 'HDF5',
-                'DATA_FOLDER', 'IMAGE_FOLDER', 'HIVE', 'JDBC', 'JSON',
+                'DATA_FOLDER', 'ICEBERG','IMAGE_FOLDER', 'HIVE', 'JDBC', 'JSON',
                 'NPY', 'PARQUET', 'PICKLE', 'SAV', 'SHAPEFILE',
                 'TAR_IMAGE_FOLDER', 'TEXT', 'VIDEO_FOLDER', 'UNKNOWN',
                 'XML_FILE'].sort(),
