@@ -139,7 +139,7 @@
                         {{ $t('actions.cancel') }}
                     </b-link>
                     <b-button @click="onSubmit()" variant="primary" class="btn btn-sm btn-primary pr-4 pl-4">
-                        {{ $tc('actions.create2') }}
+                        {{ $t('actions.create2') }}
                     </b-button>
                 </div>
             </div>

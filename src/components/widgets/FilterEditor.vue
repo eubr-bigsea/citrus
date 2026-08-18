@@ -15,12 +15,12 @@
         <span v-else>{{displayValue}}</span>
         <b-modal ref="modal"
                  size="xl"
-                 :title="$tc('common.filter', 2)"
+                 :title="$t('common.filter', 2)"
                  hide-header>
             <div class="p-1">
                 <div class="row user-filter">
                     <div class="col-md-4 mt-4">
-                        {{$tc('common.filter', 2)}}
+                        {{$t('common.filter', 2)}}
                         <div class="values pb-1 border">
                             <div v-for="(row, index) in valueList"
                                  :key="index"
@@ -32,7 +32,7 @@
                                 </small>
                                 <a href="#"
                                    :title="$t('actions.delete')"
-                                   class="ml-1 float-right btn btn-sm py-0 btn-light text-danger"
+                                   class="ms-1 float-end btn btn-sm py-0 btn-light text-danger"
                                    @click.prevent.stop="remove($event, index)">
                                     <font-awesome-icon icon="fa fa-minus-circle" />
                                 </a>
@@ -90,7 +90,7 @@
                                             </select>
                                         </div>
                                         <div class="col-md-4">
-                                            <label>{{$tc('variables.operator', 1)}}:</label>
+                                            <label>{{$t('variables.operator', 1)}}:</label>
                                             <select v-model="selected.operator"
                                                     class="form-control"
                                                     tabindex="0">
@@ -204,7 +204,7 @@
                                     O valor de <code>key</code> será atribuído à variável e <code>value</code> é
                                     exibido.
                                 </b-tab>
-                                <b-tab :title="$tc('variables.text', 2)">
+                                <b-tab :title="$t('variables.text', 2)">
                                     <label>{{$t('variables.textBefore')}}:</label>
                                     <textarea v-model="selected.textBefore"
                                               maxlength="300"
@@ -230,15 +230,16 @@
                     </div>
                 </div>
             </div>
-            <div slot="modal-footer"
-                 class="w-100 text-right">
-                <b-btn variant="primary"
-                       size="sm"
-                       class="mr-1 pl-5 pr-5"
-                       @click="okClicked">
-                    {{$t('common.ok')}}
-                </b-btn>
-            </div>
+            <template #footer>
+                <div class="w-100 text-end">
+                    <b-button variant="primary"
+                              size="sm"
+                              class="me-1 ps-5 pe-5"
+                              @click="okClicked">
+                        {{$t('common.ok')}}
+                    </b-button>
+                </div>
+            </template>
         </b-modal>
     </div>
 </template>
@@ -274,7 +275,7 @@ export default {
                 'STATIC_TEXT',
                 'BOOLEAN',
             ],
-        }
+        };
     },
     computed: {
         parameters() {
@@ -320,7 +321,7 @@ export default {
                 ['user', ' ? '],
             ]);
             if (v) {
-                this.displayValue = v.map((v) => (v.name || '') + (ops.get(v.operator) || '') + "?").join('\n')
+                this.displayValue = v.map((v) => (v.name || '') + (ops.get(v.operator) || '') + "?").join('\n');
             } else {
                 this.displayValue = '';
             }
@@ -366,7 +367,7 @@ export default {
             return r;
         }
     },
-}
+};
 </script>
 <style>
     div.values {

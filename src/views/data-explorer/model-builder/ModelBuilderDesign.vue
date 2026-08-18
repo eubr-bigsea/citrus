@@ -6,9 +6,9 @@
                     <h1>Construção de Modelos</h1>
                 </div>
                 <form class="float-right form-inline w-50 d-flex justify-content-end">
-                    <label>{{ $tc('common.name') }}:</label>
+                    <label>{{ $t('common.name') }}:</label>
                     <input v-model="workflowObj.name" type="text" class="form-control form-control-sm ml-1 w-50"
-                        :placeholder="$tc('common.name')" maxlength="100">
+                        :placeholder="$t('common.name')" maxlength="100">
                     <button class="btn btn-sm btn-outline-success ml-1 float-right" @click.prevent="saveWorkflow">
                         <font-awesome-icon icon="fa fa-save" />
                         {{ $t('actions.save') }}
@@ -65,10 +65,10 @@
                                         <FeatureGeneration />
                                     </template>
                                     <template v-if="selected === 'reduction'">
-                                        <FeatureReduction :reduction="workflowObj.reduction" />
+                                        <ModelBulderFeatureReduction :reduction="workflowObj.reduction" />
                                     </template>
                                     <template v-if="selected === 'algorithms'">
-                                        <Algorithms ref="algorithms" :operations="algorithmOperation"
+                                        <ModelBulderAlgorithms ref="algorithms" :operations="algorithmOperation"
                                             :workflow="workflowObj" :operation-map="operationsMap" :task-type="taskType"/>
                                     </template>
                                     <template v-if="selected === 'grid'">
@@ -99,21 +99,20 @@
     </div>
 </template>
 <script>
-import Vue from 'vue';
 import io from 'socket.io-client';
-import SideBar from './SideBar.vue';
+import SideBar from './ModelBuilderSideBar.vue';
 import DesignData from './DesignData.vue';
 import TrainTest from './TrainTest.vue';
-import Metric from './Metric.vue';
+import Metric from './ModelBuilderMetric.vue';
 import FeatureSelection from './FeatureSelection.vue';
 import FeatureGeneration from './FeatureGeneration.vue';
-import FeatureReduction from './FeatureReduction.vue';
 import ModelBuilderSaveResults from './ModelBuilderSaveResults.vue';
-import Algorithms from './Algorithms.vue';
-import Grid from './Grid.vue';
-import Runtime from './Runtime.vue';
+import ModelBuilderFeatureReduction from './ModelBuilderFeatureReduction.vue';
 import Result from './result/Result.vue';
 import Weighting from './Weighting.vue';
+import ModelBuilderAlgorithmList from './ModelBuilderAlgorithmList.vue';
+import ModelBuilderRuntime from './ModelBuilderRuntime.vue';
+import ModelBuilderGrid from './ModelBuilderGrid.vue';
 
 import DataSourceMixin from '../DataSourceMixin.js';
 import Notifier from '@/mixins/Notifier.js';
@@ -134,7 +133,7 @@ export default {
     name: 'DesignComponent',
     components: {
         SideBar, DesignData, TrainTest, Metric, FeatureSelection, FeatureGeneration,
-        FeatureReduction, Algorithms, Grid, Runtime, Weighting, Result,
+        ModelBuilderFeatureReduction, ModelBuilderAlgorithmList, ModelBuilderGrid, ModelBuilderRuntime, Weighting, Result,
         ModelBuilderSaveResults
     },
     mixins: [DataSourceMixin, Notifier],
@@ -374,7 +373,7 @@ export default {
                 let resp = await axios.get(`${tahitiUrl}/workflows/${this.internalWorkflowId}`)
                 this.workflowObj = new ModelBuilderWorkflow(resp.data, this.operationsMap);
                 if (this.workflowObj.type !== 'MODEL_BUILDER') {
-                    this.error(null, this.$tc('modelBuilder.invalidType'));
+                    this.error(null, this.$t('modelBuilder.invalidType'));
                     this.$router.push({ name: 'index-explorer' })
                     return;
                 }
@@ -394,7 +393,7 @@ export default {
                 this.error(e);
                 this.$router.push({ name: 'index-explorer' })
             } finally {
-                Vue.nextTick(() => {
+                this.nextTick(() => {
                     this.$Progress.finish();
                     this.loadingData = false;
                     this.isDirty = false;
@@ -437,7 +436,7 @@ export default {
                                 best = r.content.metric.value;
                             }
                         });
-                        Vue.set(result0, 'best', best);
+                        this.set(result0, 'best', best);
                     }
 
                 });
@@ -510,7 +509,7 @@ export default {
             try {
                 await axios.patch(url, cloned, { headers: { 'Content-Type': 'application/json' } });
                 this.isDirty = false;
-                this.success(this.$t('messages.savedWithSuccess', { what: this.$tc('titles.workflow') }));
+                this.success(this.$t('messages.savedWithSuccess', { what: this.$t('titles.workflow') }));
             } catch (e) {
                 this.error(e);
             }

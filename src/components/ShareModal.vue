@@ -39,7 +39,7 @@
 </template>
 <script>
 import axios from 'axios';
-import Vue from 'vue';
+;
 
 const limoneroUrl = import.meta.env.VITE_LIMONERO_URL;
 
@@ -77,14 +77,14 @@ export default {
             users: [],
             columns: ['full_name', 'email', 'actions'],
             options: {
-                skin: 'table-sm table table-hover',
+                skin: 'table table-hover',
                 columnsClasses: {
                     name: 'th-20',
                     description: 'th-20',
                     actions: 'th-10'
                 },
                 texts: {
-                    filter: this.$tc('common.filter'),
+                    filter: this.$t('common.filter'),
                     count: this.$t('common.pagerShowing'),
                     limit: this.$t('common.limit'),
                     noResults: this.$t('common.noData'),
@@ -92,16 +92,16 @@ export default {
                     filterPlaceholder: this.$t('common.filterPlaceholder')
                 },
                 headings: {
-                    name: this.$tc('common.name'),
-                    email: this.$tc('common.email'),
-                    actions: this.$tc('common.action', 2)
+                    name: this.$t('common.name'),
+                    email: this.$t('common.email'),
+                    actions: this.$t('common.action', 2)
                 },
                 sortable: ['full_name', 'email'],
                 sortIcon: {
-                    base: 'fa fas',
-                    is: 'fa-sort ml-10',
-                    up: 'fa-sort-amount-up',
-                    down: 'fa-sort-amount-down'
+                    base: 'sort-base',
+                    is: 'sort-is ms-10',
+                    up: 'sort-up',
+                    down: 'sort-down'
                 },
                 preserveState: true,
                 saveState: true
@@ -118,7 +118,7 @@ export default {
         resourceId: function (id) {
             if (id != 0) {
                 this.load().then(() => {
-                    Vue.nextTick(() => {
+                    this.$nextTick(() => {
                         self.isDirty = false;
                     });
                 });

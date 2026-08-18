@@ -21,7 +21,7 @@
     </div>
 </template>
 <script>
-import LabelComponent from './Label.vue'
+import LabelComponent from './Label.vue';
 import Widget from '../../mixins/Widget.js';
 import { debounce } from '../../util.js';
 export default {
@@ -33,5 +33,5 @@ export default {
             this.triggerUpdateEvent(this.message, this.field, e.target.value);
         }, 500)
     },
-}
+};
 </script>

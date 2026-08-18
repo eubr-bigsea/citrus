@@ -8,7 +8,7 @@
                      class="mb-2 border-0 p-0"
                      @input="handleInput">
             <template #default="{ tags, inputAttrs, inputHandlers, addTag, removeTag }">
-                <b-input-group class="w-25 float-left">
+                <b-input-group class="w-25 float-start">
                     <input v-bind="inputAttrs"
                            :type="inputType.type"
                            onKeyPress="return this.value.length < 12"
@@ -25,17 +25,17 @@
                     </b-input-group-append>
                 </b-input-group>
                 <div v-if="tags && tags.length"
-                     class="pl-2 mt-2 w-75 float-left">
+                     class="ps-2 mt-2 w-75 float-start">
                     <div v-for="(tag, i) in tags"
                          :key="i"
-                         class="badge text-secondary badge-light2 border mr-1">
+                         class="badge text-secondary badge-light2 border me-1">
                         {{tag}} <a href="#"
                                    class="text-danger"
                                    @click.prevent="removeTag(tag)">&times;</a>
                     </div>
                 </div>
                 <small v-else
-                       class="pl-2 ">
+                       class="ps-2 ">
                     Informe um valor e pressione Enter ou pressione o botão + para adicioná-lo.
                 </small>
             </template>
@@ -52,7 +52,7 @@ export default {
     data() {
         return {
             internalValue: []
-        }
+        };
     },
     computed: {
         inputType() {
@@ -82,5 +82,5 @@ export default {
             this.triggerUpdateEvent(this.message, this.field, v);
         }
     },
-}
+};
 </script>

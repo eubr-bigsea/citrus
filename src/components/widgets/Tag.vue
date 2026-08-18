@@ -1,21 +1,15 @@
 <template>
     <div v-if="readOnly">
-        {{selected}}
+        {{ selected }}
     </div>
     <div v-else>
-        <LabelComponent :field="field"
-                        :value="value" />aa
-        <b-form-tags v-model="selected"
-                     name="field.name"
-                     class="lemonade-tag-input pt-3"
-                     placeholder=""
-                     add-button-text="+"
-                     :input-type="inputType"
-                     @input="updatedTag" />
+        <LabelComponent :field="field" :value="value" />aa
+        <b-form-tags v-model="selected" name="field.name" class="lemonade-tag-input pt-3" placeholder=""
+            add-button-text="+" :input-type="inputType" @input="updatedTag" />
     </div>
 </template>
 <script>
-import LabelComponent from './Label.vue'
+import LabelComponent from './Label.vue';
 import Widget from '../../mixins/Widget.js';
 export default {
     name: 'TagComponent',
@@ -60,19 +54,19 @@ export default {
             this.value = this.field['default'];
         }
     },
-}
+};
 
 </script>
 <style scoped>
-    /* Chrome, Safari, Edge, Opera */
-    .lemonade-tag-input>>>input::-webkit-outer-spin-button,
-    .lemonade-tag-input>>>input::-webkit-inner-spin-button {
-        -webkit-appearance: none;
-        margin: 0;
-    }
+/* Chrome, Safari, Edge, Opera */
+.lemonade-tag-input :deep(input::-webkit-outer-spin-button),
+.lemonade-tag-input :deep(input::-webkit-inner-spin-button) {
+    -webkit-appearance: none;
+    margin: 0;
+}
 
-    /* Firefox */
-    .lemonade-tag-input>>>input[type=number] {
-        -moz-appearance: textfield;
-    }
+/* Firefox */
+.lemonade-tag-input :deep(input[type=number]) {
+    -moz-appearance: textfield;
+}
 </style>

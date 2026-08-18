@@ -4,13 +4,13 @@
             <div class="col">
                 <div>
                     <div class="d-flex justify-content-between align-items-center">
-                        <h1>{{$t('actions.create', {type: $tc('titles.workflow', 1).toLowerCase()})}}</h1>
+                        <h1>{{$t('actions.create', {type: $t('titles.workflow', 1).toLowerCase()})}}</h1>
                     </div>
                     <hr>
                     <b-card>
                         <div class="row">
                             <div class="col-md-4">
-                                <label>{{$tc('common.name')}}:</label>
+                                <label>{{$t('common.name')}}:</label>
                                 <input v-model="name" class="form-control mb-1">
                             </div>
                             <div class="col-md-12">
@@ -36,8 +36,7 @@
                                                                 </div>
                                                             </td>
                                                         </tr>
-                                                        <tr v-for="subset in platform.subsets"
-                                                            v-if="platform.subsets.length" :key="subset.id"
+                                                        <tr v-for="subset in platform.subsets" :key="subset.id"
                                                             class="d-flex">
                                                             <td class="col-12">
                                                                 <b-form-radio-group id="radios2"
@@ -58,7 +57,7 @@
                                 </b-tabs>
                             </div>
                             <div class="col-md-12 mt-3 border-top pt-1">
-                                <button class="btn float-left" :class="{'btn-primary': true }" :disabled="!canCreate"
+                                <button class="btn float-start" :class="{'btn-primary': true }" :disabled="!canCreate"
                                         @click.once="choose($event)">
                                     {{$t('actions.confirm')}}
                                 </button>

@@ -4,7 +4,7 @@
             <div class="col-md-6 mx-auto">
                 <div class="card fat">
                     <div class="card-header text-center bg-secondary text-white">
-                        {{$t('actions.new')}} {{$tc('titles.user', 1)}}
+                        {{$t('actions.new')}} {{$t('titles.user', 1)}}
                     </div>
                     <div class="card-body">
                         <form @submit.prevent="save">
@@ -79,7 +79,7 @@
                             <div class="form-group row border-top clearfix pt-3">
                                 <div class="col-sm-12 text-center">
                                     <button type="submit"
-                                            class="btn btn-primary mr-2 pr-5 pl-5">
+                                            class="btn btn-primary me-2 pe-5 ps-5">
                                         {{$t('common.ok')}}
                                     </button>
                                     <router-link :to="{ name: 'AdministrationUserList' }"
@@ -120,14 +120,12 @@ export default {
             let url = `${thornUrl}/users`;
             let user = self.user;
 
-            this.$Progress.start();
             return axios
                 .post(url, user)
                 .then(resp => {
-                    this.$Progress.finish();
                     self.success(
                         this.$t('messages.savedWithSuccess', {
-                            what: this.$tc('titles.user', 1)
+                            what: this.$t('titles.user', 1)
                         })
                     );
                     this.$router.push({
@@ -138,7 +136,6 @@ export default {
                 .catch(
                     function (e){
                         var err = e;
-                        this.$Progress.finish();
                         if (e.response.data.message){
                             err = {
                                 message: e.response.data.message

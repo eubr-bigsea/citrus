@@ -1,15 +1,12 @@
 <template>
-    <span class="home-card-counter float-right"
+    <span class="home-card-counter float-end"
           title="Total">
-        <animated-number :value="value"
-                         :format-value="formatValue"
-                         :duration="1000"
-                         :easing="'easeOutCirc'" />
+        <animated-number :value="value" :speed="10" />
     </span>
 </template>
 
 <script>
-import AnimatedNumber from "animated-number-vue";
+import AnimatedNumber from "@/components/AnimatedNumber.vue";
 import Humanize from "humanize-plus";
 
 export default {

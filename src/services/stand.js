@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const standUrl = import.meta.env.VITE_STAND_URL
+const standUrl = import.meta.env.VITE_STAND_URL;
 export default {
     async getLatestJob(workflowId) {
         return await axios.get(`${standUrl}/jobs/latest`,
@@ -25,8 +25,8 @@ export default {
                         result.results.get(result.task.id).push(result);
                     }
                 });
-                return result
-            })).catch(() => { return new Map() });
+                return result;
+            })).catch(() => { return new Map(); });
     },
     async getEnabledClusters() {
         return await axios.get(`${standUrl}/clusters?enabled=true`, {})
@@ -48,4 +48,4 @@ export default {
                 self.error(ex);
             });
     },
-}
+};

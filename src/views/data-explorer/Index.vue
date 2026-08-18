@@ -3,18 +3,20 @@
         <div>
             <div class="d-flex justify-content-between align-items-center">
                 <h1>
-                    <font-awesome-icon icon="fa fa-vial" /> {{ $tc('dataExplorer.tagline', 1) }}
+                    <font-awesome-icon icon="fa fa-vial" /> {{ $t('dataExplorer.tagline', 1) }}
                 </h1>
             </div>
             <hr>
             <div class="card-deck ">
-                <b-card class="clickable m-1" role="button">
+                <b-card class="clickable m-1" role="button" @click="navigate('data-explorer')">
                     <div class="row">
-                        <div class="rounded-option bg-primary">
+                        <div class="col-2 rounded-option bg-primary">
                             <font-awesome-icon icon="fa fa-table" size="3x" inverse />
                         </div>
-                        <div class="col mt-2" @click="navigate('data-explorer')">
+                        <div class="col-9 mt-2">
                             <h5>Analisar, tratar e transformar dados</h5>
+                        </div>
+                        <div class="col mt-2">
                             <small>
                                 Utilize uma interface amigável e responsiva para tratar os dados. Você poderá
                                 experimentar
@@ -25,8 +27,8 @@
                 </b-card>
                 <b-card class="clickable m-1" role="button">
                     <div class="row">
-                        <div class="rounded-option bg-warning">
-                            <svg fill="#ffffff" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg"
+                        <div class="col-2 rounded-option bg-warning">
+                            <svg id="Capa_1" fill="#ffffff" version="1.1" xmlns="http://www.w3.org/2000/svg"
                                 xmlns:xlink="http://www.w3.org/1999/xlink" width="50px" height="50px"
                                 viewBox="0 0 550.801 550.801" xml:space="preserve">
                                 <g>
@@ -62,8 +64,10 @@
                                 </g>
                             </svg>
                         </div>
-                        <div class="col mt-2" @click="navigate('data-explorer', { sql: true })">
+                        <div class="col-9 mt-2" @click="navigate('data-explorer', { sql: true })">
                             <h5>Usar SQL para analisar, tratar e transformar dados</h5>
+                        </div>
+                        <div class="col mt-2">
                             <small>
                                 Utilize o poder da SQL para tratar os dados. Você terá liberdade para escrever
                                 comandos SQL que consultam ou mesmo alteram dados.
@@ -73,11 +77,13 @@
                 </b-card>
                 <b-card class="clickable m-1" role="button" @click="navigate('choose-task')">
                     <div class="row">
-                        <div class="rounded-option bg-success">
+                        <div class="col-2 rounded-option bg-success">
                             <font-awesome-icon icon="fa fa-robot" size="3x" inverse />
                         </div>
-                        <div class="col">
+                        <div class="col-9">
                             <h5>Criar modelo de aprendizado de máquina</h5>
+                        </div>
+                        <div class="col mt-2">
                             <small>
                                 Crie modelos de aprendizado de máquina, definindo qual tarefa e algoritmos aplicar,
                                 quais <em>features</em> usar e quais métricas lhe
@@ -88,11 +94,13 @@
                 </b-card>
                 <b-card class="clickable m-1" role="button" @click="navigate('new-visualization')">
                     <div class="row">
-                        <div class="rounded-option bg-danger">
+                        <div class="col-2 rounded-option bg-danger">
                             <font-awesome-icon icon="fa fa-chart-bar" size="3x" inverse />
                         </div>
-                        <div class="col mt-2">
+                        <div class="col-9 mt-2">
                             <h5>Criar visualizações de dados</h5>
+                        </div>
+                        <div>
                             <small>
                                 Monte gráficos, tabelas e outras visualizações de dados.
                                 Associe-os a <em>dashboards</em> e compartilhe-os com outros usuários.
@@ -100,35 +108,6 @@
                         </div>
                     </div>
                 </b-card>
-                <b-card class="clickable m-1" role="button" @click="navigate('peel-home')">
-                    <div class="row">
-                        <div class="rounded-option bg-info">
-                            <font-awesome-icon icon="fa fa-magnifying-glass-chart" size="3x" inverse />
-                        </div>
-                        <div class="col mt-2">
-                            <h5>Plataforma PeelAI: Interpretabilidade de Modelos</h5>
-                            <small>
-                                Entenda seus modelos por meio de ferramentas que evidenciam o <em>porquê</em> por trás de cada resultado obtido.
-                            </small>
-                        </div>
-                    </div>
-                </b-card>
-                <!-- 
-                <b-card class="clickable m-1" role="button" @click="navigate('new-visualization')">
-                    <div class="row">
-                        <div class="rounded-option bg-dark">
-                            <font-awesome-icon icon="fa fa-balance-scale" size="3x" inverse />
-                        </div>
-                        <div class="col mt-2">
-                            <h5>Plataforma PulpAI: Justiça de Modelos</h5>
-                            <small>
-                                Compreenda se seu modelo, aplicado numa base de dados, está sendo justo com as diferentes classes rotuladas.
-                            </small>
-                        </div>
-                    </div>
-                </b-card> 
-                -->
-                
                 <!--
                 <b-card class="clickable m-1">
                     <div class="row">
@@ -152,15 +131,14 @@
             </div>
         </div>
         <div class="row mt-3">
+
             <div class="col-md-12 custom-table">
                 <b-card>
                     <h5>Ou você quer editar algo existente?</h5>
-
-                    <form class="form-inline">
-                        <label class="sr-only" for="type">{{ $tc('common.type') }}</label>
-                        <select v-model="typeFilter" class="form-control w-25 pt-0">
-                            <option selected value="">
-                            </option>
+                    <form class="d-flex flex-row align-items-center flex-wrap">
+                        <label class="sr-only" for="type">{{ $t('common.type') }}</label>
+                        <select v-model="typeFilter" class="form-select w-25">
+                            <option selected value="" />
                             <option value="DATA_EXPLORER">
                                 {{ $t('dataExplorer.experiments.DATA_EXPLORER') }}
                             </option>
@@ -174,9 +152,9 @@
                                 {{ $t('dataExplorer.experiments.SQL') }}
                             </option>
                         </select>
-                        <label class="sr-only" for="search">{{ $tc('common.name') }}</label>
+                        <label class="sr-only" for="search">{{ $t('common.name') }}</label>
                         <input v-model="searchFilter" type="text" class="form-control m-2 w-25"
-                            :placeholder="$tc('common.name')">
+                            :placeholder="$t('common.name')">
                         <button ref="searchBtn" class="btn btn-secondary btn-sm mb-2 btn-spinner"
                             @click.prevent="search">
                             <font-awesome-icon icon="fa fa-search default-icon" /> {{ $t('actions.search') }}
@@ -189,15 +167,15 @@
                         name="workflowListDataExperiments">
                         <template #id="props">
                             <router-link v-if="props.row.type === 'DATA_EXPLORER'"
-                                :to="{ name: 'data-explorer-panel', params: { id: props.row.id, platform: props.row.platform.id } }">
+                                :to="{ name: 'data-explorer-panel', params: { id: props.row.id } }">
                                 {{ props.row.id }}
                             </router-link>
                             <router-link v-if="props.row.type === 'MODEL_BUILDER'"
-                                :to="{ name: 'model-design', params: { id: props.row.id, platform: props.row.platform.id } }">
+                                :to="{ name: 'model-design', params: { id: props.row.id } }">
                                 {{ props.row.id }}
                             </router-link>
                             <router-link v-if="props.row.type === 'VIS_BUILDER'"
-                                :to="{ name: 'visualization-design', params: { id: props.row.id, platform: props.row.platform.id } }">
+                                :to="{ name: 'visualization-design', params: { id: props.row.id } }">
                                 {{ props.row.id }}
                             </router-link>
                             <router-link v-if="props.row.type === 'SQL'"
@@ -214,15 +192,15 @@
                         </template>
                         <template #name="props">
                             <router-link v-if="props.row.type === 'DATA_EXPLORER'"
-                                :to="{ name: 'data-explorer-panel', params: { id: props.row.id, platform: props.row.platform.id } }">
+                                :to="{ name: 'data-explorer-panel', params: { id: props.row.id } }">
                                 {{ props.row.name }}
                             </router-link>
                             <router-link v-if="props.row.type === 'MODEL_BUILDER'"
-                                :to="{ name: 'model-design', params: { id: props.row.id, platform: props.row.platform.id } }">
+                                :to="{ name: 'model-design', params: { id: props.row.id } }">
                                 {{ props.row.name }}
                             </router-link>
                             <router-link v-if="props.row.type === 'VIS_BUILDER'"
-                                :to="{ name: 'visualization-design', params: { id: props.row.id, platform: props.row.platform.id } }">
+                                :to="{ name: 'visualization-design', params: { id: props.row.id } }">
                                 {{ props.row.name }}
                             </router-link>
                             <router-link v-if="props.row.type === 'SQL'"
@@ -231,13 +209,7 @@
                             </router-link>
                         </template>
                         <template #updated="props">
-                            {{ props.row.updated | formatJsonDate }}
-                        </template>
-                        <template #actions="props" class="text-center">
-                            <button class="btn btn-sm btn-danger" :title="$t('actions.delete')"
-                                @click="remove(props.row)">
-                                <font-awesome-icon icon="trash" />
-                            </button>
+                            {{ $filters.formatJsonDate(props.row.updated) }}
                         </template>
                     </v-server-table>
                     <div v-show="totalRecords === 0">
@@ -250,7 +222,8 @@
 </template>
 <script>
 import axios from 'axios';
-import Notifier from '../../mixins/Notifier.js';
+import Notifier from '@/mixins/Notifier.js';
+import DataTableBuilder from '@/data-table-builder.js';
 
 let tahitiUrl = import.meta.env.VITE_TAHITI_URL;
 const META_PLATFORM_SLUG = 'meta';
@@ -259,7 +232,59 @@ export default {
     mixins: [Notifier],
     data() {
         const self = this;
+        const dtBuilder = new DataTableBuilder(this.$t)
+            .columns(['id',
+                'name',
+                'user',
+                'type',
+                'updated',
+                'version',
+                'actionsx'])
+            .headings({
+                id: 'ID',
+                name: this.$t('common.name'),
+                user: this.$t('common.user.name'),
+                type: this.$t('common.type'),
+                updated: this.$t('common.updated'),
+                version: this.$t('common.version'),
+                actions: this.$t('common.action', 2)
+            })
+            .sortable('name', 'id', 'updated')
+            .filterable('name')
+            .saveState(true)
+            .perPageValues([])
+            .requestFunction(async function (data) {
+                self.typeFilter = data.customQueries?.typeFilter;
+                data.sort = data.orderBy;
+                data.asc = data.ascending === 1 ? 'true' : 'false';
+                data.size = 5;
+                data.name = data.query;
+                data.platform = META_PLATFORM_SLUG;
+                data.types = self.typeFilter;
+
+                data.fields = 'id,name,platform,updated,user,version,description,type';
+                data.enabled = 1;
+
+                let url = `${tahitiUrl}/workflows`;
+                try {
+                    const resp = await axios.get(url, { params: data });
+                    self.totalRecords = resp.data.pagination.total;
+                    return {
+                        data: resp.data.data,
+                        count: resp.data.pagination.total,
+                        customQueries: { typeFilter: self.typeFilter }
+                    };
+                } catch (e) {
+                    self.error(e);
+                    return {
+                        data: [], count: 0
+                    };
+                }
+            }
+            );
+
         return {
+            ...dtBuilder.build(),
             totalRecords: 0,
             searchFilter: null,
             typeFilter: null,
@@ -270,7 +295,6 @@ export default {
                 'type',
                 'updated',
                 'version',
-                'actions',
             ],
             options: {
                 hidePerPageSelect: true,
@@ -282,12 +306,11 @@ export default {
                 dateColumns: ['updated'],
                 headings: {
                     id: 'ID',
-                    name: this.$tc('common.name'),
-                    user: this.$tc('common.user.name'),
-                    type: this.$tc('common.type'),
-                    updated: this.$tc('common.updated'),
-                    version: this.$tc('common.version'),
-                    actions: this.$tc('common.action')
+                    name: this.$t('common.name'),
+                    user: this.$t('common.user.name'),
+                    type: this.$t('common.type'),
+                    updated: this.$t('common.updated'),
+                    version: this.$t('common.version'),
                 },
                 sortable: ['name', 'id', 'updated'],
                 //filterable: ['name', 'id'],
@@ -307,7 +330,7 @@ export default {
                     data.sort = data.orderBy;
                     data.asc = data.ascending === 1 ? 'true' : 'false';
                     data.size = 5;
-                    data.name = self.searchFilter //data.query;
+                    data.name = self.searchFilter; //data.query;
                     data.platform = META_PLATFORM_SLUG;
 
                     if (self.typeFilter && self.typeFilter.length) {
@@ -320,13 +343,11 @@ export default {
                     data.enabled = 1;
 
                     let url = `${tahitiUrl}/workflows`;
-                    self.$Progress.start();
                     return axios
                         .get(url, {
                             params: data
                         })
                         .then(resp => {
-                            self.$Progress.finish();
                             self.totalRecords = resp.data.pagination.total;
                             return {
                                 data: resp.data.data,
@@ -335,13 +356,12 @@ export default {
                         })
                         .catch(
                             function (e) {
-                                self.$Progress.finish();
                                 self.error(e);
                             }.bind(this)
                         ).finally(() => self.$refs.searchBtn.classList.add('btn-spinner'));
                 },
                 texts: {
-                    filter: this.$tc('common.filter'),
+                    filter: this.$t('common.filter'),
                     count: this.$t('common.pagerShowing'),
                     limit: this.$t('common.limit'),
                     noResults: this.$t('common.noData'),
@@ -360,10 +380,10 @@ export default {
             localStorage.setItem('experiments:list:type', this.typeFilter);
             localStorage.setItem('experiments:list:search', this.searchFilter);
 
-            this.$refs.workflowList.refresh()
+            this.$refs.workflowList.refresh();
         },
         navigate(name, query) {
-            this.$router.push({ name, query })
+            this.$router.push({ name, query });
         },
         clearFilters() {
             this.$refs.workflowList.setFilter('');
@@ -377,36 +397,36 @@ export default {
                 'SQL': 'fa-database',
             }[row.type];
         },
-        remove(workflow) {
-            this.confirm(
-                this.$t('actions.delete'),
-                this.$t('messages.doYouWantToDelete'),
-                async () => {
-                    this.$Progress.start();
-                    try {
-                        await axios.delete(`${tahitiUrl}/workflows/${workflow.id}`);
-                        this.success(
-                            this.$t('messages.successDeletion', {
-                                what: this.$tc('titles.workflow', 1)
-                            })
-                        );
-                        this.$refs.workflowList.getData();
-                    } catch (e) {
-                        this.error(e);
-                    } finally {
-                        this.$Progress.finish();
-                    }
-                }
-            );
+        handleSelectType(ev) {
+            const table = this.$refs.workflowList;
+            table.setCustomQuery({ typeFilter: ev.target.value });
+            table.getData();
+
         }
-    },
-}
+    }
+};
 </script>
 <style scoped>
-.custom-table>>>.VueTables .row:first-child {
+.custom-table :deep(.VueTables .row:first-child) {
     margin: initial !important;
     background-color: white;
     padding-top: 0;
+}
+
+.custom-table :deep(.VueTables .row:first-child) {
+    margin: initial !important;
+    background-color: white;
+    padding-top: 0;
+}
+
+.rounded-option {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 10px;
+    width: 80px;
+    height: 80px;
+    border-radius: 40px;
 }
 
 .rounded-option {

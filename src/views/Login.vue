@@ -5,10 +5,10 @@
                 <div class="brand" />
                 <div class="card fat ">
                     <div class="card-header">
-                        <h4 class="card-title float-left">
+                        <h4 class="card-title float-start">
                             {{$t('titles.login')}}
                         </h4>
-                        <div class="float-right navbar-brand logo" style="width:32px; margin:0" />
+                        <div class="float-end navbar-brand logo" style="width:32px; margin:0" />
                     </div>
                     <div class="card-body">
                         <form @submit.prevent="login">
@@ -22,7 +22,7 @@
                             <div class="form-group">
                                 <label for="password">
                                     {{$t('common.password')}}:
-                                    <router-link class="float-right" :to="{name: 'reset_password'}">
+                                    <router-link class="float-end" :to="{name: 'reset_password'}">
                                         {{$t('common.forgotPassword')}}</router-link>
                                 </label>
                                 <div style="position:relative">
@@ -37,9 +37,9 @@
 
                             <div class="form-group">
                                 <label>
-                                    <b-check v-model="rememberPassword">
+                                    <b-form-checkbox v-model="rememberPassword">
                                         {{$t('common.rememberMe')}}
-                                    </b-check>
+                                    </b-form-checkbox>
                                 </label>
                             </div>
 
@@ -58,7 +58,7 @@
                         </form>
                         <div v-if="openIdEnabled">
                             <div class="or">
-                                <h2><span>{{$tc('common.or').toUpperCase()}}</span></h2>
+                                <h2><span>{{$t('common.or').toUpperCase()}}</span></h2>
                             </div>
                             <div class="openid-logo" />
                             <button class="btn btn-outline-primary w-100" @click="useOpenId">
@@ -101,7 +101,7 @@ export default {
     methods: {
         useOpenId() {
             this.$openIdService.login().catch(e =>
-                this.error(e))
+                this.error(e));
         },
         login: function () {
             let thornUrl = import.meta.env.VITE_THORN_URL;

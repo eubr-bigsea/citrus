@@ -4,7 +4,7 @@
             <h1 class="templatePage-title" data-test="title">
                 {{$t('pipeline.template.pipelineTemplates')}}
             </h1>
-            <button class="btn btn-primary btn-lemonade-primary float-left ml-2" data-test="addTemplateBtn" @click="openAddModal">
+            <button class="btn btn-primary btn-lemonade-primary float-left ms-2" data-test="addTemplateBtn" @click="openAddModal">
                 <font-awesome-icon icon="fa fa-plus" /> {{$t('actions.addItem')}}
             </button>
         </div>
@@ -26,7 +26,7 @@
                             {{props.row.description === '' ? '-' : props.row.description}}
                         </template>
                         <template #steps="props">
-                            <div :id="`trigger-${props.row.id}`" class="ml-1 btn btn-sm btn-secondary">
+                            <div :id="`trigger-${props.row.id}`" class="ms-1 btn btn-sm btn-secondary">
                                 <font-awesome-icon icon="info-circle" />
                             </div>
                             <b-popover :target="`trigger-${props.row.id}`" triggers="hover" data-test="templatePipelineStepsInfo">
@@ -106,10 +106,10 @@ export default {
                 },
                 headings: {
                     id: 'ID',
-                    name: this.$tc('common.name'),
-                    description: this.$tc('common.description'),
-                    steps: this.$tc('titles.step', 2),
-                    actions: this.$tc('common.action', 2)
+                    name: this.$t('common.name'),
+                    description: this.$t('common.description'),
+                    steps: this.$t('titles.step', 2),
+                    actions: this.$t('common.action', 2)
                 },
                 sortable: ['id', 'name'],
                 filterable: ['name'],
@@ -123,7 +123,7 @@ export default {
                 preserveState: true,
                 saveState: true,
                 texts: {
-                    filter: this.$tc('common.filter'),
+                    filter: this.$t('common.filter'),
                     count: this.$t('common.pagerShowing'),
                     limit: this.$t('common.limit'),
                     noResults: this.$t('common.noData'),

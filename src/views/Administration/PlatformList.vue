@@ -1,42 +1,42 @@
 <template>
-    <div>
-        <div class="title">
-            <div class="d-flex justify-content-between align-items-center">
-                <h1>{{$tc('titles.platform', 2)}}</h1>
-                <router-link :to="{name: 'addPlatform'}" class="btn btn-primary btn-lemonade-primary">
-                    <font-awesome-icon icon="fa fa-plus" /> {{$t('actions.addItem')}}
-                </router-link>
+    <main>
+        <div class="d-flex justify-content-between align-items-center pb-2 mb-2 border-bottom">
+            <h1>{{$t('titles.platform', 2)}}</h1>
+            <router-link :to="{ name: 'addPlatform' }" class="btn btn-primary btn-lemonade-primary">
+                <font-awesome-icon icon="fa fa-plus" /> {{$t('actions.addItem')}}
+            </router-link>
+        </div>
+        <div class="card">
+            <div class="card-body">
+                <v-server-table ref="platformList" :columns="columns" :options="options" name="platformList">
+                    <template #id="props">
+                        <router-link :to="{ name: 'editPlatform', params: { id: props.row.id } }">
+                            {{props.row.id}}
+                        </router-link>
+                    </template>
+                    <template #name="props">
+                        <router-link :to="{ name: 'editPlatform', params: { id: props.row.id } }">
+                            {{props.row.name}}
+                        </router-link>
+                    </template>
+                    <template #enabled="props">
+                        {{$t(props.row.enabled ? 'common.yes' : 'common.no')}}
+                    </template>
+                    <template #plugin="props">
+                        {{$t(props.row.plugin ? 'common.yes' : 'common.no')}}
+                    </template>
+                    <template #actions="props">
+                        <button class="btn btn-sm btn-danger" @click="remove(props.row.id)">
+                            <font-awesome-icon icon="trash" />
+                        </button>
+                    </template>
+                    <template #version="props">
+                        {{props.row.version}}
+                    </template>
+                </v-server-table>
             </div>
         </div>
-
-        <v-server-table ref="platformList" :columns="columns" :options="options"
-                        name="platformList">
-            <template #id="props">
-                <router-link :to="{name: 'editPlatform', params: {id: props.row.id}}">
-                    {{props.row.id}}
-                </router-link>
-            </template>
-            <template #name="props">
-                <router-link :to="{name: 'editPlatform', params: {id: props.row.id}}">
-                    {{props.row.name}}
-                </router-link>
-            </template>
-            <template #enabled="props">
-                {{$tc(props.row.enabled ? 'common.yes': 'common.no')}}
-            </template>
-            <template #plugin="props">
-                {{$tc(props.row.plugin ? 'common.yes': 'common.no')}}
-            </template>
-            <template #actions="props">
-                <button class="btn btn-sm btn-light" @click="remove(props.row.id)">
-                    <font-awesome-icon icon="trash" />
-                </button>
-            </template>
-            <template #version="props">
-                {{props.row.version}}
-            </template>
-        </v-server-table>
-    </div>
+    </main>
 </template>
 
 <script>
@@ -54,26 +54,26 @@ export default {
             columns: ['id', 'slug', 'name', 'description', 'enabled', 'plugin', 'version'],
             options: {
                 debounce: 800,
-                skin: 'table-sm table table-hover',
+                skin: 'table table-hover',
                 columnClasses: { actions: 'th-10' },
                 headings: {
                     id: 'ID',
-                    name: this.$tc('common.name'),
-                    description: this.$tc('common.description'),
-                    plugin: this.$tc('common.plugin'),
-                    slug: this.$tc('common.slug'),
-                    version: this.$tc('common.version'),
-                    enabled: this.$tc('common.enabled'),
-                    actions: this.$tc('common.action', 2)
+                    name: this.$t('common.name'),
+                    description: this.$t('common.description'),
+                    plugin: this.$t('common.plugin'),
+                    slug: this.$t('common.slug'),
+                    version: this.$t('common.version'),
+                    enabled: this.$t('common.enabled'),
+                    actions: this.$t('common.action', 2)
                 },
                 sortable: ['name', 'id', 'slug',],
                 //filterable: ['name', 'id', 'description'],
                 filterable: false,
                 sortIcon: {
-                    base: 'fa fas',
-                    is: 'fa-sort ml-10',
-                    up: 'fa-sort-amount-up',
-                    down: 'fa-sort-amount-down'
+                    base: 'sort-base',
+                    is: 'sort-is ms-10',
+                    up: 'sort-up',
+                    down: 'sort-down'
                 },
                 preserveState: true,
                 saveState: true,
@@ -89,19 +89,19 @@ export default {
                     data['all'] = 'true';
 
                     let url = `${tahitiUrl}/platforms`;
-                    this.$Progress.start();
                     try {
                         const resp = await axios.get(url, { params: data });
-                        return resp.data;
+                        return {
+                            data: resp.data.data,
+                            count: resp.data.pagination.total
+                        };
                     } catch (e) {
                         this.error(e);
-                    } finally {
-                        this.$Progress.finish();
                     }
 
                 },
                 texts: {
-                    filter: this.$tc('common.filter'),
+                    filter: this.$t('common.filter'),
                     count: this.$t('common.pagerShowing'),
                     limit: this.$t('common.limit'),
                     noResults: this.$t('common.noData'),
@@ -130,7 +130,7 @@ export default {
                         .then(() => {
                             self.success(
                                 self.$t('messages.successDeletion', {
-                                    what: this.$tc('titles.platform', 1)
+                                    what: this.$t('titles.platform', 1)
                                 })
                             );
                             self.$refs.platformList.refresh();

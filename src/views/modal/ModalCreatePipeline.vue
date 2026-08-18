@@ -1,7 +1,7 @@
 <template>
-    <b-modal ref="addModal" 
-             :title="$t('pipeline.list.pipelineCreation')" 
-             size="lg" 
+    <b-modal ref="addModal"
+             :title="$t('pipeline.list.pipelineCreation')"
+             size="lg"
              hide-footer
              scrollable
              data-test="addModal"
@@ -10,7 +10,7 @@
             <div v-if="wizardStep === 1" class="wizard-stepBox">
                 <div class="wizard-header">
                     <div class="wizard-title">
-                        <font-awesome-icon class="mr-1" icon="fa fa-file" />
+                        <font-awesome-icon class="me-1" icon="fa fa-file" />
                         {{$t('pipeline.list.generalInfo')}}
                     </div>
                     <div>
@@ -19,13 +19,13 @@
                 </div>
                 <div class="position-relative">
                     <label class="wizard-label" for="identificador">{{$t('common.name')}}</label>
-                    <input id="identificador" 
-                           v-model="pipelineName" 
+                    <input id="identificador"
+                           v-model="pipelineName"
                            class="wizard-input"
                            type="text"
-                           maxlength="100" 
+                           maxlength="100"
                            :placeholder="$t('pipeline.list.pipelineName')"
-                           data-test="input" 
+                           data-test="input"
                            @input="handleInput">
                     <div v-if="invalidInputLength" class="wizard-invalid-length" data-test="invalidInputLength">
                         - {{$t('pipeline.list.pipelineNameMinLength')}}
@@ -33,9 +33,9 @@
                 </div>
 
                 <label class="wizard-label" for="descricao">{{$t('common.description')}}</label>
-                <textarea id="descricao" 
+                <textarea id="descricao"
                           v-model="pipelineDescription"
-                          class="wizard-textarea" 
+                          class="wizard-textarea"
                           type="text"
                           maxlength="200"
                           data-test="textarea"
@@ -50,14 +50,14 @@
             <div v-if="wizardStep === 2" class="wizard-stepBox">
                 <div class="wizard-header">
                     <div class="wizard-title">
-                        <font-awesome-icon class="mr-1" icon="fa fa-folder" />
+                        <font-awesome-icon class="me-1" icon="fa fa-folder" />
                         {{$t('titles.template')}}
                     </div>
                     <div>
                         {{$t('titles.step', 1)}} 2 {{$t('titles.of', 1)}} 2
                     </div>
                 </div>
-                
+
                 {{$t('pipeline.list.wantToUseTemplate')}}
                 <b-form-select v-model="selectedTemplate" :options="templateOptions" data-test="template-select" class="mt-1 mb-1" />
 
@@ -71,7 +71,7 @@
                                 <span class="left">{{$t('common.description')}}:</span><span class="right-description">{{findTemplate().description}}</span>
                             </div>
                             <div class="wizard-infos-body-column">
-                                <span class="left">{{$t('titles.step', 2)}}:</span> 
+                                <span class="left">{{$t('titles.step', 2)}}:</span>
                                 <b-container class="wizard-steps-table">
                                     <b-row class="wizard-steps-header">
                                         <b-col>
@@ -113,7 +113,7 @@
             <div v-if="wizardStep === 3" class="wizard-stepBox">
                 <div class="wizard-header">
                     <div class="wizard-title">
-                        <font-awesome-icon class="mr-1" icon="fa fa-square-check" />
+                        <font-awesome-icon class="me-1" icon="fa fa-square-check" />
                         {{$t('pipeline.list.creationProcessCompleted')}}
                     </div>
                 </div>
@@ -134,15 +134,11 @@
 
 <script>
 import axios from 'axios';
-import { BModal } from 'bootstrap-vue';
 import Notifier from '../../mixins/Notifier.js';
 
 let tahitiUrl = import.meta.env.VITE_TAHITI_URL;
 
 export default {
-    components: {
-        BModal,
-    },
     mixins: [Notifier],
     props: {
         pipelineTemplates: { type: Array, default: () => [] },

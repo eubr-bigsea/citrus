@@ -20,7 +20,7 @@
                     <font-awesome-icon icon="fa fa-history" /> Histórico
                 </button>
                 <button class="btn btn-sm btn-success" :disabled="!isDirty" @click="saveChanges">
-                    <font-awesome-icon icon="fa fa-save" class="mr-1" /> {{ $tc('actions.save') }}
+                    <font-awesome-icon icon="fa fa-save" class="mr-1" /> {{ $t('actions.save') }}
                 </button>
 
             </div>
@@ -46,8 +46,8 @@
                                 <div>Atualizado em:</div>
                             </div>
                             <div>
-                                <div>{{ pipeline.created | formatJsonDate }}</div>
-                                <div>{{ pipeline.updated | formatJsonDate }}</div>
+                                <div>{{ $filters.formatJsonDate(pipeline.created) }}</div>
+                                <div>{{ $filters.formatJsonDate(pipeline.updated) }}</div>
                             </div>
                         </div>
                         <div class="mt-4">
@@ -196,7 +196,7 @@ import EditPipelineStep from '../components/EditPipelineStep.vue';
 import ModalAddPipelineStep from './modal/ModalAddPipelineStep.vue';
 import PipelineStepScheduler from '../components/PipelineStepScheduler.vue';
 import axios from 'axios';
-import draggable from 'vuedraggable';
+import { VueDraggableNext } from 'vue-draggable-next'
 import InputHeader from '../components/InputHeader.vue';
 import TextAreaCustom from '../components/TextAreaCustom.vue';
 import Notifier from '../mixins/Notifier.js';
@@ -205,7 +205,7 @@ let tahitiUrl = import.meta.env.VITE_TAHITI_URL;
 
 export default {
     components: {
-        draggable,
+        draggable: VueDraggableNext,
         InputHeader,
         TextAreaCustom,
         EditPipelineStep,

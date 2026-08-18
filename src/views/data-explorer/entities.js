@@ -104,13 +104,13 @@ class Workflow {
         };
         const realOp = op || new Operation({ id: 2110 });
         return realOp.createTask({
-            name: i18n.$tc('dataExplorer.sampleData') || realOp.name,
+            name: i18n.$t('dataExplorer.sampleData') || realOp.name,
             forms, display_order
         });
     }
     static buildDataExplorer(name, ds, i18n) {
         const dataReader = new Task({
-            name: i18n.$tc('dataExplorer.readData'),
+            name: i18n.$t('dataExplorer.readData'),
             operation: new Operation({ id: DATA_READER }),
             display_order: 0,
         });
@@ -148,7 +148,7 @@ class Workflow {
     }
     static buildModelBuilder(name, ds, labelAttribute, method, taskType, i18n) {
         const dataReader = new Task({
-            name: i18n.$tc('dataExplorer.readData'),
+            name: i18n.$t('dataExplorer.readData'),
             operation: new Operation({ id: DATA_READER }),
             display_order: 0,
         });
@@ -167,7 +167,7 @@ class Workflow {
     }
     static buildVisualizationBuilder(name, ds, type, method, i18n) {
         const dataReader = new Task({
-            name: i18n.$tc('dataExplorer.readData'),
+            name: i18n.$t('dataExplorer.readData'),
             operation: new Operation({ id: DATA_READER }),
             display_order: 0,
         });
@@ -252,7 +252,7 @@ class VisualizationBuilderWorkflow extends Workflow {
         ];
         const pairs = new Map(keyPairs);
         this.tasks = this.tasks.filter(task => {
-            return pairs.has(task.operation.slug)
+            return pairs.has(task.operation.slug);
         });
         this.tasks.forEach((task) => {
             if (pairs.has(task.operation.slug)) {
@@ -322,7 +322,7 @@ class SqlBuilderWorkflow extends Workflow {
                     opened: {value: true},
                     code_libraries: { value: [] },
                     ... cell.forms
-                }
+                };
             }
         });
     }
@@ -657,9 +657,11 @@ class Visualization {
         smoothing = { value: true }, palette = { value: null },
         color_scale = { value: null },
         x = { value: [] }, y = { value: [] },
-        x_axis = null, y_axis = null, title = { value: null },
-        hole = null, text_position = null, text_info = null,
-        right_margin = null, left_margin = 0, top_margin = 0, bottom_margin = 0,
+        x_axis = null, y_axis = null,
+        title = { value: null },
+        hole = { value: null },
+        right_margin = {value: null}, left_margin = {value: 0},
+        top_margin = {value: 0}, bottom_margin = {value: 0},
         auto_margin = { value: true }, template = { value: null },
         blackWhite = { value: false },
         subgraph = { value: null },
@@ -699,6 +701,9 @@ class Visualization {
         hover_data = { value: null },
 
 
+        text_position = { value: null },
+        text_info = { value: null },
+
     },
     ) {
         this.filter = filter;
@@ -710,9 +715,9 @@ class Visualization {
         this.latitude = latitude;
         this.longitude = longitude;
 
-        this.locations = locations
-        this.geo_json_url = geo_json_url
-        this.feature_id_key = feature_id_key
+        this.locations = locations;
+        this.geo_json_url = geo_json_url;
+        this.feature_id_key = feature_id_key;
 
         this.zoom = zoom;
         this.style = style;
@@ -772,7 +777,7 @@ class XDimension {
         group_others = true, sorting = 'NATURAL' }) {
         this.binning = binning;  // equal_interval, fixed_size, none, categorical
         this.bins = bins;
-        this.binSize = binSize;
+        this.bin_size = binSize;
         this.emptyBins = emptyBins; //zeros, link, interrupt
         this.multiplier = multiplier; // A number to multiply by
         this.decimal_places = decimal_places;

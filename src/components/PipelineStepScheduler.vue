@@ -291,7 +291,7 @@
 <script setup>
 import { reactive, computed, watch, toRefs } from 'vue';
 import { ref, onMounted } from 'vue';
-import { useI18n } from 'vue-i18n-bridge';
+import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
 

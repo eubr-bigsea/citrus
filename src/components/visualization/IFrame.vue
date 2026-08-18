@@ -12,5 +12,5 @@
 import VisualizationMixin from "./VisualizationMixin.vue";
 export default {
     mixins: [VisualizationMixin],
-}
+};
 </script>

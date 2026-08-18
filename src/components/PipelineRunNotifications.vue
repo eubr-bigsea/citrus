@@ -1,10 +1,10 @@
 <template>
     <div class="small-notifications scroll-area" :style="{'height': props.height}">
         <template v-if="props.notifications.length">
-            <div v-for="notification in props.notifications">
-                {{ notification.date.substring(0, 19) | formatJsonDate('dd/MM/yyyy HH:mm:ss') }} #{{ notification.id }}:
-                Etapa/passo {{ notification.order }}:
-                {{ $tc(`status.${notification.status}`) }}
+            <div v-for="notification,i in props.notifications" :key="i">
+                {{$filters.formatJsonDate(notification.date.substring(0, 19) , 'dd/MM/yyyy HH:mm:ss')}} #{{notification.id}}:
+                Etapa/passo {{notification.order}}:
+                {{$t(`status.${notification.status}`)}}
             </div>
         </template>
         <template v-else>
@@ -15,8 +15,10 @@
 <script setup>
 const props = defineProps({
     notifications: { type: Array, required: true },
-    height: {},
-})
+    height: {
+        type: String, default: "100%"
+    },
+});
 </script>
 <style scoped>
 .small-notifications>div {

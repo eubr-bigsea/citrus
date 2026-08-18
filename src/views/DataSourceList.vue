@@ -1,15 +1,16 @@
 <template>
     <main role="main">
         <div class="d-flex justify-content-between align-items-center pb-2 mb-2 border-bottom">
-            <h1>{{$tc('titles.dataSource', 2)}}</h1>
-            <router-link v-if="hasAnyPermission(['DATA_SOURCE_EDIT']) || isAdmin" :to="{ name: 'addDataSource' }"
-                class="btn btn-success btn-lemonade-primary " id="add-data-source">
+            <h1>{{$t('titles.dataSource', 2)}}</h1>
+            <router-link v-if="hasAnyPermission(['DATA_SOURCE_EDIT']) || isAdmin" id="add-data-source"
+                         :to="{ name: 'addDataSource' }" class="btn btn-success btn-lemonade-primary ">
                 <font-awesome-icon icon="fa fa-plus" /> {{$t('actions.addItem')}}
             </router-link>
         </div>
         <div class="card">
             <div class="card-body">
-                <v-server-table ref="dataSourceList" :columns="columns" :options="options" name="dataSourceList">
+                <v-server-table ref="dataSourceList" :columns="columns" :options="options" name="dataSourceList"
+                                :data="tableData" :size="tableDataSize" @on-load="handleLoad">
                     <template #id="props">
                         <router-link :to="{ name: 'editDataSource', params: { id: props.row.id } }">
                             {{props.row.id}}
@@ -24,68 +25,75 @@
                         <div class="btn-group" role="group">
                             <button v-if="visualizable(props.row)" :title="$t('common.preview')"
                                     class="btn btn-spinner btn-primary btn-sm" @click.stop="handlePreview(props.row.id)">
-                                <font-awesome-icon icon="spinner" pulse class="icon" />
-                                <font-awesome-icon icon="fa-eye" />
+                                <font-awesome-icon v-if="showPreview === props.row.id" icon="fa-spinner" pulse />
+                                <font-awesome-icon v-else icon="fa-eye" />
                             </button>
                             <a :href="getDownloadLink(props.row)" class="btn btn-sm btn-info"
                                :title="$t('actions.download')" target="_blank">
                                 <font-awesome-icon icon="download" />
                             </a>
-                            <a v-if="props.row.format === 'PARQUET'" :href="getDownloadLink(props.row, true)" class="btn btn-sm btn-secondary"
-                               :title="$t('actions.download') + ' CSV'" target="_blank">
+                            <a v-if="props.row.format === 'PARQUET'" :href="getDownloadLink(props.row, true)"
+                               class="btn btn-sm btn-secondary" :title="$t('actions.download') + ' CSV'" target="_blank">
                                 <font-awesome-icon icon="download" /> CSV
                             </a>
                             <button v-if="loggedUserIsOwnerOrAdmin(props.row)" class="btn btn-sm btn-danger"
-                                    @click="remove(props.row.id)">
+                                    :title="$t('actions.delete')" @click="remove(props.row.id)">
                                 <font-awesome-icon icon="trash" />
                             </button>
                         </div>
                     </template>
                     <template #created="props">
-                        {{props.row.created | formatJsonDate}}
+                        {{$filters.formatJsonDate(props.row.created)}}
                     </template>
                     <template #tags="props">
                         <div v-if="props.row.tags">
-                            <div v-for="tag in (props.row.tags || '').split(',')" :key="tag"
-                                 class="badge badge-info mr-1">
+                            <div v-for="tag in (props.row.tags).split(',')" :key="tag"
+                                 class="badge bg-light text-dark px-2 py-1  me-1">
                                 {{tag}}
                             </div>
                         </div>
                     </template>
+                    <!--
+                     -->
                 </v-server-table>
-                <modal-preview-data-source ref="previewWindow" />
+                <modal-preview-data-source v-if="showPreview"
+                                           ref="previewWindow" table-class="table-striped table-sm"
+                                           @hidden="showPreview = null" />
             </div>
         </div>
     </main>
 </template>
 
 <script>
-import { ref } from 'vue';
-import { useI18n } from 'vue-i18n-bridge';
-import { mapGetters } from 'vuex';
+import { inject, ref, computed, nextTick } from 'vue';
+import { useI18n } from 'vue-i18n';
+import { mapGetters, useStore } from 'vuex';
 
-import Vue from 'vue';
 import axios from 'axios';
-import Notifier from '../notifier.js';
+import Notifier from '@/notifier.js';
 import ModalPreviewDataSource from './modal/ModalPreviewDataSource.vue';
 import DataTableBuilder from '../data-table-builder.js';
+import VServerTable from '@/components/VServerTable.vue';
 
 let limoneroUrl = import.meta.env.VITE_LIMONERO_URL;
 
 export default {
     components: {
-        ModalPreviewDataSource
+        ModalPreviewDataSource,
     },
     setup() {
+        const preventableModal = ref(false);
         const { t } = useI18n();
-        const store = Vue.prototype.$legacyStore;
+        const store = useStore();
         const user = store.getters.user;
-        const permissions = store.getters.userPermissions;
-        const isAdmin = permissions.indexOf('ADMINISTRATOR') >= 0;
-        const notifier = new Notifier(Vue.prototype.$snotify, t);
+        const isAdmin = user.roles.indexOf('admin') >= 0;
+        const notifier = new Notifier(inject('snotify'), t);
+        const tableData = [];
+        const tableDataSize = 0;
+        const showPreview = ref(false);
 
         //#region Listing
-        const reqFn = async (data) => {
+        const handleLoad = async (data) => {
             data.sort = data.orderBy;
             data.asc = data.ascending === 1 ? 'true' : 'false';
             data.size = data.limit;
@@ -100,9 +108,9 @@ export default {
                     count: resp.data.pagination.total
                 };
             } catch (e) {
-                Vue.prototype.$snotify.error(e);
+                notifier.error(e);
             }
-        }
+        };
 
         const columns = [
             'id',
@@ -128,26 +136,32 @@ export default {
             })
             .sortable('name', 'id', 'created')
             .filterable('name')
-            .requestFunction(reqFn);
-            //#endregion
-            //#region Preview
+            .requestFunction(handleLoad);
+        //#endregion
+        //#region Preview
 
         const previewWindow = ref(null);
-        const handlePreview = (dataSource) => {
+        const handlePreview = async (dataSource) => {
             /**/
-            previewWindow.value.show(dataSource);
-        }
+            showPreview.value = dataSource;
+            nextTick(async () => {
+                const ok = await previewWindow.value.show(dataSource);
+                if (!ok){
+                    showPreview.value = null;
+                }
+            });
+        };
         //#endregion
         const loggedUserIsOwnerOrAdmin = (dataSource) => {
             return dataSource.user_id === user.id || isAdmin;
-        }
+        };
         const getPermissions = (permissions) => {
             return (
                 (permissions || []).map(p => { return p.permission; }).join(', ') || 'ALL');
-        }
+        };
 
         const dataSourceList = ref(null);
-        const remove = (dataSourceId) => {
+        const remove = async (dataSourceId) => {
             notifier.confirm(
                 t('actions.delete'),
                 t('messages.doYouWantToDelete'),
@@ -166,11 +180,11 @@ export default {
                     }
                 }
             );
-        }
+        };
         const getDownloadLink = (row, toCSV) => {
-            return `${limoneroUrl}/datasources/public/${row.id}/download?token=${row.download_token}` + 
+            return `${limoneroUrl}/datasources/public/${row.id}/download?token=${row.download_token}` +
                 (toCSV ? '&to_csv=true' : '');
-        }
+        };
         const visualizable = (ds) => {
             return ['JDBC', 'CSV', 'HIVE', 'PARQUET', 'ICEBERG'].includes(ds.format);
         }
@@ -184,7 +198,10 @@ export default {
             getPermissions,
             getDownloadLink,
             remove,
-            visualizable
+            visualizable,
+            preventableModal,
+            tableData, tableDataSize, handleLoad,
+            showPreview
         };
     },
     computed: {

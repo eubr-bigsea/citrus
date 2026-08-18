@@ -1,39 +1,39 @@
 <template>
     <b-modal ref="modal" size="xl" hide-header>
         <b-tabs class="filter-field">
-            <b-tab :title="$tc('workflow.variables', 2)">
+            <b-tab :title="$t('workflow.variables', 2)">
                 <div class="row user-filter">
                     <div class="col-md-4 mt-4">
                         <div class="values pb-1 border">
                             <div v-for="(row, index) in items" :key="row.name" class="clear-fix item-list"
-                                :class="{ selected: selected && selected.index === row.index }"
-                                @click.prevent="select(row, index)">
-                                <small>{{ row.name }} <em v-if="!row.name">&lt;variável sem nome&gt;</em>
-                                    <span v-if="row.label">({{ row.label }})</span></small>
-                                <a class="float-right ml-1 bn btn-sm py-0 btn-light text-danger" href="#"
-                                    :title="$t('actions.delete')" @click.prevent.stop="remove($event, index)">
+                                 :class="{selected: selected && selected.index === row.index }"
+                                 @click.prevent="select(row, index)">
+                                <small>{{row.name}} <em v-if="! row.name">&lt;variável sem nome&gt;</em>
+                                    <span v-if="row.label">({{row.label}})</span></small>
+                                <a class="float-end ms-1 bn btn-sm py-0 btn-light text-danger" href="#"
+                                   :title="$t('actions.delete')" @click.prevent.stop="remove($event, index)">
                                     <font-awesome-icon icon="fa fa-minus-circle text-danger" />
                                 </a>
                             </div>
                         </div>
                         <button class="btn btn-success btn-sm mt-2" @click.prevent="add">
-                            <font-awesome-icon icon="fa fa-plus" /> {{ $t('actions.addItem') }}
+                            <font-awesome-icon icon="fa fa-plus" /> {{$t('actions.addItem')}}
                         </button>
                     </div>
                     <div class="col-md-8">
                         <div v-if="selected" class="form-filter ">
                             <div class="row">
                                 <div class="col-md-4">
-                                    <label>{{ $t('variables.name') }}:</label>
+                                    <label>{{$t('variables.name')}}:</label>
                                     <input v-model="selected.name" v-focus maxlength="40" autocomplete="off"
-                                        class="form-control">
+                                           class="form-control">
                                 </div>
                                 <div class="col-md-4">
                                     <label>{{ $t('variables.type') }}:</label>
                                     <select v-model="selected.type" class="form-control">
                                         <option />
                                         <option v-for="dt in dataTypes" :key="dt" :value="dt">
-                                            {{ $t('dataTypes.' + dt) }}
+                                            {{$t('dataTypes.' + dt)}}
                                         </option>
                                     </select>
                                 </div>
@@ -44,12 +44,12 @@
                                 </div>
                                 <template v-if="!simple">
                                     <div class="col-md-4">
-                                        <label>{{ $t('variables.label') }}:</label>
+                                        <label>{{$t('variables.label')}}:</label>
                                         <input v-model="selected.label" maxlength="40" autocomplete="off"
-                                            class="form-control">
+                                               class="form-control">
                                     </div>
                                     <div class="col-md-4">
-                                        <label>{{ $t('variables.multiplicity') }}:</label>
+                                        <label>{{$t('variables.multiplicity')}}:</label>
                                         <select v-model="selected.multiplicity" class="form-control" tabindex="0">
                                             <option value="0">
                                                 Opcional
@@ -66,18 +66,18 @@
                                         </select>
                                     </div>
                                     <div class="col-md-4">
-                                        <label>{{ $t('variables.index') }}:</label>
+                                        <label>{{$t('variables.index')}}:</label>
                                         <input v-model="selected.parameters.display_index" maxlength="4"
-                                            autocomplete="off" class="form-control w-50" type="number" min="0"
-                                            max="100">
+                                               autocomplete="off" class="form-control w-50" type="number" min="0"
+                                               max="100">
                                     </div>
                                 </template>
-                                    <div class="col-md-12">
-                                        <label>{{ $t('variables.description') }}:</label>
-                                        <textarea v-model="selected.description" autocomplete="off"
-                                            class="form-control form-control-sm" rows="3" />
-                                    </div>
-                                    <!--
+                                <div class="col-md-12">
+                                    <label>{{$t('variables.description')}}:</label>
+                                    <textarea v-model="selected.description" autocomplete="off"
+                                              class="form-control form-control-sm" rows="3" />
+                                </div>
+                                <!--
                                 <div class="col-md-12">
                                     <label>{{$t('variables.help')}}:</label>
                                     <textarea v-model="selected.help" maxlength="300" autocomplete="off"
@@ -110,9 +110,9 @@
                     </div>
                 </div>
             </b-tab>
-            <b-tab v-if="!simple" :title="$tc('titles.systemVariables', 2)">
+            <b-tab v-if="!simple" :title="$t('titles.systemVariables', 2)">
                 <div class="col-md-12 mt-1">
-                    <SystemVariables :other-variables="this.variables" />
+                    <SystemVariables :other-variables="variables" />
                 </div>
                 <p class="lead mark small bg-light p-3 m-2">
                     Variáveis de sistema são definidas pelo Lemonade e podem ser usadas no fluxo como qualquer outra
@@ -133,15 +133,18 @@
             tentará converter o "Valor-padrão" para o tipo especificado. Caso não seja
             possível, ocorrerá um erro durante a execução.
         </p>
-        <div slot="modal-footer" class="w-100 text-right">
-            <b-btn variant="primary" size="sm" class="mr-1 pl-5 pr-5" @click="okClicked">
-                {{ $t('common.ok') }}
-            </b-btn>
-        </div>
+        <template #modal-footer>
+            <div class="w-100 text-right">
+                <button class="btn btn-primary btn-sm me-1 ps-5 pe-5" @click="okClicked">
+                    {{$t('common.ok')}}
+                </button>
+            </div>
+        </template>
     </b-modal>
 </template>
 <script>
-import SystemVariables from '../SystemVariables.vue'
+
+import SystemVariables from '../SystemVariables.vue';
 
 export default {
     components: {
@@ -151,6 +154,7 @@ export default {
         items: { type: Array, default: () => [], required: true },
         simple: { type: Boolean, default: false }
     },
+    emits: ['confirm'],
     data() {
         return {
             variables: [
@@ -164,13 +168,13 @@ export default {
                 'BINARY',
             ],
             selected: null,
-
+            itemsCopy: this.items
         };
     },
     methods: {
         add() {
-            if (this.items === null) {
-                this.items = [];
+            if (this.itemsCopy === null) {
+                this.itemsCopy = [];
             }
             const value = {
                 name: '', description: '', help: '',
@@ -179,11 +183,11 @@ export default {
                 index: 0,
             };
             this.selected = value;
-            value.index = this.items.length;
-            this.items.push(value);
+            value.index = this.itemsCopy.length;
+            this.itemsCopy.push(value);
         },
         remove(e, index) {
-            this.items.splice(index, 1);
+            this.itemsCopy.splice(index, 1);
         },
         select(row, index) {
             row.index = index;
@@ -201,10 +205,13 @@ export default {
             this.$refs.modal.show();
         },
         okClicked() {
+            this.$emit('confirm', this.itemsCopy);
+            this.$emit('input', this.itemsCopy);
             this.$refs.modal.hide();
         },
     }
-}
+};
+
 </script>
 <style>
 div.values {

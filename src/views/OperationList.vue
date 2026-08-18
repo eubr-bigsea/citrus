@@ -6,7 +6,7 @@
                     <div class="row border-bottom border-primary p-2">
                         <div class="col-md-10">
                             <h2 class="title text-primary">
-                                {{$tc('titles.jobs', 2)}}
+                                {{$t('titles.jobs', 2)}}
                             </h2>
                         </div>
                     </div>
@@ -14,33 +14,7 @@
                         <div class="col-md-12">
                             <v-server-table ref="jobList" :data="tableData" :columns="columns" :options="options"
                                             name="jobList">
-                                <!--
-                    <template slot="id" v-slot="props">
-                        <router-link :to="{name: 'jobDetail', params: {platform: props.row.workflow.platform.id, id: props.row.id}}">{{props.row.id}}</router-link>
-                    </template>
-                    <template slot="name" v-slot="props">
-                        <router-link :to="{name: 'jobDetail', params: {platform: props.row.workflow.platform.id, id: props.row.id}}">{{props.row.name}}</router-link>
-                    </template>
-                    <template slot="actions" v-slot="props">
-                        <button class="btn btn-sm danger" @click="remove(props.row)" :title="$t('actions.delete')">
-                            <font-awesome-icon icon="trash"></font-awesome-icon>
-                        </button>
-                    </template>
-                    <template slot="status" v-slot="props">
-                        <div class="lemonade-job" :class="props.row.status.toLowerCase()">
-                            {{props.row.status}}
-                        </div>
-                    </template>
-                    <template slot="created" v-slot="props">
-                        {{props.row.created | formatJsonDate}}
-                    </template>
-                    <template slot="workflow" v-slot="props">
-                        <router-link :to="{name: 'editWorkflow', params: {'id': props.row.workflow.id, platform: props.row.workflow.platform.id}}">
-                            {{props.row.workflow.id}} - {{props.row.workflow.name}}
-                        </router-link>
-                    </template>
-                -->
-                                <template slot="platforms.name" #default="props">
+                                <template #platforms="props">
                                     {{props.row.platforms.map(plat => plat.name).join(", ")}}
                                 </template>
                                 <template #enabled="props">
@@ -79,24 +53,24 @@ export default {
                 },
                 headings: {
                     id: 'ID',
-                    actions: this.$tc('common.action', 2),
-                    name: this.$tc('common.name'),
+                    actions: this.$t('common.action', 2),
+                    name: this.$t('common.name'),
                     'user.name': this.$t('common.user.name'),
-                    'platforms.name': this.$tc('titles.platform', 2)
+                    'platforms.name': this.$t('titles.platform', 2)
                 },
                 sortable: ['name', 'id', 'created'],
                 sortIcon: {
-                    base: 'fa fas',
-                    is: 'fa-sort ml-10',
-                    up: 'fa-sort-amount-up',
-                    down: 'fa-sort-amount-down'
+                    base: 'sort-base',
+                    is: 'sort-is ms-10',
+                    up: 'sort-up',
+                    down: 'sort-down'
                 },
                 preserveState: true,
                 saveState: true,
                 filterable: ['name', 'album'],
                 requestFunction: this.load,
                 texts: {
-                    filter: this.$tc('common.filter'),
+                    filter: this.$t('common.filter'),
                     count: this.$t('common.pagerShowing'),
                     limit: this.$t('common.limit'),
                     noResults: this.$t('common.noData'),
@@ -115,13 +89,11 @@ export default {
             data.name = data.query;
             data.fields = FIELDS.join(',');
             data.disabled = 1;
-            this.$Progress.start();
             return axios
                 .get(`${tahitiUrl}/operations`, {
                     params: data
                 })
                 .then(resp => {
-                    this.$Progress.finish();
                     return { data: resp.data.data, count: resp.data.pagination.total };
                 })
                 .catch(
@@ -135,7 +107,6 @@ export default {
                 this.$t('actions.delete'),
                 this.$t('messages.doYouWantToDelete'),
                 () => {
-                    this.$Progress.start();
                     axios
                         .delete(`${tahitiUrl}/jobs/${job.id}`, {})
                         .then(() => {
@@ -145,11 +116,9 @@ export default {
                                 })
                             );
                             this.$refs.jobList.refresh();
-                            this.$Progress.finish();
                         })
                         .catch(
                             function (e) {
-                                this.$Progress.finish();
                                 this.dispatch('error', e);
                             }.bind(this)
                         );
@@ -160,16 +129,16 @@ export default {
 };
 </script>
 <style scoped>
-    .slide-leave-active,
-    .slide-enter-active {
-        transition: 0.5s;
-    }
+.slide-leave-active,
+.slide-enter-active {
+    transition: 0.5s;
+}
 
-    .slide-enter {
-        transform: translate(0, 100%);
-    }
+.slide-enter {
+    transform: translate(0, 100%);
+}
 
-    .slide-leave-to {
-        transform: translate(0, -100%);
-    }
+.slide-leave-to {
+    transform: translate(0, -100%);
+}
 </style>

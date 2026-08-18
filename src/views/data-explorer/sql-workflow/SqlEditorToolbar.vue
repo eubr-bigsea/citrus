@@ -43,8 +43,8 @@
                 <template #button-content>
                     <font-awesome-icon icon="fa fa-play" />
                 </template>
-                <b-dropdown-item href="#" @click="emit('on-execute', task.id, true)">Até esta célula (usando dados do cache)</b-dropdown-item>
-                <b-dropdown-item href="#" @click="emit('on-execute', task.id, false)">Até esta célula (sem uso de dados do cache)</b-dropdown-item>
+                <b-dropdown-item href="#" @click.prevent="emit('on-execute', task.id, true)">Até esta célula (usando dados do cache)</b-dropdown-item>
+                <b-dropdown-item href="#" @click.prevent="emit('on-execute', task.id, false)">Até esta célula (sem uso de dados do cache)</b-dropdown-item>
             </b-dropdown>
             <button class="btn btn-sm btn-outline-secondary" title="Fechar" @click="emit('on-toggle', task.id)">
                 <font-awesome-icon :icon="opened ? 'fa fa-compress' : 'fa fa-expand'" />

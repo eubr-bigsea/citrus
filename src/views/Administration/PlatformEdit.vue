@@ -4,7 +4,7 @@
             <div class="col">
                 <div>
                     <div class="d-flex justify-content-between align-items-center">
-                        <h1>{{$tc('titles.platform', 1)}}</h1>
+                        <h1>{{$t('titles.platform', 1)}}</h1>
                     </div>
 
                     <b-card no-body>
@@ -14,12 +14,12 @@
                                     <div v-if="platform.id" class="col-md-12 col-xg-12 mx-auto">
                                         <div class="row">
                                             <div class="col-md-6">
-                                                <label class="font-weight-bold">{{$tc('common.name')}}:</label>
+                                                <label class="font-weight-bold">{{$t('common.name')}}:</label>
                                                 <br>
                                                 {{platform.name}}
                                             </div>
                                             <div class="col-md-3">
-                                                <label class="font-weight-bold">{{$tc('common.slug')}}:</label>
+                                                <label class="font-weight-bold">{{$t('common.slug')}}:</label>
                                                 <br>{{platform.slug}}
                                             </div>
                                             <div class="col-md-3">
@@ -28,7 +28,7 @@
                                                 </b-form-checkbox>
                                             </div>
                                             <div class="col-md-12 mt-4">
-                                                <label class="font-weight-bold">{{$tc('common.description')}}:</label>
+                                                <label class="font-weight-bold">{{$t('common.description')}}:</label>
                                                 <br>{{platform.description}}
                                             </div>
                                             <template v-if="platform.plugin">
@@ -37,27 +37,27 @@
                                                     {{$t('message.platformIsPluginExplanation')}}
                                                 </div>
                                                 <div class="col-md-12">
-                                                    <label class="font-weight-bold">{{$tc('common.url')}}:</label>
+                                                    <label class="font-weight-bold">{{$t('common.url')}}:</label>
                                                     <br>{{platform.description}}
                                                 </div>
                                             </template>
                                         </div>
                                         <div class="row">
                                             <div class="col-md-12 mt-4 border-top pt-2">
-                                                <button class="btn btn-primary mr-1 btn-spinner" @click.stop="save">
+                                                <button class="btn btn-primary me-1 btn-spinner" @click.stop="save">
                                                     <font-awesome-icon icon="spinner" pulse class="icon" />
                                                     <font-awesome-icon icon="fa fa-save" />
-                                                    {{$tc('actions.save')}}
+                                                    {{$t('actions.save')}}
                                                 </button>
-                                                <router-link :to="{name: 'platforms'}" class="btn btn-secondary mr-1">
-                                                    {{$tc('actions.cancel')}}
+                                                <router-link :to="{name: 'platforms'}" class="btn btn-secondary me-1">
+                                                    {{$t('actions.cancel')}}
                                                 </router-link>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </b-tab>
-                            <b-tab :title="$tc('platform.subset', 2)">
+                            <b-tab :title="$t('platform.subset', 2)">
                                 <div class="row mt-4 mb-4">
                                     <div class="col-md-6">
                                         <label>Adicionar novo subconjunto de operações à plataforma:
@@ -81,7 +81,7 @@
                                                        class="form-control">
                                             </td>
                                             <td>
-                                                <button class="btn btn-primary btn-sm mr-1" :title="$t('actions.save')"
+                                                <button class="btn btn-primary btn-sm me-1" :title="$t('actions.save')"
                                                         @click="saveSubset(subset)">
                                                     {{$t('actions.save')}}
                                                 </button>
@@ -94,7 +94,7 @@
                                     </table>
                                 </div>
                             </b-tab>
-                            <b-tab :title="$tc('titles.operation', 2)" @click.prevent="loadOperations">
+                            <b-tab :title="$t('titles.operation', 2)" @click.prevent="loadOperations">
                                 <div class="row">
                                     <div class="col-md-2">
                                         <div class="alert mt-1 mb-2 alert-warning">
@@ -125,14 +125,14 @@
                                                 <thead class="thead-light">
                                                     <tr>
                                                         <th class="text-center" style="width: 80px">
-                                                            {{$tc('common.enabled',
-                                                                  1)}}
+                                                            {{$t('common.enabled',
+                                                                 1)}}
                                                         </th>
                                                         <th class="text-center" style="width: 80px">
-                                                            {{$tc('common.id', 1)}}
+                                                            {{$t('common.id', 1)}}
                                                         </th>
                                                         <th class="text-center">
-                                                            {{$tc('common.name', 1)}}
+                                                            {{$t('common.name', 1)}}
                                                         </th>
                                                         <th v-for="subset in platform.subsets" :key="subset.id"
                                                             class="subset text-center">
@@ -164,7 +164,7 @@
                                 </div>
                             </b-tab>
                             <!--
-                            <b-tab :title="$tc('platform.subset', 2)">
+                            <b-tab :title="$t('platform.subset', 2)">
                                 <select class="form-control" @change="loadSubsetOperations" v-model="subsetId">
                                     <option></option>
                                     <option v-for="subset in platform.subsets" :key="subset.id" :value="subset.id">
@@ -192,7 +192,7 @@
 </template>
 
 <script>
-import Vue from 'vue';
+;
 import axios from 'axios';
 import Notifier from '../../mixins/Notifier.js';
 
@@ -220,7 +220,7 @@ export default {
     watch: {
         '$route.params.id': function (){
             this.load().then(() => {
-                Vue.nextTick(() => {
+                this.$nextTick(() => {
                     this.isDirty = false;
                 });
             });
@@ -235,7 +235,7 @@ export default {
     mounted(){
         let self = this;
         this.load().then(() => {
-            Vue.nextTick(() => {
+            this.$nextTick(() => {
                 self.isDirty = false;
             });
         });
@@ -253,13 +253,13 @@ export default {
                             this.load();
                             this.success(
                                 this.$t('messages.successDeletion', {
-                                    what: this.$tc('platform.subset', 1)
+                                    what: this.$t('platform.subset', 1)
                                 })
                             );
                         })
                         .catch(function (e){
                             self.error(e);
-                        })
+                        });
                 });
         },
         saveSubset(subset){
@@ -270,7 +270,7 @@ export default {
                     this.load();
                     this.success(
                         this.$t('messages.savedWithSuccess', {
-                            what: this.$tc('platform.subset', 1)
+                            what: this.$t('platform.subset', 1)
                         })
                     );
                 })
@@ -290,7 +290,7 @@ export default {
                         this.load();
                         self.success(
                             this.$t('messages.savedWithSuccess', {
-                                what: this.$tc('platform.subset', 1)
+                                what: this.$t('platform.subset', 1)
                             })
                         );
                     })
@@ -327,7 +327,7 @@ export default {
         },
         getCategory(op){
             const categ = op.categories.find(c => c.type === 'group');
-            return categ ? categ.name : '-'
+            return categ ? categ.name : '-';
         },
         load(){
             let self = this;
@@ -371,7 +371,7 @@ export default {
                 partial: 1,
                 disabled: true,
                 ts: new Date().getTime(), // disable cache
-            }
+            };
             self[loading] = true;
             return axios
                 .get(url, {params})
@@ -379,7 +379,7 @@ export default {
                     self[target] = resp.data.data;
                     resp.data.data.forEach(op => {
                         if (op.subsets){
-                            op.subsetIds = op.subsets.map(s => s.id)
+                            op.subsetIds = op.subsets.map(s => s.id);
                         } else {
                             op.subset = [];
                         }
@@ -395,12 +395,12 @@ export default {
                 .patch(url, this.platform)
                 .then(resp => {
                     self.platform = resp.data;
-                    Vue.nextTick(() => {
+                    this.$nextTick(() => {
                         self.isDirty = false;
                     });
                     self.success(
                         this.$t('messages.savedWithSuccess', {
-                            what: this.$tc('titles.platform', 1)
+                            what: this.$t('titles.platform', 1)
                         })
                     );
                     this.$router.push({name: 'platforms'});

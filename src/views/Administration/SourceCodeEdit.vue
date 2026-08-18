@@ -39,10 +39,10 @@
                                     </form>
                                     <div class="row">
                                         <div class="col-md-12 mt-4 border-top pt-2">
-                                            <button class="btn btn-primary mr-1 btn-spinner" @click.stop="save">
+                                            <button class="btn btn-primary me-1 btn-spinner" @click.stop="save">
                                                 <font-awesome-icon icon="spinner" pulse class="icon" />
                                                 <font-awesome-icon icon="fa fa-save" />
-                                                {{ $tc('actions.save') }}
+                                                {{$t('actions.save')}}
                                             </button>
                                             <router-link :to="{ name: 'globalVariableList' }"
                                                 class="btn btn-outline-secondary mr-1">
@@ -54,7 +54,6 @@
                             </div>
                         </div>
                     </div>
-
                 </div>
             </div>
         </div>
@@ -65,13 +64,15 @@
 import { ref, onMounted } from 'vue';
 import { getCurrentInstance } from 'vue';
 import "vue-prism-editor/dist/prismeditor.min.css"; // import the styles somewhere
+import { useI18n } from 'vue-i18n';
+import { useRouter, useRoute } from 'vue-router';
 
 // import highlighting library (you can use any library you want just return html string)
 import { highlight, languages } from "prismjs/components/prism-core";
 import "prismjs/components/prism-python";
 import "prismjs/themes/prism-dark.css"; // import syntax highlighting styles
 import axios from 'axios';
-import useNotifier from '../../composables/useNotifier.js';
+import Notifier from '@/notifier.js';
 
 const vm = getCurrentInstance();
 const route = vm.proxy.$route;
@@ -126,7 +127,7 @@ const save = async (event) => {
         );*/
         router.push({ name: 'globalVariableList' });
     } catch (ex) {
-        error(ex);
+        notifier.error(ex);
     } finally {
         event.target.removeAttribute('disabled');
         event.target.classList.add('btn-spinner');
@@ -148,7 +149,7 @@ const focusTextarea = (event) => {
     if (elem) {
         elem.focus();
     }
-}
+};
 </script>
 <style scoped>
 .code2>>>textarea,
@@ -165,7 +166,7 @@ const focusTextarea = (event) => {
     border: 1px solid #ddd;
     border-radius: 3px;
     overflow-y: scroll;
-    height: 65vh;
+    height: 60vh;
 
 }
 
