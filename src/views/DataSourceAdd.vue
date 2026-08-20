@@ -218,7 +218,7 @@
     </main>
 </template>
 <script>
-import { ref, nextTick } from 'vue';
+import { ref, nextTick, inject } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { onMounted } from 'vue';
 import { useRouter } from 'vue-router';
@@ -233,8 +233,8 @@ export default {
     setup() {
         const router = useRouter();
         const { t } = useI18n();
-        const notifier = new Notifier(router, t);
-        
+        const notifier = new Notifier(inject('snotify'), t, router);
+
         const step = ref(1);
         const dataSource = ref({ format: '', storage_id: null, command: null, url: 'placeholder', name:''});
         const storage = ref({
@@ -314,7 +314,9 @@ export default {
 
         const setupResumable = async () => {
             const headers = {... axios.defaults.headers.common }; // < same auth headers
-            const notifier = new Notifier();
+            // reuses the `notifier` built in setup() above — inject() only
+            // works during setup()'s synchronous execution, not in this
+            // nextTick-deferred call
 
             const token = localStorage.getItem('token');
             if (token) {

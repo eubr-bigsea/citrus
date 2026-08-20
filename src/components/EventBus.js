@@ -1,11 +1,9 @@
-import Vue from 'vue';
 import { mapGetters } from 'vuex';
 import io from 'socket.io-client';
 const standNamespace = import.meta.env.VITE_STAND_NAMESPACE;
 const standSocketIoPath = import.meta.env.VITE_STAND_SOCKET_IO_PATH;
 const standSocketServer = import.meta.env.VITE_STAND_SOCKET_IO_SERVER;
 
-debugger;
 const { user } = { ...mapGetters(['user']) };
 
 const room = `users/${user.id}`;
@@ -37,4 +35,21 @@ beforeUnmount() {
         this.socket.close();
     }
 }*/
-export default new Vue();
+// Vue 3's instances no longer expose $on/$off/$emit for ad hoc buses like
+// Vue 2's `new Vue()` did — a plain listener map replaces it.
+const listeners = new Map();
+export default {
+    on(event, handler) {
+        (listeners.get(event) || listeners.set(event, []).get(event)).push(handler);
+    },
+    off(event, handler) {
+        const handlers = listeners.get(event);
+        if (handlers) {
+            const i = handlers.indexOf(handler);
+            if (i !== -1) handlers.splice(i, 1);
+        }
+    },
+    emit(event, ...args) {
+        (listeners.get(event) || []).forEach(handler => handler(...args));
+    }
+};

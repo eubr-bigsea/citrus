@@ -25,14 +25,11 @@
     </div>
 </template>
 <script>
-;
 /**
      * Based on https://www.digitalocean.com/community/tutorials/vuejs-vue-autocomplete-component
     */
-/*
-    const Autocomplete = {
+export default {
         name: "autocomplete",
-        template: "#autocomplete",
         props: {
             items: {
                 type: Array,
@@ -115,25 +112,12 @@
         mounted() {
             document.addEventListener("click", this.handleClickOutside);
         },
-        destroyed() {
+        unmounted() {
             document.removeEventListener("click", this.handleClickOutside);
         }
     };
-    */
-new Vue({
-    el: "#app",
-    name: "App",
-});
 </script>
 <style>
-    #app {
-        font-family: "Avenir", Helvetica, Arial, sans-serif;
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-        color: #2c3e50;
-        margin-top: 60px;
-    }
-
     .autocomplete {
         position: relative;
         width: 130px;
