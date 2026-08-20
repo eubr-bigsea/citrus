@@ -351,7 +351,7 @@ openIdService.loadConfig(store).then(() => {
     */
 
     app.directive('focus', {
-        inserted: function (el) {
+        mounted: function (el) {
             el.focus();
         }
     });
