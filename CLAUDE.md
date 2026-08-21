@@ -45,7 +45,8 @@ Dev server needs an `env.development` file (not committed) pointing at a Lemonad
 - **`src/components/visualization/`** + **`src/components/caipirinha-visualization/`** — chart rendering for dashboards. `CaipirinhaVisualization.vue` dispatches to a specific chart component (`BarChart`, `LineChart`, `PieChart`, `Plotly`, `Heatmap`, `Treemap`, etc.) by visualization type; used by `DashboardBuilder.vue`/`DashboardDetail.vue`.
 - **`src/mixins/`** (Options API) vs **`src/composables/`** (Composition API, e.g. `useNotifier.js`) — the codebase is mid-migration between the two patterns; prefer composables in new code.
 
-## Git commits
+## Git commits, PRs, issues
 
 - Never include Claude or any AI attribution in git commits. Remain anonymous at all times in regards to git. Do not use co-authored-by tags or any other form of attribution.
 - Keep commit messages concise — tokens cost money. One-line subject only; add a body only if truly necessary, and keep it to 1-2 short lines, not a full explanation of the change.
+- Write commit messages, PR titles/descriptions, and issue titles/descriptions in English, regardless of the conversation language.
