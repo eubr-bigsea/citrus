@@ -137,10 +137,6 @@ export default {
             selectedElements: [],
             copiedTasks: [],
 
-            settings: {
-                maxScrollbarLength: 60,
-                handlers: ['click-rail', 'drag-scrollbar', 'wheel', 'touch']
-            },
             tasksRendered: false,
             showToolbarInternal: true,
             showTaskDecorationInternal: false,

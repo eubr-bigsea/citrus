@@ -170,9 +170,6 @@ export default {
         return {
             filteredOperations: [],
             search: '',
-            settings: {
-                maxScrollbarLength: 100
-            }
         };
     },
     computed: {
