@@ -179,7 +179,9 @@ export default {
                 portAnchors.forEach((anchor, inx) => {
                     lbls[0][1]['label'] = `<div class="has-${ports.length}-ports">${ports[inx].name}</div>`;
 
-                    let options = JSON.parse(JSON.stringify(item.options)); // clone in order to modify
+                    // safe to structuredClone: item.options is a plain const
+                    // from jsplumb-const.js, never a Vue reactive object
+                    let options = structuredClone(item.options); // clone in order to modify
                     lbls[0][1]['location'] = locations[item.type];
                     options['anchors'] = anchor.slice();
                     options['overlays'] = lbls.slice();
@@ -465,18 +467,8 @@ li.dragging {
     height: 5000px;
     -webkit-touch-callout: none;
     /* iOS Safari */
-    -webkit-user-select: none;
-    /* Chrome/Safari/Opera */
-    -khtml-user-select: none;
-    /* Konqueror */
-    -moz-user-select: none;
-    /* Firefox */
-    -ms-user-select: none;
-    /* Internet Explorer/Edge */
     user-select: none;
 
-    /* Non-prefixed version, currently
-                                                                not supported by any browser */
     .jtk-group-expanded,
     .jtk-group-collapsed {
         background: transparent;
@@ -950,9 +942,6 @@ div.size-2 {
     height: 100%;
     top: 0;
     left: 0;
-    -webkit-transform: skew(-30deg);
-    -moz-transform: skew(-30deg);
-    -o-transform: skew(-30deg);
     transform: skew(-30deg);
     z-index: -1;
 }
