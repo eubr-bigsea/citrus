@@ -94,6 +94,7 @@ export default {
                 return { data: resp.data.data, count: resp.data.pagination.total };
             } catch (e) {
                 this.error(e);
+                return { data: [], count: 0 };
             }
         },
     }
