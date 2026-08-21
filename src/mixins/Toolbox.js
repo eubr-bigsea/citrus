@@ -4,7 +4,7 @@ import { debounce } from '../util.js';
 export default {
     computed: {
         searcheableOperations() {
-            let result = new Map();
+            let result = {};
             if (this.search) {
                 this.operations.filter(op => op.name != null).forEach(op => {
                     result[op.id] = op.name
