@@ -51,17 +51,6 @@ import DiagramToolbar from './DiagramToolbar.vue';
 import ToolboxMixin from '../mixins/Toolbox.js';
 import {jsPlumb} from 'jsplumb';
 
-const tahitiUrl = import.meta.env.VITE_TAHITI_URL;
-const standUrl = import.meta.env.VITE_STAND_URL;
-const connectorPaintStyle = {
-    lineWidth: 1,
-    radius: 8,
-    strokeStyle: "#111",
-    stroke: "#111",
-    outlineColor: 'white',
-    outlineWidth: 2,
-};
-
 export default {
     name: 'DiagramComponent',
     components: {
@@ -133,7 +122,7 @@ export default {
     },
     emits: [
         'onclear-selection', 'addFlow', 'add-task',
-        'onkeyboard-keyup', 'onblur-selection', 'removeFlow', 'onshow-deploy',
+        'onkeyboard-keyup', 'onblur-selection', 'removeFlow',
         'onclick-task', 'onset-is-dirty', 'onshow-result', 'remove-task',
         'onzoom', 'ontoggle-tasks-panel', 'ontoggle-data-sources-panel',
         'ontoggle-dark-mode'
@@ -142,11 +131,6 @@ export default {
     data() {
         return {
             platform: null,
-            clusters: [],
-            clusterDescription: '',
-            cluster: null,
-            deployInfo: {},
-            name: '',
             readyTasks: new Set(),
             selectedTask: null,
             tryConnections: false,
@@ -157,50 +141,16 @@ export default {
                 maxScrollbarLength: 60,
                 handlers: ['click-rail', 'drag-scrollbar', 'wheel', 'touch']
             },
-            showDeployModal: false,
-            showExecutionModal: false,
             tasksRendered: false,
             showToolbarInternal: true,
             showTaskDecorationInternal: false,
 
-            zoomInEnabled: true,
-            zoomOutEnabled: true,
             zoom: this.initialZoom,
 
             darkMode: localStorage.getItem('darkMode') ? localStorage.getItem('darkMode') == "true" : false
         };
     },
 
-    computed: {
-        flows() {
-            if (this.renderFrom) {
-                if (this.renderFrom && this.renderFrom.flows) {
-                    return this.renderFrom.flows;
-                } else {
-                    return {};
-                }
-            } else {
-                return this.workflow.flows;
-            }
-        },
-        tasks() {
-            if (this.renderFrom) {
-                if (this.renderFrom && this.renderFrom.tasks) {
-                    return this.renderFrom.tasks;
-                } else {
-                    return {};
-                }
-            } else {
-                return this.workflow.tasks;
-            }
-        },
-        groups() {
-            return this.$store.getters.getGroups;
-        },
-        zoomPercent: function () {
-            return `${Math.round(100 * this.zoom, 0)}%`;
-        }
-    },
     watch: {
         workflow() {
             this.tasksRendered = false;
@@ -213,18 +163,6 @@ export default {
     },
     created() {
         this.init();
-
-        // this.$on('oncancel-deploy', () => {
-        //   this.setZoomPercent(null, this.oldZoom);
-        //   this.showToolbarInternal = true;
-        //   this.showTaskDecorationInternal = false;
-        // });
-
-        // this.$on('xupdate-form-field-value', (field, value) => {
-        //   this.$emit('update-form-field-value-in-diagram', field, value);
-        //   this.updateAttributeSuggestion();
-        // });
-
     },
 
     beforeUnmount() {
@@ -335,13 +273,6 @@ export default {
             this.$emit('onclick-task', taskComponent, showProperties);
         },
         scrollHandle() {},
-        changeCluster() {
-            let self = this;
-            let c = self.clusters.filter(c => c.id === self.cluster);
-            if (c.length) {
-                this.clusterDescription = c[0].description;
-            }
-        },
         removeSelectedTasks() {
             // Two steps, because this.removeTask changes the array used in the loop
             const tasksToRemove = this.workflow.tasks.filter(task => {
@@ -358,43 +289,6 @@ export default {
                     task.enabled = !task.enabled;
                 }
             });
-        },
-        addGroup() {
-            let self = this;
-            let group = {};
-            self.$store.dispatch('addGroup', group);
-            return false;
-        },
-        deploy(ev) {
-            this.$emit('onshow-deploy');
-            this.oldZoom = this.zoom;
-            this.setZoomPercent(ev, 0.85);
-            this.showToolbarInternal = false;
-            this.showTaskDecorationInternal = true;
-            // if (false) {
-            //     let self = this;
-            //     let dataSources = self.tasks.filter(task => {
-            //         return (
-            //             task.operation.categories.filter(cat => {
-            //                 return cat.type === 'data source';
-            //             }).length > 0
-            //         );
-            //     });
-            //     let ports = self.tasks.map(task => {
-            //         let dataPorts = task.operation.ports.filter(port => {
-            //             let itfs = port.interfaces.filter(iface => {
-            //                 return iface.name === 'Data' || iface.name === 'IData';
-            //             });
-            //             return itfs.length > 0 && port.type === 'OUTPUT';
-            //         });
-            //         return [task, dataPorts];
-            //     });
-            //     self.showDeployModal = true;
-            //     self.deployInfo['dataSources'] = dataSources;
-            //     self.deployInfo['ports'] = ports;
-            // }
-            ev.preventDefault();
-            return false;
         },
         addTask(task) {
             task.forms = task.forms || {};
@@ -661,22 +555,6 @@ export default {
             });
             this.$emit('onblur-selection');
             this.selectedElements = [];
-        },
-        flowClick(connection, e) {
-            var self = this;
-            self.selectedFlow = connection;
-            self.instance.select().setPaintStyle(connectorPaintStyle);
-            connection.setPaintStyle({
-                lineWidth: 2,
-                radius: 1,
-                strokeStyle: 'rgba(242, 141, 0, 1)'
-            });
-            let tasks = document.querySelectorAll('.task.selected');
-            Array.prototype.slice.call(tasks, 0).forEach(e => {
-                e.classList.remove('selected');
-            });
-            e.stopPropagation();
-            e.preventDefault();
         },
         drop(ev) {
             const self = this;
@@ -955,28 +833,6 @@ export default {
             this.zoom = zoom;
             this.setZoom(this.zoom, this.instance, null, this.diagramElement);
         },
-        zoomIn(ev) {
-            let self = this;
-            self.zoom += 0.1;
-            if (self.zoom > 1.3) {
-                self.zoomInEnabled = false;
-            }
-            self.zoomOutEnabled = true;
-            this.setZoom(self.zoom, self.instance, null, self.diagramElement);
-            ev.preventDefault();
-            return false;
-        },
-        zoomOut(ev) {
-            let self = this;
-            self.zoom -= 0.1;
-            if (self.zoom < 0.8) {
-                self.zoomOutEnabled = false;
-            }
-            self.zoomInEnabled = true;
-            this.setZoom(self.zoom, self.instance, null, self.diagramElement);
-            ev.preventDefault();
-            return false;
-        },
         distribute(mode, prop) {
             if (this.selectedElements.length < 3) {
                 return;
@@ -1013,15 +869,6 @@ export default {
                 });
             }
         },
-        showHistory() {
-            let self = this;
-            let url = `${tahitiUrl}/workflows/${self.workflow.id}/history`;
-            let headers = {};
-
-            self.$http.get(url, {headers}).then(response => {
-                console.debug(response);
-            });
-        },
         align(pos, fn) {
             let self = this;
             let selectedTasks = this.workflow.tasks.filter(task => {
@@ -1050,101 +897,6 @@ export default {
                 });
             }
         },
-        scrollToTask(taskId) {
-            let elemTask = document.getElementById(taskId);
-            let container = self.diagramElement.parentElement;
-            container.scrollTop = parseInt(elemTask.style.top);
-            container.scrollLeft = parseInt(elemTask.style.left);
-        },
-        cancelExecute() {
-            this.showExecutionModal = false;
-        },
-        /*
-        execute() {
-            this.showExecutionModal = false;
-
-            let cloned = JSON.parse(JSON.stringify(this.workflow));
-            cloned.platform_id = cloned.platform.id;
-            cloned.tasks.forEach(task => {
-                task.operation = {id: task.operation.id};
-                delete task.version;
-            });
-
-            let body = {
-                workflow: cloned,
-                cluster: {id: this.cluster},
-                name: this.name,
-                user: {
-                    id: 0,
-                    login: '',
-                    name: ''
-                }
-            };
-            let self = this;
-
-            let locale = this.$store.getters.getLanguage;
-            let headers = {
-                Locale: locale
-            };
-            Vue.http
-                .post(`${standUrl}/jobs`, body, {headers})
-                .then(function (response) {
-                    self.$router.push({
-                        name: 'job-child-diagram',
-                        params: {
-                            id: response.body.data.id,
-                            platform: self.platform
-                        }
-                    });
-                })
-                .catch(ex => {
-                    if (ex.body) {
-                        self.$root.$refs.toastr.e(ex.body.message);
-                    } else if (ex.status === 0) {
-                        self.$root.$refs.toastr.e(
-                            `Error connecting to the backend (connection refused).`
-                        );
-                    } else {
-                        self.$root.$refs.toastr.e(`Unhandled error: ${JSON.stringify(ex)}`);
-                    }
-                });
-        },
-
-        onClickExecute() {
-            let self = this;
-            let headers = {
-            };
-            // Retrieve clusters
-            Vue.http
-                .get(`${standUrl}/clusters`, {headers})
-                .then(response => {
-                    self.clusters.length = 0;
-                    Array.prototype.push.apply(self.clusters, response.body);
-                    if (self.clusters.length) {
-                        self.cluster = self.clusters[0].id;
-                        self.clusterDescription = self.clusters[0].description;
-                        self.showExecutionModal = true;
-                        if (self.name === '') {
-                            self.name = self.workflow.name;
-                        }
-                    } else {
-                        self.$root.$refs.toastr.e(
-                            'Unable to execute workflow: There is not cluster available.'
-                        );
-                    }
-                })
-                .catch(ex => {
-                    if (ex.body) {
-                        self.$root.$refs.toastr.e(ex.body.message);
-                    } else if (ex.status === 0) {
-                        self.$root.$refs.toastr.e(
-                            `Error connecting to the backend (connection refused).`
-                        );
-                    } else {
-                        self.$root.$refs.toastr.e(`Unhandled error: ${JSON.stringify(ex)}`);
-                    }
-                });
-        },*/
         _fixGroupConnections(self) {
             return function (group) {
                 let members = group.getMembers();
@@ -1180,45 +932,11 @@ export default {
                 });
             };
         },
-        _customUpdateConnectionsForGroup(_jsPlumb) {// eslint-disable-line no-unused-vars
-            // return function (group) {
-            //     var members = group.getMembers();
-            //     var c1 = _jsPlumb.getConnections({ source: members, scope: '*' }, true);
-            //     var c2 = _jsPlumb.getConnections({ target: members, scope: '*' }, true);
-            //     var processed = {};
-            //     group.connections.source.length = 0;
-            //     group.connections.target.length = 0;
-            //     var oneSet = function (c) {
-            //         for (var i = 0; i < c.length; i++) {
-            //             if (processed[c[i].id]) {
-            //                 continue;
-            //             }
-            //             processed[c[i].id] = true;
-            //             if (c[i].source._jsPlumbGroup === group) {
-            //                 if (c[i].target._jsPlumbGroup !== group) {
-            //                     group.connections.source.push(c[i]);
-            //                 }
-            //                 _connectionSourceMap[c[i].id] = group;
-            //             }
-            //             else if (c[i].target._jsPlumbGroup === group) {
-            //                 group.connections.target.push(c[i]);
-            //                 _connectionTargetMap[c[i].id] = group;
-            //             }
-            //         }
-            //     };
-            //     oneSet(c1); oneSet(c2);
-            // }
-        },
         _bindJsPlumbEvents() {
             let self = this;
             self.instance.getGroupManager().updateConnectionsForGroup = self._fixGroupConnections(
                 self
             );
-            // self.instance.getContainer().addEventListener('click', function (ev) {
-            //     //self.clearSelection(ev);
-            // });
-            // self.instance.bind("click", self.flowClick);
-
             self.instance.bind('group:removeMember', p => {
                 console.log('Group', p.group.id, 'removed', p.el.id);
                 self._fixGroupConnections(self, p);
