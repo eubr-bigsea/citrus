@@ -44,3 +44,8 @@ Dev server needs an `env.development` file (not committed) pointing at a Lemonad
 - **`src/components/widgets/`** — dynamic form-field components (Cast, Join, Filter, Range, Color, Date, Select2, ...) driven by a task/operation's metadata; registered globally in `main.js`, shared behavior lives in `src/mixins/Widget.js`.
 - **`src/components/visualization/`** + **`src/components/caipirinha-visualization/`** — chart rendering for dashboards. `CaipirinhaVisualization.vue` dispatches to a specific chart component (`BarChart`, `LineChart`, `PieChart`, `Plotly`, `Heatmap`, `Treemap`, etc.) by visualization type; used by `DashboardBuilder.vue`/`DashboardDetail.vue`.
 - **`src/mixins/`** (Options API) vs **`src/composables/`** (Composition API, e.g. `useNotifier.js`) — the codebase is mid-migration between the two patterns; prefer composables in new code.
+
+## Git commits
+
+- Never include Claude or any AI attribution in git commits. Remain anonymous at all times in regards to git. Do not use co-authored-by tags or any other form of attribution.
+- Keep commit messages concise — tokens cost money.
