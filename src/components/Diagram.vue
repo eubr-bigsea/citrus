@@ -227,6 +227,10 @@ export default {
 
     beforeUnmount() {
         this.readyTasks = new Set();
+        this.$el.removeEventListener('keyup', this.keyboardKeyUpTrigger, true);
+        if (this.diagramElement) {
+            this.diagramElement.removeEventListener('mousedown', this.handleDiagramMousedown);
+        }
     },
 
     mounted() {
@@ -253,7 +257,19 @@ export default {
         this.$el.addEventListener('keyup', this.keyboardKeyUpTrigger, true);
 
         /* selection by dragging */
-        self.diagramElement.addEventListener('mousedown', ev => {
+        self.diagramElement.addEventListener('mousedown', this.handleDiagramMousedown);
+        if (self.shink) {
+            // const z = parseFloat(self.zoom);
+            // const width = z * (Math.max.apply(null, self.workflow.tasks.map(t => t.left)) + 200);
+            // const height = z * (Math.max.apply(null, self.workflow.tasks.map(t => t.top)) + 200);
+            self.$refs.diagram.style.width = '100%'; //width + 'px';
+            self.$refs.diagram.style.height = '100%';
+        }
+    },
+
+    methods: {
+        handleDiagramMousedown(ev) {
+            const self = this;
             if (self.$refs.diagram === ev.target) {
                 let rightClick =
                     ev.which === 3 || ev.button == 2; // Gecko (Firefox), WebKit (Safari/Chrome) & Opera // IE, Opera
@@ -275,17 +291,7 @@ export default {
                     document.addEventListener('mousemove', self.openSelector);
                 }
             }
-        });
-        if (self.shink) {
-            // const z = parseFloat(self.zoom);
-            // const width = z * (Math.max.apply(null, self.workflow.tasks.map(t => t.left)) + 200);
-            // const height = z * (Math.max.apply(null, self.workflow.tasks.map(t => t.top)) + 200);
-            self.$refs.diagram.style.width = '100%'; //width + 'px';
-            self.$refs.diagram.style.height = '100%';
-        }
-    },
-
-    methods: {
+        },
         showResult(task) {
             this.$emit('onshow-result', task);
         },
