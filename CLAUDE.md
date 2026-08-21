@@ -48,4 +48,4 @@ Dev server needs an `env.development` file (not committed) pointing at a Lemonad
 ## Git commits
 
 - Never include Claude or any AI attribution in git commits. Remain anonymous at all times in regards to git. Do not use co-authored-by tags or any other form of attribution.
-- Keep commit messages concise — tokens cost money.
+- Keep commit messages concise — tokens cost money. One-line subject only; add a body only if truly necessary, and keep it to 1-2 short lines, not a full explanation of the change.
