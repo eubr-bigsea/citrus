@@ -3,7 +3,7 @@
         <diagram-toolbar v-if="showToolbar" class="diagram-toolbar" :selected="selectedElements" :copied-tasks="copiedTasks"
             :use-data-source="useDataSource" @onclick-task="clickTask" @oncopy-tasks="_copy" @onpaste-tasks="_paste"
             @ontoggle-tasks="toggleTasks" @ondistribute-tasks="distribute" @onalign-tasks="align"
-            @onremove-tasks="removeSelectedTasks" />
+            @onremove-tasks="removeSelectedTasks" @onzoom="setZoomPercent" />
         <div v-else class="border"></div>
         <div id="lemonade-container" :class="{'with-grid': showGrid, 'dark-mode': darkMode}"
              class="lemonade-container not-selectable" @click="diagramClick">
@@ -127,7 +127,7 @@ export default {
         }
     },
     emits: [
-        'onclear-selection', 'addFlow', 'onclear-selection', 'add-task',
+        'onclear-selection', 'addFlow', 'add-task',
         'onkeyboard-keyup', 'onblur-selection', 'removeFlow', 'onshow-deploy',
         'onclick-task', 'onset-is-dirty', 'onshow-result', 'remove-task',
         'onzoom'
@@ -135,6 +135,7 @@ export default {
 
     data() {
         return {
+            platform: null,
             clusters: [],
             clusterDescription: '',
             cluster: null,
@@ -205,11 +206,7 @@ export default {
         });
     },
     created() {
-        const self = this;
-
-        if (this.$route.params.id) {
-            this.init();
-        }
+        this.init();
 
         // this.$on('oncancel-deploy', () => {
         //   this.setZoomPercent(null, this.oldZoom);
@@ -264,8 +261,8 @@ export default {
                 const ghostSelect = self.$refs.ghostSelect;
                 if (ghostSelect) {
                     ghostSelect.classList.add('ghost-active');
-                    ghostSelect.style.left = ev.offsetY + 'px';
-                    ghostSelect.style.top = ev.offsetX + 'px';
+                    ghostSelect.style.left = ev.offsetX + 'px';
+                    ghostSelect.style.top = ev.offsetY + 'px';
                     ghostSelect.style.width = '0px';
                     ghostSelect.style.height = '0px';
                     self.initialW = ev.offsetX;
@@ -285,8 +282,8 @@ export default {
     },
 
     methods: {
-        showResult() {
-            this.$emit('onshow-result', this.task);
+        showResult(task) {
+            this.$emit('onshow-result', task);
         },
 
         /* Flow management  */
