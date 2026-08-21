@@ -190,7 +190,7 @@
                         </div>
                         <div class="col-12 border-left">
                             <h6>Notificações</h6>
-                            <pipeline-run-notifications :notifications="notifications" />
+                            <pipeline-run-notifications ref="notificationsList" />
                         </div>
                     </div>
                 </div>
@@ -219,7 +219,6 @@ export default {
     mixins: [Notifier],
     data() {
         return {
-            notifications: [],
             statuses: ['COMPLETED', 'CANCELED', 'ERROR', 'INTERRUPTED', 'PENDING',
                 'RUNNING', 'WAITING', 'WAITING_INTERVENTION'],
             filters: { // binding
@@ -302,13 +301,7 @@ export default {
                 if (!msg.pipeline_run) {
                     return;
                 }
-                this.notifications.unshift({
-                    id: msg.pipeline_run.id,
-                    status: msg.pipeline_step_run.status, date: msg.date,
-                    order: msg.pipeline_step_run.order
-                });
-                this.notifications.length = this.notifications.length > 100 ? 100
-                    : this.notifications.length;
+                this.$refs.notificationsList.push(msg);
                 if (!msg.cache) {
                     this.$refs.runsList.refresh();
                 }

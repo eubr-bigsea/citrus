@@ -1,7 +1,7 @@
 <template>
     <div class="small-notifications scroll-area" :style="{'height': props.height}">
-        <template v-if="props.notifications.length">
-            <div v-for="notification,i in props.notifications" :key="i">
+        <template v-if="notifications.length">
+            <div v-for="notification,i in notifications" :key="i">
                 {{$filters.formatJsonDate(notification.date.substring(0, 19) , 'dd/MM/yyyy HH:mm:ss')}} #{{notification.id}}:
                 Etapa/passo {{notification.order}}:
                 {{$t(`status.${notification.status}`)}}
@@ -13,12 +13,29 @@
     </div>
 </template>
 <script setup>
+import { ref } from 'vue';
+
 const props = defineProps({
-    notifications: { type: Array, required: true },
     height: {
         type: String, default: "100%"
     },
 });
+
+const notifications = ref([]);
+
+// receives a raw 'update pipeline run' websocket message and keeps the
+// last 100 notifications, newest first
+function push(msg) {
+    notifications.value.unshift({
+        id: msg.pipeline_run.id,
+        status: msg.pipeline_step_run.status,
+        date: msg.date,
+        order: msg.pipeline_step_run.order
+    });
+    notifications.value.length = notifications.value.length > 100 ? 100 : notifications.value.length;
+}
+
+defineExpose({ push });
 </script>
 <style scoped>
 .small-notifications>div {
