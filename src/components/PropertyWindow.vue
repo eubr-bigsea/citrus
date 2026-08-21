@@ -107,7 +107,7 @@
                                                    class="form-control form-control-sm" maxlength="100">
                                         </td>
                                         <td>
-                                            <component :is="field.suggested_widget + '-component'" :field="field"
+                                            <component :is="getWidget(field)" :field="field"
                                                        :value="getValue(field.name)" :type="field.suggested_widget"
                                                        context="context" :read-only="true" />
                                         </td>
@@ -172,7 +172,7 @@ export default {
             filledForm: [],
             lookups: [],
             tabIndex: 0,
-            taskCopy: { ...this.task },
+            taskCopy: structuredClone(this.task),
         };
     },
     computed: {
@@ -226,15 +226,14 @@ export default {
         },
         async getLookups() {
             if (this.lookups === undefined || this.lookups.length === 0) {
-                const self = this;
                 const params = {
                     lookup: true,
                     fields: 'id,name,attributes.id,attributes.name',
                 };
                 const resp = await axios.get(`${limoneroUrl}/datasources`, { params });
-                self.lookups = resp.data.data;
-                return self.lookups;
+                this.lookups = resp.data.data;
             }
+            return this.lookups;
         },
         getValue(name) {
             return this.taskCopy
@@ -255,7 +254,10 @@ export default {
         },
         update() {
             const self = this;
-            this.taskCopy = {... this.task};
+            // a real clone, not {...this.task} - that only shallow-copies
+            // the top level, so taskCopy.forms stayed the same object as
+            // task.forms and every edit here mutated the prop directly
+            this.taskCopy = structuredClone(this.task);
             const callback = () => {
                 self.filledForm = self.taskCopy.forms;
                 self.forms = self.taskCopy.operation.forms.sort((a, b) => {
