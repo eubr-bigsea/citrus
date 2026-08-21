@@ -49,14 +49,12 @@
 <script setup>
 import axios from 'axios';
 import { ref } from 'vue'
-import { useI18n } from 'vue-i18n-bridge';
 import DataTableBuilder from '../../data-table-builder.js';
 import useNotifier from '@/composables/useNotifier.js';
 import { getCurrentInstance } from 'vue';
 
 const vm = getCurrentInstance();
 const standUrl = import.meta.env.VITE_STAND_URL;
-const { t } = useI18n();
 
 const { confirm, success, error } = useNotifier(vm.proxy);
 const columns = [
@@ -85,11 +83,11 @@ const reqFn = async (data) => {
 const dtBuilder = new DataTableBuilder(t)
     .columns(...columns)
     .headings({
-        actions: t('common.action', 2),
+        actions: this.$t('common.action', 2),
         id: 'ID',
-        name: t('common.name', 1),
-        created: t('common.created'),
-        enabled: t('common.enabled'),
+        name: this.$t('common.name', 1),
+        created: this.$t('common.created'),
+        enabled: this.$t('common.enabled'),
     })
     .sortable('name', 'id', 'created')
     .filterable('name')
@@ -100,15 +98,15 @@ const options = ref(dtBuilder.build());
 const codeList = ref();
 const remove = async (id) => {
     try {
-        confirm(t('actions.delete'), t('messages.doYouWantToDelete'), async (result) => {
+        confirm(this.$t('actions.delete'), this.$t('messages.doYouWantToDelete'), async (result) => {
             if (result) {
                 await axios
                     .delete(`${standUrl}/global-variables/${id}`, {});
 
                 codeList.value.refresh();
-                success(t('messages.successDeletion', {
+                success(this.$t('messages.successDeletion', {
                     what: 'Variável global'
-                }), t('actions.delete'))
+                }), this.$t('actions.delete'))
             }
         });
     } catch (e) {
