@@ -11,21 +11,7 @@
         </p>
         <div class="row">
             <div class="col-6">
-                <select v-model.number="month" class="form-control form-control-sm">
-                    <option />
-                    <option v-for="m, i in getMonthNames" :key="m" :value="i + 1">
-                        {{m}}
-                    </option>
-                </select>
-            </div>
-            <div class="col-3">
-                <select v-model.number="year" class="form-control form-control-sm">
-                    <option />
-                    <option v-for="y in getYears" :key="y" :value="y">
-                        {{y}}
-                    </option>
-                </select>
-
+                <input v-model="monthYear" type="month" class="form-control form-control-sm">
             </div>
         </div>
         <div class="row mt-3">
@@ -56,37 +42,11 @@
 
 <script setup>
 import { ref, computed } from 'vue';
-import { pt } from 'date-fns/locale';
-import { format } from 'date-fns';
 
-const month = ref(null);
-const year = ref(null);
+const monthYear = ref('');
 const name = ref(null);
 const id = ref(null);
 const scheduleModal = ref(null);
-
-const getMonthNames = computed(() => {
-    const monthNames = [];
-    for (let i = 0; i < 12; i++) {
-        const date = new Date(2021, i, 1); // Using any year, 2021 here
-        const monthName = format(date, 'MMMM', { locale: pt });
-        monthNames.push(monthName);
-    }
-    return monthNames;
-});
-
-const getYears = computed(() => {
-    const years = [];
-    let currentYear = new Date().getYear();
-    let maxYears = 5;
-    years.push(currentYear + 1901); // First year in JS is 1900! Add next year
-    do {
-        years.push(currentYear + 1900);
-        currentYear--;
-        maxYears--;
-    } while (maxYears > 0);
-    return years;
-});
 
 const show = (modalId, modalName) => {
 
@@ -95,14 +55,15 @@ const show = (modalId, modalName) => {
     scheduleModal.value.show();
 };
 const testFormOk = computed(() => {
-    return (!month.value || !year.value || contextData.value.some(data => !data.name || !data.value))
+    return (!monthYear.value || contextData.value.some(data => !data.name || !data.value))
 });
 const emit = defineEmits(['on-schedule-pipeline']);
 const confirm = () => {
+    const [year, month] = monthYear.value.split('-').map(Number);
     emit('on-schedule-pipeline', id.value,
         // In JS, months start from 0 !!!
-        new Date(year.value, month.value - 1, 1),
-        new Date(year.value, month.value, 0),
+        new Date(year, month - 1, 1),
+        new Date(year, month, 0),
         contextData.value
     );
 };

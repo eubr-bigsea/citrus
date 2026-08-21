@@ -129,15 +129,6 @@
 <script>
 import ToolboxMixin from '../mixins/Toolbox.js';
 
-const groupBy = function (xs, keySelector) {
-    return xs.reduce(function (rv, x) {
-        var key = keySelector(x);
-        rv.set(key, rv.get(key) || []);
-        rv.get(key).push(x);
-        return rv;
-    }, new Map());
-};
-
 export default {
     name: 'ToolboxComponent',
 
@@ -202,25 +193,25 @@ export default {
                 if (groupCompare != 0) return groupCompare;
                 return a.subGroup ? a.subGroup.localeCompare(b.subGroup) : -1;
             });
-            let grouped = [...groupBy(ops, x => x.group)].map(item => {
-                if (item[1][0].subGroup === '') {
+            let grouped = Object.entries(Object.groupBy(ops, x => x.group)).map(([group, items]) => {
+                if (items[0].subGroup === '') {
                     return {
-                        group: item[0],
-                        operations: item[1].sort((a, b) =>
+                        group,
+                        operations: items.sort((a, b) =>
                             a.operation.name.localeCompare(b.operation.name)
                         )
                     };
                 } else {
                     return {
-                        group: item[0],
-                        subGroups: [...groupBy(item[1], x => x.subGroup)]
-                            .map(subItem => {
+                        group,
+                        subGroups: Object.entries(Object.groupBy(items, x => x.subGroup))
+                            .map(([subGroup, subItems]) => {
                                 return {
-                                    group: item[0],
-                                    subGroup: subItem[0],
-                                    subGroupOrder: item[1][0].subGroupOrder,
-                                    subGroupDefaultOrder: item[1][0].subGroupDefaultOrder,
-                                    operations: subItem[1].sort((a, b) =>
+                                    group,
+                                    subGroup,
+                                    subGroupOrder: items[0].subGroupOrder,
+                                    subGroupDefaultOrder: items[0].subGroupDefaultOrder,
+                                    operations: subItems.sort((a, b) =>
                                         a.operation.name.localeCompare(b.operation.name)
                                     )
                                 };
