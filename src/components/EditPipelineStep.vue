@@ -240,32 +240,27 @@ export default {
                 this.error(e);
             }
         },
-        createWorkflow() {
+        async createWorkflow() {
             const workflow = {
                 name: this.workflowName,
                 platform_id: this.workflowPlatform,
                 type: this.selectedWorkflowType
             };
 
-            axios
-                .post(`${tahitiUrl}/workflows`, workflow)
-                .then((resp) => {
-                    // eslint-disable-next-line vue/no-mutating-props
-                    this.editedStep.workflow_id = resp.data.id;
-                    // eslint-disable-next-line vue/no-mutating-props
-                    this.editedStep.workflow = resp.data;
-                    this.editStep();
-                    this.success('Workflow criado e associado com sucesso à etapa.');
-                })
-                .catch(
-                    function (e) {
-                        this.error(e);
-                    }.bind(this)
-                );
-
-            this.showWorkflowOps = -1;
-            this.workflowName = '';
-            this.selectedWorkflowType = 'SQL';
+            try {
+                const resp = await axios.post(`${tahitiUrl}/workflows`, workflow);
+                // eslint-disable-next-line vue/no-mutating-props
+                this.editedStep.workflow_id = resp.data.id;
+                // eslint-disable-next-line vue/no-mutating-props
+                this.editedStep.workflow = resp.data;
+                this.editStep();
+                this.success('Workflow criado e associado com sucesso à etapa.');
+                this.showWorkflowOps = -1;
+                this.workflowName = '';
+                this.selectedWorkflowType = 'SQL';
+            } catch (e) {
+                this.error(e);
+            }
         }
     }
 

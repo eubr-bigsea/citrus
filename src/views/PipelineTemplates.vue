@@ -173,22 +173,18 @@ export default {
             this.confirm(
                 this.$t('actions.delete') + " '" + templateName + "'",
                 this.$t('messages.doYouWantToDelete'),
-                () => {
-                    axios
-                        .delete(`${tahitiUrl}/pipeline-templates/${templateId}`, {})
-                        .then(() => {
-                            this.success(
-                                this.$t('messages.successDeletion', {
-                                    what: 'Template'
-                                })
-                            );
-                            this.$refs.templateList.refresh();
-                        })
-                        .catch(
-                            function (e) {
-                                this.error(e);
-                            }.bind(this)
+                async () => {
+                    try {
+                        await axios.delete(`${tahitiUrl}/pipeline-templates/${templateId}`, {});
+                        this.success(
+                            this.$t('messages.successDeletion', {
+                                what: 'Template'
+                            })
                         );
+                        this.$refs.templateList.refresh();
+                    } catch (e) {
+                        this.error(e);
+                    }
                 }
             );
         }

@@ -166,43 +166,35 @@ export default {
             }
 
         },
-        loadTemplates() {
+        async loadTemplates() {
             if (this.templateOptions.length >= 2) return;
-            axios
-                .get(`${tahitiUrl}/pipeline-templates`)
-                .then((resp) => {
-                    this.pipelineTemplates.push(...resp.data.data);
-                    this.pipelineTemplates.map(template => {
-                        let aux = { value: template.id, text: template.name };
-                        this.templateOptions.push(aux);
-                    });
-                })
-                .catch(
-                    function (e) {
-                        this.error(e);
-                    }.bind(this)
-                );
+            try {
+                const resp = await axios.get(`${tahitiUrl}/pipeline-templates`);
+                this.pipelineTemplates.push(...resp.data.data);
+                this.pipelineTemplates.map(template => {
+                    let aux = { value: template.id, text: template.name };
+                    this.templateOptions.push(aux);
+                });
+            } catch (e) {
+                this.error(e);
+            }
         },
         deletePipeline(pipelineId, pipelineName) {
             this.confirm(
                 this.$t('actions.delete') + " '" + pipelineName + "'",
                 this.$t('messages.doYouWantToDelete'),
-                () => {
-                    axios
-                        .delete(`${tahitiUrl}/pipelines/${pipelineId}`, {})
-                        .then(() => {
-                            this.success(
-                                this.$t('messages.successDeletion', {
-                                    what: 'Pipeline'
-                                })
-                            );
-                            this.$refs.pipelineList.refresh();
-                        })
-                        .catch(
-                            function (e) {
-                                this.error(e);
-                            }.bind(this)
+                async () => {
+                    try {
+                        await axios.delete(`${tahitiUrl}/pipelines/${pipelineId}`, {});
+                        this.success(
+                            this.$t('messages.successDeletion', {
+                                what: 'Pipeline'
+                            })
                         );
+                        this.$refs.pipelineList.refresh();
+                    } catch (e) {
+                        this.error(e);
+                    }
                 }
             );
         }

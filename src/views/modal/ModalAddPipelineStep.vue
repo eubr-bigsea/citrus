@@ -179,24 +179,20 @@ export default {
             //this.editPipeline('Etapa adicionada com sucesso.');
             this.$emit('onadd-step', copy, this.stepOrder);
         },
-        createWorkflow() {
+        async createWorkflow() {
             const workflow = {
                 name: this.workflowName,
                 platform_id: this.workflowPlatform,
                 type: this.selectedWorkflowType
             };
 
-            axios
-                .post(`${tahitiUrl}/workflows`, workflow)
-                .then((resp) => {
-                    this.newStep.workflow_id = resp.data.id;
-                    this.success('Fluxo de trabalho criado com sucesso.');
-                })
-                .catch(
-                    function (e) {
-                        this.error(e);
-                    }.bind(this)
-                );
+            try {
+                const resp = await axios.post(`${tahitiUrl}/workflows`, workflow);
+                this.newStep.workflow_id = resp.data.id;
+                this.success('Fluxo de trabalho criado com sucesso.');
+            } catch (e) {
+                this.error(e);
+            }
 
             this.showWorkflowOps = 0;
             this.workflowName = '';

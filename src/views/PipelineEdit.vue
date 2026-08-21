@@ -352,21 +352,17 @@ export default {
                     }
                 });
         },
-        editPipeline(msg) {
+        async editPipeline(msg) {
             this.pipeline.steps.sort((a, b) => a.order - b.order);
-            axios
-                .patch(`${tahitiUrl}/pipelines/${this.pipeline.id}`, this.pipeline)
-                .then((resp) => {
-                    this.pipeline = resp.data.data[0];
-                    if (this.pipeline.steps.length === 0) this.pipelineWithoutSteps = true;
-                    this.success(msg);
-                    this.isDirty = false;
-                })
-                .catch(
-                    function (e) {
-                        this.error(e);
-                    }.bind(this)
-                );
+            try {
+                const resp = await axios.patch(`${tahitiUrl}/pipelines/${this.pipeline.id}`, this.pipeline);
+                this.pipeline = resp.data.data[0];
+                if (this.pipeline.steps.length === 0) this.pipelineWithoutSteps = true;
+                this.success(msg);
+                this.isDirty = false;
+            } catch (e) {
+                this.error(e);
+            }
         },
         deleteStep(stepId, stepName) {
             this.confirm(
