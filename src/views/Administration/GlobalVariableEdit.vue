@@ -16,7 +16,7 @@
                                             <div class="col-md-6">
                                                 <div class="row">
                                                     <div class="col-6">
-                                                        <label class="font-weight-bold">{{ $tc('common.name')
+                                                        <label class="font-weight-bold">{{ $t('common.name')
                                                             }}:</label>
                                                         <input v-model="sourceCode.name" type="text"
                                                             class="form-control">
@@ -33,7 +33,7 @@
                                                             rows="5"></textarea>
                                                     </div>
                                                     <div class="col-md-12 mt-2">
-                                                        <label class="font-weight-bold">{{ $tc('titles.imports', 2)
+                                                        <label class="font-weight-bold">{{ $t('titles.imports', 2)
                                                             }}:</label>
                                                         <div @click="focusTextarea">
                                                             <prism-editor ref="prism" v-model="sourceCode.imports"
@@ -43,7 +43,7 @@
                                                         </div>
                                                     </div>
                                                     <div class="col-md-12 mt-2">
-                                                        <label class="font-weight-bold">{{ $tc('titles.help')
+                                                        <label class="font-weight-bold">{{ $t('titles.help')
                                                             }}:</label>
                                                         <textarea v-model="sourceCode.help" class="form-control"
                                                             rows="5"></textarea>
@@ -51,7 +51,7 @@
                                                 </div>
                                             </div>
                                             <div class="col-6">
-                                                <label class="font-weight-bold">{{ $tc('titles.code') }}:</label>
+                                                <label class="font-weight-bold">{{ $t('titles.code') }}:</label>
                                                 <div class="form-text">
                                                     Escreva o código Python na forma de um método/função, geralmente com
                                                     parâmetros.
@@ -71,11 +71,11 @@
                                             <button class="btn btn-primary mr-1 btn-spinner" @click.stop="save">
                                                 <font-awesome-icon icon="spinner" pulse class="icon" />
                                                 <font-awesome-icon icon="fa fa-save" />
-                                                {{ $tc('actions.save') }}
+                                                {{ $t('actions.save') }}
                                             </button>
                                             <router-link :to="{ name: 'sourceCodeList' }"
                                                 class="btn btn-outline-secondary mr-1">
-                                                {{ $tc('actions.cancel') }}
+                                                {{ $t('actions.cancel') }}
                                             </router-link>
                                         </div>
                                     </div>
@@ -158,7 +158,7 @@ const save = async (event) => {
         /*
         self.success(
             this.$t('messages.savedWithSuccess', {
-                what: this.$tc('titles.sourceCode', 1)
+                what: this.$t('titles.sourceCode', 1)
             })
         );*/
         router.push({ name: 'sourceCodeList' });
