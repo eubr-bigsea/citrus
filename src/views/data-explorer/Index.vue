@@ -7,8 +7,9 @@
                 </h1>
             </div>
             <hr>
-            <div class="card-deck ">
-                <b-card class="clickable m-1" role="button" @click="navigate('data-explorer')">
+            <div class="row row-cols-1 row-cols-lg-2 row-cols-xl-4 g-3">
+                <div class="col">
+                <b-card class="clickable h-100" role="button" @click="navigate('data-explorer')">
                     <div class="row">
                         <div class="col-2 rounded-option bg-primary">
                             <font-awesome-icon icon="fa fa-table" size="3x" inverse />
@@ -25,7 +26,9 @@
                         </div>
                     </div>
                 </b-card>
-                <b-card class="clickable m-1" role="button">
+                </div>
+                <div class="col">
+                <b-card class="clickable h-100" role="button">
                     <div class="row">
                         <div class="col-2 rounded-option bg-warning">
                             <svg id="Capa_1" fill="#ffffff" version="1.1" xmlns="http://www.w3.org/2000/svg"
@@ -75,7 +78,9 @@
                         </div>
                     </div>
                 </b-card>
-                <b-card class="clickable m-1" role="button" @click="navigate('choose-task')">
+                </div>
+                <div class="col">
+                <b-card class="clickable h-100" role="button" @click="navigate('choose-task')">
                     <div class="row">
                         <div class="col-2 rounded-option bg-success">
                             <font-awesome-icon icon="fa fa-robot" size="3x" inverse />
@@ -92,7 +97,9 @@
                         </div>
                     </div>
                 </b-card>
-                <b-card class="clickable m-1" role="button" @click="navigate('new-visualization')">
+                </div>
+                <div class="col">
+                <b-card class="clickable h-100" role="button" @click="navigate('new-visualization')">
                     <div class="row">
                         <div class="col-2 rounded-option bg-danger">
                             <font-awesome-icon icon="fa fa-chart-bar" size="3x" inverse />
@@ -108,6 +115,7 @@
                         </div>
                     </div>
                 </b-card>
+                </div>
                 <!--
                 <b-card class="clickable m-1">
                     <div class="row">
@@ -136,7 +144,7 @@
                 <b-card>
                     <h5>Ou você quer editar algo existente?</h5>
                     <form class="d-flex flex-row align-items-center flex-wrap">
-                        <label class="sr-only" for="type">{{ $t('common.type') }}</label>
+                        <label class="visually-hidden" for="type">{{ $t('common.type') }}</label>
                         <select v-model="typeFilter" class="form-select w-25">
                             <option selected value="" />
                             <option value="DATA_EXPLORER">
@@ -152,7 +160,7 @@
                                 {{ $t('dataExplorer.experiments.SQL') }}
                             </option>
                         </select>
-                        <label class="sr-only" for="search">{{ $t('common.name') }}</label>
+                        <label class="visually-hidden" for="search">{{ $t('common.name') }}</label>
                         <input v-model="searchFilter" type="text" class="form-control m-2 w-25"
                             :placeholder="$t('common.name')">
                         <button ref="searchBtn" class="btn btn-secondary btn-sm mb-2 btn-spinner"
