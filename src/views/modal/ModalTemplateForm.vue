@@ -155,3 +155,96 @@ export default {
     }
 };
 </script>
+
+<style scoped lang="scss">
+
+.templatePage-card-modal {
+    width: 100%;
+    background-color: #fff;
+}
+
+.templatePage-label {
+    display: block;
+    margin-bottom: 10px;
+    align-items: center;
+    text-transform: uppercase;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.templatePage-input {
+    width: 100%;
+    height: fit-content;
+    padding: 12px 20px;
+    margin-bottom: 25px;
+    border-radius: 4px;
+    border: none;
+    background-color: #eff0f6;
+
+    &.stepInput {
+        margin-bottom: 0px;
+        font-size: 14px;
+    }
+}
+
+.templatePage-textarea {
+    width: 100%;
+    height: fit-content;
+    padding: 12px 20px;
+    margin-bottom: 15px;
+    border-radius: 4px;
+    border: none;
+    background-color: #eff0f6;
+    max-height: 100px;
+
+    &.stepTextarea {
+        margin-bottom: 0px;
+        height: 45px;
+    }
+}
+
+.templatePage-input-container {
+    overflow-y: auto;
+    max-height: 250px;
+}
+
+.templatePage-input-box {
+    display: flex;
+    gap: 10px;
+    margin-bottom: -2px;
+    border-bottom: 2px solid #eff0f6;
+    padding: 10px 0px;
+    padding-right: 10px;
+    border-radius: 3px;
+    align-items: center;
+    font-weight: 500;
+
+    &:hover {
+        cursor: grab;
+    }
+}
+
+.templatePage-tab-button {
+    background-color: transparent;
+    border: 0px;
+    color: black;
+    font-size: 15px;
+}
+
+.templatePage-dragIcon {
+    color: #212529;
+    width: 12px;
+}
+
+.templatePage-invalid-length {
+    color: red;
+    font-size: 12px;
+    position: absolute;
+    top: 5px;
+    display: flex;
+    justify-content: end;
+    width: 100%;
+}
+
+</style>

@@ -63,9 +63,6 @@
                             </b-tabs>
                         </b-card>
                     </form>
-                    <div class="card-body">
-                        {{taskCopy.id}}
-                    </div>
                 </div>
             
                 <b-modal ref="publishingModal" size="xl" :title="$t('titles.publication')" :ok-only="true">
@@ -179,9 +176,6 @@ export default {
         docReferenceUrl() {
             return `${referenceUrl}/${this.taskCopy.operation.slug}`;
         },
-        propertiesForPublishing() {
-            return Object.keys(this.taskCopy.forms).sort((a, b) => a.localeCompare(b));
-        },
         variableNames() {
             return this.variables.map((v) => v.name);
         }
@@ -191,12 +185,6 @@ export default {
             deep: false,
             handler(newValues){
                 this.update();
-            }
-        },
-        xtask: {
-            deep: true,
-            handler(newValues) {
-                //this.taskCopy = {... this.task}
             }
         }
     },
@@ -308,10 +296,6 @@ export default {
                     });
                 });
             };
-            if (this.$refs.scrollBar) {
-                let container = this.$refs.scrollBar.$el; //.querySelector('.ps-container');
-                container.scrollTop = 0;
-            }
             this.tabIndex = 0;
             callback();
 

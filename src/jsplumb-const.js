@@ -1,35 +1,3 @@
-/*
-    const anchorsOriginal = {
-        input: [
-            [
-                [0.5, 0, 0, -1],
-            ],
-            [
-                [0.2, 0, 0, -1],
-                [0.8, 0, 0, -1]
-            ],
-            [
-                [0.2, 0, 0, -1],
-                [0.5, 0, 0, -1],
-                [0.8, 0, 0, -1]
-            ]
-        ],
-        output: [
-            [
-                [0.5, 1, 0, 1],
-            ],
-            [
-                [0.2, 1, 0, 1],
-                [0.8, 1, 0, 1]
-            ],
-            [
-                [0.2, 1, 0, 1],
-                [0.5, 1, 0, 1],
-                [0.8, 1, 0, 1]
-            ]
-        ]
-    }
-    */
 const anchors = {
     input: [
         [
@@ -105,11 +73,6 @@ const endPointPaintStyle = {
 };
 const overlays = [
     ["Arrow", { location: .85, width: 10, length: 15 }],
-    /*
-    ["Label", { padding: 10, location: .5, 
-        label: '[ <font-awesome-icon icon="fa fa-dot-circle-o" /> ]', 
-        cssClass: "labelClass" }]
-        */
 ];
 
 
@@ -137,12 +100,4 @@ const endPointOptionsOutput = {
     connectorStyle: connectorPaintStyle,
     fill: '#faa'
 };
-/*
-const connectionOptions = {
-    maxConnections: 1,
-    endpoint: ['Dot', connectorPaintStyle],
-    paintStyle: connectorPaintStyle,
-    overlays: overlays,
-}
-*/
 export {anchors, anchorRow, endPointOptionsInput, endPointOptionsOutput };

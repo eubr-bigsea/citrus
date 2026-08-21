@@ -227,20 +227,12 @@ export default {
         return {
             pipeline: {},
             pipelineWithoutSteps: false,
-            deleteResponse: null,
             isDirty: false,
             ident: 'ident',
-            collapse1: 'collapse1',
             selectedStep: {},
             selectedStepIndex: null,
-            collapseVisible2: true,
-            collapseVisible3: false,
             editedStep: { id: null, name: '', description: '', workflow: {} },
             stepOrder: null,
-            startDate: "",
-            intervalDays: null,
-            intervalWeeks: null,
-            intervalMonths: null,
             periodicityOptions: [
                 { value: null, text: 'Selecione a periodicidade' },
                 { value: 'daily', text: 'Diário' },
@@ -256,12 +248,6 @@ export default {
             } else {
                 return [];
             }
-        },
-        minDate() {
-            const currentDate = new Date();
-            currentDate.setDate(currentDate.getDate() - 1);
-            const currentDateFormatted = currentDate.toISOString().split('T')[0];
-            return currentDateFormatted;
         }
     },
     created() {

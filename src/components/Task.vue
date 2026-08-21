@@ -51,9 +51,6 @@ export default {
     props: {
         draggable: { default: true, type: Boolean },
         enableContextMenu: { default: true, type: Boolean },
-        enablePositioning: {
-            default: true, type: Boolean
-        },
         instance: { type: Object, default: () => null },
         showDecoration: {
             default: false, type: Boolean
@@ -80,15 +77,12 @@ export default {
     },
     computed: {
         getStyle() {
-            let result = {};
             const task = this.task;
-            if (this.enablePositioning) {
-                result = {
-                    zIndex: task.z_index < 99 ? 100 : task.z_index,
-                    top: task.top + 'px',
-                    left: task.left + 'px',
-                };
-            }
+            const result = {
+                zIndex: task.z_index < 99 ? 100 : task.z_index,
+                top: task.top + 'px',
+                left: task.left + 'px',
+            };
             result['background'] = task.forms && task.forms.color && task.forms.color.value
                 ? task.forms.color.value.background : '#fff';
             return result;
@@ -221,7 +215,6 @@ export default {
                     options.paintStyle.fill = options.paintStyle.fillStyle;
                     if (self.instance && self.instance.addEndpoint) {
                         const endpoint = self.instance.addEndpoint(elem, options);
-                        endpoint.bind('click', self.endpointClick);
                         endpoint.canvas.style.zIndex = zIndex > 0 ? zIndex - 1 : 1;
                         endpoint._portId = ports[inx].id;
                     }
@@ -347,11 +340,6 @@ export default {
             this.contextMenuOpened = false;
             this.$emit('onremove-task', this.task);
         },
-        endpointClick(endpoint, e) {
-            if (e.ctrlKey) {
-                console.debug('Port id: ', endpoint._portId);
-            }
-        }
     },
 };
 

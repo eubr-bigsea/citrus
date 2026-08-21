@@ -2,11 +2,6 @@
     <div class="lemonade-toolbox">
         <div>
             <ul class="list-group">
-                <!-- <li
-                        class="list-group-item truncate sidebar-separator-title text-muted d-flex align-items-center menu-collapsed">
-                        <input v-model="search" type="text" class="form-control" :placeholder="$t('actions.search')"
-                            @input="searchOperation" />
-                    </li> -->
                 <div>
                     <span v-for="item in items" :key="item.op.id + ':' + item.id">
                         <b-link class="list-group-item truncate list-group-item-action flex-column align-items-start"
@@ -59,9 +54,6 @@ export default {
     },
     data() {
         return {
-            filteredOperations: [],
-            search: '',
-            settings: { maxScrollbarLength: 100 },
             expandedOperations: [],
             items: [],
             alreadyLoaded: new Set(),

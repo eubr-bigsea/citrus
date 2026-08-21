@@ -51,21 +51,11 @@
                 </button>
             </div>
         </div>
-        <!--
-        <b-form-group>
-            <label>Data inicial de referência</label>
-            <b-form-datepicker :date-disabled-fn="dateDisabled('first')" locale="pt" />
-        </b-form-group>
-        <b-form-group>
-            <label>Data final de referência</label>
-            <b-form-datepicker :date-disabled-fn="dateDisabled('last')" locale="pt" />
-        </b-form-group>
-        -->
     </b-modal>
 </template>
 
 <script setup>
-import { ref, computed, defineEmits } from 'vue';
+import { ref, computed } from 'vue';
 import { pt } from 'date-fns/locale';
 import { format } from 'date-fns';
 
@@ -120,19 +110,6 @@ const confirm = () => {
 const handleCancel = () => {
     contextData.value = [];
     scheduleModal.value.hide();
-};
-const dateDisabled = (type) => {
-    return (ymd, date) => {
-        const day = date.getDate();
-        const month = date.getMonth();
-        if (type === 'first') {
-            return day !== 1;
-        } else if (type === 'last') {
-            const nextDay = new Date(date.getTime());
-            nextDay.setDate(nextDay.getDate() + 1);
-            return (nextDay.getMonth() === month);
-        }
-    };
 };
 const contextData = ref([]);
 const addContextData = () => {
