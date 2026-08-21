@@ -8,7 +8,7 @@
              @ok="addStep">
         <div class="configPage-card-modal">
             <div>
-                <label for="nome">{{ $tc('common.name') }}:</label>
+                <label for="nome">{{ $t('common.name') }}:</label>
                 <input id="nome" v-model="newStep.name" class="form-control form-control-sm focus" type="text" focus
                        placeholder="Nome da etapa" maxlength="50"/>
             </div>

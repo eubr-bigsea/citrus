@@ -118,7 +118,7 @@
                                                     <div class="fw-bold text-uppercase" style="font-size: 0.65rem;">{{
                                                         step.name }}</div>
                                                     <div style="font-size: 0.55rem; opacity: 0.9;">{{
-                                                        $tc(`status.${step.status}`) }}
+                                                        $t(`status.${step.status}`) }}
                                                     </div>
                                                 </div>
                                                 <b-tooltip :target="'tooltip-target-' + step.id" triggers="hover"
@@ -262,9 +262,9 @@ export default {
                     period: this.$t('common.period'),
                     updated: this.$t('common.updated'),
                     last_executed_step: 'Última Etapa',
-                    status: this.$tc('common.status'),
-                    actions: this.$tc('titles.action', 2),
-                    comment: this.$tc('titles.comment', 2),
+                    status: this.$t('common.status'),
+                    actions: this.$t('titles.action', 2),
+                    comment: this.$t('titles.comment', 2),
                     context: 'Variáveis',
                 },
                 sortable: ['id', 'pipeline_id', 'pipeline_name', 'period', 'updated',],

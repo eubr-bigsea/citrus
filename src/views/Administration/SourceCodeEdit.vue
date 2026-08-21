@@ -14,7 +14,7 @@
                                     <form>
                                         <div class="row">
                                             <div class="col-md-9">
-                                                <label class="font-weight-bold">{{ $tc('common.name')
+                                                <label class="font-weight-bold">{{ $t('common.name')
                                                 }}:</label>
                                                 <input v-model="globalVariable.name" type="text" class="form-control" v-focus maxlength="50">
                                             </div>
@@ -30,7 +30,7 @@
                                                     rows="3"></textarea>
                                             </div>
                                             <div class="col-md-12 mt-2">
-                                                <label class="font-weight-bold">{{ $tc('titles.value')
+                                                <label class="font-weight-bold">{{ $t('titles.value')
                                                 }}:</label>
                                                 <textarea v-model="globalVariable.value" class="form-control"
                                                     rows="3"></textarea>
@@ -46,7 +46,7 @@
                                             </button>
                                             <router-link :to="{ name: 'globalVariableList' }"
                                                 class="btn btn-outline-secondary mr-1">
-                                                {{ $tc('actions.cancel') }}
+                                                {{ $t('actions.cancel') }}
                                             </router-link>
                                         </div>
                                     </div>
@@ -122,7 +122,7 @@ const save = async (event) => {
         /*
         self.success(
             this.$t('messages.savedWithSuccess', {
-                what: this.$tc('titles.globalVariable', 1)
+                what: this.$t('titles.globalVariable', 1)
             })
         );*/
         router.push({ name: 'globalVariableList' });
