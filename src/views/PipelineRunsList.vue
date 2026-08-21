@@ -126,7 +126,7 @@
                                                     <div>
                                                         <strong>Atualização:</strong> {{ $filters.formatJsonDate(step.updated, 'dd/MM/yyyy HH:mm:SS') }} <br>
                                                         <router-link
-                                                            :to="{ name: 'sql-workflow', params: { id: step.workflow_id, platform: 2 } }">
+                                                            :to="{ name: 'sql-workflow', params: { id: step.workflow_id } }">
                                                             Ir para o fluxo de trabalho #{{ step.workflow_id }}
                                                         </router-link>
                                                     </div>
