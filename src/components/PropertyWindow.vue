@@ -172,7 +172,7 @@ export default {
             filledForm: [],
             lookups: [],
             tabIndex: 0,
-            taskCopy: structuredClone(this.task),
+            taskCopy: JSON.parse(JSON.stringify(this.task)),
         };
     },
     computed: {
@@ -256,8 +256,11 @@ export default {
             const self = this;
             // a real clone, not {...this.task} - that only shallow-copies
             // the top level, so taskCopy.forms stayed the same object as
-            // task.forms and every edit here mutated the prop directly
-            this.taskCopy = structuredClone(this.task);
+            // task.forms and every edit here mutated the prop directly.
+            // JSON round-trip, not structuredClone: task can carry
+            // non-cloneable values (e.g. reactive refs) that make
+            // structuredClone throw; JSON.stringify just drops them
+            this.taskCopy = JSON.parse(JSON.stringify(this.task));
             const callback = () => {
                 self.filledForm = self.taskCopy.forms;
                 self.forms = self.taskCopy.operation.forms.sort((a, b) => {
