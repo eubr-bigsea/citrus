@@ -39,7 +39,7 @@
                 </label>
                 <div class="templatePage-input-container">
                     <draggable v-model="editedTemplate.steps" :options="dragOptions" @end="onDragEnd">
-                        <div v-for="(input, index) in orderedTemplateSteps" :key="index" class="templatePage-input-box">
+                        <div v-for="(input, index) in editedTemplate.steps" :key="index" class="templatePage-input-box">
                             <font-awesome-icon class="templatePage-dragIcon" icon="fa fa-grip-vertical" />
                             {{setOrder(input, index)}}
                             #{{index + 1}}
@@ -96,13 +96,11 @@ export default {
             },
         };
     },
-    computed: {
-        orderedTemplateSteps() {
-            return this.editedTemplate.steps.slice().sort((a, b) => a.order - b.order);
-        },
-    },
     methods: {
         show() {
+            this.invalidInputLength = false;
+            // eslint-disable-next-line vue/no-mutating-props
+            this.editedTemplate.steps.sort((a, b) => a.order - b.order);
             this.$refs.editTemplateModal.show();
         },
         onDragEnd(event) {
@@ -124,7 +122,11 @@ export default {
             // eslint-disable-next-line vue/no-mutating-props
             this.editedTemplate.steps.splice(index, 1);
         },
-        editTemplate() {
+        editTemplate(e) {
+            if (this.invalidInputLength) {
+                e.preventDefault();
+                return;
+            }
             axios
                 .patch(`${tahitiUrl}/pipeline-templates/${this.editedTemplate.id}`, this.editedTemplate)
                 .then(() => {
