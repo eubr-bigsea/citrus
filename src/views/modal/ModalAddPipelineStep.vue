@@ -144,8 +144,7 @@ export default {
             this.selectedWorkflow = null;
             this.showWorkflowOps = 0;
             this.selectedWorkflowType = null;
-            this.newStep.name = '';
-            this.newStep.description = '';
+            this.newStep = { name: '', description: '', enabled: true, order: null };
         },
         show() {
             this.$refs.addStepModal.show();
@@ -193,7 +192,8 @@ export default {
 
             axios
                 .post(`${tahitiUrl}/workflows`, workflow)
-                .then(() => {
+                .then((resp) => {
+                    this.newStep.workflow_id = resp.data.id;
                     this.success('Fluxo de trabalho criado com sucesso.');
                 })
                 .catch(
