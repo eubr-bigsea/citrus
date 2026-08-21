@@ -149,10 +149,6 @@ export default {
         show() {
             this.$refs.addStepModal.show();
         },
-        redirectToWorkflow(step) {
-            if(step.workflow === undefined) this.warning('Etapa não associada a um fluxo de trabalho.');
-            else this.$router.push({ name: 'editWorkflow', params: { id: step.workflow.id, platform: 1 } });
-        },
         /*
         editPipeline(msg) {
             const changedPipeline = { ...this.pipeline };
