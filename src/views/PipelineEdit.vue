@@ -119,7 +119,7 @@
                                         <font-awesome-icon icon="plus" />
                                     </button>
                                 </div>
-                                <draggable v-model="pipeline.steps" :options="dragOptions" @end="onDragEnd">
+                                <draggable v-model="pipeline.steps" @end="onDragEnd">
                                     <div v-for="(step, index) in orderedPipelineSteps" :key="step.id"
                                         class="editPage-dragDiv"
                                         :class="{ 'editPage-dragDiv-selected': selectedStep.id === step.id }"
@@ -240,12 +240,6 @@ export default {
             intervalDays: null,
             intervalWeeks: null,
             intervalMonths: null,
-            dragOptions: {
-                animation: 200,
-                group: 'description',
-                disabled: false,
-                ghostClass: 'ghost',
-            },
             periodicityOptions: [
                 { value: null, text: 'Selecione a periodicidade' },
                 { value: 'daily', text: 'Diário' },
