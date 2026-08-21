@@ -45,7 +45,7 @@
 
 <script>
 ;
-import { anchors, endPointOptionsInput, endPointOptionsOutput } from '../jsplumb-const.js';
+import { anchorRow, endPointOptionsInput, endPointOptionsOutput } from '../jsplumb-const.js';
 export default {
     name: 'TaskComponent',
     props: {
@@ -171,14 +171,18 @@ export default {
             let portType = item.type;
             lbls[0][1]['cssClass'] = `endpoint-label ${portType}`;
 
+            let portAnchors = ports.length > 0 ? anchorRow(portType, ports.length) : [];
             // FIXME: hard coded layout
             if (cssClass && cssClass.includes('circle-layout') && ports.length === 2) {
-                anchors[portType][1][0][1] = 0.35;
-                anchors[portType][1][1][1] = 0.65;
+                // clone before overriding so this never mutates the
+                // shared anchors table other tasks read from
+                portAnchors = portAnchors.map(a => a.slice());
+                portAnchors[0][1] = 0.35;
+                portAnchors[1][1] = 0.65;
             }
 
             if (ports.length > 0) {
-                anchors[portType][ports.length - 1].forEach((anchor, inx) => {
+                portAnchors.forEach((anchor, inx) => {
                     lbls[0][1]['label'] = `<div class="has-${ports.length}-ports">${ports[inx].name}</div>`;
 
                     let options = JSON.parse(JSON.stringify(item.options)); // clone in order to modify
