@@ -246,6 +246,9 @@ export default {
         }
         this.$emit('ontask-ready', self.task);
     },
+    beforeUnmount() {
+        this.$el.removeEventListener('keyup', this.keyboardKeyUpTrigger, true);
+    },
     methods: {
         keyboardKeyUpTrigger(ev) {
             this.$emit('onkeyboard-keyup', ev);
