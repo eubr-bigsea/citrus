@@ -168,7 +168,7 @@
                                         </template>
                                         <PipelineStepScheduler ref="stepScheduler" :selected-step="selectedStep"
                                             :selected-step-index="selectedStepIndex" :pipeline-id="pipeline.id"
-                                            @send-scheduler-changes="schedulerUpdate" />
+                                            @update-step="schedulerUpdate" />
                                     </b-tab>
                                     <b-tab>
                                         <template #title>
@@ -178,7 +178,7 @@
                                         </template>
                                         <EditPipelineStep ref="editStepModal" :edited-step="editedStep"
                                             :pipeline="pipeline" :selected-step-index="selectedStepIndex"
-                                            @send-step-changes="schedulerUpdate" />
+                                            @update-step="schedulerUpdate" />
                                     </b-tab>
                                 </b-tabs>
                             </div>

@@ -150,7 +150,7 @@ export default {
         selectedStepIndex: { type: Number, default: null },
         pipeline: { type: Object, default: () => { } },
     },
-    emits: ['send-step-changes'],
+    emits: ['update-step'],
     data() {
         return {
             showWorkflowOps: this.editedStep.workflow === undefined ? 0 : -1,
@@ -178,7 +178,7 @@ export default {
             // eslint-disable-next-line vue/no-mutating-props
             if (this.selectedWorkflow !== null) this.editedStep.workflow_id = this.selectedWorkflow.id;
 
-            this.$emit('send-step-changes', this.editedStep);
+            this.$emit('update-step', this.editedStep);
         },
         handleInput() {
             this.editStep();
