@@ -69,11 +69,11 @@
                                             <strong> {{subGroup.subGroup}}</strong>
                                         </span>
                                     </b-button>
-                                    <b-collapse v-for="op in subGroup.operations"
-                                                :id="`subsubmenu_${index}+${index2}`"
-                                                :key="op.operation.id"
-                                                :title="op.operation.name">
-                                        <a class="list-group-item truncate list-group-item-action bg-white text-dark"
+                                    <b-collapse :id="`subsubmenu_${index}+${index2}`">
+                                        <a v-for="op in subGroup.operations"
+                                           :key="op.operation.id"
+                                           :title="op.operation.name"
+                                           class="list-group-item truncate list-group-item-action bg-white text-dark"
                                            draggable="true"
                                            :data-id="op.operation.id"
                                            href="#"

@@ -688,13 +688,19 @@ export default {
                 })
                 .join(' ');
             const tryConnections = ev.dataTransfer.getData('tryConnections');
+            // dbClickAddTask (Toolbox mixin) passes explicit
+            // coordinates via dataTransfer since a synthetic drop
+            // event's offsetX/offsetY can't be relied on; a real
+            // drag-and-drop never sets these, so it falls back as before
+            const explicitLeft = ev.dataTransfer.getData('left');
+            const explicitTop = ev.dataTransfer.getData('top');
             const newTask = {
                 id: self.generateId(),
                 forms: {},
                 operation,
                 operation_id: operation.id,
-                left: ev.offsetX,
-                top: ev.offsetY,
+                left: explicitLeft !== '' ? Number(explicitLeft) : ev.offsetX,
+                top: explicitTop !== '' ? Number(explicitTop) : ev.offsetY,
                 z_index: ++self.currentZIndex,
                 classes,
                 status: 'WAITING',
