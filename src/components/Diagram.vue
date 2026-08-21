@@ -558,11 +558,17 @@ export default {
                 self.initialW = 0;
                 self.initialH = 0;
 
+                // ghostSelect's left/top/width/height were set from
+                // getBoundingClientRect-derived screen pixels in
+                // openSelector(), i.e. already scaled by zoom; convert
+                // back to diagram space (same units as task.left/top)
+                // before comparing, instead of mixing the two.
+                const zoom = this.zoom || 1;
                 let ghostSelect = self.$refs.ghostSelect;
-                let x1 = parseInt(ghostSelect.style.left);
-                let y1 = parseInt(ghostSelect.style.top);
-                let x2 = parseInt(ghostSelect.style.width) + x1;
-                let y2 = parseInt(ghostSelect.style.height) + y1;
+                let x1 = parseInt(ghostSelect.style.left) / zoom;
+                let y1 = parseInt(ghostSelect.style.top) / zoom;
+                let x2 = parseInt(ghostSelect.style.width) / zoom + x1;
+                let y2 = parseInt(ghostSelect.style.height) / zoom + y1;
 
                 ghostSelect.classList.remove('ghost-active');
                 ghostSelect.style.width = 0;
@@ -574,6 +580,8 @@ export default {
                     const taskElem = document.getElementById(task.id);
                     if (taskElem) {
                         let bounds = taskElem.getBoundingClientRect();
+                        const width = bounds.width / zoom;
+                        const height = bounds.height / zoom;
 
                         // Uses task left and top because offset calculation
                         // was already done
@@ -584,9 +592,9 @@ export default {
 
                         if (
                             x1 <= task.left &&
-                            x2 >= task.left + bounds.width &&
+                            x2 >= task.left + width &&
                             y1 <= task.top &&
-                            y2 >= task.top + bounds.height
+                            y2 >= task.top + height
                         ) {
                             // console.debug(`overlap with ${task.operation.name}`)
                             self.instance.addToDragSelection(task.id);
