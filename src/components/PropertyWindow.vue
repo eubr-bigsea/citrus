@@ -236,10 +236,7 @@ export default {
             return this.lookups;
         },
         getValue(name) {
-            return this.taskCopy
-                && this.taskCopy.forms
-                && this.taskCopy.forms[name]
-                ? this.taskCopy.forms[name].value : null;
+            return this.taskCopy?.forms?.[name]?.value ?? null;
         },
         evalInContext(js, context) {
             //# Return the results of the in-line anonymous function we .call with the passed context
