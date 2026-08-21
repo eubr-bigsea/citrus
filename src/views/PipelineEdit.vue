@@ -200,6 +200,7 @@ import { VueDraggableNext } from 'vue-draggable-next'
 import InputHeader from '../components/InputHeader.vue';
 import TextAreaCustom from '../components/TextAreaCustom.vue';
 import Notifier from '../mixins/Notifier.js';
+import { reorder } from '../util.js';
 
 let tahitiUrl = import.meta.env.VITE_TAHITI_URL;
 
@@ -324,9 +325,7 @@ export default {
             this.isDirty = true;
         },
         onDragEnd(event) {
-            this.pipeline.steps.forEach((step, index) => {
-                step.order = index + 1;
-            });
+            reorder(this.pipeline.steps);
             this.isDirty = true;
         },
         updatePipeline(pipelineData) {
