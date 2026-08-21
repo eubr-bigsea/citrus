@@ -3,7 +3,10 @@
         <diagram-toolbar v-if="showToolbar" class="diagram-toolbar" :selected="selectedElements" :copied-tasks="copiedTasks"
             :use-data-source="useDataSource" @onclick-task="clickTask" @oncopy-tasks="_copy" @onpaste-tasks="_paste"
             @ontoggle-tasks="toggleTasks" @ondistribute-tasks="distribute" @onalign-tasks="align"
-            @onremove-tasks="removeSelectedTasks" />
+            @onremove-tasks="removeSelectedTasks" @onzoom="setZoomPercent"
+            @ontoggle-tasks-panel="$emit('ontoggle-tasks-panel')"
+            @ontoggle-data-sources-panel="$emit('ontoggle-data-sources-panel')"
+            @ontoggle-dark-mode="$emit('ontoggle-dark-mode')" />
         <div v-else class="border"></div>
         <div id="lemonade-container" :class="{'with-grid': showGrid, 'dark-mode': darkMode}"
              class="lemonade-container not-selectable" @click="diagramClick">
@@ -127,14 +130,16 @@ export default {
         }
     },
     emits: [
-        'onclear-selection', 'addFlow', 'onclear-selection', 'add-task',
+        'onclear-selection', 'addFlow', 'add-task',
         'onkeyboard-keyup', 'onblur-selection', 'removeFlow', 'onshow-deploy',
         'onclick-task', 'onset-is-dirty', 'onshow-result', 'remove-task',
-        'onzoom'
+        'onzoom', 'ontoggle-tasks-panel', 'ontoggle-data-sources-panel',
+        'ontoggle-dark-mode'
     ],
 
     data() {
         return {
+            platform: null,
             clusters: [],
             clusterDescription: '',
             cluster: null,
@@ -205,11 +210,7 @@ export default {
         });
     },
     created() {
-        const self = this;
-
-        if (this.$route.params.id) {
-            this.init();
-        }
+        this.init();
 
         // this.$on('oncancel-deploy', () => {
         //   this.setZoomPercent(null, this.oldZoom);
@@ -226,6 +227,10 @@ export default {
 
     beforeUnmount() {
         this.readyTasks = new Set();
+        this.$el.removeEventListener('keyup', this.keyboardKeyUpTrigger, true);
+        if (this.diagramElement) {
+            this.diagramElement.removeEventListener('mousedown', this.handleDiagramMousedown);
+        }
     },
 
     mounted() {
@@ -252,7 +257,19 @@ export default {
         this.$el.addEventListener('keyup', this.keyboardKeyUpTrigger, true);
 
         /* selection by dragging */
-        self.diagramElement.addEventListener('mousedown', ev => {
+        self.diagramElement.addEventListener('mousedown', this.handleDiagramMousedown);
+        if (self.shink) {
+            // const z = parseFloat(self.zoom);
+            // const width = z * (Math.max.apply(null, self.workflow.tasks.map(t => t.left)) + 200);
+            // const height = z * (Math.max.apply(null, self.workflow.tasks.map(t => t.top)) + 200);
+            self.$refs.diagram.style.width = '100%'; //width + 'px';
+            self.$refs.diagram.style.height = '100%';
+        }
+    },
+
+    methods: {
+        handleDiagramMousedown(ev) {
+            const self = this;
             if (self.$refs.diagram === ev.target) {
                 let rightClick =
                     ev.which === 3 || ev.button == 2; // Gecko (Firefox), WebKit (Safari/Chrome) & Opera // IE, Opera
@@ -264,8 +281,8 @@ export default {
                 const ghostSelect = self.$refs.ghostSelect;
                 if (ghostSelect) {
                     ghostSelect.classList.add('ghost-active');
-                    ghostSelect.style.left = ev.offsetY + 'px';
-                    ghostSelect.style.top = ev.offsetX + 'px';
+                    ghostSelect.style.left = ev.offsetX + 'px';
+                    ghostSelect.style.top = ev.offsetY + 'px';
                     ghostSelect.style.width = '0px';
                     ghostSelect.style.height = '0px';
                     self.initialW = ev.offsetX;
@@ -274,19 +291,9 @@ export default {
                     document.addEventListener('mousemove', self.openSelector);
                 }
             }
-        });
-        if (self.shink) {
-            // const z = parseFloat(self.zoom);
-            // const width = z * (Math.max.apply(null, self.workflow.tasks.map(t => t.left)) + 200);
-            // const height = z * (Math.max.apply(null, self.workflow.tasks.map(t => t.top)) + 200);
-            self.$refs.diagram.style.width = '100%'; //width + 'px';
-            self.$refs.diagram.style.height = '100%';
-        }
-    },
-
-    methods: {
-        showResult() {
-            this.$emit('onshow-result', this.task);
+        },
+        showResult(task) {
+            this.$emit('onshow-result', task);
         },
 
         /* Flow management  */
@@ -445,16 +452,9 @@ export default {
 
                 const connection = self.instance.connect({uuids});
                 if (connection) {
-                    connection.bind('mouseover', (c, originalEvent) => {
-                        //var arr = self.instance.select({ source: con.sourceId, target: con.targetId });
-                        if (originalEvent) {
-                            const currentStyle = c ? c.getPaintStyle() : null;
-                            currentStyle.lineWidth = 20;
-                            currentStyle.outlineColor = '#ed8';
-                            c.setPaintStyle(currentStyle);
-                            self.instance.repaintEverything();
-                        }
-                    });
+                    // hover thickening/color is handled by the
+                    // instance's HoverPaintStyle (getJsPlumbInstance)
+                    // instead of a hand-rolled mouseover/mouseout pair
                     const currentStyle = connection ? connection.getPaintStyle() : null;
                     if (currentStyle) {
                         currentStyle[
@@ -538,8 +538,8 @@ export default {
             const instance = jsPlumb.getInstance({
                 //Anchors: anchors,
                 Endpoints: [['Dot', {radius: 2}], ['Dot', {radius: 1}]],
-                EndpointHoverStyle: {fillStyle: 'orange'},
-                HoverPaintStyle: {strokeStyle: 'blue'}
+                EndpointHoverStyle: {fill: 'orange'},
+                HoverPaintStyle: {stroke: 'blue', strokeWidth: 3}
             });
             if (this.initialZoom) instance.setZoom(this.initialZoom);
             return instance;
@@ -568,11 +568,17 @@ export default {
                 self.initialW = 0;
                 self.initialH = 0;
 
+                // ghostSelect's left/top/width/height were set from
+                // getBoundingClientRect-derived screen pixels in
+                // openSelector(), i.e. already scaled by zoom; convert
+                // back to diagram space (same units as task.left/top)
+                // before comparing, instead of mixing the two.
+                const zoom = this.zoom || 1;
                 let ghostSelect = self.$refs.ghostSelect;
-                let x1 = parseInt(ghostSelect.style.left);
-                let y1 = parseInt(ghostSelect.style.top);
-                let x2 = parseInt(ghostSelect.style.width) + x1;
-                let y2 = parseInt(ghostSelect.style.height) + y1;
+                let x1 = parseInt(ghostSelect.style.left) / zoom;
+                let y1 = parseInt(ghostSelect.style.top) / zoom;
+                let x2 = parseInt(ghostSelect.style.width) / zoom + x1;
+                let y2 = parseInt(ghostSelect.style.height) / zoom + y1;
 
                 ghostSelect.classList.remove('ghost-active');
                 ghostSelect.style.width = 0;
@@ -584,6 +590,8 @@ export default {
                     const taskElem = document.getElementById(task.id);
                     if (taskElem) {
                         let bounds = taskElem.getBoundingClientRect();
+                        const width = bounds.width / zoom;
+                        const height = bounds.height / zoom;
 
                         // Uses task left and top because offset calculation
                         // was already done
@@ -594,9 +602,9 @@ export default {
 
                         if (
                             x1 <= task.left &&
-                            x2 >= task.left + bounds.width &&
+                            x2 >= task.left + width &&
                             y1 <= task.top &&
-                            y2 >= task.top + bounds.height
+                            y2 >= task.top + height
                         ) {
                             // console.debug(`overlap with ${task.operation.name}`)
                             self.instance.addToDragSelection(task.id);
@@ -690,13 +698,19 @@ export default {
                 })
                 .join(' ');
             const tryConnections = ev.dataTransfer.getData('tryConnections');
+            // dbClickAddTask (Toolbox mixin) passes explicit
+            // coordinates via dataTransfer since a synthetic drop
+            // event's offsetX/offsetY can't be relied on; a real
+            // drag-and-drop never sets these, so it falls back as before
+            const explicitLeft = ev.dataTransfer.getData('left');
+            const explicitTop = ev.dataTransfer.getData('top');
             const newTask = {
                 id: self.generateId(),
                 forms: {},
                 operation,
                 operation_id: operation.id,
-                left: ev.offsetX,
-                top: ev.offsetY,
+                left: explicitLeft !== '' ? Number(explicitLeft) : ev.offsetX,
+                top: explicitTop !== '' ? Number(explicitTop) : ev.offsetY,
                 z_index: ++self.currentZIndex,
                 classes,
                 status: 'WAITING',

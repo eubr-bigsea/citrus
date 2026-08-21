@@ -8,7 +8,7 @@
                 {{$t('titles.pipelineRuns', 2)}}
             </h1>
             <router-link v-if="fromPipelineEdit" :to="{ name: 'pipelineEdit', params: { id: $route.params.id } }"
-                         class="btn btn-outline-primary d-print-none float-right btn-sm">
+                         class="btn btn-outline-primary d-print-none float-end btn-sm">
                 <font-awesome-icon icon="fa-chevron-left" />
                 &nbsp; {{$t('actions.back')}} -
                 Pipeline #{{$route.params.id}}
@@ -20,26 +20,26 @@
                     <div class="runsList-container custom-table">
                         <div class="row">
                             <div class="col-12">
-                                <form class="form-row list-filter">
-                                    <div class="form-group col-3">
+                                <form class="row g-2 list-filter">
+                                    <div class="col-3 mb-2">
                                         <label for="search">Id ou {{$t('common.name')}} da pipeline:</label>
                                         <input v-model="filters.name" type="text" class="form-control form-control-sm"
                                                :placeholder="$t('common.name')">
                                     </div>
-                                    <div class="form-group col-2">
+                                    <div class="col-2 mb-2">
                                         <label for="range">{{$t('titles.start')}} do período: </label>
                                         <input v-model="filters.start" type="date"
                                                class="form-control form-control-sm">
                                     </div>
 
-                                    <div class="form-group col-2">
+                                    <div class="col-2 mb-2">
                                         <label for="range">{{$t('common.end')}} do período: </label>
                                         <input v-model="filters.end" type="date" class="form-control form-control-sm">
                                     </div>
 
-                                    <div class="form-group col-2">
+                                    <div class="col-2 mb-2">
                                         <label for="status">{{$t('common.status')}}: </label>
-                                        <select v-model="filters.status" class="form-control form-control-sm"
+                                        <select v-model="filters.status" class="form-select form-select-sm"
                                                 name="status">
                                             <option selected value="" />
                                             <option v-for="status in statuses" :key="status" :value="status">
@@ -47,9 +47,9 @@
                                             </option>
                                         </select>
                                     </div>
-                                    <div class="form-group col-1">
+                                    <div class="col-1 mb-2">
                                         <label for="limit">{{$t('common.limit')}}: </label>
-                                        <select v-model="filters.limit" class="form-control form-control-sm"
+                                        <select v-model="filters.limit" class="form-select form-select-sm"
                                                 name="limit">
                                             <option selected value="10">
                                                 10
@@ -88,7 +88,7 @@
                                             {{ props.row.pipeline_name }}
                                         </router-link>
                                         <div v-if="props.row.context_data && props.row.context_data.length > 0" class="mt-1" title="Variáveis de contexto">
-                                                <span v-for="data in props.row.context_data" :key="data.name" class="text-muted mr-2 small">{{ data.name }}={{ data.value }}</span>
+                                                <span v-for="data in props.row.context_data" :key="data.name" class="text-muted me-2 small">{{ data.name }}={{ data.value }}</span>
                                         </div>
                                     </template>
                                     <template #period="props">
@@ -97,9 +97,9 @@
                                     <template #updated="props" class="text-center">
 
                                         <font-awesome-icon icon="fa fa-calendar-alt"
-                                            :title="props.row.updated | formatJsonDate('dd/MM/yyyy HH:mm:SS')"
+                                            :title="$filters.formatJsonDate(props.row.updated, 'dd/MM/yyyy HH:mm:SS')"
                                             class="text-info" />
-                                        {{ props.row.updated | formatJsonDate('dd/MM/yyyy HH:mm:SS') }}
+                                        {{ $filters.formatJsonDate(props.row.updated, 'dd/MM/yyyy HH:mm:SS') }}
 
                                     </template>
                                     <template #comment="props">
@@ -118,16 +118,15 @@
                                                     <div class="fw-bold text-uppercase" style="font-size: 0.65rem;">{{
                                                         step.name }}</div>
                                                     <div style="font-size: 0.55rem; opacity: 0.9;">{{
-                                                        $tc(`status.${step.status}`) }}
+                                                        $t(`status.${step.status}`) }}
                                                     </div>
                                                 </div>
                                                 <b-tooltip :target="'tooltip-target-' + step.id" triggers="hover"
                                                     custom-class="tooltip-large">
                                                     <div>
-                                                        <strong>Atualização:</strong> {{ step.updated |
-                                                            formatJsonDate('dd/MM/yyyy HH:mm:SS') }} <br>
+                                                        <strong>Atualização:</strong> {{ $filters.formatJsonDate(step.updated, 'dd/MM/yyyy HH:mm:SS') }} <br>
                                                         <router-link
-                                                            :to="{ name: 'sql-workflow', params: { id: step.workflow_id, platform: 2 } }">
+                                                            :to="{ name: 'sql-workflow', params: { id: step.workflow_id } }">
                                                             Ir para o fluxo de trabalho #{{ step.workflow_id }}
                                                         </router-link>
                                                     </div>
@@ -262,9 +261,9 @@ export default {
                     period: this.$t('common.period'),
                     updated: this.$t('common.updated'),
                     last_executed_step: 'Última Etapa',
-                    status: this.$tc('common.status'),
-                    actions: this.$tc('titles.action', 2),
-                    comment: this.$tc('titles.comment', 2),
+                    status: this.$t('common.status'),
+                    actions: this.$t('titles.action', 2),
+                    comment: this.$t('titles.comment', 2),
                     context: 'Variáveis',
                 },
                 sortable: ['id', 'pipeline_id', 'pipeline_name', 'period', 'updated',],
@@ -291,12 +290,6 @@ export default {
             key: 1
         };
     },
-    watch: {
-        '$route': function(to, from) {
-            debugger;
-            disconnectWebSocket();
-        }
-    },
     mounted() {
         if (this.$route.params.from === 'PipelineEdit') this.fromPipelineEdit = true;
         else this.fromPipelineEdit = false;
@@ -317,31 +310,7 @@ export default {
                 this.notifications.length = this.notifications.length > 100 ? 100
                     : this.notifications.length;
                 if (!msg.cache) {
-                    const run = msg.pipeline_run;
-                    let elem = document.getElementById('runsList');
-                    if (elem)
-                        elem = elem.querySelector(`[data-id="${run.id}"]`);
-                    if (elem) {
-                        elem.className = 'pipeline-runs-status';
-                        elem.classList.add(run.status.toLowerCase());
-                        elem.innerText = this.$t(`status.${run.status}`).toUpperCase();
-
-                        const row = elem.parentNode.parentNode;
-                        const children = row.childNodes;
-                        if (run.updated) {
-                            children[4].innerText = run.updated;
-                        }
-                        if (run.last_step) {
-                            children[5].innerText = run.last_step;
-                        }
-
-                        row.classList.add('highlight');
-                        row.classList.add('font-weight-bold');
-                        row.addEventListener('animationend', () => {
-                            row.classList.remove('highlight');
-                            row.classList.remove('font-weight-bold');
-                        });
-                    }
+                    this.$refs.runsList.refresh();
                 }
             },
         };
@@ -349,14 +318,13 @@ export default {
             eventHandlers);
     },
     beforeMount() {
-        this.filters = JSON.parse(localStorage.getItem('pipeline_run:list:filters') || '{}');
+        Object.assign(this.filters, JSON.parse(localStorage.getItem('pipeline_run:list:filters') || '{}'));
     },
     unmounted() {
-        debugger
+        disconnectWebSocket();
     },
     watch: {
-        '$route': function (to, from) {
-            debugger
+        '$route'() {
             disconnectWebSocket();
         }
     },

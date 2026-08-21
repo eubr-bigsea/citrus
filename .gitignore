@@ -2,6 +2,11 @@
 node_modules
 /dist
 
+# Claude Code local settings (machine-specific paths) and graphify's
+# regenerable knowledge-graph output
+/.claude
+/graphify-out
+
 
 # local env files
 .env.local

@@ -124,7 +124,7 @@ export default {
                             this.items.push(... resp.data);
                             this.alreadyLoaded.add(op.id);
                         }).catch(function (e) {
-                            this.$root.$emit('on-error', e);
+                            this.error(e);
                         }.bind(this));
                     }
                 }

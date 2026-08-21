@@ -351,7 +351,7 @@ openIdService.loadConfig(store).then(() => {
     */
 
     app.directive('focus', {
-        inserted: function (el) {
+        mounted: function (el) {
             el.focus();
         }
     });
@@ -369,9 +369,9 @@ openIdService.loadConfig(store).then(() => {
     };
 
     app.config.globalProperties.$filters = {
-        formatJsonDate(v) {
+        formatJsonDate(v, fmt) {
             if (v) {
-                return format(parseISO(v + '.000Z'), 'dd/MM/yyyy HH:mm');
+                return format(parseISO(v + '.000Z'), fmt || 'dd/MM/yyyy HH:mm');
             }
         },
         formatTimestamp(v) {

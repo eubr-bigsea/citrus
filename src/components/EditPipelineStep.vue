@@ -265,7 +265,7 @@ export default {
 
             this.showWorkflowOps = -1;
             this.workflowName = '';
-            this.selectedWorkflowType = null;
+            this.selectedWorkflowType = 'SQL';
         }
     }
 

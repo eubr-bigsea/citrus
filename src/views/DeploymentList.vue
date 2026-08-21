@@ -89,7 +89,7 @@
 
 
 <script>
-import { ref, reactive, onMounted } from 'vue';
+import { ref, reactive, onMounted, inject } from 'vue';
 import { useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import { useStore } from 'vuex';
@@ -105,15 +105,13 @@ export default {
         const router = useRouter();
         const store = useStore();
         const { t } = useI18n();
-        const notifier = new Notifier(router, t);
+        const notifier = new Notifier(inject('snotify'), t, router);
 
         const currentRow = ref(null);
         const logs = ref([]);
         const listTable = ref(null);
 
         const columns = ['id', 'name', 'model_name', 'current_status', 'updated', 'user_name', 'address', 'actions'];
-
-        const formatJsonDate = date => new Date(date).toLocaleString(); // ou seu filtro
 
         const getDeploymentClass = (item) => {
             switch (item.current_status) {
@@ -234,7 +232,6 @@ export default {
             currentRow,
             logs,
             listTable,
-            formatJsonDate,
             getDeploymentClass,
             loggedUserIsOwnerOrAdmin,
             showInfo,

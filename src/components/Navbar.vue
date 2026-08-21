@@ -8,35 +8,35 @@
         <b-collapse id="nav_collapse" is-nav>
             <b-navbar-nav class="pt-1">
                 <b-nav-item v-if="hasAnyPermission(DATA_SOURCE_PERMISSIONS) || isAdmin" :to="{ name: 'dataSources' }">
-                    <font-awesome-icon icon="fa fa-database" class="text-success" /> {{ $tc('titles.dataSource', 2) }}
+                    <font-awesome-icon icon="fa fa-database" class="text-success" /> {{ $t('titles.dataSource', 2) }}
                 </b-nav-item>
                 <b-nav-item v-if="hasAnyPermission(WORKFLOW_PERMISSIONS) || isAdmin" :to="{ name: 'workflows' }">
-                    <font-awesome-icon icon="fa fa-flask" class="text-success" /> {{ $tc('titles.workflow', 2) }}
+                    <font-awesome-icon icon="fa fa-flask" class="text-success" /> {{ $t('titles.workflow', 2) }}
                 </b-nav-item>
                 <b-nav-item v-if="hasAnyPermission(WORKFLOW_PERMISSIONS) || isAdmin" :to="{ name: 'index-explorer' }"
                             data-test="experiments-menu">
-                    <font-awesome-icon icon="fa fa-vial" class="text-success" /> {{ $tc('titles.dataExplorer', 2) }}
+                    <font-awesome-icon icon="fa fa-vial" class="text-success" /> {{ $t('titles.dataExplorer', 2) }}
                 </b-nav-item>
                 <b-nav-item v-if="hasAnyPermission(APP_PERMISSIONS) || isAdmin" :to="{ name: 'tracks' }">
-                    <font-awesome-icon icon="fa fa-microscope" class="text-success" /> {{ $tc('titles.track', 2) }}
+                    <font-awesome-icon icon="fa fa-microscope" class="text-success" /> {{ $t('titles.track', 2) }}
                 </b-nav-item>
                 <b-nav-item v-if="hasAnyPermission(JOB_PERMISSIONS) || isAdmin" :to="{ name: 'jobs' }">
-                    <font-awesome-icon icon="fa fa-tasks" class="text-success" /> {{ $tc('titles.jobs', 2) }}
+                    <font-awesome-icon icon="fa fa-tasks" class="text-success" /> {{ $t('titles.jobs', 2) }}
                 </b-nav-item>
                 <b-nav-item v-if="hasAnyPermission(DASHBOARD_PERMISSIONS) || isAdmin" :to="{ name: 'dashboards' }">
-                    <font-awesome-icon icon="fa fa-chart-line" class="text-success" /> {{ $tc('titles.dashboard', 2) }}
+                    <font-awesome-icon icon="fa fa-chart-line" class="text-success" /> {{ $t('titles.dashboard', 2) }}
                 </b-nav-item>
 
                 <b-nav-item-dropdown v-if="hasAnyPermission(PIPELINE) || isAdmin" right data-test="pipelines-menu">
                     <template #button-content>
                         <font-awesome-icon icon="fa fa-circle-nodes" class="text-success" />
-                        {{ $tc('titles.pipeline', 2) }}
+                        {{ $t('titles.pipeline', 2) }}
                     </template>
                     <b-dropdown-item :to="{ name: 'pipelines' }" data-test="pipelines-item">
-                        {{ $tc('titles.pipeline', 2) }}
+                        {{ $t('titles.pipeline', 2) }}
                     </b-dropdown-item>
                     <b-dropdown-item :to="{ name: 'pipelineRunsList' }" data-test="pipelineRuns-item">
-                        {{ $tc('titles.pipelineRuns', 2) }}
+                        {{ $t('titles.pipelineRuns', 2) }}
                     </b-dropdown-item>
                 </b-nav-item-dropdown>
             </b-navbar-nav>
@@ -45,36 +45,36 @@
                 <b-nav-item-dropdown v-if="isAdmin" data-test="admin-menu" right>
                     <template #button-content>
                         <font-awesome-icon icon="fa fa-lock" class="text-success" />
-                        {{ $tc('titles.administration', 2) }}
+                        {{ $t('titles.administration', 2) }}
                     </template>
                     <b-dropdown-item :to="{ name: 'AdministrationUserList' }">
                         <font-awesome-icon icon="fa fa-users" class="text-success"/>
-                        {{ $tc('titles.user', 2) }}
+                        {{ $t('titles.user', 2) }}
                     </b-dropdown-item>
                     <b-dropdown-item :to="{ name: 'AdministrationRoleList' }">
                         <font-awesome-icon icon="fa fa-user-group" class="text-success" />
-                        {{ $tc('titles.role', 2) }}
+                        {{ $t('titles.role', 2) }}
                     </b-dropdown-item>
                     <b-dropdown-item :to="{ name: 'configuration' }">
                         <font-awesome-icon icon="fa fa-cog" class="text-success" />
-                        {{ $tc('titles.configuration', 2) }}
+                        {{ $t('titles.configuration', 2) }}
                     </b-dropdown-item>
                     <b-dropdown-divider />
                     <b-dropdown-item :to="{ name: 'clusters' }">
                         <font-awesome-icon icon="fa fa-server" class="text-success"/>
-                        {{ $tc('titles.cluster', 2) }}
+                        {{ $t('titles.cluster', 2) }}
                     </b-dropdown-item>
                     <b-dropdown-item :to="{ name: 'storages' }">
                         <font-awesome-icon icon="fa fa-database" class="text-success"/>
-                        {{ $tc('titles.storage', 2) }}
+                        {{ $t('titles.storage', 2) }}
                     </b-dropdown-item>
                     <b-dropdown-item :to="{ name: 'platforms' }">
                         <font-awesome-icon icon="fa fa-cogs" class="text-success"/>
-                        {{ $tc('titles.platform', 2) }}
+                        {{ $t('titles.platform', 2) }}
                     </b-dropdown-item>
                     <b-dropdown-item :to="{ name: 'models' }">
                         <font-awesome-icon icon="fa fa-shapes" class="text-success"/>
-                        {{ $tc('titles.model', 2) }}
+                        {{ $t('titles.model', 2) }}
                     </b-dropdown-item>
                     <b-dropdown-divider />
                     <b-dropdown-item :to="{ name: 'pipelineTemplates' }" data-test="pipelineTemplates-item">
@@ -92,7 +92,7 @@
                     <b-dropdown-divider />
                     <b-dropdown-item :to="{ name: 'deployments' }">
                         <font-awesome-icon icon="fa fa-seedling" class="text-success" />
-                        {{ $tc('titles.deployment', 2) }}
+                        {{ $t('titles.deployment', 2) }}
                     </b-dropdown-item>
                     <b-dropdown-divider />
                     <b-dropdown-item :to="{ name: 'admin-openid' }">
@@ -103,7 +103,7 @@
                     </b-dropdown-item>
                 </b-nav-item-dropdown>
             </b-navbar-nav>
-            <b-navbar-nav class="ml-auto">
+            <b-navbar-nav class="ml-auto mt-2">
                 <b-nav-item-dropdown ref="dropdown" right>
                     <template #button-content>
                         <font-awesome-icon icon="fa fa-user" class="text-success" />
@@ -118,7 +118,7 @@
                             <small>{{ user.email }}</small>
                         </p>
                         <div class="text-center">
-                            <strong>{{ $tc('titles.role', 2) }}</strong><br>
+                            <strong>{{ $t('titles.role', 2) }}</strong><br>
                             <div class="mt-2">
                                 <span v-for="role in userRoles" :key="role.id" class="badge badge-info mr-1 p-1">
                                     {{ role.label }}
@@ -126,7 +126,7 @@
                             </div>
                         </div>
                         <p class="border-top pt-2">
-                            <b-button variant="primary" size="sm" @click="profile">
+                            <b-button variant="primary" size="sm" @click="profile" class="mx-1">
                                 {{ $t('titles.profile') }}
                             </b-button>
                             <b-button variant="danger" size="sm" class="ml-2" @click="logout">
@@ -136,7 +136,7 @@
                     </b-dropdown-form>
                 </b-nav-item-dropdown>
                 <b-nav-item-dropdown right ref="dropdown" @show="loadNotifications" no-caret>
-                    <template slot="button-content">
+                    <template #button-content>
                         <font-awesome-icon icon="fa fa-bell" />
                         <span class="badge badge-pill" v-if="unreadNotifications > 0"
                             :class="unreadNotifications > 0 ? 'badge-danger' : 'badge-success'">
@@ -174,7 +174,7 @@
                             <small>{{user.email}}</small>
                         </p>
                         <div class="text-center">
-                            <strong>{{$tc('titles.role', 2)}}</strong><br>
+                            <strong>{{$t('titles.role', 2)}}</strong><br>
                             <div class="mt-2">
                                 <span v-for="role in user.roles"
                                       :key="role.id"
@@ -389,7 +389,7 @@ export default {
     }
 }
 
-#l-navbar a.nav-link {
+#l-navbar .nav-link {
     font-weight: 500;
     font-size: 14px;
 }
@@ -416,6 +416,17 @@ export default {
     padding: 0 .5rem;
     border-bottom: solid 4px #FFFFFF00;
     white-space: nowrap;
+    // bootstrap-vue-next renders the dropdown toggles as real <button
+    // class="btn ..."> elements (bootstrap-vue's old ones were <a>) -
+    // strip the button chrome (rounded corners, border, focus shadow)
+    // that .btn adds so they still look like plain nav-links; the
+    // bottom border above is deliberate (hover underline), leave it
+    border-radius: 0;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    background-color: transparent;
+    box-shadow: none;
 
     @media (max-width: 1000px) {
         padding: 0 .5rem;

@@ -263,15 +263,6 @@ onMounted(() => {
     connectWebSocket(standSocketServer, standNamespace, standSocketIoPath,
         eventHandlers);
 });
-router.beforeEach(function (to, from, next) {
-    if (!isDirty.value || (confirm(confirmMsg))) {
-        isDirty.value = false;
-        next();
-    } else {
-        next(false);
-    }
-});
-const isDirty = ref(false);
 const selectedStep = ref({ jobs: [] });
 
 const orderedJobs = computed(() => {
@@ -292,9 +283,12 @@ const execute = async (id, name) => {
     const callback = async (result) => {
         if (result) {
             const url = `${standUrl}/pipeline-runs/execute`;
+            const context = Object.fromEntries(
+                (pipelineRun.value.context_data || []).map(v => [v.name, v.value])
+            );
             const payload = {
                 id,
-                variables: '{}'
+                variables: JSON.stringify(context)
             };
             try {
                 const resp = await axios.post(url, payload);
@@ -319,10 +313,7 @@ const load = async () => {
         error(e);
         router.push({ name: 'pipelineRunsList' });
     } finally {
-        Vue.nextTick(() => {
-            progress.finish();
-            isDirty.value = false;
-        });
+        progress.finish();
     }
 };
 const setSelectedStep = (step) => {

@@ -73,11 +73,24 @@ const anchors = {
         ],
     ]
 };
+// anchors only has hand-tuned rows for 1-4 ports; beyond that, fall
+// back to evenly-spaced positions with the same 0.1 margin the
+// 3-port row already uses, instead of throwing on undefined.
+function anchorRow(portType, portCount) {
+    const table = anchors[portType];
+    if (portCount <= table.length) return table[portCount - 1];
+    const x = portType === 'input' ? 0 : 1;
+    const dx = portType === 'input' ? -1 : 1;
+    const margin = 0.1;
+    const step = (1 - 2 * margin) / (portCount - 1);
+    return Array.from({ length: portCount },
+        (_, i) => [x, margin + i * step, dx, 0]);
+}
+
 const connectorType = ['Flowchart', 'Bezier', 'StateMachine'][0];
 const connectorPaintStyle = {
-    lineWidth: 1,
+    strokeWidth: 1,
     radius: 8,
-    strokeStyle: "#111",
     stroke: "#111",
     outlineColor: 'white',
     outlineWidth: 2,
@@ -132,4 +145,4 @@ const connectionOptions = {
     overlays: overlays,
 }
 */
-export {anchors, endPointOptionsInput, endPointOptionsOutput };
+export {anchors, anchorRow, endPointOptionsInput, endPointOptionsOutput };

@@ -96,7 +96,7 @@
                                                                     <span class="badge-custom"
                                                                         :class="'badge badge-' + log.level.replace('ERROR', 'danger').toLowerCase()">{{$t(`juicer.log.${log.level.toLowerCase()}`)}}</span>
                                                                     &nbsp;
-                                                                    <span>{{log.date | formatJsonHourMinute}}</span>&nbsp;
+                                                                    <span>{{$filters.formatJsonHourMinute(log.date)}}</span>&nbsp;
                                                                     <TaskDisplay :task="getTask(log.task.id)"
                                                                         :simple="true" />
 
