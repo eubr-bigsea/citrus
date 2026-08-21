@@ -97,9 +97,9 @@
                                     <template #updated="props" class="text-center">
 
                                         <font-awesome-icon icon="fa fa-calendar-alt"
-                                            :title="props.row.updated | formatJsonDate('dd/MM/yyyy HH:mm:SS')"
+                                            :title="$filters.formatJsonDate(props.row.updated, 'dd/MM/yyyy HH:mm:SS')"
                                             class="text-info" />
-                                        {{ props.row.updated | formatJsonDate('dd/MM/yyyy HH:mm:SS') }}
+                                        {{ $filters.formatJsonDate(props.row.updated, 'dd/MM/yyyy HH:mm:SS') }}
 
                                     </template>
                                     <template #comment="props">
@@ -124,8 +124,7 @@
                                                 <b-tooltip :target="'tooltip-target-' + step.id" triggers="hover"
                                                     custom-class="tooltip-large">
                                                     <div>
-                                                        <strong>Atualização:</strong> {{ step.updated |
-                                                            formatJsonDate('dd/MM/yyyy HH:mm:SS') }} <br>
+                                                        <strong>Atualização:</strong> {{ $filters.formatJsonDate(step.updated, 'dd/MM/yyyy HH:mm:SS') }} <br>
                                                         <router-link
                                                             :to="{ name: 'sql-workflow', params: { id: step.workflow_id, platform: 2 } }">
                                                             Ir para o fluxo de trabalho #{{ step.workflow_id }}
