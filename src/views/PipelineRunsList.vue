@@ -291,12 +291,6 @@ export default {
             key: 1
         };
     },
-    watch: {
-        '$route': function(to, from) {
-            debugger;
-            disconnectWebSocket();
-        }
-    },
     mounted() {
         if (this.$route.params.from === 'PipelineEdit') this.fromPipelineEdit = true;
         else this.fromPipelineEdit = false;
@@ -317,31 +311,7 @@ export default {
                 this.notifications.length = this.notifications.length > 100 ? 100
                     : this.notifications.length;
                 if (!msg.cache) {
-                    const run = msg.pipeline_run;
-                    let elem = document.getElementById('runsList');
-                    if (elem)
-                        elem = elem.querySelector(`[data-id="${run.id}"]`);
-                    if (elem) {
-                        elem.className = 'pipeline-runs-status';
-                        elem.classList.add(run.status.toLowerCase());
-                        elem.innerText = this.$t(`status.${run.status}`).toUpperCase();
-
-                        const row = elem.parentNode.parentNode;
-                        const children = row.childNodes;
-                        if (run.updated) {
-                            children[4].innerText = run.updated;
-                        }
-                        if (run.last_step) {
-                            children[5].innerText = run.last_step;
-                        }
-
-                        row.classList.add('highlight');
-                        row.classList.add('font-weight-bold');
-                        row.addEventListener('animationend', () => {
-                            row.classList.remove('highlight');
-                            row.classList.remove('font-weight-bold');
-                        });
-                    }
+                    this.$refs.runsList.refresh();
                 }
             },
         };
@@ -349,14 +319,13 @@ export default {
             eventHandlers);
     },
     beforeMount() {
-        this.filters = JSON.parse(localStorage.getItem('pipeline_run:list:filters') || '{}');
+        Object.assign(this.filters, JSON.parse(localStorage.getItem('pipeline_run:list:filters') || '{}'));
     },
     unmounted() {
-        debugger
+        disconnectWebSocket();
     },
     watch: {
-        '$route': function (to, from) {
-            debugger
+        '$route'() {
             disconnectWebSocket();
         }
     },
