@@ -59,6 +59,7 @@ const SourceCodeEdit = () => import('./views/Administration/SourceCodeEdit.vue')
 const SourceCodeList = () => import('./views/Administration/SourceCodeList.vue');
 
 const GlobalVariableList = () => import('./views/Administration/GlobalVariableList.vue');
+const GlobalVariableEdit = () => import('./views/Administration/GlobalVariableEdit.vue');
 
 const ClusterList = () => import(/* webpackChunkName: "group-cluster" */ './views/Administration/ClusterList.vue');
 const ClusterEdit = () => import(/* webpackChunkName: "group-cluster" */ './views/Administration/ClusterEdit.vue');
@@ -277,6 +278,28 @@ let router = createRouter({
             path: '/administration/global-variables',
             name: 'globalVariableList',
             component: GlobalVariableList,
+            meta: {
+                requiresAuth: true,
+                requiresRole: true,
+                requiredPermissions: ['ADMINISTRATOR'],
+                title: ['titles.user', 1]
+            }
+        },
+        {
+            path: '/administration/global-variables/add',
+            name: 'globalVariableAdd',
+            props: { add: true },
+            component: GlobalVariableEdit,
+            meta: {
+                requiresAuth: true,
+                requiredPermissions: ['ADMINISTRATOR'],
+                title: ['titles.user', 1]
+            }
+        },
+        {
+            path: '/administration/global-variables/:id',
+            name: 'globalVariableEdit',
+            component: GlobalVariableEdit,
             meta: {
                 requiresAuth: true,
                 requiresRole: true,
