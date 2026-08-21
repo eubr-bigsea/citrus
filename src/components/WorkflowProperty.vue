@@ -7,7 +7,7 @@
                 <component :is="field.suggested_widget + '-component'"
                            :field="field"
                            :value="getValue(field.name)"
-                           language="language"
+                           :language="$root.$i18n.locale"
                            context="context"
                            message="update-workflow-form-field-value" />
             </div>
