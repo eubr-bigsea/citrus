@@ -11,10 +11,10 @@
                 <div class="col">
                 <b-card class="clickable h-100" role="button" @click="navigate('data-explorer')">
                     <div class="row align-items-center">
-                        <div class="col-2 rounded-option bg-primary">
+                        <div class="col-auto rounded-option bg-primary">
                             <font-awesome-icon icon="fa fa-table" size="3x" inverse />
                         </div>
-                        <div class="col-9">
+                        <div class="col">
                             <h5>Analisar, tratar e transformar dados</h5>
                         </div>
                         <div class="col mt-2">
@@ -30,7 +30,7 @@
                 <div class="col">
                 <b-card class="clickable h-100" role="button">
                     <div class="row align-items-center">
-                        <div class="col-2 rounded-option bg-warning">
+                        <div class="col-auto rounded-option bg-warning">
                             <svg id="Capa_1" fill="#ffffff" version="1.1" xmlns="http://www.w3.org/2000/svg"
                                 xmlns:xlink="http://www.w3.org/1999/xlink" width="50px" height="50px"
                                 viewBox="0 0 550.801 550.801" xml:space="preserve">
@@ -67,7 +67,7 @@
                                 </g>
                             </svg>
                         </div>
-                        <div class="col-9" @click="navigate('data-explorer', { sql: true })">
+                        <div class="col" @click="navigate('data-explorer', { sql: true })">
                             <h5>Usar SQL para analisar, tratar e transformar dados</h5>
                         </div>
                         <div class="col mt-2">
@@ -82,10 +82,10 @@
                 <div class="col">
                 <b-card class="clickable h-100" role="button" @click="navigate('choose-task')">
                     <div class="row align-items-center">
-                        <div class="col-2 rounded-option bg-success">
+                        <div class="col-auto rounded-option bg-success">
                             <font-awesome-icon icon="fa fa-robot" size="3x" inverse />
                         </div>
-                        <div class="col-9">
+                        <div class="col">
                             <h5>Criar modelo de aprendizado de máquina</h5>
                         </div>
                         <div class="col mt-2">
@@ -101,10 +101,10 @@
                 <div class="col">
                 <b-card class="clickable h-100" role="button" @click="navigate('new-visualization')">
                     <div class="row align-items-center">
-                        <div class="col-2 rounded-option bg-danger">
+                        <div class="col-auto rounded-option bg-danger">
                             <font-awesome-icon icon="fa fa-chart-bar" size="3x" inverse />
                         </div>
-                        <div class="col-9">
+                        <div class="col">
                             <h5>Criar visualizações de dados</h5>
                         </div>
                         <div class="col mt-2">
