@@ -103,7 +103,7 @@
                     </b-dropdown-item>
                 </b-nav-item-dropdown>
             </b-navbar-nav>
-            <b-navbar-nav class="ml-auto">
+            <b-navbar-nav class="ml-auto mt-2">
                 <b-nav-item-dropdown ref="dropdown" right>
                     <template #button-content>
                         <font-awesome-icon icon="fa fa-user" class="text-success" />
@@ -126,7 +126,7 @@
                             </div>
                         </div>
                         <p class="border-top pt-2">
-                            <b-button variant="primary" size="sm" @click="profile">
+                            <b-button variant="primary" size="sm" @click="profile" class="mx-1">
                                 {{ $t('titles.profile') }}
                             </b-button>
                             <b-button variant="danger" size="sm" class="ml-2" @click="logout">
@@ -136,7 +136,7 @@
                     </b-dropdown-form>
                 </b-nav-item-dropdown>
                 <b-nav-item-dropdown right ref="dropdown" @show="loadNotifications" no-caret>
-                    <template slot="button-content">
+                    <template #button-content>
                         <font-awesome-icon icon="fa fa-bell" />
                         <span class="badge badge-pill" v-if="unreadNotifications > 0"
                             :class="unreadNotifications > 0 ? 'badge-danger' : 'badge-success'">
@@ -389,7 +389,7 @@ export default {
     }
 }
 
-#l-navbar a.nav-link {
+#l-navbar .nav-link {
     font-weight: 500;
     font-size: 14px;
 }
@@ -416,6 +416,17 @@ export default {
     padding: 0 .5rem;
     border-bottom: solid 4px #FFFFFF00;
     white-space: nowrap;
+    // bootstrap-vue-next renders the dropdown toggles as real <button
+    // class="btn ..."> elements (bootstrap-vue's old ones were <a>) -
+    // strip the button chrome (rounded corners, border, focus shadow)
+    // that .btn adds so they still look like plain nav-links; the
+    // bottom border above is deliberate (hover underline), leave it
+    border-radius: 0;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    background-color: transparent;
+    box-shadow: none;
 
     @media (max-width: 1000px) {
         padding: 0 .5rem;
