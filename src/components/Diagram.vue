@@ -3,7 +3,10 @@
         <diagram-toolbar v-if="showToolbar" class="diagram-toolbar" :selected="selectedElements" :copied-tasks="copiedTasks"
             :use-data-source="useDataSource" @onclick-task="clickTask" @oncopy-tasks="_copy" @onpaste-tasks="_paste"
             @ontoggle-tasks="toggleTasks" @ondistribute-tasks="distribute" @onalign-tasks="align"
-            @onremove-tasks="removeSelectedTasks" @onzoom="setZoomPercent" />
+            @onremove-tasks="removeSelectedTasks" @onzoom="setZoomPercent"
+            @ontoggle-tasks-panel="$emit('ontoggle-tasks-panel')"
+            @ontoggle-data-sources-panel="$emit('ontoggle-data-sources-panel')"
+            @ontoggle-dark-mode="$emit('ontoggle-dark-mode')" />
         <div v-else class="border"></div>
         <div id="lemonade-container" :class="{'with-grid': showGrid, 'dark-mode': darkMode}"
              class="lemonade-container not-selectable" @click="diagramClick">
@@ -130,7 +133,8 @@ export default {
         'onclear-selection', 'addFlow', 'add-task',
         'onkeyboard-keyup', 'onblur-selection', 'removeFlow', 'onshow-deploy',
         'onclick-task', 'onset-is-dirty', 'onshow-result', 'remove-task',
-        'onzoom'
+        'onzoom', 'ontoggle-tasks-panel', 'ontoggle-data-sources-panel',
+        'ontoggle-dark-mode'
     ],
 
     data() {

@@ -104,7 +104,7 @@ export default {
     name: 'DiagramToolbar',
     props: {
         selected: {type: Array, default: () => []},
-        copiedTasks: {type: Array, default: () => null},
+        copiedTasks: {type: Array, default: () => []},
         useDataSource: {
             type: Boolean,
             default: false
@@ -112,7 +112,7 @@ export default {
     },
     emits: ['onalign-tasks', 'oncopy-tasks', 'ondistribute-tasks',
         'onpaste-tasks', 'onremove-tasks', 'ontoggle-dark-mode',
-        'ontoggle-dataSources-panel', 'ontoggle-tasks',
+        'ontoggle-data-sources-panel', 'ontoggle-tasks',
         'ontoggle-tasks-panel', 'onzoom',
     ],
     data() {
@@ -153,14 +153,14 @@ export default {
             this.$emit('ontoggle-tasks');
         },
         toggleTasksPanel() {
-            this.$parent.$emit('ontoggle-tasks-panel');
+            this.$emit('ontoggle-tasks-panel');
         },
         toggleDataSourcesPanel() {
-            this.$parent.$emit('ontoggle-data-sources-panel');
+            this.$emit('ontoggle-data-sources-panel');
         },
         toggleDarkMode() {
             localStorage.setItem('darkMode', this.darkMode);
-            this.$parent.$emit('ontoggle-dark-mode');
+            this.$emit('ontoggle-dark-mode');
         },
         addGroup() {
 

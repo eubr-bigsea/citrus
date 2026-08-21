@@ -101,7 +101,7 @@ export default {
     computed: {
         ...mapGetters(['hasAnyPermission', 'isAdmin', 'user']),
         totalVariables() {
-            return this.workflow.variables.length;
+            return this.workflow?.variables?.length ?? 0;
         }
     },
     methods: {
