@@ -154,12 +154,6 @@ export default {
             selectedTemplate: null,
             createdPipelineId: null,
             invalidInputLength: true,
-            pipelineData: {
-                name: '',
-                description: '',
-                enabled: true,
-                steps: [],
-            },
         };
     },
     methods: {
@@ -180,10 +174,6 @@ export default {
             else this.wizardStep = 2;
         },
         secondWizardStep() {
-            this.wizardStep = 3;
-            this.pipelineData.name = this.pipelineName;
-            this.pipelineData.description = this.pipelineDescription;
-            if (this.selectedTemplate !== null) this.pipelineData.steps = JSON.parse(JSON.stringify(this.findTemplate().steps, (key, value) => (key === 'id' ? undefined : value)));
             this.createPipeline();
         },
         findTemplate() {
@@ -193,17 +183,24 @@ export default {
         handleInput() {
             this.invalidInputLength = this.pipelineName.length < 3;
         },
-        createPipeline() {
-            axios
-                .post(`${tahitiUrl}/pipelines`, this.pipelineData)
-                .then((resp) => {
-                    this.createdPipelineId = resp.data.id;
-                    this.success(this.$t('pipeline.alerts.pipelineCreationSuccess'));})
-                .catch(
-                    function (e) {
-                        this.error(e);
-                    }.bind(this)
-                );
+        async createPipeline() {
+            const steps = this.selectedTemplate !== null
+                ? this.findTemplate().steps.map(({ id, ...step }) => step)
+                : [];
+            const pipelineData = {
+                name: this.pipelineName,
+                description: this.pipelineDescription,
+                enabled: true,
+                steps,
+            };
+            try {
+                const resp = await axios.post(`${tahitiUrl}/pipelines`, pipelineData);
+                this.createdPipelineId = resp.data.id;
+                this.success(this.$t('pipeline.alerts.pipelineCreationSuccess'));
+                this.wizardStep = 3;
+            } catch (e) {
+                this.error(e);
+            }
         },
     }
 
