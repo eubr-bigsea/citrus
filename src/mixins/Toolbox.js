@@ -1,6 +1,41 @@
 /* Set of common methods used in diagram toolboxes */
+import { debounce } from '../util.js';
+
 export default {
+    computed: {
+        searcheableOperations() {
+            let result = new Map();
+            if (this.search) {
+                this.operations.filter(op => op.name != null).forEach(op => {
+                    result[op.id] = op.name
+                        .replace('ı́', 'i')
+                        .normalize('NFD')
+                        .replace(/\p{M}/gu, '')
+                        .toLowerCase();
+                });
+            }
+            return result;
+        }
+    },
     methods: {
+        getOperationFromId(id) {
+            return this.operations.find(v => v.id === parseInt(id));
+        },
+        searchOperation: debounce(function () {
+            let search = this.search
+                .normalize('NFD')
+                .replace(/\p{M}/gu, '')
+                .toLowerCase();
+            let searcheable = this.searcheableOperations;
+
+            this.filteredOperations = this.operations.filter(op => {
+                return (
+                    op.enabled &&
+                        searcheable[op.id] &&
+                        searcheable[op.id].indexOf(search) > -1
+                );
+            });
+        }, 500),
         startDrag(event) {
             const target = event.target;
             let crt = this.$refs.opDrag;

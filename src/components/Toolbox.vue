@@ -128,7 +128,6 @@
 </template>
 <script>
 import ToolboxMixin from '../mixins/Toolbox.js';
-import { debounce } from '../util.js';
 
 const groupBy = function (xs, keySelector) {
     return xs.reduce(function (rv, x) {
@@ -240,44 +239,10 @@ export default {
                 }
             });
             return grouped;
-        },
-        searcheableOperations() {
-            let result = new Map();
-            if (this.search) {
-                this.operations.filter(op => op.name != null).forEach(op => {
-                    result[op.id] = op.name
-                        .replace('ı́', 'i')
-                        .normalize('NFD')
-                        .replace(/[\u0300-\u036f]/g, '')
-                        .toLowerCase();
-                });
-            }
-            return result;
         }
     },
     methods: {
-        toggle() { },
-        searchOperation: debounce(function () {
-            let search = this.search
-                .normalize('NFD')
-                .replace(/[\u0300-\u036f]/g, '')
-                .toLowerCase();
-            let searcheable = this.searcheableOperations;
-
-            this.filteredOperations = this.operations.filter(op => {
-                return (
-                    op.enabled &&
-                        searcheable[op.id] &&
-                        searcheable[op.id].indexOf(search) > -1
-                );
-            });
-        }, 500),
-        getOperationFromId(id) {
-            let result = this.operations.find(v => {
-                return v.id === parseInt(id);
-            });
-            return result;
-        },
+        toggle() { }
     }
 };
 </script>
