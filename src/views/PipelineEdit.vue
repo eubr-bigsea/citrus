@@ -272,6 +272,9 @@ export default {
     created() {
         window.addEventListener('beforeunload', this.leaving);
     },
+    unmounted() {
+        window.removeEventListener('beforeunload', this.leaving);
+    },
     async mounted() {
         this.load();
     },
@@ -377,7 +380,6 @@ export default {
                 this.$t('actions.delete') + " '" + stepName + "'",
                 'Tem certeza que deseja excluir esta etapa?',
                 () => {
-                    if (!this.pipelineWithoutSteps) this.setSelectedStep(this.pipeline.steps[0], 0);
                     this.pipeline.steps = this.pipeline.steps.filter(step => step.id !== stepId);
                     this.selectedStepIndex = null;
                     this.editPipeline('Etapa excluída com sucesso.');
