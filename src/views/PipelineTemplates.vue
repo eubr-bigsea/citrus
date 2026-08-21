@@ -9,7 +9,7 @@
             </button>
         </div>
 
-        <ModalCreateTemplate ref="addTemplateModal" data-test="addTemplateModal" @onupdate-template-list="updateTemplateList" />
+        <ModalTemplateForm ref="templateModal" data-test="addTemplateModal" @onupdate-template-list="updateTemplateList" />
 
         <div class="templatePage-body">
             <div class="templatePage-card-right">
@@ -57,10 +57,6 @@
                             </div>
                         </template>
                     </v-server-table>
-                    <ModalEditTemplate ref="editTemplateModal" 
-                                       :edited-template="editedTemplate" 
-                                       :edited-template-steps="editedTemplate.steps" 
-                                       @onupdate-template-list="updateTemplateList" />
                 </div>
             </div>
         </div>
@@ -70,16 +66,14 @@
 <script>
 import axios from 'axios';
 import Notifier from '../mixins/Notifier.js';
-import ModalEditTemplate from './modal/ModalEditTemplate.vue';
-import ModalCreateTemplate from './modal/ModalCreateTemplate.vue';
+import ModalTemplateForm from './modal/ModalTemplateForm.vue';
 import DataTableBuilder from '../data-table-builder.js';
 
 let tahitiUrl = import.meta.env.VITE_TAHITI_URL;
 
 export default {
     components: {
-        ModalEditTemplate,
-        ModalCreateTemplate
+        ModalTemplateForm
     },
     mixins: [Notifier],
     data() {
@@ -105,45 +99,34 @@ export default {
             .requestFunction(this.load);
 
         return {
-            stepInput: 'stepInput',
-            stepTextarea: 'stepTextarea',
-            editedTemplate: { name: '', description: '', enabled: true, steps: [] },
-            invalidInputLength: true,
             tableData: [],
             ...dtBuilder.build(),
         };
     },
     methods: {
-        load(data) {
+        async load(data) {
             data.sort = data.orderBy;
             data.asc = data.ascending === 1 ? 'true' : 'false';
             data.size = data.limit;
             data.name = data.query;
             data.fields = 'id,name,description,steps';
             data.disabled = 1;
-            
+
             this.$Progress.start();
-            return axios
-                .get(`${tahitiUrl}/pipeline-templates`, {
-                    params: data
-                })
-                .then(resp => {
-                    this.$Progress.finish();
-                    return { data: resp.data.data, count: resp.data.pagination.total };
-                })
-                .catch(
-                    function (e) {
-                        this.$Progress.finish();
-                        this.error(e);
-                    }.bind(this)
-                );
+            try {
+                const resp = await axios.get(`${tahitiUrl}/pipeline-templates`, { params: data });
+                return { data: resp.data.data, count: resp.data.pagination.total };
+            } catch (e) {
+                this.error(e);
+            } finally {
+                this.$Progress.finish();
+            }
         },
         openAddModal() {
-            this.$refs.addTemplateModal.show();
+            this.$refs.templateModal.show();
         },
         openEditModal(row) {
-            this.editedTemplate = {...row};
-            this.$refs.editTemplateModal.show();
+            this.$refs.templateModal.show(row);
         },
         updateTemplateList() {
             this.$refs.templateList.refresh();
