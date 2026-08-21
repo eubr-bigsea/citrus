@@ -130,13 +130,16 @@
                         </div>
                     </form>
                 </div>
-                <div>
+                <div class="mt-4">
                     <span class="px-3 lemonade-job" :class="jobStatus.status.toLowerCase()">{{ jobStatus.status
                     }}</span>
                     {{ jobStatus.message }}
-                    <div v-if="jobStatus.exception_stack" class="exception-stack scroll-area">
-                        <pre class="exception mt-4">{{ jobStatus.exception_stack }}</pre>
-                    </div>
+                    <a v-if="jobStatus.exception_stack" href="javascript:void(0)" @click="exceptionDialog.showModal()">Ver detalhes</a>
+                    <dialog ref="exceptionDialog" class="exception-dialog">
+                        <h5>Detalhes do erro</h5>
+                        <pre class="exception">{{ jobStatus.exception_stack }}</pre>
+                        <button class="btn btn-sm btn-secondary" @click="exceptionDialog.close()">Fechar</button>
+                    </dialog>
                 </div>
             </div>
             <div class="layout-center pt-2">
@@ -401,6 +404,7 @@ const jobStatus = ref({ status: '' });
 const loaded = ref(false);
 const loadingData = ref(false);
 const clusterRef = ref(null);
+const exceptionDialog = ref(null);
 const expandedArea = ref(false);
 
 const targetPlatform = ref(4);
@@ -1049,10 +1053,15 @@ table.dataframe {
     font-size: 10pt;
 }
 
-.exception-stack {
+.exception-dialog {
+    width: 80%;
+    max-height: 80vh;
     overflow: auto;
-    width: 260px;
-    height: 300px;
+    border: 1px solid gray;
+}
+
+.exception-dialog .exception {
+    white-space: pre-wrap;
 }
 
 .cell-status-bar {
