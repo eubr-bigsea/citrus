@@ -8,7 +8,7 @@
                 {{$t('titles.pipelineRuns', 2)}}
             </h1>
             <router-link v-if="fromPipelineEdit" :to="{ name: 'pipelineEdit', params: { id: $route.params.id } }"
-                         class="btn btn-outline-primary d-print-none float-right btn-sm">
+                         class="btn btn-outline-primary d-print-none float-end btn-sm">
                 <font-awesome-icon icon="fa-chevron-left" />
                 &nbsp; {{$t('actions.back')}} -
                 Pipeline #{{$route.params.id}}
@@ -20,26 +20,26 @@
                     <div class="runsList-container custom-table">
                         <div class="row">
                             <div class="col-12">
-                                <form class="form-row list-filter">
-                                    <div class="form-group col-3">
+                                <form class="row g-2 list-filter">
+                                    <div class="col-3 mb-2">
                                         <label for="search">Id ou {{$t('common.name')}} da pipeline:</label>
                                         <input v-model="filters.name" type="text" class="form-control form-control-sm"
                                                :placeholder="$t('common.name')">
                                     </div>
-                                    <div class="form-group col-2">
+                                    <div class="col-2 mb-2">
                                         <label for="range">{{$t('titles.start')}} do período: </label>
                                         <input v-model="filters.start" type="date"
                                                class="form-control form-control-sm">
                                     </div>
 
-                                    <div class="form-group col-2">
+                                    <div class="col-2 mb-2">
                                         <label for="range">{{$t('common.end')}} do período: </label>
                                         <input v-model="filters.end" type="date" class="form-control form-control-sm">
                                     </div>
 
-                                    <div class="form-group col-2">
+                                    <div class="col-2 mb-2">
                                         <label for="status">{{$t('common.status')}}: </label>
-                                        <select v-model="filters.status" class="form-control form-control-sm"
+                                        <select v-model="filters.status" class="form-select form-select-sm"
                                                 name="status">
                                             <option selected value="" />
                                             <option v-for="status in statuses" :key="status" :value="status">
@@ -47,9 +47,9 @@
                                             </option>
                                         </select>
                                     </div>
-                                    <div class="form-group col-1">
+                                    <div class="col-1 mb-2">
                                         <label for="limit">{{$t('common.limit')}}: </label>
-                                        <select v-model="filters.limit" class="form-control form-control-sm"
+                                        <select v-model="filters.limit" class="form-select form-select-sm"
                                                 name="limit">
                                             <option selected value="10">
                                                 10
@@ -88,7 +88,7 @@
                                             {{ props.row.pipeline_name }}
                                         </router-link>
                                         <div v-if="props.row.context_data && props.row.context_data.length > 0" class="mt-1" title="Variáveis de contexto">
-                                                <span v-for="data in props.row.context_data" :key="data.name" class="text-muted mr-2 small">{{ data.name }}={{ data.value }}</span>
+                                                <span v-for="data in props.row.context_data" :key="data.name" class="text-muted me-2 small">{{ data.name }}={{ data.value }}</span>
                                         </div>
                                     </template>
                                     <template #period="props">
