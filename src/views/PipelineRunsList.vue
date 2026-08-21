@@ -73,7 +73,7 @@
                                         </button>
                                     </div>
                                 </form>
-                                <v-server-table id="runsList" ref="runsList" :key="key" :columns="columns"
+                                <v-server-table id="runsList" ref="runsList" :columns="columns"
                                                 :options="options" name="runsList">
                                     <template #id="props">
                                         <router-link :to="{ name: 'pipelineRunDetail', params: { id: props.row.id } }">
@@ -256,22 +256,16 @@ export default {
                 .headings({
                     id: 'ID',
                     pipeline_name: this.$t('titles.pipeline'),
-                    pipeline_id: `${this.$t('titles.pipeline')} Id`,
                     period: this.$t('common.period'),
                     updated: this.$t('common.updated'),
-                    last_executed_step: 'Última Etapa',
                     status: this.$t('common.status'),
                     actions: this.$t('titles.action', 2),
                     comment: this.$t('titles.comment', 2),
-                    context: 'Variáveis',
                 })
                 .sortable('id', 'pipeline_id', 'pipeline_name', 'period', 'updated')
                 .filterable()
                 .requestFunction(this.load)
-                .build(),
-            orderBy: null,
-            ascending: null,
-            key: 1
+                .build()
         };
     },
     mounted() {
@@ -312,9 +306,6 @@ export default {
             this.$router.replace({ query }).catch(() => { });
             this.$refs.runsList.refresh();
         },
-        detail(step) {
-            console.debug(step)
-        },
         async load(data) {
             localStorage.setItem('pipeline_run:list:filters', JSON.stringify(this.filters));
             data.sort = data.orderBy;
@@ -326,9 +317,6 @@ export default {
             data.start = this.filters.start;
             data.end = this.filters.end;
             data.dateType = this.filters.dateType;
-
-            this.orderBy = data.sort;
-            this.ascending = data.asc;
 
             if (this.$route.query.id) {
                 data.name = this.$route.query.id;
