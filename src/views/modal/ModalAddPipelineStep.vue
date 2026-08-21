@@ -149,34 +149,12 @@ export default {
         show() {
             this.$refs.addStepModal.show();
         },
-        /*
-        editPipeline(msg) {
-            const changedPipeline = { ...this.pipeline };
-            axios
-                .patch(`${tahitiUrl}/pipelines/${this.pipeline.id}`, changedPipeline)
-                .then((resp) => {
-                    // eslint-disable-next-line vue/no-mutating-props
-                    const pipelineData = resp.data.data[0];
-                    this.$emit('onupdate-pipeline', pipelineData);
-                    this.success(msg);
-                    this.selectedWorkflow = null;
-                })
-                .catch(
-                    function (e) {
-                        this.error(e);
-                    }.bind(this)
-                );
-        },*/
         addStep() {
             this.newStep.order = this.pipeline.steps.length+1;
 
             if (this.selectedWorkflow !== null) this.newStep.workflow_id = this.selectedWorkflow.id;
 
             const copy = {... this.newStep};
-            // insert the new step at the specified order position
-            //this.pipeline.steps.splice(this.stepOrder, 0, copy);
-            //this.pipeline.steps.push(copy);
-            //this.editPipeline('Etapa adicionada com sucesso.');
             this.$emit('onadd-step', copy, this.stepOrder);
         },
         async createWorkflow() {
