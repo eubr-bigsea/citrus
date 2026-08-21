@@ -1,6 +1,6 @@
 // Common operations need by more than one view. Related to loading data source
 import axios from 'axios';
-import { debounce } from "../../util.js";
+import { debounce, pad } from "../../util.js";
 
 const limoneroUrl = import.meta.env.VITE_LIMONERO_URL;
 export default {
@@ -11,7 +11,7 @@ export default {
         };
     },
     methods: {
-        pad: (num, places, ch) => String(num).padStart(places, ch),
+        pad,
         loadDataSourceList: debounce(function (search, loading) {
             if (search) {
                 this.asyncLoadDataSourceList(search, loading);

@@ -5,6 +5,8 @@ import {
     isProxy,
 } from 'vue';
 
+export const pad = (num, places, ch) => String(num).padStart(places, ch);
+
 export function debounce(fn, delay) {
     var timeoutID = null;
     return function () {
