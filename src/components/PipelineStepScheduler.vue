@@ -289,7 +289,7 @@
 </template>
 
 <script setup>
-import { reactive, computed, watch, toRefs } from 'vue';
+import { reactive, computed, watch, toRefs, nextTick } from 'vue';
 import { ref, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 
@@ -342,9 +342,12 @@ const minDate = computed(() => {
     return currentDate.toISOString().split('T')[0];
 });
 
+let loadingStep = false;
+
 watch(
     () => props.selectedStep,
     (newStep) => {
+        loadingStep = true;
         if (newStep.scheduling !== undefined) {
             loadStepInfo();
         } else {
@@ -352,6 +355,7 @@ watch(
             resetSelect();
         }
         stepCopy.value = JSON.parse(JSON.stringify(newStep));
+        nextTick(() => { loadingStep = false; });
     },
     { immediate: true }
 );
@@ -359,6 +363,7 @@ watch(
 watch(
     schedulerData,
     () => {
+        if (loadingStep) return;
         saveSchedulerChanges();
     },
     { deep: true }
@@ -392,6 +397,9 @@ function loadStepInfo() {
     schedulerData.executeImmediately = scheduling.stepSchedule.executeImmediately;
     schedulerData.startDay = scheduling.stepSchedule.startDay;
     schedulerData.startTime = scheduling.stepSchedule.startTime;
+    schedulerData.startDate = scheduling.stepSchedule.startDateTime
+        ? scheduling.stepSchedule.startDateTime.split('T')[0]
+        : null;
 }
 
 function resetSelect() {
