@@ -445,16 +445,9 @@ export default {
 
                 const connection = self.instance.connect({uuids});
                 if (connection) {
-                    connection.bind('mouseover', (c, originalEvent) => {
-                        //var arr = self.instance.select({ source: con.sourceId, target: con.targetId });
-                        if (originalEvent) {
-                            const currentStyle = c ? c.getPaintStyle() : null;
-                            currentStyle.lineWidth = 20;
-                            currentStyle.outlineColor = '#ed8';
-                            c.setPaintStyle(currentStyle);
-                            self.instance.repaintEverything();
-                        }
-                    });
+                    // hover thickening/color is handled by the
+                    // instance's HoverPaintStyle (getJsPlumbInstance)
+                    // instead of a hand-rolled mouseover/mouseout pair
                     const currentStyle = connection ? connection.getPaintStyle() : null;
                     if (currentStyle) {
                         currentStyle[
@@ -538,8 +531,8 @@ export default {
             const instance = jsPlumb.getInstance({
                 //Anchors: anchors,
                 Endpoints: [['Dot', {radius: 2}], ['Dot', {radius: 1}]],
-                EndpointHoverStyle: {fillStyle: 'orange'},
-                HoverPaintStyle: {strokeStyle: 'blue'}
+                EndpointHoverStyle: {fill: 'orange'},
+                HoverPaintStyle: {stroke: 'blue', strokeWidth: 3}
             });
             if (this.initialZoom) instance.setZoom(this.initialZoom);
             return instance;
