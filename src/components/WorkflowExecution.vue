@@ -26,6 +26,7 @@
 <script>
 import axios from 'axios';
 import Notifier from '../mixins/Notifier.js';
+import DataTableBuilder from '../data-table-builder.js';
 
 const standUrl = import.meta.env.VITE_STAND_URL;
 
@@ -38,42 +39,29 @@ export default {
     emits: ['loaded'],
     data() {
         return {
-            columns: ['status', 'id', 'name', 'created'],
-            options: {
-                skin: 'table table-hover',
-                columnsClasses: {
+            ...new DataTableBuilder(this.$t)
+                .columns('status', 'id', 'name', 'created')
+                .skin('table table-hover')
+                .columnClasses({
                     name: 'th-20',
                     description: 'th-20',
                     actions: 'th-5 text-center',
                     status: 'th-5 text-center',
-                },
-                descOrderColumns: ["id", "created"],
-                headings: {
+                })
+                .headings({
                     id: 'ID',
                     created: this.$t('common.created'),
                     actions: this.$t('common.action', 2),
                     name: this.$t('common.name'),
                     'user.name': this.$t('common.user.name'),
-                },
-                sortable: ['name', 'id', 'created'],
-                sortIcon: {
-                    base: 'sort-base',
-                    is: 'sort-is ms-10',
-                    up: 'sort-up',
-                    down: 'sort-down'
-                },
-                requestFunction: this.load,
-                filterable: false,
-                perPageValues: [],
-                texts: {
-                    filter: this.$t('common.filter'),
-                    count: this.$t('common.pagerShowing'),
-                    limit: this.$t('common.limit'),
-                    noResults: this.$t('common.noData'),
-                    loading: this.$t('common.loading'),
-                    filterPlaceholder: this.$t('common.filterPlaceholder')
-                }
-            }
+                })
+                .sortable('name', 'id', 'created')
+                .requestFunction(this.load)
+                .filterable()
+                .perPageValues([])
+                .preserveState(false)
+                .saveState(false)
+                .build()
         };
     },
     methods: {

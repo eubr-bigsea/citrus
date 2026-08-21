@@ -204,6 +204,7 @@ import axios from 'axios';
 import { useWebSocket } from '@/composables/websocket.js';
 import PipelineRunNotifications from '@/components/PipelineRunNotifications.vue';
 import Notifier from '@/mixins/Notifier.js';
+import DataTableBuilder from '@/data-table-builder.js';
 
 const standUrl = import.meta.env.VITE_STAND_URL;
 const standNamespace = import.meta.env.VITE_STAND_NAMESPACE;
@@ -232,28 +233,27 @@ export default {
 
             },
             fromPipelineEdit: false,
-            columns: [
-                'id',
-                //'pipeline_id',
-                'pipeline_name',
-                'status',
-                'period',
-                'updated',
-                //'last_executed_step',
-                'comment',
-                //'context',
-                'statusStatus',
-                'actions',
-            ],
-            options: {
-                skin: 'table-sm table table-hover',
-                perPageValues: [],
-                dateColumns: [],
-                columnsClasses: {
+            ...new DataTableBuilder(this.$t)
+                .columns(
+                    'id',
+                    //'pipeline_id',
+                    'pipeline_name',
+                    'status',
+                    'period',
+                    'updated',
+                    //'last_executed_step',
+                    'comment',
+                    //'context',
+                    'statusStatus',
+                    'actions',
+                )
+                .skin('table-sm table table-hover')
+                .perPageValues([])
+                .columnClasses({
                     last_executed_step: 'text-center',
                     status: 'text-center',
-                },
-                headings: {
+                })
+                .headings({
                     id: 'ID',
                     pipeline_name: this.$t('titles.pipeline'),
                     pipeline_id: `${this.$t('titles.pipeline')} Id`,
@@ -264,26 +264,11 @@ export default {
                     actions: this.$t('titles.action', 2),
                     comment: this.$t('titles.comment', 2),
                     context: 'Variáveis',
-                },
-                sortable: ['id', 'pipeline_id', 'pipeline_name', 'period', 'updated',],
-                filterable: false,
-                sortIcon: {
-                    base: 'sort-base',
-                    is: 'sort-is ml-10',
-                    up: 'sort-up',
-                    down: 'sort-down'
-                },
-                preserveState: true,
-                saveState: true,
-                texts: {
-                    count: this.$t('common.pagerShowing'),
-                    limit: this.$t('common.limit'),
-                    noResults: this.$t('common.noData'),
-                    loading: this.$t('common.loading'),
-                },
-                requestFunction: this.load,
-                width: ['5%', '25%', '10%', '10%', '10%', '40%'],
-            },
+                })
+                .sortable('id', 'pipeline_id', 'pipeline_name', 'period', 'updated')
+                .filterable()
+                .requestFunction(this.load)
+                .build(),
             orderBy: null,
             ascending: null,
             key: 1

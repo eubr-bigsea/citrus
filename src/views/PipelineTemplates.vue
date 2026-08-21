@@ -72,6 +72,7 @@ import axios from 'axios';
 import Notifier from '../mixins/Notifier.js';
 import ModalEditTemplate from './modal/ModalEditTemplate.vue';
 import ModalCreateTemplate from './modal/ModalCreateTemplate.vue';
+import DataTableBuilder from '../data-table-builder.js';
 
 let tahitiUrl = import.meta.env.VITE_TAHITI_URL;
 
@@ -82,56 +83,34 @@ export default {
     },
     mixins: [Notifier],
     data() {
+        const dtBuilder = new DataTableBuilder(this.$t)
+            .columns('id', 'name', 'description', 'steps', 'actions')
+            .skin('table-sm table table-hover')
+            .columnClasses({
+                id: 'text-start',
+                name: 'text-start',
+                description: 'text-start',
+                steps: 'text-start',
+                actions: 'text-start',
+            })
+            .headings({
+                id: 'ID',
+                name: this.$t('common.name'),
+                description: this.$t('common.description'),
+                steps: this.$t('titles.step', 2),
+                actions: this.$t('common.action', 2)
+            })
+            .sortable('id', 'name')
+            .filterable('name')
+            .requestFunction(this.load);
+
         return {
             stepInput: 'stepInput',
             stepTextarea: 'stepTextarea',
-            columns: [
-                'id',
-                'name',
-                'description',
-                'steps',
-                'actions'
-            ],
             editedTemplate: { name: '', description: '', enabled: true, steps: [] },
             invalidInputLength: true,
             tableData: [],
-            options: {
-                skin: 'table-sm table table-hover',
-                columnsClasses: { 
-                    id: 'text-start',
-                    name: 'text-start',
-                    description: 'text-start',
-                    steps: 'text-start',
-                    actions: 'text-start',
-                },
-                headings: {
-                    id: 'ID',
-                    name: this.$t('common.name'),
-                    description: this.$t('common.description'),
-                    steps: this.$t('titles.step', 2),
-                    actions: this.$t('common.action', 2)
-                },
-                sortable: ['id', 'name'],
-                filterable: ['name'],
-                limitable: true,
-                sortIcon: {
-                    base: 'sort-base',
-                    is: 'sort-is ml-10',
-                    up: 'sort-up',
-                    down: 'sort-down'
-                },
-                preserveState: true,
-                saveState: true,
-                texts: {
-                    filter: this.$t('common.filter'),
-                    count: this.$t('common.pagerShowing'),
-                    limit: this.$t('common.limit'),
-                    noResults: this.$t('common.noData'),
-                    loading: this.$t('common.loading'),
-                    filterPlaceholder: this.$t('common.filterPlaceholder')
-                },
-                requestFunction: this.load
-            },
+            ...dtBuilder.build(),
         };
     },
     methods: {

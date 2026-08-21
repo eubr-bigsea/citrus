@@ -37,7 +37,7 @@ export default class DataTableBuilder {
         return this;
     }
     filterable(...names) {
-        this.options.filterable = names;
+        this.options.filterable = names.length ? names : false;
         return this;
     }
     requestFunction(fn) {
@@ -48,8 +48,20 @@ export default class DataTableBuilder {
         this.options.headings = h;
         return this;
     }
+    columnClasses(c) {
+        this.options.columnsClasses = c;
+        return this;
+    }
+    skin(s) {
+        this.options.skin = s;
+        return this;
+    }
     saveState(v) {
         this.options.saveState = v;
+        return this;
+    }
+    preserveState(v) {
+        this.options.preserveState = v;
         return this;
     }
     perPageValues(v) {
