@@ -32,17 +32,24 @@ export default {
                 const lastTaskId = self.workflow.tasks[index].id;
                 elem = document.getElementById(lastTaskId);
             }
-            let rect = elem.getBoundingClientRect();
+            const diagramRect = diagram.getBoundingClientRect();
+            const elemRect = elem.getBoundingClientRect();
 
-            let offsetLeft = rect.left + 250; //Math.floor(Math.random() * 300);
-            let offsetTop = rect.top; //Math.floor(Math.random() * 50);
+            // Position relative to the diagram element itself - a
+            // synthetic DragEvent's offsetX/offsetY (what drop() reads)
+            // isn't reliably derived from clientX/clientY the way a real
+            // drag's would be, so pass explicit coordinates instead.
+            const left = elemRect.left - diagramRect.left + 250; //Math.floor(Math.random() * 300);
+            const top = elemRect.top - diagramRect.top; //Math.floor(Math.random() * 50);
 
             dataTransfer.setData('id', target.dataset.id);
+            dataTransfer.setData('left', left);
+            dataTransfer.setData('top', top);
             diagram.dispatchEvent(
                 new DragEvent('drop', {
                     dataTransfer: dataTransfer,
-                    clientX: offsetLeft,
-                    clientY: offsetTop
+                    clientX: elemRect.left + 250,
+                    clientY: elemRect.top
                 })
             );
             return false;
