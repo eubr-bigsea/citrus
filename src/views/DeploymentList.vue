@@ -113,8 +113,6 @@ export default {
 
         const columns = ['id', 'name', 'model_name', 'current_status', 'updated', 'user_name', 'address', 'actions'];
 
-        const formatJsonDate = date => new Date(date).toLocaleString(); // ou seu filtro
-
         const getDeploymentClass = (item) => {
             switch (item.current_status) {
                 case 'NOT_DEPLOYED': return 'text-secondary';
@@ -234,7 +232,6 @@ export default {
             currentRow,
             logs,
             listTable,
-            formatJsonDate,
             getDeploymentClass,
             loggedUserIsOwnerOrAdmin,
             showInfo,
