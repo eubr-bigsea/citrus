@@ -62,6 +62,7 @@ import axios from 'axios';
 import Notifier from '../mixins/Notifier.js';
 import ModalCreatePipeline from './modal/ModalCreatePipeline.vue';
 import ModalSchedulePipeline from './modal/ModalSchedulePipeline.vue';
+import DataTableBuilder from '../data-table-builder.js';
 
 const tahitiUrl = import.meta.env.VITE_TAHITI_URL;
 const standUrl = import.meta.env.VITE_STAND_URL;
@@ -73,62 +74,38 @@ export default {
     },
     mixins: [Notifier],
     data() {
+        const dtBuilder = new DataTableBuilder(this.$t)
+            .columns('id', 'name', 'created', 'updated', 'user_name', 'version', 'actions')
+            .skin('table-sm table table-hover')
+            .columnClasses({
+                id: 'text-start',
+                name: 'text-start',
+                created: 'text-start',
+                updated: 'text-start',
+                version: 'text-start',
+                user_name: 'text-start',
+                actions: 'text-center',
+            })
+            .headings({
+                id: 'ID',
+                name: this.$t('common.name'),
+                created: this.$t('common.created'),
+                updated: this.$t('common.updated'),
+                user_name: this.$t('common.userName'),
+                actions: this.$t('common.action', 2),
+                version: this.$t('common.version', 1),
+            })
+            .sortable('id', 'name', 'created', 'updated')
+            .filterable('name')
+            .requestFunction(this.load);
+
         return {
             first: 'first',
             pipelineTemplates: [],
             templateOptions: [
                 { value: null, text: 'Não utilizar template' },
             ],
-            columns: [
-                'id',
-                'name',
-                'created',
-                'updated',
-                'user_name',
-                'version',
-                'actions',
-            ],
-            options: {
-                skin: 'table-sm table table-hover',
-                dateColumns: ['created', 'updated'],
-                columnsClasses: {
-                    id: 'text-start',
-                    name: 'text-start',
-                    created: 'text-start',
-                    updated: 'text-start',
-                    version: 'text-start',
-                    user_name: 'text-start',
-                    actions: 'text-center',
-                },
-                headings: {
-                    id: 'ID',
-                    name: this.$t('common.name'),
-                    created: this.$t('common.created'),
-                    updated: this.$t('common.updated'),
-                    user_name: this.$t('common.userName'),
-                    actions: this.$t('common.action', 2),
-                    version: this.$t('common.version', 1),
-                },
-                sortable: ['id', 'name', 'created', 'updated'],
-                filterable: ['name'],
-                sortIcon: {
-                    base: 'sort-base',
-                    is: 'sort-is ml-10',
-                    up: 'sort-up',
-                    down: 'sort-down'
-                },
-                preserveState: true,
-                saveState: true,
-                texts: {
-                    filter: this.$t('common.filter'),
-                    count: this.$t('common.pagerShowing'),
-                    limit: this.$t('common.limit'),
-                    noResults: this.$t('common.noData'),
-                    loading: this.$t('common.loading'),
-                    filterPlaceholder: this.$t('common.filterPlaceholder')
-                },
-                requestFunction: this.load
-            }
+            ...dtBuilder.build()
         };
     },
     methods: {
@@ -166,43 +143,35 @@ export default {
             }
 
         },
-        loadTemplates() {
+        async loadTemplates() {
             if (this.templateOptions.length >= 2) return;
-            axios
-                .get(`${tahitiUrl}/pipeline-templates`)
-                .then((resp) => {
-                    this.pipelineTemplates.push(...resp.data.data);
-                    this.pipelineTemplates.map(template => {
-                        let aux = { value: template.id, text: template.name };
-                        this.templateOptions.push(aux);
-                    });
-                })
-                .catch(
-                    function (e) {
-                        this.error(e);
-                    }.bind(this)
-                );
+            try {
+                const resp = await axios.get(`${tahitiUrl}/pipeline-templates`);
+                this.pipelineTemplates.push(...resp.data.data);
+                this.pipelineTemplates.map(template => {
+                    let aux = { value: template.id, text: template.name };
+                    this.templateOptions.push(aux);
+                });
+            } catch (e) {
+                this.error(e);
+            }
         },
         deletePipeline(pipelineId, pipelineName) {
             this.confirm(
                 this.$t('actions.delete') + " '" + pipelineName + "'",
                 this.$t('messages.doYouWantToDelete'),
-                () => {
-                    axios
-                        .delete(`${tahitiUrl}/pipelines/${pipelineId}`, {})
-                        .then(() => {
-                            this.success(
-                                this.$t('messages.successDeletion', {
-                                    what: 'Pipeline'
-                                })
-                            );
-                            this.$refs.pipelineList.refresh();
-                        })
-                        .catch(
-                            function (e) {
-                                this.error(e);
-                            }.bind(this)
+                async () => {
+                    try {
+                        await axios.delete(`${tahitiUrl}/pipelines/${pipelineId}`, {});
+                        this.success(
+                            this.$t('messages.successDeletion', {
+                                what: 'Pipeline'
+                            })
                         );
+                        this.$refs.pipelineList.refresh();
+                    } catch (e) {
+                        this.error(e);
+                    }
                 }
             );
         }

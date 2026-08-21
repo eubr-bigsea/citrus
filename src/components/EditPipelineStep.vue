@@ -150,7 +150,7 @@ export default {
         selectedStepIndex: { type: Number, default: null },
         pipeline: { type: Object, default: () => { } },
     },
-    emits: ['send-step-changes'],
+    emits: ['update-step'],
     data() {
         return {
             showWorkflowOps: this.editedStep.workflow === undefined ? 0 : -1,
@@ -178,7 +178,7 @@ export default {
             // eslint-disable-next-line vue/no-mutating-props
             if (this.selectedWorkflow !== null) this.editedStep.workflow_id = this.selectedWorkflow.id;
 
-            this.$emit('send-step-changes', this.editedStep);
+            this.$emit('update-step', this.editedStep);
         },
         handleInput() {
             this.editStep();
@@ -240,32 +240,27 @@ export default {
                 this.error(e);
             }
         },
-        createWorkflow() {
+        async createWorkflow() {
             const workflow = {
                 name: this.workflowName,
                 platform_id: this.workflowPlatform,
                 type: this.selectedWorkflowType
             };
 
-            axios
-                .post(`${tahitiUrl}/workflows`, workflow)
-                .then((resp) => {
-                    // eslint-disable-next-line vue/no-mutating-props
-                    this.editedStep.workflow_id = resp.data.id;
-                    // eslint-disable-next-line vue/no-mutating-props
-                    this.editedStep.workflow = resp.data;
-                    this.editStep();
-                    this.success('Workflow criado e associado com sucesso à etapa.');
-                })
-                .catch(
-                    function (e) {
-                        this.error(e);
-                    }.bind(this)
-                );
-
-            this.showWorkflowOps = -1;
-            this.workflowName = '';
-            this.selectedWorkflowType = 'SQL';
+            try {
+                const resp = await axios.post(`${tahitiUrl}/workflows`, workflow);
+                // eslint-disable-next-line vue/no-mutating-props
+                this.editedStep.workflow_id = resp.data.id;
+                // eslint-disable-next-line vue/no-mutating-props
+                this.editedStep.workflow = resp.data;
+                this.editStep();
+                this.success('Workflow criado e associado com sucesso à etapa.');
+                this.showWorkflowOps = -1;
+                this.workflowName = '';
+                this.selectedWorkflowType = 'SQL';
+            } catch (e) {
+                this.error(e);
+            }
         }
     }
 

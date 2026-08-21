@@ -102,6 +102,7 @@
 </template>
 <script>
 import vSelect from 'vue-select';
+import { pad } from '@/util.js';
 export default {
     components: { 'vue-select': vSelect, },
     props: {
@@ -124,7 +125,7 @@ export default {
         this.dataSource_ = this.dataSource;
     },
     methods: {
-        pad: (num, places, ch) => String(num).padStart(places, ch),
+        pad,
         searchDataSource(search, loading) {
             this.$emit('search-data-source', search, loading);
         },

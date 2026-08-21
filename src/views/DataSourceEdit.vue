@@ -214,7 +214,7 @@
                           -->
                                                 </tr>
                                             </thead>
-                                            <draggable v-model="dataSource.attributes" :options="dragOptions"
+                                            <draggable v-model="dataSource.attributes"
                                                 tag="tbody">
                                                 <tr v-for="(attr, index) in dataSource.attributes" :key="attr.id"
                                                     :class="{ 'hovered-row': attr === selectedAttribute }"
@@ -584,12 +584,6 @@ export default {
             selectedTable: null,
             selectedAttribute: null,
             tables: [],
-            dragOptions: {
-                animation: 200,
-                group: 'description',
-                disabled: false,
-                ghostClass: 'ghost',
-            },
         };
     },
 

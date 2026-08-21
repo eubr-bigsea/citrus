@@ -100,6 +100,7 @@
 </template>
 <script setup>
 import vueSelect from 'vue-select';
+import { pad } from '@/util.js';
 
 const dataSource = defineModel('dataSource');
 const type = defineModel('type');
@@ -117,7 +118,6 @@ const props = defineProps({
 
 const emit = defineEmits(['search-data-source', 'retrieve-attributes']);
 
-const pad = (num, places, ch) => String(num).padStart(places, ch);
 const searchDataSource = (search, loading) => {
     emit('search-data-source', search, loading);
 };

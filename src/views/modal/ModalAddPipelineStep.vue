@@ -149,10 +149,6 @@ export default {
         show() {
             this.$refs.addStepModal.show();
         },
-        redirectToWorkflow(step) {
-            if(step.workflow === undefined) this.warning('Etapa não associada a um fluxo de trabalho.');
-            else this.$router.push({ name: 'editWorkflow', params: { id: step.workflow.id, platform: 1 } });
-        },
         /*
         editPipeline(msg) {
             const changedPipeline = { ...this.pipeline };
@@ -183,24 +179,20 @@ export default {
             //this.editPipeline('Etapa adicionada com sucesso.');
             this.$emit('onadd-step', copy, this.stepOrder);
         },
-        createWorkflow() {
+        async createWorkflow() {
             const workflow = {
                 name: this.workflowName,
                 platform_id: this.workflowPlatform,
                 type: this.selectedWorkflowType
             };
 
-            axios
-                .post(`${tahitiUrl}/workflows`, workflow)
-                .then((resp) => {
-                    this.newStep.workflow_id = resp.data.id;
-                    this.success('Fluxo de trabalho criado com sucesso.');
-                })
-                .catch(
-                    function (e) {
-                        this.error(e);
-                    }.bind(this)
-                );
+            try {
+                const resp = await axios.post(`${tahitiUrl}/workflows`, workflow);
+                this.newStep.workflow_id = resp.data.id;
+                this.success('Fluxo de trabalho criado com sucesso.');
+            } catch (e) {
+                this.error(e);
+            }
 
             this.showWorkflowOps = 0;
             this.workflowName = '';

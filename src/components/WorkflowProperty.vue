@@ -15,41 +15,9 @@
     </div>
 </template>
 <script>
-import AttributeFunctionComponent from './widgets/AttributeFunction.vue';
-import AttributeSelectorComponent from './widgets/AttributeSelector2.vue';
-import CheckboxComponent from './widgets/Checkbox.vue';
-import CodeComponent from './widgets/Code.vue';
-import ColorComponent from './widgets/Color.vue';
-import DecimalComponent from './widgets/Decimal.vue';
-import DropDownComponent from './widgets/DropDown.vue';
-import ExpressionComponent from './widgets/ExpressionEditor.vue';
-import IntegerComponent from './widgets/Integer.vue';
-import LookupComponent from './widgets/Lookup.vue';
-import RangeComponent from './widgets/Range.vue';
-import Select2Component from './widgets/Select2.vue';
-import TagComponent from './widgets/Select2.vue';
-import TextComponent from './widgets/Text.vue';
-import TextAreaComponent from './widgets/TextArea.vue';
-
+// widget components (attribute-function-component, etc.) are already
+// registered globally in main.js - no local components map needed
 export default {
-    components: {
-        'attribute-function-component': AttributeFunctionComponent,
-        'attribute-selector-component': AttributeSelectorComponent,
-        'checkbox-component': CheckboxComponent,
-        'code-component': CodeComponent,
-        'color-component': ColorComponent,
-        'decimal-component': DecimalComponent,
-        'dropdown-component': DropDownComponent,
-        'expression-component': ExpressionComponent,
-        'integer-component': IntegerComponent,
-        'lookup-component': LookupComponent,
-        'percentage-component': RangeComponent,
-        'range-component': RangeComponent,
-        'select2-component': Select2Component,
-        'tag-component': TagComponent,
-        'text-component': TextComponent,
-        'textarea-component': TextAreaComponent
-    },
     props: {
         form: { type: Object, default: () => {} },
         workflow: { type: Object, default: () => {} },
@@ -59,10 +27,7 @@ export default {
     },
     methods: {
         getValue(name) {
-            return this.workflow
-                    && this.workflow.forms
-                    && this.workflow.forms[name]
-                ? this.workflow.forms[name].value : null;
+            return this.workflow?.forms?.[name]?.value ?? null;
         },
     }
 };

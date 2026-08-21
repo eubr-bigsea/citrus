@@ -48,6 +48,7 @@
 
 import TaskComponent from './Task.vue';
 import DiagramToolbar from './DiagramToolbar.vue';
+import ToolboxMixin from '../mixins/Toolbox.js';
 import {jsPlumb} from 'jsplumb';
 
 const tahitiUrl = import.meta.env.VITE_TAHITI_URL;
@@ -67,6 +68,7 @@ export default {
         'task-component': TaskComponent,
         'diagram-toolbar': DiagramToolbar,
     },
+    mixins: [ToolboxMixin],
     props: {
         formContainer: {
             type: Boolean,
@@ -528,12 +530,6 @@ export default {
         removeFlow(flow) {
             this.$emit('removeFlow', flow);
         },
-        getOperationFromId(id) {
-            let result = this.operations.find(v => {
-                return v.id === parseInt(id);
-            });
-            return result;
-        },
         getJsPlumbInstance() {
             const instance = jsPlumb.getInstance({
                 //Anchors: anchors,
@@ -927,13 +923,7 @@ export default {
             this.$emit('onclear-selection');
         },
         generateId() {
-            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (
-                c
-            ) {
-                let r = (Math.random() * 16) | 0,
-                    v = c == 'x' ? r : (r & 0x3) | 0x8;
-                return v.toString(16);
-            });
+            return crypto.randomUUID();
         },
 
         setZoom(zoom, instance, transformOrigin, el) {

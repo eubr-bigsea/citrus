@@ -56,7 +56,7 @@
                 </div>
                 <div class="border p-2 mt-2">
                     <h6>Notificações</h6>
-                    <pipeline-run-notifications :notifications="notifications"
+                    <pipeline-run-notifications ref="notificationsRef"
                         :height="showVariables ? '45.5vh' : '63.3vh'" />
                 </div>
             </div>
@@ -217,7 +217,7 @@ const router = vm.proxy.$router;
 const route = vm.proxy.$route;
 
 const { connectWebSocket, disconnectWebSocket, joinRoom } = useWebSocket();
-const notifications = ref([]);
+const notificationsRef = ref(null);
 let currentState = null;
 onBeforeMount(async () => {
     pipelineRunId.value = (route) ? route.params.id : 0;
@@ -244,13 +244,7 @@ onMounted(() => {
             if (msg.message === 'status') {
                 pipelineRun.value.status = msg.value;
             } else {
-                notifications.value.unshift({
-                    id: msg.pipeline_run.id,
-                    status: msg.pipeline_step_run.status, date: msg.date,
-                    order: msg.pipeline_step_run.order
-                });
-                notifications.value.length = notifications.value.length > 100 ? 100
-                    : notifications.value.length;
+                notificationsRef.value?.push(msg);
                 if (!msg.cache) {
                     if (currentState != msg.job.status) {
                         await load();

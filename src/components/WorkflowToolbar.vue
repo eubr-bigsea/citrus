@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="btn-group me-2" role="group">
-            <button class="btn btn-sm btn-outline-dark" :title="$t('titles.job', 2)" @click.prevent="showExecutions">
+            <button class="btn btn-sm btn-outline-dark" :title="$t('titles.job', 2)" @click.prevent="$emit('onshow-executions')">
                 <font-awesome-icon icon="fa fa-tasks" /> {{$t('titles.job', 2)}}
                 <span class="position-absolute top-0 start-0 translate-middle badge rounded-pill bg-info">
                     {{totalJobs}}
@@ -9,7 +9,7 @@
                 </span>
             </button>
             <button v-if="(hasAnyPermission(['APP_EDIT']) || isAdmin) && workflow.publishing_enabled"
-                    class="btn btn-sm btn-outline-dark" :title="$t('actions.showVariables')" @click.prevent="showVariables">
+                    class="btn btn-sm btn-outline-dark" :title="$t('actions.showVariables')" @click.prevent="$emit('onshow-variables')">
                 <font-awesome-icon icon="fa fa-dollar-sign" /> {{$t('workflow.variables', 2)}}
                 <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-info">
                     {{totalVariables}}
@@ -20,17 +20,17 @@
         <div v-if="canEditWorkflow"  class="btn-group mr-2" role="group">
             <button class="btn btn-sm btn-outline-success"
                     :title="$t('actions.save')"
-                    @click.prevent="saveWorkflow" :disabled="!isDirty">
+                    @click.prevent="$emit('onsave-workflow')" :disabled="!isDirty">
                 <font-awesome-icon icon="fa fa-save"/> {{$t('actions.save')}}
             </button>
-            <button class="btn btn-sm btn-outline-dark" :title="$t('actions.saveAs')" @click.prevent="saveWorkflowAs">
+            <button class="btn btn-sm btn-outline-dark" :title="$t('actions.saveAs')" @click.prevent="$emit('onsaveas-workflow')">
                 <font-awesome-icon icon="fa fa-copy" /> {{$t('actions.saveAs')}}...
             </button>
         </div>
 
         <div class="btn-group me-2">
             <button class="btn btn-sm btn-outline-dark" :title="$t('actions.export')"
-                    @click.prevent.stop="exportWorkflow()">
+                    @click.prevent.stop="$emit('onclick-export')">
                 <font-awesome-icon icon="fa fa-save" /> {{$t('actions.export')}}
             </button>
             <!---
@@ -54,7 +54,7 @@
         <div v-if="canEditWorkflow"  class="btn-group mr-2" role="group">
             <button class="btn btn-sm btn-outline-dark"
                     :title="$t('actions.showProperties')"
-                    @click.prevent="showProperties">
+                    @click.prevent="$emit('onshow-properties')">
                 <font-awesome-icon icon="fa fa-cogs" />
             </button>
             <!--
@@ -64,13 +64,13 @@
                 <font-awesome-icon icon="fa fa-image" />
             </button>
             -->
-            <button class="btn btn-sm btn-outline-dark" :title="$t('actions.showHistory')" @click.prevent="showHistory">
+            <button class="btn btn-sm btn-outline-dark" :title="$t('actions.showHistory')" @click.prevent="$emit('onshow-history')">
                 <font-awesome-icon icon="fa fa-history" />
             </button>
         </div>
         <div class="btn-group" role="group">
             <button id="tlb-execute-wf" class="btn btn-sm btn-outline-dark runBtn" :title="$t('actions.execute')"
-                    variant="success" @click.prevent="execute">
+                    variant="success" @click.prevent="$emit('onclick-execute')">
                 <font-awesome-icon icon="fa fa-play" class=" text-primary" /> {{$t('actions.execute')}}
             </button>
             <!--
@@ -102,35 +102,6 @@ export default {
         ...mapGetters(['hasAnyPermission', 'isAdmin', 'user']),
         totalVariables() {
             return this.workflow?.variables?.length ?? 0;
-        }
-    },
-    methods: {
-        saveWorkflow() {
-            this.$emit('onsave-workflow');
-        },
-        saveWorkflowAs() {
-            this.$emit('onsaveas-workflow');
-        },
-        showHistory() {
-            this.$emit('onshow-history');
-        },
-        execute() {
-            this.$emit('onclick-execute');
-        },
-        exportWorkflow(format) {
-            this.$emit('onclick-export', format);
-        },
-        showProperties() {
-            this.$emit('onshow-properties');
-        },
-        showExecutions() {
-            this.$emit('onshow-executions');
-        },
-        showVariables() {
-            this.$emit('onshow-variables');
-        },
-        selectImage() {
-            this.$emit('onselect-image');
         }
     }
 };

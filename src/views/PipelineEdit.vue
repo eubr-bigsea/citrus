@@ -119,7 +119,7 @@
                                         <font-awesome-icon icon="plus" />
                                     </button>
                                 </div>
-                                <draggable v-model="pipeline.steps" :options="dragOptions" @end="onDragEnd">
+                                <draggable v-model="pipeline.steps" @end="onDragEnd">
                                     <div v-for="(step, index) in orderedPipelineSteps" :key="step.id"
                                         class="editPage-dragDiv"
                                         :class="{ 'editPage-dragDiv-selected': selectedStep.id === step.id }"
@@ -168,7 +168,7 @@
                                         </template>
                                         <PipelineStepScheduler ref="stepScheduler" :selected-step="selectedStep"
                                             :selected-step-index="selectedStepIndex" :pipeline-id="pipeline.id"
-                                            @send-scheduler-changes="schedulerUpdate" />
+                                            @update-step="schedulerUpdate" />
                                     </b-tab>
                                     <b-tab>
                                         <template #title>
@@ -178,7 +178,7 @@
                                         </template>
                                         <EditPipelineStep ref="editStepModal" :edited-step="editedStep"
                                             :pipeline="pipeline" :selected-step-index="selectedStepIndex"
-                                            @send-step-changes="schedulerUpdate" />
+                                            @update-step="schedulerUpdate" />
                                     </b-tab>
                                 </b-tabs>
                             </div>
@@ -200,6 +200,7 @@ import { VueDraggableNext } from 'vue-draggable-next'
 import InputHeader from '../components/InputHeader.vue';
 import TextAreaCustom from '../components/TextAreaCustom.vue';
 import Notifier from '../mixins/Notifier.js';
+import { reorder } from '../util.js';
 
 let tahitiUrl = import.meta.env.VITE_TAHITI_URL;
 
@@ -240,12 +241,6 @@ export default {
             intervalDays: null,
             intervalWeeks: null,
             intervalMonths: null,
-            dragOptions: {
-                animation: 200,
-                group: 'description',
-                disabled: false,
-                ghostClass: 'ghost',
-            },
             periodicityOptions: [
                 { value: null, text: 'Selecione a periodicidade' },
                 { value: 'daily', text: 'Diário' },
@@ -330,9 +325,7 @@ export default {
             this.isDirty = true;
         },
         onDragEnd(event) {
-            this.pipeline.steps.forEach((step, index) => {
-                step.order = index + 1;
-            });
+            reorder(this.pipeline.steps);
             this.isDirty = true;
         },
         updatePipeline(pipelineData) {
@@ -359,21 +352,17 @@ export default {
                     }
                 });
         },
-        editPipeline(msg) {
+        async editPipeline(msg) {
             this.pipeline.steps.sort((a, b) => a.order - b.order);
-            axios
-                .patch(`${tahitiUrl}/pipelines/${this.pipeline.id}`, this.pipeline)
-                .then((resp) => {
-                    this.pipeline = resp.data.data[0];
-                    if (this.pipeline.steps.length === 0) this.pipelineWithoutSteps = true;
-                    this.success(msg);
-                    this.isDirty = false;
-                })
-                .catch(
-                    function (e) {
-                        this.error(e);
-                    }.bind(this)
-                );
+            try {
+                const resp = await axios.patch(`${tahitiUrl}/pipelines/${this.pipeline.id}`, this.pipeline);
+                this.pipeline = resp.data.data[0];
+                if (this.pipeline.steps.length === 0) this.pipelineWithoutSteps = true;
+                this.success(msg);
+                this.isDirty = false;
+            } catch (e) {
+                this.error(e);
+            }
         },
         deleteStep(stepId, stepName) {
             this.confirm(

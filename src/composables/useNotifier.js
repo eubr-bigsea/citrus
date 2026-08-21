@@ -1,25 +1,18 @@
 import { useI18n } from 'vue-i18n';
 import { useToast } from "vue-toastification";
-import { h } from 'vue';
+import { h, inject } from 'vue';
 export default (vm) => {
     const { t } = useI18n();
     // use the root in order to persist the toast between route transitions
     //debugger
     const toaster = { toast: useToast() };
-    const modal = vm.$root.$bvModal;
+    const snotify = inject('snotify');
     const router = vm.$router;
 
     const confirm = (title, question, callback) => {
-        modal.msgBoxConfirm(
-            question,
-            {
-                title,
-                centered: false,
-                buttonSize: 'sm',
-                okTitle: t('common.yes'),
-                cancelTitle: t('common.no'),
-            }
-        ).then(value => { callback(value); }).catch(err => { callback(false); });
+        snotify.confirm(question, title, {
+            callback: () => callback(true)
+        });
     };
 
     const display = (msg, title, variant, autoHideDelay, faIcon, position = 'b-toaster-bottom-right') => {
@@ -58,7 +51,6 @@ export default (vm) => {
             } else if (e.response && e.response.data) {
                 const responseData = e.response.data;
                 if (responseData.message === 'Invalid data' | responseData.message == 'Validation error') {
-                    const h = vm.$createElement;
                     const errorMessage = h('div', {},
                         [
                             h('strong', {}, [t('errors.validation')]),

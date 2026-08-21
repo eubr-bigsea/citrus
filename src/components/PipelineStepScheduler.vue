@@ -301,7 +301,7 @@ const props = defineProps({
     pipelineId: { type: Number, default: 0 },
 });
 
-const emit = defineEmits(['send-scheduler-changes']);
+const emit = defineEmits(['update-step']);
 
 const stepCopy = ref({});
 const schedulerData = reactive({
@@ -442,7 +442,7 @@ function saveSchedulerChanges() {
 
     stepCopy.value.scheduling = JSON.stringify(data);
 
-    emit('send-scheduler-changes', stepCopy.value, props.selectedStep);
+    emit('update-step', stepCopy.value, props.selectedStep);
 }
 
 onMounted(() => {

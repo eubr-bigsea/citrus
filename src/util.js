@@ -5,6 +5,13 @@ import {
     isProxy,
 } from 'vue';
 
+export const pad = (num, places, ch) => String(num).padStart(places, ch);
+
+// re-number a draggable-reordered list's `order` field in place
+export function reorder(list) {
+    list.forEach((item, index) => { item.order = index + 1; });
+}
+
 export function debounce(fn, delay) {
     var timeoutID = null;
     return function () {

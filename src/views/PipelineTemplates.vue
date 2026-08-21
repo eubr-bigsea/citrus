@@ -9,7 +9,7 @@
             </button>
         </div>
 
-        <ModalCreateTemplate ref="addTemplateModal" data-test="addTemplateModal" @onupdate-template-list="updateTemplateList" />
+        <ModalTemplateForm ref="templateModal" data-test="addTemplateModal" @onupdate-template-list="updateTemplateList" />
 
         <div class="templatePage-body">
             <div class="templatePage-card-right">
@@ -57,10 +57,6 @@
                             </div>
                         </template>
                     </v-server-table>
-                    <ModalEditTemplate ref="editTemplateModal" 
-                                       :edited-template="editedTemplate" 
-                                       :edited-template-steps="editedTemplate.steps" 
-                                       @onupdate-template-list="updateTemplateList" />
                 </div>
             </div>
         </div>
@@ -70,101 +66,67 @@
 <script>
 import axios from 'axios';
 import Notifier from '../mixins/Notifier.js';
-import ModalEditTemplate from './modal/ModalEditTemplate.vue';
-import ModalCreateTemplate from './modal/ModalCreateTemplate.vue';
+import ModalTemplateForm from './modal/ModalTemplateForm.vue';
+import DataTableBuilder from '../data-table-builder.js';
 
 let tahitiUrl = import.meta.env.VITE_TAHITI_URL;
 
 export default {
     components: {
-        ModalEditTemplate,
-        ModalCreateTemplate
+        ModalTemplateForm
     },
     mixins: [Notifier],
     data() {
+        const dtBuilder = new DataTableBuilder(this.$t)
+            .columns('id', 'name', 'description', 'steps', 'actions')
+            .skin('table-sm table table-hover')
+            .columnClasses({
+                id: 'text-start',
+                name: 'text-start',
+                description: 'text-start',
+                steps: 'text-start',
+                actions: 'text-start',
+            })
+            .headings({
+                id: 'ID',
+                name: this.$t('common.name'),
+                description: this.$t('common.description'),
+                steps: this.$t('titles.step', 2),
+                actions: this.$t('common.action', 2)
+            })
+            .sortable('id', 'name')
+            .filterable('name')
+            .requestFunction(this.load);
+
         return {
-            stepInput: 'stepInput',
-            stepTextarea: 'stepTextarea',
-            columns: [
-                'id',
-                'name',
-                'description',
-                'steps',
-                'actions'
-            ],
-            editedTemplate: { name: '', description: '', enabled: true, steps: [] },
-            invalidInputLength: true,
             tableData: [],
-            options: {
-                skin: 'table-sm table table-hover',
-                columnsClasses: { 
-                    id: 'text-start',
-                    name: 'text-start',
-                    description: 'text-start',
-                    steps: 'text-start',
-                    actions: 'text-start',
-                },
-                headings: {
-                    id: 'ID',
-                    name: this.$t('common.name'),
-                    description: this.$t('common.description'),
-                    steps: this.$t('titles.step', 2),
-                    actions: this.$t('common.action', 2)
-                },
-                sortable: ['id', 'name'],
-                filterable: ['name'],
-                limitable: true,
-                sortIcon: {
-                    base: 'sort-base',
-                    is: 'sort-is ml-10',
-                    up: 'sort-up',
-                    down: 'sort-down'
-                },
-                preserveState: true,
-                saveState: true,
-                texts: {
-                    filter: this.$t('common.filter'),
-                    count: this.$t('common.pagerShowing'),
-                    limit: this.$t('common.limit'),
-                    noResults: this.$t('common.noData'),
-                    loading: this.$t('common.loading'),
-                    filterPlaceholder: this.$t('common.filterPlaceholder')
-                },
-                requestFunction: this.load
-            },
+            ...dtBuilder.build(),
         };
     },
     methods: {
-        load(data) {
+        async load(data) {
             data.sort = data.orderBy;
             data.asc = data.ascending === 1 ? 'true' : 'false';
             data.size = data.limit;
             data.name = data.query;
             data.fields = 'id,name,description,steps';
             data.disabled = 1;
-            
+
             this.$Progress.start();
-            return axios
-                .get(`${tahitiUrl}/pipeline-templates`, {
-                    params: data
-                })
-                .then(resp => {
-                    this.$Progress.finish();
-                    return { data: resp.data.data, count: resp.data.pagination.total };
-                })
-                .catch(
-                    function (e) {
-                        this.$Progress.finish();
-                        this.error(e);
-                    }.bind(this)
-                );
+            try {
+                const resp = await axios.get(`${tahitiUrl}/pipeline-templates`, { params: data });
+                return { data: resp.data.data, count: resp.data.pagination.total };
+            } catch (e) {
+                this.error(e);
+            } finally {
+                this.$Progress.finish();
+            }
         },
         openAddModal() {
-            this.$refs.addTemplateModal.show();
+            this.$refs.templateModal.show();
         },
         openEditModal(row) {
-            this.editedTemplate = {...row};
-            this.$refs.editTemplateModal.show();
+            this.$refs.templateModal.show(row);
         },
         updateTemplateList() {
             this.$refs.templateList.refresh();
@@ -173,22 +135,18 @@ export default {
             this.confirm(
                 this.$t('actions.delete') + " '" + templateName + "'",
                 this.$t('messages.doYouWantToDelete'),
-                () => {
-                    axios
-                        .delete(`${tahitiUrl}/pipeline-templates/${templateId}`, {})
-                        .then(() => {
-                            this.success(
-                                this.$t('messages.successDeletion', {
-                                    what: 'Template'
-                                })
-                            );
-                            this.$refs.templateList.refresh();
-                        })
-                        .catch(
-                            function (e) {
-                                this.error(e);
-                            }.bind(this)
+                async () => {
+                    try {
+                        await axios.delete(`${tahitiUrl}/pipeline-templates/${templateId}`, {});
+                        this.success(
+                            this.$t('messages.successDeletion', {
+                                what: 'Template'
+                            })
                         );
+                        this.$refs.templateList.refresh();
+                    } catch (e) {
+                        this.error(e);
+                    }
                 }
             );
         }

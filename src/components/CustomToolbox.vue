@@ -32,7 +32,6 @@
 <script>
 import ToolboxMixin from '../mixins/Toolbox.js';
 import Notifier from '../mixins/Notifier.js';
-import { debounce } from '../util.js';
 import axios from 'axios';
 
 const limoneroUrl = import.meta.env.VITE_LIMONERO_URL;
@@ -71,18 +70,6 @@ export default {
     computed: {
         shortcutOperations() {
             return this.operations.filter(op => op.enabled && op.type === 'SHORTCUT');
-        },
-        searcheableOperations() {
-            let result = new Map();
-            if (this.search) {
-                this.operations.forEach(op => {
-                    result[op.id] = op.name
-                        .normalize('NFD')
-                        .replace(/[\u0300-\u036f]/g, '')
-                        .toLowerCase();
-                });
-            }
-            return result;
         }
     },
     watch: {
@@ -152,23 +139,7 @@ export default {
                 re.lastIndex = 0;
             }
             return tpl;
-        },
-        searchOperation: debounce(function () {
-            let search = this.search
-                .normalize('NFD')
-                .replace(/[\u0300-\u036f]/g, '')
-                .toLowerCase();
-            let searcheable = this.searcheableOperations;
-
-            this.filteredOperations = this.operations.filter(op => {
-                return (
-                    op.enabled &&
-                        searcheable[op.id] &&
-                        searcheable[op.id].indexOf(search) > -1
-                );
-            });
-        }, 500),
-
+        }
     }
 };
 </script>
