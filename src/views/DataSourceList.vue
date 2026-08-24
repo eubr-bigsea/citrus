@@ -65,12 +65,12 @@
 </template>
 
 <script>
-import { inject, ref, computed, nextTick } from 'vue';
+import { getCurrentInstance, ref, computed, nextTick } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { mapGetters, useStore } from 'vuex';
 
 import axios from 'axios';
-import Notifier from '@/notifier.js';
+import useNotifier from '@/composables/useNotifier.js';
 import ModalPreviewDataSource from './modal/ModalPreviewDataSource.vue';
 import DataTableBuilder from '../data-table-builder.js';
 import VServerTable from '@/components/VServerTable.vue';
@@ -87,7 +87,7 @@ export default {
         const store = useStore();
         const user = store.getters.user;
         const isAdmin = user.roles.indexOf('admin') >= 0;
-        const notifier = new Notifier(inject('snotify'), t);
+        const { success, error, confirm } = useNotifier(getCurrentInstance().proxy);
         const tableData = [];
         const tableDataSize = 0;
         const showPreview = ref(false);
@@ -108,7 +108,7 @@ export default {
                     count: resp.data.pagination.total
                 };
             } catch (e) {
-                notifier.error(e);
+                error(e);
             }
         };
 
@@ -162,21 +162,21 @@ export default {
 
         const dataSourceList = ref(null);
         const remove = async (dataSourceId) => {
-            notifier.confirm(
+            confirm(
                 t('actions.delete'),
                 t('messages.doYouWantToDelete'),
                 async () => {
                     const url = `${limoneroUrl}/datasources/${dataSourceId}`;
                     try {
                         await axios.delete(url);
-                        notifier.success(
+                        success(
                             t('messages.successDeletion', {
                                 what: t('titles.dataSource', 1)
                             })
                         );
                         dataSourceList.value.refresh();
                     } catch (e) {
-                        notifier.error(e);
+                        error(e);
                     }
                 }
             );
