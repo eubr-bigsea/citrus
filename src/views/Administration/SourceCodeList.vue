@@ -42,14 +42,15 @@
 <script setup>
 import axios from 'axios';
 import DataTableBuilder from '@/data-table-builder.js';
-import Notifier from '@/notifier.js';
-import { ref, inject } from 'vue';
+import useNotifier from '@/composables/useNotifier.js';
+import { ref, getCurrentInstance } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const tahitiUrl = import.meta.env.VITE_TAHITI_URL;
 const { t } = useI18n();
 
-const notifier = new Notifier(inject('snotify'), t);
+const vm = getCurrentInstance();
+const { success, error, confirm } = useNotifier(vm.proxy);
 
 const columns = [
     "id",
@@ -68,7 +69,7 @@ const reqFn = async (data) => {
             count: resp.data.pagination.total
         };
     } catch (e) {
-        notifier.error(e);
+        error(e);
         return {};
     }
 };
@@ -90,17 +91,17 @@ const options = dtBuilder.build();
 const listing = ref();
 const remove = async (id) => {
     try {
-        notifier.confirm(t('actions.delete'), t('messages.doYouWantToDelete'), async () => {
+        confirm(t('actions.delete'), t('messages.doYouWantToDelete'), async () => {
             await axios.delete(`${tahitiUrl}/source-codes/${id}`, {});
 
             listing.value.refresh();
-            notifier.success(t('messages.successDeletion', {
+            success(t('messages.successDeletion', {
                 what: 'Biblioteca de código'
             }));
 
         });
     } catch (e) {
-        notifier.error(e);
+        error(e);
     }
 };
 </script>

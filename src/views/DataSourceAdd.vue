@@ -218,12 +218,12 @@
     </main>
 </template>
 <script>
-import { ref, nextTick, inject } from 'vue';
+import { ref, nextTick, getCurrentInstance } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 
-import Notifier from '../notifier.js';
+import useNotifier from '../composables/useNotifier.js';
 
 import axios from 'axios';
 ;
@@ -233,7 +233,7 @@ export default {
     setup() {
         const router = useRouter();
         const { t } = useI18n();
-        const notifier = new Notifier(inject('snotify'), t, router);
+        const { success, error } = useNotifier(getCurrentInstance().proxy);
 
         const step = ref(1);
         const dataSource = ref({ format: '', storage_id: null, command: null, url: 'placeholder', name:''});
@@ -314,8 +314,8 @@ export default {
 
         const setupResumable = async () => {
             const headers = {... axios.defaults.headers.common }; // < same auth headers
-            // reuses the `notifier` built in setup() above — inject() only
-            // works during setup()'s synchronous execution, not in this
+            // reuses `success`/`error` built in setup() above — getCurrentInstance()
+            // only works during setup()'s synchronous execution, not in this
             // nextTick-deferred call
 
             const token = localStorage.getItem('token');
@@ -380,7 +380,7 @@ export default {
                         }">${self.$t('actions.edit')} ${fileRef.file.fileName}`;
                     fileRef.done = true;
                     */
-                notifier.success(
+                success(
                     t('messages.savedWithSuccess', {
                         what: t('titles.dataSource', 1)
                     })
@@ -422,14 +422,14 @@ export default {
             try {
                 const resp = await axios.post(url, dataSource.value);
                 isDirty.value = false;
-                notifier.success(
+                success(
                     t('messages.savedWithSuccess',
                         { what: t('titles.dataSource', 1) }));
                 router.push({
                     name: 'editDataSource', params: { 'id': resp.data.data.id }
                 });
             } catch (e) {
-                notifier.error(e);
+                error(e);
             } finally {
                 event.target.removeAttribute('disabled');
                 event.target.classList.remove('btn-spinner');
@@ -460,7 +460,7 @@ export default {
                 storage.value.hiveStorage = storages.value.hiveStorages.length ? storages.value.hiveStorages[0].id : '';
 
             } catch (e) {
-                notifier.error(e);
+                error(e);
             }
         });
         return {

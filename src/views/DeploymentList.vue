@@ -89,13 +89,13 @@
 
 
 <script>
-import { ref, reactive, onMounted, inject } from 'vue';
+import { ref, reactive, onMounted, getCurrentInstance } from 'vue';
 import { useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import { useStore } from 'vuex';
 import axios from 'axios';
 import io from 'socket.io-client';
-import Notifier from '../notifier.js';
+import useNotifier from '../composables/useNotifier.js';
 
 const seedUrl = import.meta.env.VITE_SEED_URL;
 const standNamespace = import.meta.env.VITE_STAND_NAMESPACE;
@@ -105,7 +105,7 @@ export default {
         const router = useRouter();
         const store = useStore();
         const { t } = useI18n();
-        const notifier = new Notifier(inject('snotify'), t, router);
+        const { success, error, confirm } = useNotifier(getCurrentInstance().proxy);
 
         const currentRow = ref(null);
         const logs = ref([]);
@@ -141,29 +141,29 @@ export default {
 
         const deployOrUndeploy = (deploymentId, deploy) => {
             const confirmMsg = deploy ? t('deployment.confirmDeploy') : t('deployment.confirmUndeploy');
-            notifier.confirm(
+            confirm(
                 t('titles.deployment'),
                 confirmMsg,
                 () => {
                     const params = deploy ? { deploy: true } : { undeploy: true };
                     axios.patch(`${seedUrl}/deployments/${deploymentId}`, params)
-                        .then(resp => { notifier.success(resp.message); refresh(); })
-                        .catch(e => notifier.error(e));
+                        .then(resp => { success(resp.message); refresh(); })
+                        .catch(e => error(e));
                 }
             );
         };
 
         const remove = (deploymentId) => {
-            notifier.confirm(
+            confirm(
                 t('actions.delete'),
                 `${t('messages.doYouWantToDelete')} ${t('deployment.deleteNotice')}`,
                 () => {
                     axios.delete(`${seedUrl}/deployments/${deploymentId}`)
                         .then(() => {
-                            notifier.success(t('messages.successDeletion', { what: t('titles.deployment', 1) }));
+                            success(t('messages.successDeletion', { what: t('titles.deployment', 1) }));
                             refresh();
                         })
-                        .catch(e => notifier.error(e));
+                        .catch(e => error(e));
                 }
             );
         };
@@ -202,7 +202,7 @@ export default {
                     const resp = await axios.get(`${seedUrl}/deployments?enabled=true`, { params: data });
                     return { data: resp.data.data, count: resp.data.pagination.total };
                 } catch (e) {
-                    notifier.error(e);
+                    error(e);
                     return { data: [], count: 0 }; // <<< garante que sempre retorne objeto
                 }
             },

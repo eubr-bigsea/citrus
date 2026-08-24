@@ -42,11 +42,8 @@
     </div>
 </template>
 <script setup>
-import {ref, inject} from 'vue';
-import Notifier from '@/notifier.js';
-import { useI18n } from 'vue-i18n';
-
-const { t } = useI18n();
+import {ref, getCurrentInstance} from 'vue';
+import useNotifier from '@/composables/useNotifier.js';
 
 const taskType = defineModel('taskType');
 const binaryMetric = defineModel('binaryMetric');
@@ -59,11 +56,12 @@ const taskTypeInternal = ref(taskType.value);
 const props = defineProps({
     evaluator: { type: Object, default: () => null }
 });
-const notifier = new Notifier(inject('snotify'), t);
+const vm = getCurrentInstance();
+const { confirm } = useNotifier(vm.proxy);
 
 const changeType = (v) => {
-    notifier.confirm('Alteração do tipo da tarefa', 
-        'Alterar esta opção pode fazer com que o experimento pare de funcionar. Continuar?', 
-        () => {taskType.value = taskTypeInternal.value; });   
+    confirm('Alteração do tipo da tarefa',
+        'Alterar esta opção pode fazer com que o experimento pare de funcionar. Continuar?',
+        () => {taskType.value = taskTypeInternal.value; });
 };
 </script>
