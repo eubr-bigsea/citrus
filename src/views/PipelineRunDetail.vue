@@ -55,7 +55,7 @@
                     </p>
                 </div>
                 <div class="border p-2 mt-2">
-                    <h6>Notificações</h6>
+                    <h6>{{$t('titles.notification', 2)}}</h6>
                     <pipeline-run-notifications ref="notificationsRef"
                         :height="showVariables ? '45.5vh' : '63.3vh'" />
                 </div>
