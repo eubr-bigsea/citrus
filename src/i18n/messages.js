@@ -878,6 +878,7 @@ export default {
                 scheduler: {
                     chooseSchedulerFrequency: 'Quando deseja que sua etapa seja inicializada?',
                     immediately: 'Imediatamente após a etapa anterior',
+                    lastDayOfMonth: 'Último',
                     once: 'Uma vez',
                     repetitionInterval: 'Intervalo de repetição',
                     selectAll: 'Selecionar todos',
@@ -903,9 +904,12 @@ export default {
                 reportTitle: 'Relatório de Execução'
             },
             list: {
+                contextVariables: 'Variáveis de contexto',
                 doNotUseTemplate: 'Não utilizar modelo',
                 generalInfo: 'Informações Gerais',
+                goToWorkflow: 'Ir para o fluxo de trabalho',
                 pipelineCreation: 'Criação de Pipeline',
+                searchByIdOrName: 'Id ou Nome da pipeline',
                 closeCreationModal: 'Ao fechar este modal, você será redirecionado para a página da pipeline criada.',
                 creationProcessCompleted: 'Processo de criação da pipeline finalizada.',
                 pipelineDescription: 'Descrição da Pipeline',
@@ -1835,6 +1839,7 @@ export default {
                 scheduler: {
                     chooseSchedulerFrequency: 'When do you want your step to be initialized?',
                     immediately: 'Immediately after the previous step',
+                    lastDayOfMonth: 'Last',
                     once: 'Once',
                     repetitionInterval: 'Repetition interval',
                     selectAll: 'Select all',
@@ -1861,9 +1866,12 @@ export default {
 
             },
             list: {
+                contextVariables: 'Context variables',
                 doNotUseTemplate: 'Do not use template',
                 generalInfo: 'General information',
+                goToWorkflow: 'Go to workflow',
                 pipelineCreation: 'Pipeline Creation',
+                searchByIdOrName: 'Pipeline Id or Name',
                 closeCreationModal: 'Closing this modal, you will be redirected to the pipeline page you created.',
                 creationProcessCompleted: 'Pipeline creation process completed.',
                 pipelineDescription: 'Pipeline Description',

@@ -2,7 +2,7 @@
     <main role="main">
         <div class="d-flex justify-content-between align-items-center pb-2 mb-2 border-bottom">
             <h1 v-if="fromPipelineEdit">
-                Execuções - {{$route.params.name}}
+                {{$t('titles.pipelineRuns', 2)}} - {{$route.params.name}}
             </h1>
             <h1 v-else class="runsList-title">
                 {{$t('titles.pipelineRuns', 2)}}
@@ -22,18 +22,18 @@
                             <div class="col-12">
                                 <form class="row g-2 list-filter">
                                     <div class="col-3 mb-2">
-                                        <label for="search">Id ou {{$t('common.name')}} da pipeline:</label>
+                                        <label for="search">{{$t('pipeline.list.searchByIdOrName')}}:</label>
                                         <input v-model="filters.name" type="text" class="form-control form-control-sm"
                                                :placeholder="$t('common.name')">
                                     </div>
                                     <div class="col-2 mb-2">
-                                        <label for="range">{{$t('titles.start')}} do período: </label>
+                                        <label for="range">{{$t('pipeline.list.periodStart')}}: </label>
                                         <input v-model="filters.start" type="date"
                                                class="form-control form-control-sm">
                                     </div>
 
                                     <div class="col-2 mb-2">
-                                        <label for="range">{{$t('common.end')}} do período: </label>
+                                        <label for="range">{{$t('pipeline.list.periodFinish')}}: </label>
                                         <input v-model="filters.end" type="date" class="form-control form-control-sm">
                                     </div>
 
@@ -87,12 +87,12 @@
                                                 props.row.pipeline_id }} -
                                             {{ props.row.pipeline_name }}
                                         </router-link>
-                                        <div v-if="props.row.context_data && props.row.context_data.length > 0" class="mt-1" title="Variáveis de contexto">
+                                        <div v-if="props.row.context_data && props.row.context_data.length > 0" class="mt-1" :title="$t('pipeline.list.contextVariables')">
                                                 <span v-for="data in props.row.context_data" :key="data.name" class="text-muted me-2 small">{{ data.name }}={{ data.value }}</span>
                                         </div>
                                     </template>
                                     <template #period="props">
-                                       {{ $filters.formatJsonDate(props.row.start) }} at{{ $filters.formatJsonDate(props.row.finish) }}
+                                       {{ $filters.formatJsonDate(props.row.start) }} {{$t('common.until')}} {{ $filters.formatJsonDate(props.row.finish) }}
                                     </template>
                                     <template #updated="props" class="text-center">
 
@@ -124,10 +124,10 @@
                                                 <b-tooltip :target="'tooltip-target-' + step.id" triggers="hover"
                                                     custom-class="tooltip-large">
                                                     <div>
-                                                        <strong>Atualização:</strong> {{ $filters.formatJsonDate(step.updated, 'dd/MM/yyyy HH:mm:SS') }} <br>
+                                                        <strong>{{$t('common.updated')}}:</strong> {{ $filters.formatJsonDate(step.updated, 'dd/MM/yyyy HH:mm:SS') }} <br>
                                                         <router-link
                                                             :to="{ name: 'sql-workflow', params: { id: step.workflow_id } }">
-                                                            Ir para o fluxo de trabalho #{{ step.workflow_id }}
+                                                            {{$t('pipeline.list.goToWorkflow')}} #{{ step.workflow_id }}
                                                         </router-link>
                                                     </div>
                                                 </b-tooltip>
@@ -189,7 +189,7 @@
                             </div>
                         </div>
                         <div class="col-12 border-left">
-                            <h6>Notificações</h6>
+                            <h6>{{$t('titles.notification', 2)}}</h6>
                             <pipeline-run-notifications ref="notificationsList" />
                         </div>
                     </div>

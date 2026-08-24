@@ -72,7 +72,7 @@
                     </p>
                     <select class="form-control form-control-sm" v-model="schedulerData.startDay">
                         <option v-for="i in 31" :value="i" :key="i">{{ i }}</option>
-                        <option value="last">Último</option>
+                        <option value="last">{{$t('pipeline.edit.scheduler.lastDayOfMonth')}}</option>
                     </select>
                     <!--
                     <input id="iniciar-data" v-model="schedulerData.startDate" class="editPage-input" type="date"
