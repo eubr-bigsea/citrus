@@ -156,7 +156,6 @@ export default {
             showWorkflowOps: this.editedStep.workflow === undefined ? 0 : -1,
             selectedWorkflow: null,
             workflowName: '',
-            workflowPlatform: 1000, // meta platform - FIXME
             selectedWorkflowType: 'SQL',
             workflowTypeOptions: [
                 { value: 'DATA_EXPLORER', text: 'Explorador de dados' },

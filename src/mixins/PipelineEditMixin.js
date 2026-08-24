@@ -7,6 +7,10 @@ export default {
     data() {
         return {
             workflowList: [],
+            // shared by ModalAddPipelineStep.vue and EditPipelineStep.vue's
+            // createWorkflow() - the two used to disagree (1 vs 1000/meta),
+            // silently creating workflows against different platforms
+            workflowPlatform: 1,
         };
     },
     methods: {
