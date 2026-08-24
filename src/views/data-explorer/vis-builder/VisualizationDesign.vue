@@ -163,8 +163,9 @@
 </template>
 
 <script setup>
-import { ref, shallowRef, computed, onBeforeMount, onMounted, onUnmounted } from "vue";
+import { ref, shallowRef, computed, onBeforeMount, onMounted } from "vue";
 import { getCurrentInstance } from 'vue';
+import { useWebSocket } from '@/composables/websocket.js';
 import ChartBuilderOptions from '@/components/chart-builder/ChartBuilderOptions.vue';
 import ChartBuilderAxis from '@/components/chart-builder/ChartBuilderAxis.vue';
 
@@ -213,7 +214,7 @@ const loaded = ref(false);
 const loadingData = ref(false);
 const operationsMap = ref(new Map());
 const plotlyData = shallowRef(null);
-const socketIo = ref(null); // used by socketio (web sockets)
+const { connectWebSocket: wsConnect, disconnectWebSocket, joinRoom } = useWebSocket();
 const targetPlatform = ref(4);
 const workflowObj = ref({ forms: { $meta: { value: { target: '', taskType: '' } } } });
 const visualizationObj = ref(null);
@@ -534,32 +535,17 @@ const handlePreview = (dataSource) => {
 }
 
 /* WebSocket Handling */
-const disconnectWebSocket = () => {
-    if (socketIo.value) {
-        socketIo.value.emit('leave', { room: job.value.id });
-        socketIo.value.close();
-    }
-};
-
 const connectWebSocket = () => {
-    if (socketIo.value === null) {
-        const opts = { upgrade: true };
-        if (standSocketIoPath !== '') {
-            opts['path'] = standSocketIoPath;
-        }
-        const socket = io(
-            `${standSocketServer}${standNamespace}`, opts);
-
-        socketIo.value = socket;
-        socket.on('connect', () => { socket.emit('join', { cached: false, room: job.value.id }); });
-        socket.on('update task', (msg, callback) => {// eslint-disable-line no-unused-vars
+    wsConnect(standSocketServer, standNamespace, standSocketIoPath, {
+        connect: () => joinRoom(job.value.id),
+        'update task': (msg, callback) => {// eslint-disable-line no-unused-vars
             if (msg.type === 'PLOTLY') {
                 const messageJson = msg.message;
                 plotlyData.value = messageJson;
                 plotVersion.value++;
             }
-        });
-        socket.on('update job', msg => {
+        },
+        'update job': msg => {
             jobStatus.value = '';
             if (msg.status === 'ERROR') {
                 notifier.error(msg);
@@ -569,10 +555,8 @@ const connectWebSocket = () => {
                 jobStatus.value = msg.message;
                 loadingData.value = false;
             }
-        });
-    } else {
-        //self.socket.emit('join', { room: self.job.id });
-    }
+        },
+    });
 };
 
 </script>
