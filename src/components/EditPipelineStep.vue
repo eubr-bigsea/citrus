@@ -4,18 +4,18 @@
             <div>
                 <label for="nome">{{$t('common.name')}}:</label>
                 <input id="nome" v-model="editedStep.name" class="form-control form-control-sm" type="text"
-                       placeholder="Nome da etapa" maxlength="50" @input="handleInput">
+                       :placeholder="$t('pipeline.template.stepName')" maxlength="50" @input="handleInput">
             </div>
 
             <div class="mt-2">
                 <label for="descricao">{{$t('common.description')}}:</label>
                 <textarea id="descricao" v-model="editedStep.description" class="form-control form-control-sm"
-                          type="text" placeholder="Descrição da etapa" maxlength="200" @input="handleInput" />
+                          type="text" :placeholder="$t('pipeline.template.stepDescription')" maxlength="200" @input="handleInput" />
             </div>
         </div>
         <hr class="mt-4 mb-3">
         <div v-if="editedStep.workflow !== undefined && showWorkflowOps < 0" class="d-flex flex-column">
-            <label class="editPage-label">Etapa associada a um fluxo de trabalho:</label>
+            <label class="editPage-label">{{$t('pipeline.edit.settings.stepLinkedToWorkflow')}}:</label>
             <button class="btn text-center btn-outline-secondary my-2" @click="redirectToWorkflow(editedStep)">
                 <font-awesome-icon icon="fa fa-flask" class="me-1" size="lg" />
                 <span class="editPage-workflow-label">
@@ -34,16 +34,16 @@
             </div>
         </div>
         <div v-if="showWorkflowOps > -1">
-            <label class="editPage-label mb-2">Associar etapa a um workflow</label>
+            <label class="editPage-label mb-2">{{$t('pipeline.edit.settings.linkStepToWorkflow')}}</label>
             <div v-if="showWorkflowOps == 0" class="d-flex">
                 <b-button class="w-50 mr-2" variant="outline-primary" size="sm" @click="showWorkflowOps = 1">
                     <font-awesome-icon icon="fa fa-flask" class="mr-2" size="xl" />
-                    Workflow existente
+                    {{$t('pipeline.edit.settings.existingWorkflow')}}
                 </b-button>
                 <b-button class="50 ml-2 clickable" variant="outline-success" size="sm" @click="showWorkflowOps = 2">
                     <span class="editPage-workflow-label">
                         <font-awesome-icon icon="fa fa-plus" class="mr-2" size="xl" />
-                        Novo workflow
+                        {{$t('pipeline.edit.settings.newWorkflow')}}
                     </span>
                 </b-button>
                 <b-button v-if="editedStep.workflow" class="ms-2" variant="outline-secondary" size="sm"
@@ -52,11 +52,11 @@
                 </b-button>
             </div>
             <div v-if="showWorkflowOps == 1" class="mb-3">
-                <label>Escolha um fluxo existente para associar a esta etapa:</label>
+                <label>{{$t('pipeline.edit.settings.chooseExistingWorkflow')}}:</label>
                 <vue-select v-model="selectedWorkflow" :filterable="false" :options="workflowList" label="name"
                             class="w-100" @search="loadWorkflowList" @input="handleInput">
                     <template #no-options="{}">
-                        <small>Digite parte do nome para pesquisar...</small>
+                        <small>{{$t('common.typeToSearch')}}</small>
                     </template>
                     <template #option="option">
                         <div class="container">
@@ -85,32 +85,32 @@
                     <b-button :disabled="!selectedWorkflow" class="float-right mt-3" style="right: 15px; bottom: 0;" variant="primary"
                               size="sm"
                               @click="editStepWorkflow">
-                        Confirmar
+                        {{$t('actions.confirm')}}
                     </b-button>
                     <b-button class="mt-3" size="sm" variant="outline-secondary" @click="showWorkflowOps = -1">
-                        Cancelar
+                        {{$t('actions.cancel')}}
                     </b-button>
                 </div>
             </div>
             <div v-if="showWorkflowOps == 2" class="d-flex flex-column">
                 <b-container class="editPage-workflow-box p-3">
-                    <label class="editPage-label mb-2" for="identificador">Criação do fluxo de trabalho</label>
+                    <label class="editPage-label mb-2" for="identificador">{{$t('pipeline.edit.settings.workflowCreation')}}</label>
                     <b-row>
                         <b-col>
-                            <label class="" for="name">Nome:</label>
+                            <label class="" for="name">{{$t('common.name')}}:</label>
                             <input id="name" v-model="workflowName" v-focus type="text"
                                    class="form-control w-100 form-control-sm mb-2" maxlength="100">
                         </b-col>
                         <input id="platform" type="hidden" value="META">
                         <b-col class="d-none">
-                            <label class="" for="platform">Plataforma:</label>
+                            <label class="" for="platform">{{$t('common.platform')}}:</label>
                             <input id="platform" v-focus value="META" type="text"
                                    class="form-control w-100 form-control-sm mb-2" maxlength="100" disabled>
                         </b-col>
                     </b-row>
                     <b-row>
                         <b-col cols="6">
-                            <label>Tipo:</label>
+                            <label>{{$t('common.type')}}:</label>
                             <input v-model="selectedWorkflowType" type="text" value="SQL" disabled
                                    class="form-control ">
                             <!-- b-form-select v-model="selectedWorkflowType" :options="workflowTypeOptions" class="w-100 mb-2" /-->
@@ -118,11 +118,11 @@
                         <b-col class="position-relative">
                             <b-button class="position-absolute" style="right: 15px; bottom: 0;" variant="success"
                                       @click="createWorkflow">
-                                Confirmar
+                                {{$t('actions.confirm')}}
                             </b-button>
                             <b-button class="position-absolute" style="right: 120px; bottom: 0;"
                                       @click="showWorkflowOps = 0">
-                                Cancelar
+                                {{$t('actions.cancel')}}
                             </b-button>
                         </b-col>
                     </b-row>
