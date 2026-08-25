@@ -87,7 +87,7 @@ import { ref, onMounted, computed, watch, shallowRef } from 'vue';
 const props = defineProps({
     options: { type: Object, required: true },
     columns: { type: Array, required: true },
-    name: { type: String, required: false, default: Math.random().toString(36).slice(2, 7) },
+    name: { type: String, required: false, default: () => Math.random().toString(36).slice(2, 7) },
     showSkeleton: { type: Boolean, required: false, default: true },
 });
 
@@ -177,14 +177,15 @@ const populateTable = async () => {
             tableData.value = data || [];
             tableCount.value = count;
         } catch (e) {
-            throw e;
+            console.debug(e);
+        } finally {
+            loading.value = false;
+            firstLoad.value = false;
         }
-        loading.value = false;
 
         if ((currentPage.value - 1) * perPage.value > tableCount.value) {
             currentPage.value = 1;
         }
-        firstLoad.value = false;
     } else {
         console.error('Invalid requestFunction specified in options');
     }
@@ -228,9 +229,9 @@ const load = () => {
                 try {
                     const params = JSON.parse(saved);
                     sortColumn.value = params.orderBy?.column;
-                    sortDirection.value = params.orderBy.ascending ? 'asc' : 'desc',
-                    perPage.value = params.perPage,
-                    query.value = params.query,
+                    sortDirection.value = params.orderBy.ascending ? 'asc' : 'desc';
+                    perPage.value = params.perPage;
+                    query.value = params.query;
                     currentPage.value = params.page;
                     tableCustomQueries.value = params.customQueries;
 

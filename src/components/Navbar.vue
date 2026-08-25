@@ -148,58 +148,17 @@
                         <div class="notification border-bottom pb-2">
                             <div><font-awesome-icon v-bind="getIcon(notification)" /></div>
                             <div :class="{ 'font-weight-bold': notification.status === 'UNREAD' }"
-                                v-html="notification.text.substring(0, Math.min(notification.text.length, 200)) + (notification.text.length > 200 ? '&h e llip;' : '')">
+                                v-html="notification.text.substring(0, Math.min(notification.text.length, 200)) + (notification.text.length > 200 ? '&hellip;' : '')">
                             </div>
                         </div>
                     </b-dropdown-item>
                     <b-dropdown-item
                         @click.native.stop="$route.name === 'notifications' ? $router.go() : $router.push({ name: 'notifications' })">
-                        {{ $t('titles.allNotifications') }} {{ $route.name === 'notifications' }}
+                        {{ $t('titles.allNotifications') }}
                         <font-awesome-icon icon="fa fa-angle-right" />
                     </b-dropdown-item>
                 </b-nav-item-dropdown>
             </b-navbar-nav>
-            <!--
-            <b-navbar-nav class="pt-1">
-                <b-nav-item-dropdown ref="dropdown" right toggle-class>
-                    <template #button-content>
-                        <font-awesome-icon icon="fa fa-bars" size="1x" class="text-success" />
-                    </template>
-
-                    <b-dropdown-form style="width: 300px" class="text-center">
-                        <font-awesome-icon icon="fa fa-user" />
-                        <p>
-                            <strong>{{user.name}}</strong>
-                            <br>
-                            <small>{{user.email}}</small>
-                        </p>
-                        <div class="text-center">
-                            <strong>{{$t('titles.role', 2)}}</strong><br>
-                            <div class="mt-2">
-                                <span v-for="role in user.roles"
-                                      :key="role.id"
-                                      class="badge badge-info mr-1 p-1">
-                                    {{role.label}}
-                                </span>
-                            </div>
-                        </div>
-                        <p class="border-top pt-2">
-                            <b-button variant="primary"
-                                      size="sm"
-                                      @click="profile">
-                                {{$t('titles.profile')}}
-                            </b-button>
-                            <b-button variant="danger"
-                                      size="sm"
-                                      class="ml-2"
-                                      @click="logout">
-                                {{$t('common.logout')}}
-                            </b-button>
-                        </p>
-                    </b-dropdown-form>
-                </b-nav-item-dropdown>
-            </b-navbar-nav>
-        -->
         </b-collapse>
     </b-navbar>
 </template>
@@ -208,6 +167,10 @@
 import { mapGetters } from 'vuex';
 import axios from 'axios';
 import io from 'socket.io-client';
+import {
+    APP_PERMISSIONS, PIPELINE, DASHBOARD_PERMISSIONS, DATA_SOURCE_PERMISSIONS,
+    JOB_PERMISSIONS, WORKFLOW_PERMISSIONS
+} from '../permission-groups.js';
 const standNamespace = import.meta.env.VITE_STAND_NAMESPACE;
 const standSocketIoPath = import.meta.env.VITE_STAND_SOCKET_IO_PATH;
 const standSocketServer = import.meta.env.VITE_STAND_SOCKET_IO_SERVER;
@@ -223,25 +186,16 @@ export default {
             notifications: [],
             socket: null,
             room: null,
-            APP_PERMISSIONS: ['APP_EDIT', 'APP_USE'],
-            PIPELINE: ['PIPELINE', 'PIPELINE_RUN',],
-            DASHBOARD_PERMISSIONS: ['DASHBOARD_EDIT', 'DASHBOARD_EDIT_ANY',
-                'DASHBOARD_VIEW', 'DASHBOARD_VIEW_ANY'],
-            DATA_SOURCE_PERMISSIONS: ['DATA_SOURCE_EDIT', 'DATA_SOURCE_LIST',
-                'DATA_SOURCE_VIEW', 'DATA_SOURCE_EDIT_ANY', 'DATA_SOURCE_VIEW_ANY',
-                'DATA_SOURCE_USE', 'DATA_SOURCE_USE_ANY'],
-            DEPLOYMENT_PERMISSIONS: ['DEPLOYMENT_MANAGE'],
-            JOB_PERMISSIONS: ['JOB_EDIT_ANY', 'RUN_WORKFLOW_API', 'JOB_VIEW_ANY'],
-            SYSTEM_PERMISSIONS: ['ADMINISTRATOR', 'STORAGE_MANAGE', 'CLUSTER_MANAGE'],
-            USER_PERMISSIONS: ['USER_MANAGE'],
-            WORKFLOW_PERMISSIONS: ['WORKFLOW_EDIT', 'WORKFLOW_LIST',
-                'WORKFLOW_VIEW', 'WORKFLOW_EDIT_ANY', 'WORKFLOW_VIEW_ANY',
-                'WORKFLOW_EXECUTE', 'WORKFLOW_EXECUTE_ANY'],
-
+            APP_PERMISSIONS,
+            PIPELINE,
+            DASHBOARD_PERMISSIONS,
+            DATA_SOURCE_PERMISSIONS,
+            JOB_PERMISSIONS,
+            WORKFLOW_PERMISSIONS,
         }
     },
     computed: {
-        ...mapGetters(['hasAnyRole', 'hasAnyPermission', 'isAdmin', 'isManager', 'isMonitor', 'user']),
+        ...mapGetters(['hasAnyPermission', 'isAdmin', 'user']),
         sampleNotifications() {
             return this.notifications.length > 5 ? this.notifications.slice(0, 5) : this.notifications;
         },

@@ -39,7 +39,6 @@
 </template>
 <script>
 import axios from 'axios';
-;
 
 const limoneroUrl = import.meta.env.VITE_LIMONERO_URL;
 
@@ -119,7 +118,7 @@ export default {
             if (id != 0) {
                 this.load().then(() => {
                     this.$nextTick(() => {
-                        self.isDirty = false;
+                        this.isDirty = false;
                     });
                 });
             }
@@ -130,12 +129,8 @@ export default {
             if (!isEmpty(datasource)) {
                 this.loading = false;
             }
-        },
-        users: function (users) { // eslint-disable-line no-unused-vars
-            console.log(' aaa');
         }
     },
-    mounted() { },
     methods: {
         mountUrl() {
             let baseUrl = '';
