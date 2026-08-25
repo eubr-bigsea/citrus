@@ -1,18 +1,18 @@
 <template>
     <div class="home-card-item">
-        <dd>
+        <div>
             <b>
                 <slot name="head" />
             </b>
-        </dd>
-        <dd>
+        </div>
+        <div>
             <small>
                 <slot name="body" />
             </small>
-        </dd>
-        <dd>
+        </div>
+        <div>
             <slot name="footer" />
-        </dd>
+        </div>
         <hr>
     </div>
 </template>
@@ -52,7 +52,7 @@ export default {
         text-overflow: ellipsis;
     }
 
-    .home-card-item dd:last-of-type {
+    .home-card-item div:last-of-type {
         display: flex;
         justify-content: space-between;
     }

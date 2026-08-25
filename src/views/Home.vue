@@ -6,15 +6,15 @@
 
         <div class="home-card-container">
             <home-card v-if="listings.has('dataSources')" :type="'dataSource'" :items="dataSources"
-                       icon="fa fa-database" :total="total.dataSources" />
+                       icon="fa fa-database" :total="total.dataSources" :loading="loading.dataSources" />
             <home-card v-if="listings.has('workflows')" :type="'workflow'" :items="workflows" :total="total.workflows"
-                       icon="fa fa-diagram-project" />
+                       icon="fa fa-diagram-project" :loading="loading.workflows" />
             <home-card v-if="listings.has('jobs')" :type="'job'" :items="jobs" :total="total.jobs"
-                       icon="fa fa-tasks" />
+                       icon="fa fa-tasks" :loading="loading.jobs" />
             <home-card v-if="listings.has('apps')" :type="'app'" :items="apps" :total="total.apps"
-                       icon="fa fa-microscope" />
+                       icon="fa fa-microscope" :loading="loading.apps" />
             <home-card v-if="listings.has('dashboards')" :type="'dashboard'" :items="dashboards"
-                       :total="total.dashboards" icon="fa fa-chart-line" />
+                       :total="total.dashboards" icon="fa fa-chart-line" :loading="loading.dashboards" />
         </div>
     </main>
 </template>
@@ -46,6 +46,13 @@ export default {
                 dataSources: 0,
                 jobs: 0,
                 workflows: 0
+            },
+            loading: {
+                apps: true,
+                dashboards: true,
+                dataSources: true,
+                jobs: true,
+                workflows: true
             }
         };
     },
@@ -104,6 +111,8 @@ export default {
                 self.total[key] = resp.data.pagination.total;
             } catch (e) {
                 console.debug(e);
+            } finally {
+                self.loading[key] = false;
             }
         });
     }
@@ -111,11 +120,9 @@ export default {
 </script>
 <style>
 .home-card-container {
-    display: flex;
-    flex-wrap: wrap;
-    flex-direction: row;
-    justify-content: flex-start;
-    align-items: auto;
-    align-content: flex-start
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 8px;
+    align-items: stretch;
 }
 </style>

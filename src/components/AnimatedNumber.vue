@@ -1,5 +1,5 @@
 <template>
-    {{displayNumber}}
+    {{props.format(displayNumber)}}
 </template>
 
 <script setup>
@@ -15,6 +15,10 @@ const props = defineProps({
         // smaller is faster
         type: Number,
         default: 5,
+    },
+    format: {
+        type: Function,
+        default: v => v,
     },
 });
 
