@@ -1,7 +1,7 @@
 <template>
     <span class="home-card-counter float-end"
-          title="Total">
-        <animated-number :value="value" :speed="10" />
+          :title="$t('common.total')">
+        <animated-number :value="value" :format="formatValue" :speed="10" />
     </span>
 </template>
 
