@@ -8,7 +8,6 @@
                            :field="field"
                            :value="getValue(field.name)"
                            :language="$root.$i18n.locale"
-                           context="context"
                            message="update-workflow-form-field-value" />
             </div>
         </div>
@@ -22,8 +21,6 @@ export default {
         form: { type: Object, default: () => {} },
         workflow: { type: Object, default: () => {} },
         loaded: {type: Boolean, default: false},
-    },
-    mounted(){
     },
     methods: {
         getValue(name) {

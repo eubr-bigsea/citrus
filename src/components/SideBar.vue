@@ -78,29 +78,24 @@
 </template>
 <script>
 import { mapGetters } from 'vuex';
+import {
+    APP_PERMISSIONS, DASHBOARD_PERMISSIONS, DATA_SOURCE_PERMISSIONS,
+    JOB_PERMISSIONS, WORKFLOW_PERMISSIONS
+} from '../permission-groups.js';
 export default {
     data() {
         return {
             path: '',
             icon: '',
-            APP_PERMISSIONS: ['APP_EDIT', 'APP_USE'],
-            DASHBOARD_PERMISSIONS: ['DASHBOARD_EDIT', 'DASHBOARD_EDIT_ANY',
-                'DASHBOARD_VIEW', 'DASHBOARD_VIEW_ANY'],
-            DATA_SOURCE_PERMISSIONS: ['DATA_SOURCE_EDIT', 'DATA_SOURCE_LIST',
-                'DATA_SOURCE_VIEW', 'DATA_SOURCE_EDIT_ANY', 'DATA_SOURCE_VIEW_ANY',
-                'DATA_SOURCE_USE', 'DATA_SOURCE_USE_ANY'],
-            DEPLOYMENT_PERMISSIONS: ['DEPLOYMENT_MANAGE'],
-            JOB_PERMISSIONS: ['JOB_EDIT_ANY', 'RUN_WORKFLOW_API', 'JOB_VIEW_ANY'],
-            SYSTEM_PERMISSIONS: ['ADMINISTRATOR', 'STORAGE_MANAGE', 'CLUSTER_MANAGE'],
-            USER_PERMISSIONS: ['USER_MANAGE'],
-            WORKFLOW_PERMISSIONS: ['WORKFLOW_EDIT', 'WORKFLOW_LIST',
-                'WORKFLOW_VIEW', 'WORKFLOW_EDIT_ANY', 'WORKFLOW_VIEW_ANY',
-                'WORKFLOW_EXECUTE', 'WORKFLOW_EXECUTE_ANY'],
-
+            APP_PERMISSIONS,
+            DASHBOARD_PERMISSIONS,
+            DATA_SOURCE_PERMISSIONS,
+            JOB_PERMISSIONS,
+            WORKFLOW_PERMISSIONS,
         };
     },
     computed: {
-        ...mapGetters(['hasAnyRole', 'hasAnyPermission', 'isAdmin', 'isManager', 'isMonitor', 'user'])
+        ...mapGetters(['hasAnyPermission', 'isAdmin', 'user'])
     },
     watch: {
         '$route'(to) {

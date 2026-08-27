@@ -12,7 +12,7 @@
                 <b-button size="sm" :class="yesButton?.cssClass" @click="emit('confirm')">
                     {{$t('common.yes')}}
                 </b-button>
-                <b-button size="sm" class="noButton.cssClass" @click="emit('cancel')">
+                <b-button size="sm" :class="noButton?.cssClass" @click="emit('cancel')">
                     {{$t('common.no')}}
                 </b-button>
             </div>
