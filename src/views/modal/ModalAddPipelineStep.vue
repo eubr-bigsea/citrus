@@ -130,7 +130,6 @@ export default {
             showWorkflowOps: 0,
             selectedWorkflow: null,
             workflowName: '',
-            workflowPlatform: 1,
             selectedWorkflowType: null,
             workflowTypeOptions: [
                 { value: 'DATA_EXPLORER', text: 'Explorador de dados' },
