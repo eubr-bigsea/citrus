@@ -17,7 +17,7 @@
                     {{ $t('actions.back') }}
                 </router-link>
                 <button class="btn btn-sm btn-outline-secondary float-left" @click="redirectToRuns">
-                    <font-awesome-icon icon="fa fa-history" /> Histórico
+                    <font-awesome-icon icon="fa fa-history" /> {{$t('common.history')}}
                 </button>
                 <button class="btn btn-sm btn-success" :disabled="!isDirty" @click="saveChanges">
                     <font-awesome-icon icon="fa fa-save" class="mr-1" /> {{ $t('actions.save') }}
@@ -31,19 +31,19 @@
             <div class="editPage-container">
                 <div class="w-25">
                     <h5>
-                        Informações básicas
+                        {{$t('common.basicInformation')}}
                     </h5>
                     <b-card class="editPage-infos">
 
                         <div class="mt-2 mb-4">
-                            <label for="identifier" class="font-weight-bold">Identificador:</label>
+                            <label for="identifier" class="font-weight-bold">{{$t('common.identifier')}}:</label>
                             <input type="text" id="identifier" class="form-control form-control-sm"
                                 v-model="pipeline.identifier" @input="isDirty = true" />
                         </div>
                         <div class="d-flex flex-row">
                             <div class="font-weight-bold mr-2">
-                                <div>Criado em:</div>
-                                <div>Atualizado em:</div>
+                                <div>{{$t('common.created')}}:</div>
+                                <div>{{$t('common.updated')}}:</div>
                             </div>
                             <div>
                                 <div>{{ $filters.formatJsonDate(pipeline.created) }}</div>
@@ -51,26 +51,26 @@
                             </div>
                         </div>
                         <div class="mt-4">
-                            <span class="font-weight-bold">Descrição:</span>
+                            <span class="font-weight-bold">{{$t('common.description')}}:</span>
                             <textarea v-model="pipeline.description" @input="isDirty = true" rows="4"
                                 class="form-control form-control-sm" maxlength="200" />
                         </div>
                         <div class="mt-4">
                             <b-form-checkbox v-model="pipeline.enabled" class="d-flex align-items-center"
                                 name="check-button" size="sm" switch @change="isDirty = true">
-                                Habilitada
+                                {{$t('common.enabled')}}
                             </b-form-checkbox>
                         </div>
                         <div class="mt-4" v-if="pipeline.periodicity">
                             <div>
-                                <label class="font-weight-bold">Periodicidade da execução:</label>
+                                <label class="font-weight-bold">{{$t('pipeline.edit.executionPeriodicity')}}:</label>
                                 <b-form-select v-model="pipeline.periodicity" class="mt-0" size="sm"
                                     @input="isDirty = true" :options="periodicityOptions" />
                             </div>
                             <div class="mt-2">
                                 <div>
                                     <label class="font-weight-bold mr-2">
-                                        Iniciar:
+                                        {{$t('pipeline.edit.periodicityStart')}}:
                                     </label>
                                     <input id="iniciar-data" v-model.number="pipeline.periodicity_start"
                                         class="form-control mr-auto form-control-sm w-75" type="number" max="31"
@@ -78,7 +78,7 @@
                                 </div>
                                 <div class="mt-2">
                                     <label class="font-weight-bold mr-2">
-                                        Intervalo (opcional):
+                                        {{$t('pipeline.edit.periodicityIntervalOptional')}}:
                                     </label>
                                     <input v-model.number="pipeline.periodicity_interval"
                                         class="form-control form-control-sm mr-auto w-75" type="number" min="0"
@@ -90,7 +90,7 @@
                 </div>
                 <div class="w-75">
                     <h5>
-                        Etapas
+                        {{$t('pipeline.step', 2)}}
                     </h5>
                     <b-card class="editPage-stepsDiv scroll-area">
                         <div class="editPage-collapse-div">
@@ -100,21 +100,21 @@
                                         <font-awesome-icon icon="info-circle" />
                                     </button>
                                     <b-popover target="popover-trigger" triggers="hover">
-                                        Segure e arraste as etapas abaixo para reordená-las.
+                                        {{$t('pipeline.template.holdAndDragSteps')}}
                                     </b-popover>
                                     <div class="editPage-etapas-header-column">
-                                        Ordem
+                                        {{$t('titles.order')}}
                                     </div>
                                     <div class="editPage-etapas-header-column">
-                                        Nome
+                                        {{$t('common.name')}}
                                     </div>
                                     <div class="editPage-etapas-header-column">
-                                        Ações
+                                        {{$t('common.action', 2)}}
                                     </div>
                                 </div>
                                 <div v-if="pipeline.steps && pipeline.steps.length === 0" class="editPage-no-steps">
-                                    Adicione etapas à sua pipeline
-                                    <button class="ml-1 btn btn-sm btn-secondary" title="Adicionar etapa"
+                                    {{$t('pipeline.edit.addStepsToPipeline')}}
+                                    <button class="ml-1 btn btn-sm btn-secondary" :title="$t('pipeline.edit.addStep')"
                                         @click="openAddStepModal(0)">
                                         <font-awesome-icon icon="plus" />
                                     </button>
@@ -133,11 +133,11 @@
                                         </div>
                                         <div class="editPage-drag-column">
                                             <div>
-                                                <button class="ml-1 btn btn-sm btn-danger" title="Excluir etapa"
+                                                <button class="ml-1 btn btn-sm btn-danger" :title="$t('pipeline.edit.deleteStep')"
                                                     @click="deleteStep(step.id, step.name)">
                                                     <font-awesome-icon icon="trash" />
                                                 </button>
-                                                <button class="ml-1 btn btn-sm btn-secondary" title="Adicionar etapa"
+                                                <button class="ml-1 btn btn-sm btn-secondary" :title="$t('pipeline.edit.addStep')"
                                                     @click="openAddStepModal(step.order)">
                                                     <font-awesome-icon icon="plus" />
                                                 </button>
@@ -154,8 +154,7 @@
                                 <div v-if="pipelineWithoutSteps" class="w-100 h-100 d-flex justify-content-center">
                                     <b-card class="w-100 h-25 text-center p-5">
                                         <div class="editPage-empty-step ">
-                                            Adicione etapas à sua pipeline para acessar suas informações de agendamento
-                                            e configurações.
+                                            {{$t('pipeline.edit.addStepsToAccess')}}
                                         </div>
                                     </b-card>
                                 </div>
@@ -163,7 +162,7 @@
                                     <b-tab active>
                                         <template #title>
                                             <span class="editPage-tabs-title-text">
-                                                Agendador
+                                                {{$t('pipeline.edit.schedulerLabel')}}
                                             </span>
                                         </template>
                                         <PipelineStepScheduler ref="stepScheduler" :selected-step="selectedStep"
@@ -173,7 +172,7 @@
                                     <b-tab>
                                         <template #title>
                                             <span class="editPage-tabs-title-text">
-                                                Configurações
+                                                {{$t('pipeline.edit.settingsLabel')}}
                                             </span>
                                         </template>
                                         <EditPipelineStep ref="editStepModal" :edited-step="editedStep"
