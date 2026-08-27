@@ -201,14 +201,17 @@ import axios from 'axios';
 import Notifier from '@/mixins/Notifier.js';
 import { GridLayout, GridItem } from "vue3-grid-layout-next";
 import DateComponent from '@/components/widgets/Date.vue';
-import io from 'socket.io-client';
+import { useWebSocket } from '@/composables/websocket.js';
 import CapirinhaVisualization from '@/components/caipirinha-visualization/CaipirinhaVisualization.vue';
 
 
 const caipirinhaUrl = import.meta.env.VITE_CAIPIRINHA_URL;
 const standUrl = import.meta.env.VITE_STAND_URL;
 const standNamespace = import.meta.env.VITE_STAND_NAMESPACE;
+const standSocketIoPath = import.meta.env.VITE_STAND_SOCKET_IO_PATH;
+const standSocketServer = import.meta.env.VITE_STAND_SOCKET_IO_SERVER;
 const tahitiUrl = import.meta.env.VITE_TAHITI_URL;
+const { connectWebSocket, disconnectWebSocket, joinRoom } = useWebSocket();
 
 class EditField {
     constructor(obj, sourceType) {
@@ -297,7 +300,6 @@ export default {
             running: false,
             savedFiltersName: null,
             savedFilters: {},
-            socket: null,
             statusError: null,
             visualizations: [],
             workflow: {},
@@ -313,11 +315,7 @@ export default {
         }
     },
     beforeUnmount() {
-
-        if (this.socket) {
-            this.socket.emit('leave', { room: this.job.id });
-            this.socket.close();
-        }
+        disconnectWebSocket();
     },
     mounted() {
         this.load();
@@ -356,89 +354,85 @@ export default {
             window.dispatchEvent(new Event('resize'));
         },
 
-        connectWebSocket() {
+        initWebSocketConnection() {
             const self = this;
-            const socket = io(standNamespace, { upgrade: true, });
 
-            self.socket = socket;
-
-            socket.on('disconnect', () => {
-                //self.warning({ message: self.$t('You are not connected') });
-            });
-            socket.on('response', msg => { // eslint-disable-line no-unused-vars
-                //console.debug('response', msg);
-            });
-            socket.on('connect', () => {
-                const room = self.job.id;
-                //console.debug('Connecting to room', room);
-                socket.emit('join', { room: room });
-                self.socket = socket;
-            });
-            socket.on('connect_error', () => {
-                //console.debug('Web socket server offline');
-            });
-            // socket.on('update task', (msg, callback) => {
-            //     const task = self.job.workflow.tasks.find(t => {
-            //         return msg.task && t.id === msg.task.id;
-            //     });
-            //     console.debug(msg);
-            //     if (task) {
-            //         task.status = msg.status;
-            //         let step = self.job.steps.find(step => step.task.id === task.id);
-            //         if (step) {
-            //             step.status = msg.status;
-            //             const found = step.logs.filter(v => v.id === msg.id);
-            //             if (found.length === 0) {
-            //                 step.logs.push({
-            //                     id: msg.step_id,
-            //                     level: msg.level,
-            //                     date: msg.date,
-            //                     type: msg.type,
-            //                     message: msg.message
-            //                 });
-            //             }
-            //         }
-            //     }
-            // });
-            socket.on('task result', msg => {
-                //console.debug(msg)
-                const task = self.visualizations.find((t) => t.id === msg.task.id);
-                if (task) {
-                    task.data = msg;
-                } else {
-                    console.debug('task not found: ', msg.task.id);
-                }
-            });
-            socket.on('update job', msg => {
-                self.jobStatus = msg.status.toLowerCase();
-                if (msg.id === self.job.id && self.job.status !== 'COMPLETED') {
-                    self.job.status = msg.status;
-                    self.job.finished = msg.finished;
-                    //console.debug(msg.message);
-                    if (msg.message) {
-                        const finalMsg = msg.message;
-                        self.job.status_text = finalMsg;
-                        if (msg.status === 'COMPLETED') {
-                            // hack
-                            window.setTimeout(() => (self.jobStatus = 'COMPLETED'), 10);
-                            //self.success(finalMsg);
-                            self.running = false;
-                        } else if (msg.status === 'ERROR') {
-                            if (msg.exception_stack) {
-                                self.job.exception_stack = msg.exception_stack.replace(
-                                    /(^[ \t]*\n)/gm,
-                                    ''
-                                );
+            connectWebSocket(standSocketServer, standNamespace, standSocketIoPath, {
+                disconnect: () => {
+                    //self.warning({ message: self.$t('You are not connected') });
+                },
+                response: msg => { // eslint-disable-line no-unused-vars
+                    //console.debug('response', msg);
+                },
+                connect: () => {
+                    const room = self.job.id;
+                    //console.debug('Connecting to room', room);
+                    joinRoom(room);
+                },
+                'connect_error': () => {
+                    //console.debug('Web socket server offline');
+                },
+                // 'update task': (msg, callback) => {
+                //     const task = self.job.workflow.tasks.find(t => {
+                //         return msg.task && t.id === msg.task.id;
+                //     });
+                //     console.debug(msg);
+                //     if (task) {
+                //         task.status = msg.status;
+                //         let step = self.job.steps.find(step => step.task.id === task.id);
+                //         if (step) {
+                //             step.status = msg.status;
+                //             const found = step.logs.filter(v => v.id === msg.id);
+                //             if (found.length === 0) {
+                //                 step.logs.push({
+                //                     id: msg.step_id,
+                //                     level: msg.level,
+                //                     date: msg.date,
+                //                     type: msg.type,
+                //                     message: msg.message
+                //                 });
+                //             }
+                //         }
+                //     }
+                // },
+                'task result': msg => {
+                    //console.debug(msg)
+                    const task = self.visualizations.find((t) => t.id === msg.task.id);
+                    if (task) {
+                        task.data = msg;
+                    } else {
+                        console.debug('task not found: ', msg.task.id);
+                    }
+                    self.job.results.push(msg);
+                },
+                'update job': msg => {
+                    self.jobStatus = msg.status.toLowerCase();
+                    if (msg.id === self.job.id && self.job.status !== 'COMPLETED') {
+                        self.job.status = msg.status;
+                        self.job.finished = msg.finished;
+                        //console.debug(msg.message);
+                        if (msg.message) {
+                            const finalMsg = msg.message;
+                            self.job.status_text = finalMsg;
+                            if (msg.status === 'COMPLETED') {
+                                // hack
+                                window.setTimeout(() => (self.jobStatus = 'COMPLETED'), 10);
+                                //self.success(finalMsg);
+                                self.running = false;
+                            } else if (msg.status === 'ERROR') {
+                                if (msg.exception_stack) {
+                                    self.job.exception_stack = msg.exception_stack.replace(
+                                        /(^[ \t]*\n)/gm,
+                                        ''
+                                    );
+                                }
+                                self.statusError = msg.message;
+                                //self.error(null, msg.message);
+                                self.running = false;
                             }
-                            self.statusError = msg.message;
-                            //self.error(null, msg.message);
-                            self.running = false;
                         }
                     }
-                }
-            });
-            socket.on('task result', msg => {
-                self.job.results.push(msg);
+                },
             });
         },
         async execute() {
@@ -472,7 +466,7 @@ export default {
                     };
                     self.job = await axios.post(`${standUrl}/jobs`, body, { headers })
                         .then((response) => response.data.data);
-                    self.connectWebSocket();
+                    self.initWebSocketConnection();
                 } else {
                     self.$refs.form.reportValidity();
                 }

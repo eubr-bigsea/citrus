@@ -99,7 +99,7 @@
     </div>
 </template>
 <script>
-import io from 'socket.io-client';
+import { useWebSocket } from '@/composables/websocket.js';
 import SideBar from './ModelBuilderSideBar.vue';
 import DesignData from './DesignData.vue';
 import TrainTest from './TrainTest.vue';
@@ -128,6 +128,7 @@ const standSocketIoPath = import.meta.env.VITE_STAND_SOCKET_IO_PATH;
 const standSocketServer = import.meta.env.VITE_STAND_SOCKET_IO_SERVER;
 
 const META_PLATFORM_ID = 1000;
+const { connectWebSocket, disconnectWebSocket, joinRoom } = useWebSocket();
 
 export default {
     name: 'DesignComponent',
@@ -155,7 +156,7 @@ export default {
             operationsMap: new Map(),
             selectedAlgorithm: { forms: [] },
             selected: 'target',
-            socket: null, // used by socketio (web sockets)
+            wsConnected: false, // guards against reconnecting an already-open socket
             targetPlatform: 1,
             workflowObj: { forms: { $meta: { value: { target: '', taskType: '' } } } },
 
@@ -209,63 +210,49 @@ export default {
         await this.load();
     },
     beforeUnmount() {
-        this.disconnectWebSocket();
+        disconnectWebSocket();
     },
     methods: {
         /* WebSocket Handling */
-        disconnectWebSocket() {
-            if (this.socket) {
-                this.socket.emit('leave', { room: this.job.id });
-                this.socket.close();
-            }
-        },
-        changeRoom(room) {
-            this.socket.emit('join', { cached: false, room });
-        },
-        connectWebSocket() {
+        initWebSocketConnection() {
             const self = this;
-            if (self.socket === null) {
-                const opts = { upgrade: true };
-                if (standSocketIoPath !== '') {
-                    opts['path'] = standSocketIoPath;
-                }
+            if (!self.wsConnected) {
+                self.wsConnected = true;
 
-                const socket = io(
-                    `${standSocketServer}${standNamespace}`, opts);
-                self.socket = socket;
+                connectWebSocket(standSocketServer, standNamespace, standSocketIoPath, {
+                    connect: () => joinRoom(self.job.id),
 
-                socket.on('connect', () => { socket.emit('join', { cached: false, room: self.job.id }); });
-
-                socket.on('task result', (msg, callback) => { // eslint-disable-line no-unused-vars
-                    //const task = self.workflowObj.getTaskById(msg.id);
-                    this.jobs[0].results.push({
-                        task_id: msg.id,
-                        operation_id: msg.operation_id,
-                        title: msg.title,
-                        type: msg.type,
-                        content: msg.type === 'VISUALIZATION' ? JSON.parse(msg.message) : msg.message
-                    })
-                    this.jobs[0].groupedResults = this.jobs[0].results.reduce((rv, x) => {
-                        const key = `${x.task_id}:${x.title}`;
-                        (rv[key] = rv[key] || []).push(x);
-                        return rv;
-                    }, {});
-                    this.$refs.results.selectFirst();
-                });
-                socket.on('update job', msg => {
-                    if (msg.status === 'ERROR') {
-                        self.error(msg);
-                        self.notRunning = true;
-                    }
-                    if (msg.status === 'COMPLETED') {
-                        self.jobStatus = msg.message;
-                        self.notRunning = true;
-                    }
-                    //self.job && (self.job.status = msg.status);
-                    this.loadJobs();
+                    'task result': (msg, callback) => { // eslint-disable-line no-unused-vars
+                        //const task = self.workflowObj.getTaskById(msg.id);
+                        this.jobs[0].results.push({
+                            task_id: msg.id,
+                            operation_id: msg.operation_id,
+                            title: msg.title,
+                            type: msg.type,
+                            content: msg.type === 'VISUALIZATION' ? JSON.parse(msg.message) : msg.message
+                        })
+                        this.jobs[0].groupedResults = this.jobs[0].results.reduce((rv, x) => {
+                            const key = `${x.task_id}:${x.title}`;
+                            (rv[key] = rv[key] || []).push(x);
+                            return rv;
+                        }, {});
+                        this.$refs.results.selectFirst();
+                    },
+                    'update job': msg => {
+                        if (msg.status === 'ERROR') {
+                            self.error(msg);
+                            self.notRunning = true;
+                        }
+                        if (msg.status === 'COMPLETED') {
+                            self.jobStatus = msg.message;
+                            self.notRunning = true;
+                        }
+                        //self.job && (self.job.status = msg.status);
+                        this.loadJobs();
+                    },
                 });
             } else if (self.job) {
-                self.changeRoom(self.job.id);
+                joinRoom(self.job.id);
             }
         },
         updateSaveResults(name, value){
@@ -352,7 +339,7 @@ export default {
                 self.success('Construção dos modelos foi iniciada.');
                 this.notRunning = false;
                 this.$refs.results.selectFirst();
-                self.connectWebSocket();
+                self.initWebSocketConnection();
             } catch (ex) {
                 if (ex.data) {
                     self.error(ex.data.message);
@@ -448,7 +435,7 @@ export default {
 
             this.notRunning = this.jobs.length === 0 || this.jobs.every(job => runningStatuses.indexOf(job.status) === -1);
             if (this.job) {
-                this.connectWebSocket();
+                this.initWebSocketConnection();
             }
         },
         async loadOperations() {

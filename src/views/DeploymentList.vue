@@ -89,16 +89,18 @@
 
 
 <script>
-import { ref, reactive, onMounted, getCurrentInstance } from 'vue';
+import { ref, reactive, onMounted, onUnmounted, getCurrentInstance } from 'vue';
 import { useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import { useStore } from 'vuex';
 import axios from 'axios';
-import io from 'socket.io-client';
+import { useWebSocket } from '../composables/websocket.js';
 import useNotifier from '../composables/useNotifier.js';
 
 const seedUrl = import.meta.env.VITE_SEED_URL;
 const standNamespace = import.meta.env.VITE_STAND_NAMESPACE;
+const standSocketIoPath = import.meta.env.VITE_STAND_SOCKET_IO_PATH;
+const standSocketServer = import.meta.env.VITE_STAND_SOCKET_IO_SERVER;
 
 export default {
     setup() {
@@ -106,6 +108,7 @@ export default {
         const store = useStore();
         const { t } = useI18n();
         const { success, error, confirm } = useNotifier(getCurrentInstance().proxy);
+        const { connectWebSocket, disconnectWebSocket, joinRoom } = useWebSocket();
 
         const currentRow = ref(null);
         const logs = ref([]);
@@ -218,11 +221,16 @@ export default {
         });
 
         onMounted(() => {
-            const socket = io(standNamespace, { upgrade: true });
             const room = `deployment.list.${store.getters.user.id}`;
 
-            socket.on('connect', () => socket.emit('join', { room }));
-            socket.on('refresh', () => refresh());
+            connectWebSocket(standSocketServer, standNamespace, standSocketIoPath, {
+                connect: () => joinRoom(room),
+                refresh: () => refresh(),
+            });
+        });
+
+        onUnmounted(() => {
+            disconnectWebSocket();
         });
 
         return {

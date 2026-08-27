@@ -293,7 +293,7 @@
 <script>
 ;
 import jsep from 'jsep';
-import io from 'socket.io-client';
+import { useWebSocket } from '@/composables/websocket.js';
 import axios from 'axios';
 import { debounce, deepToRaw } from '@/util.js';
 import Preview from './DataExplorerPreview.vue';
@@ -317,6 +317,7 @@ const standSocketServer = import.meta.env.VITE_STAND_SOCKET_IO_SERVER;
 
 const META_PLATFORM_ID = 1000;
 const PAGE_SIZE = 100;
+const { connectWebSocket, disconnectWebSocket, socketEmit, joinRoom } = useWebSocket();
 const WORKFLOW_OFFSET = 800000;
 
 const type2Generic = new Map([
@@ -380,7 +381,7 @@ export default {
             operationLookup: new Map(),
             schemas: {},
             selected: { field: {} }, // selected attribute in table preview
-            socket: null, // used by socketio (web sockets)
+            wsConnected: false, // guards emits from before the socket connects
 
             tableData: { attributes: [] }, // data used to render preview table
             workflowObj: { cluster: null },
@@ -424,7 +425,7 @@ export default {
         await this.loadOperations();
         const workflowOk = await this.loadWorkflow();
 
-        this.connectWebSocket();
+        this.initWebSocketConnection();
         if (workflowOk) {
             await this.loadData(null, null, false);;
         } else {
@@ -435,7 +436,7 @@ export default {
         this.updateAttributeSuggestion();
     },
     beforeUnmount() {
-        this.disconnectWebSocket();
+        disconnectWebSocket();
     },
     methods: {
         handleSelectStep(task, value) {
@@ -466,7 +467,7 @@ export default {
         handleScroll: debounce(function (el) {
             if ((el.srcElement.offsetHeight + el.srcElement.scrollTop) >= el.srcElement.scrollHeight) {
                 if (this.loadedDataSize < this.tableData?.total) {
-                    if (this.socket) {
+                    if (this.wsConnected) {
                         this.$nextTick(() => {
                             // Fill data with dummy values while waits for real ones.
                             this.addDummyData();
@@ -476,7 +477,7 @@ export default {
                             // Get the last visible and enabled task
                             const task_id = [... this.workflowObj.tasks].reverse().find(
                                 task => task.enabled && task.previewable)['id'];
-                            this.socket.emit("more data", {
+                            socketEmit("more data", {
                                 workflow_id, job_id, room: `${job_id}`, task_id,
                                 size: PAGE_SIZE, page: this.page + 1, type: "more data",
                             });
@@ -978,12 +979,6 @@ export default {
             }
         },
 
-        disconnectWebSocket() {
-            if (this.socket) {
-                this.socket.emit('leave', { room: this.job.id });
-                this.socket.close();
-            }
-        },
         duplicateStep(step) {
             // Clone tasks instance
             const cloned = new Task(JSON.parse(JSON.stringify(step)));
@@ -1015,7 +1010,7 @@ export default {
             const task_id = [... this.workflowObj.tasks].reverse().find(
                 task => task.enabled && task.previewable)['id'];
 
-            this.socket.emit("analyse attribute", {
+            socketEmit("analyse attribute", {
                 workflow_id, job_id, room: `${job_id}`, task_id,
                 type: "analyse attribute", attribute: selected?.field?.key,
             });
@@ -1026,7 +1021,7 @@ export default {
             const task_id = [... this.workflowObj.tasks].reverse().find(
                 task => task.enabled && task.previewable)['id'];
 
-            this.socket.emit("analyse attribute", {
+            socketEmit("analyse attribute", {
                 cluster: true, similarity: this.similarity,
                 workflow_id, job_id, room: `${job_id}`, task_id,
                 type: "analyse attribute", attribute: this.selected?.field?.key,
@@ -1049,7 +1044,7 @@ export default {
             const workflow_id = this.workflowObj.id;
             const job_id = WORKFLOW_OFFSET + parseInt(workflow_id);
 
-            this.socket.emit("export", {
+            socketEmit("export", {
                 workflow_id, job_id, room: `${job_id}`,
                 app_id: workflow_id,
                 format: 'JSON',
@@ -1104,23 +1099,17 @@ export default {
             return "hsl(" + h + ", 100%, 50%, .5)";
         },
         /* WebSocket Handling */
-        connectWebSocket() {
+        initWebSocketConnection() {
             const self = this;
-            if (self.socket === null) {
-                const opts = { upgrade: true };
-                if (standSocketIoPath !== '') {
-                    opts['path'] = standSocketIoPath;
-                }
-                const socket = io(
-                    `${standSocketServer}${standNamespace}`, opts);
+            self.wsConnected = true;
 
-                self.socket = socket;
-                socket.on('connect', () => { socket.emit('join', { cached: false, room: self.job.id }); });
+            connectWebSocket(standSocketServer, standNamespace, standSocketIoPath, {
+                connect: () => joinRoom(self.job.id),
 
-                socket.on('exported result', (msg) => {
+                'exported result': (msg) => {
                     //console.debug(msg);
-                });
-                socket.on('analysis', (msg) => { // eslint-disable-line no-unused-vars
+                },
+                analysis: (msg) => { // eslint-disable-line no-unused-vars
                     if (msg.analysis_type !== 'cluster') {
                         this.stats = msg;
                         this.$refs.statsModal?.show();
@@ -1129,8 +1118,8 @@ export default {
                     }
                     if (this.$refs.selectAttributeStat)
                         this.$refs.selectAttributeStat.disabled = false;
-                });
-                socket.on('update task', (msg, callback) => {// eslint-disable-line no-unused-vars
+                },
+                'update task': (msg, callback) => {// eslint-disable-line no-unused-vars
 
                     // Meta add a suffix to task id when converting tasks to other platform.
                     const task = self.workflowObj.getTaskById(msg.id.substring(0, 36));
@@ -1258,8 +1247,8 @@ export default {
                                 */
                         }
                     }
-                });
-                socket.on('update job', msg => {
+                },
+                'update job': msg => {
                     self.jobStatus = '';
                     if (msg.status === 'ERROR') {
                         self.error(msg);
@@ -1269,13 +1258,11 @@ export default {
                         self.jobStatus = msg.message;
                         self.loadingData = false;
                     }
-                });
-                socket.on('*', (msg) => {
+                },
+                '*': (msg) => { // eslint-disable-line no-unused-vars
                     //console.debug(msg, 'teste');
-                });
-            } else {
-                //self.socket.emit('join', { room: self.job.id });
-            }
+                },
+            });
         }
     }
 };

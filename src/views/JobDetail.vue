@@ -288,7 +288,7 @@ import DiagramComponent from '../components/Diagram.vue';
 import SourceCode from '../components/SourceCode.vue';
 import Notifier from '../mixins/Notifier.js';
 import axios from 'axios';
-import io from 'socket.io-client';
+import { useWebSocket } from '../composables/websocket.js';
 import CapirinhaVisualization from '../components/caipirinha-visualization/CaipirinhaVisualization.vue';
 
 const standUrl = import.meta.env.VITE_STAND_URL;
@@ -297,6 +297,7 @@ const standSocketServer = import.meta.env.VITE_STAND_SOCKET_IO_SERVER;
 const standSocketIoPath = import.meta.env.VITE_STAND_SOCKET_IO_PATH;
 const caipirinhaUrl = import.meta.env.VITE_CAIPIRINHA_URL;
 const tahitiUrl = import.meta.env.VITE_TAHITI_URL;
+const { connectWebSocket, disconnectWebSocket, joinRoom } = useWebSocket();
 
 /*
     const TaskDisplay = Vue.extend({
@@ -417,10 +418,7 @@ export default {
         }
     },
     beforeUnmount() {
-        if (this.socket) {
-            this.socket.emit('leave', { room: this.job.id });
-            this.socket.close();
-        }
+        disconnectWebSocket();
         //this.$root.$off('onclick-task');
         //this.$root.$off('onblur-selection');
     },
@@ -497,7 +495,7 @@ export default {
                     self.results[result.task.id] = result;
                 });
                 if (['running', 'waiting'].includes(self.job.status.toLowerCase())) {
-                    self.connectWebSocket();
+                    self.initWebSocketConnection();
                 }
             })
             .catch(function (e) {
@@ -561,101 +559,93 @@ export default {
         getCaipirinhaLink(jobId, taskId, visId) {
             return `${caipirinhaUrl}/visualizations/${jobId}/${taskId}/${visId}`;
         },
-        connectWebSocket() {
+        initWebSocketConnection() {
             const self = this;
-            const opts = {
-                upgrade: true,
-            };
-            if (standSocketIoPath !== '') {
-                opts['path'] = standSocketIoPath;
-            }
-            const socket = io(`${standSocketServer}${standNamespace}`, opts);
 
-            self.socket = socket;
-
-            socket.on('disconnect', () => {
-                console.debug('You are not connected');
-            });
-            socket.on('response', msg => {
-                console.debug('response', msg);
-            });
-            socket.on('connect', () => {
-                let room = self.job.id;
-                console.debug('Connecting to room', room);
-                socket.emit('join', { room: room });
-                self.socket = socket;
-            });
-            socket.on('connect_error', () => {
-                console.debug('Web socket server offline');
-            });
-            socket.on('update task', (msg, callback) => {// eslint-disable-line no-unused-vars
-                const task = self.job.workflow.tasks.find(t => {
-                    return msg.task && t.id === msg.task.id;
-                });
-                // const task = self.tasks[msg.task.id];
-                if (task) {
-                    task.status = msg.status;
-                    let step = self.job.steps.find(step => step.task.id === task.id);
-                    if (step) {
-                        step.status = msg.status;
-                        const found = step.logs.filter(v => v.id === msg.id);
-                        let message = msg.message;
-                        if (msg.type === 'OBJECT' && msg.meaning === 'sample') {
-                            message = JSON.parse(message);
-                            const attributeNames = message.attributes.map(attr => attr.key);
-                            message.rows = message.rows.map(
-                                row => Object.assign(...attributeNames.map((attr, i) => { return { [attr]: row[i] }; })));
-                        }
-                        if (found.length === 0) {
-                            step.logs.push({
-                                id: msg.step_id,
-                                level: msg.level,
-                                date: msg.date,
-                                type: msg.type,
-                                message
-                            });
-                        }
-                    }
-                }
-            });
-            socket.on('update job', msg => {
-                self.jobStatus = msg.status.toLowerCase();
-                if (msg.id === self.job.id && self.job.status !== 'COMPLETED') {
-                    self.job.status = msg.status;
-                    self.job.finished = msg.finished;
-
-                    if (msg.message) {
-                        // let finalMsg = msg.message.replace(/&/g, '&amp;')
-                        //     .replace(/"/g, '&quot;')
-                        //     .replace(/</g, '&lt;')
-                        //     .replace(/>/g, '&gt;');;
-                        const finalMsg = msg.message;
-                        self.job.status_text = finalMsg;
-                        if (msg.status === 'COMPLETED') {
-                            // hack
-                            window.setTimeout(() => {
-                                self.jobStatus = 'COMPLETED';
-                                self.job.steps.forEach(step => {
-                                    if (step.status !== 'COMPLETED') {
-                                        step.status = 'COMPLETED';
-                                    }
-                                });
-                            }, 10);
-                            self.success(finalMsg);
-                        } else if (msg.status === 'ERROR') {
-                            if (msg.exception_stack) {
-                                self.job.exception_stack = msg.exception_stack.replace(
-                                    /(^[ \t]*\n)/gm,
-                                    ''
-                                );
+            connectWebSocket(standSocketServer, standNamespace, standSocketIoPath, {
+                disconnect: () => {
+                    console.debug('You are not connected');
+                },
+                response: msg => {
+                    console.debug('response', msg);
+                },
+                connect: () => {
+                    let room = self.job.id;
+                    console.debug('Connecting to room', room);
+                    joinRoom(room);
+                },
+                'connect_error': () => {
+                    console.debug('Web socket server offline');
+                },
+                'update task': (msg, callback) => {// eslint-disable-line no-unused-vars
+                    const task = self.job.workflow.tasks.find(t => {
+                        return msg.task && t.id === msg.task.id;
+                    });
+                    // const task = self.tasks[msg.task.id];
+                    if (task) {
+                        task.status = msg.status;
+                        let step = self.job.steps.find(step => step.task.id === task.id);
+                        if (step) {
+                            step.status = msg.status;
+                            const found = step.logs.filter(v => v.id === msg.id);
+                            let message = msg.message;
+                            if (msg.type === 'OBJECT' && msg.meaning === 'sample') {
+                                message = JSON.parse(message);
+                                const attributeNames = message.attributes.map(attr => attr.key);
+                                message.rows = message.rows.map(
+                                    row => Object.assign(...attributeNames.map((attr, i) => { return { [attr]: row[i] }; })));
                             }
-                            self.error(null, self.$t('job.error'));
+                            if (found.length === 0) {
+                                step.logs.push({
+                                    id: msg.step_id,
+                                    level: msg.level,
+                                    date: msg.date,
+                                    type: msg.type,
+                                    message
+                                });
+                            }
                         }
                     }
-                }
-            });
-            socket.on('task result', msg => {
-                self.job.results.push(msg);
+                },
+                'update job': msg => {
+                    self.jobStatus = msg.status.toLowerCase();
+                    if (msg.id === self.job.id && self.job.status !== 'COMPLETED') {
+                        self.job.status = msg.status;
+                        self.job.finished = msg.finished;
+
+                        if (msg.message) {
+                            // let finalMsg = msg.message.replace(/&/g, '&amp;')
+                            //     .replace(/"/g, '&quot;')
+                            //     .replace(/</g, '&lt;')
+                            //     .replace(/>/g, '&gt;');;
+                            const finalMsg = msg.message;
+                            self.job.status_text = finalMsg;
+                            if (msg.status === 'COMPLETED') {
+                                // hack
+                                window.setTimeout(() => {
+                                    self.jobStatus = 'COMPLETED';
+                                    self.job.steps.forEach(step => {
+                                        if (step.status !== 'COMPLETED') {
+                                            step.status = 'COMPLETED';
+                                        }
+                                    });
+                                }, 10);
+                                self.success(finalMsg);
+                            } else if (msg.status === 'ERROR') {
+                                if (msg.exception_stack) {
+                                    self.job.exception_stack = msg.exception_stack.replace(
+                                        /(^[ \t]*\n)/gm,
+                                        ''
+                                    );
+                                }
+                                self.error(null, self.$t('job.error'));
+                            }
+                        }
+                    }
+                },
+                'task result': msg => {
+                    self.job.results.push(msg);
+                },
             });
         }
     }
