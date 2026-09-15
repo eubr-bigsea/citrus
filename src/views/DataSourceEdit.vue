@@ -521,6 +521,7 @@ import DataSourceOptions from '@/components/data-source/DataSourceOptions.vue';
 import { debounce } from '@/util.js';
 import { VueDraggableNext as draggable } from 'vue-draggable-next'
 import { nextTick } from 'vue';
+import { BCard, BTabs, BTab, BFormCheckbox, BModal } from 'bootstrap-vue-next';
 
 const limoneroUrl = import.meta.env.VITE_LIMONERO_URL;
 const standUrl = import.meta.env.VITE_STAND_URL;
@@ -534,6 +535,11 @@ export default {
         UserVariables,
         SystemVariables,
         draggable,
+        BCard,
+        BTabs,
+        BTab,
+        BFormCheckbox,
+        BModal,
     },
     mixins: [Notifier],
     beforeRouteLeave(to, from, next) {
