@@ -1,18 +1,18 @@
-FROM node:16 as citrus_build
+FROM node:20-alpine as citrus_build
 LABEL maintainer="Walter dos Santos Filho <walter AT dcc.ufmg.br> Guilherme Maluf Balzana <guimaluf AT dcc.ufmg.br"
 
 ENV CITRUS_HOME=/usr/local/citrus
 WORKDIR $CITRUS_HOME
 
 COPY package*.json $CITRUS_HOME/
-RUN npm install
+RUN npm ci --no-audit --no-fund
 
 COPY . $CITRUS_HOME
 RUN npm run build
 
 ###
 
-FROM nginx:1.15-alpine
+FROM nginx:1.23-alpine
 LABEL maintainer="Walter dos Santos Filho <walter AT dcc.ufmg.br> Guilherme Maluf Balzana <guimaluf AT dcc.ufmg.br"
 
 ENV CITRUS_HOME=/usr/local/citrus
