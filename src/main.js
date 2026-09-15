@@ -28,7 +28,7 @@ import Vue, { createApp, h } from '@vue/compat';
 */
 
 import './assets/main.scss';
-import { createApp, h } from 'vue';
+import { createApp, h, defineAsyncComponent } from 'vue';
 //import VueProgressBar from "@aacassandra/vue3-progressbar";
 //import BootstrapVue from 'bootstrap-vue';
 import App from './App.vue';
@@ -63,42 +63,47 @@ import Toast, { useToast } from "vue-toastification";
 import "vue-toastification/dist/index.css";
 
 /* Widgets */
+/* Loaded lazily: each is only ever resolved dynamically via
+   <component :is="..."> in PropertyWindow.vue, never referenced directly
+   in a template, so nothing needs them eagerly at startup. Several pull in
+   heavy libraries (prismjs, jsep) that were otherwise forced into the
+   initial bundle for every page. */
 
-import AttributeFunctionComponent from './components/widgets/AttributeFunction.vue';
-import AttributeSelector2Component from './components/widgets/AttributeSelector2.vue';
-import AttributeAliasSelectorComponent from './components/widgets/AttributeAliasSelector.vue';
-import CheckboxComponent from './components/widgets/Checkbox.vue';
-import CastComponent from './components/widgets/Cast.vue';
-import CodeComponent from './components/widgets/Code.vue';
-import ColorComponent from './components/widgets/Color.vue';
-import ColorPaletteComponent from './components/widgets/ColorPalette.vue';
-import ColorScaleComponent from './components/widgets/ColorScale.vue';
-import DateComponent from './components/widgets/Date.vue';
-import DecimalComponent from './components/widgets/Decimal.vue';
-import DropDownComponent from './components/widgets/DropDown.vue';
-import ExpressionComponent from './components/widgets/ExpressionEditor.vue';
-import FilterComponent from './components/widgets/FilterEditor.vue';
-import GridCoordinatesComponent from './components/widgets/GridCoordinates.vue';
-import IntegerComponent from './components/widgets/Integer.vue';
-import JoinComponent from './components/widgets/Join.vue';
-import LookupComponent from './components/widgets/Lookup.vue';
-import MarkdownEditorComponent from './components/widgets/MarkdownEditor.vue';
-import MarkdownComponent from './components/widgets/MarkdownComponent.vue';
-import PercentageComponent from './components/widgets/Percentage.vue';
-import RadioComponent from './components/widgets/Radio.vue';
-import RangeComponent from './components/widgets/Range.vue';
-import SampleLookupComponent from './components/widgets/SampleLookup.vue';
-import Select2Component from './components/widgets/Select2.vue';
-import TagComponent from './components/widgets/Tag.vue';
-import TextComponent from './components/widgets/Text.vue';
-import TextAreaComponent from './components/widgets/TextArea.vue';
-import UrlComponent from './components/widgets/Url.vue';
-import Plotly from './components/visualization/Plotly.vue';
+const AttributeFunctionComponent = defineAsyncComponent(() => import('./components/widgets/AttributeFunction.vue'));
+const AttributeSelector2Component = defineAsyncComponent(() => import('./components/widgets/AttributeSelector2.vue'));
+const AttributeAliasSelectorComponent = defineAsyncComponent(() => import('./components/widgets/AttributeAliasSelector.vue'));
+const CheckboxComponent = defineAsyncComponent(() => import('./components/widgets/Checkbox.vue'));
+const CastComponent = defineAsyncComponent(() => import('./components/widgets/Cast.vue'));
+const CodeComponent = defineAsyncComponent(() => import('./components/widgets/Code.vue'));
+const ColorComponent = defineAsyncComponent(() => import('./components/widgets/Color.vue'));
+const ColorPaletteComponent = defineAsyncComponent(() => import('./components/widgets/ColorPalette.vue'));
+const ColorScaleComponent = defineAsyncComponent(() => import('./components/widgets/ColorScale.vue'));
+const DateComponent = defineAsyncComponent(() => import('./components/widgets/Date.vue'));
+const DecimalComponent = defineAsyncComponent(() => import('./components/widgets/Decimal.vue'));
+const DropDownComponent = defineAsyncComponent(() => import('./components/widgets/DropDown.vue'));
+const ExpressionComponent = defineAsyncComponent(() => import('./components/widgets/ExpressionEditor.vue'));
+const FilterComponent = defineAsyncComponent(() => import('./components/widgets/FilterEditor.vue'));
+const GridCoordinatesComponent = defineAsyncComponent(() => import('./components/widgets/GridCoordinates.vue'));
+const IntegerComponent = defineAsyncComponent(() => import('./components/widgets/Integer.vue'));
+const JoinComponent = defineAsyncComponent(() => import('./components/widgets/Join.vue'));
+const LookupComponent = defineAsyncComponent(() => import('./components/widgets/Lookup.vue'));
+const MarkdownEditorComponent = defineAsyncComponent(() => import('./components/widgets/MarkdownEditor.vue'));
+const MarkdownComponent = defineAsyncComponent(() => import('./components/widgets/MarkdownComponent.vue'));
+const PercentageComponent = defineAsyncComponent(() => import('./components/widgets/Percentage.vue'));
+const RadioComponent = defineAsyncComponent(() => import('./components/widgets/Radio.vue'));
+const RangeComponent = defineAsyncComponent(() => import('./components/widgets/Range.vue'));
+const SampleLookupComponent = defineAsyncComponent(() => import('./components/widgets/SampleLookup.vue'));
+const Select2Component = defineAsyncComponent(() => import('./components/widgets/Select2.vue'));
+const TagComponent = defineAsyncComponent(() => import('./components/widgets/Tag.vue'));
+const TextComponent = defineAsyncComponent(() => import('./components/widgets/Text.vue'));
+const TextAreaComponent = defineAsyncComponent(() => import('./components/widgets/TextArea.vue'));
+const UrlComponent = defineAsyncComponent(() => import('./components/widgets/Url.vue'));
+const InputTagComponent = defineAsyncComponent(() => import('@/components/widgets/InputTag.vue'));
+const NumericRangeOrSetComponent = defineAsyncComponent(() => import('@/components/widgets/NumericRangeOrSet.vue'));
+
 import ConfirmComponenent from './components/ConfirmComponent.vue';
 import VueSelect from "vue-select";
 import VueGridLayout from 'vue3-grid-layout-next';
-import InputTagComponent from '@/components/widgets/InputTag.vue';
-import NumericRangeOrSetComponent from '@/components/widgets/NumericRangeOrSet.vue';
 
 import * as ConfirmDialog from 'vuejs-confirm-dialog';
 import { createConfirmDialog } from 'vuejs-confirm-dialog';
@@ -143,8 +148,6 @@ const widgets = new Map([
     ['numeric-range-or-set-component', NumericRangeOrSetComponent],
 ]);
 
-
-//Vue.component('Plotly', Plotly.default || Plotly);
 
 
 
