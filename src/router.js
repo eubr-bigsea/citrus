@@ -17,43 +17,43 @@ import Unauthorized from '@/views/Unauthorized.vue'
 
 // Lazy routes
 
-const ChangePassword = () => import(/* webpackChunkName: "group-user-profile" */  './views/ChangePassword.vue');
-const Login = () => import(/* webpackChunkName: "group-user-profile" */  './views/Login.vue');
-const Logout = () => import(/* webpackChunkName: "group-user-profile" */  './views/Logout.vue');
-const Disconnected = () => import(/* webpackChunkName: "group-user-profile" */  './views/Disconnected.vue');
-const Register = () => import(/* webpackChunkName: "group-user-profile" */  './views/Register.vue');
-const ResetPassword = () => import(/* webpackChunkName: "group-user-profile" */  './views/ResetPassword.vue');
-const Profile = () => import(/* webpackChunkName: "group-user-profile" */  './views/Profile.vue');
+const ChangePassword = () => import('./views/ChangePassword.vue');
+const Login = () => import('./views/Login.vue');
+const Logout = () => import('./views/Logout.vue');
+const Disconnected = () => import('./views/Disconnected.vue');
+const Register = () => import('./views/Register.vue');
+const ResetPassword = () => import('./views/ResetPassword.vue');
+const Profile = () => import('./views/Profile.vue');
 
-const DataSourceList = () => import(/* webpackChunkName: "group-data-source" */ './views/DataSourceList.vue');
-const DataSourceEdit = () => import(/* webpackChunkName: "group-data-source" */ './views/DataSourceEdit.vue');
-const DataSourceAdd = () => import(/* webpackChunkName: "group-data-source" */ './views/DataSourceAdd.vue');
-const DataSourceStorage = () => import(/* webpackChunkName: "group-data-source" */ './views/data-source/DataSourceStorage.vue');
-const DataSourceAnalysis = () => import(/* webpackChunkName: "group-data-source" */ './views/data-source/DataSourceAnalysis.vue');
+const DataSourceList = () => import('./views/DataSourceList.vue');
+const DataSourceEdit = () => import('./views/DataSourceEdit.vue');
+const DataSourceAdd = () => import('./views/DataSourceAdd.vue');
+const DataSourceStorage = () => import('./views/data-source/DataSourceStorage.vue');
+const DataSourceAnalysis = () => import('./views/data-source/DataSourceAnalysis.vue');
 
-const JobList = () => import(/* webpackChunkName: "group-job" */ './views/JobList.vue');
-const JobDetail = () => import(/* webpackChunkName: "group-job" */ './views/JobDetail.vue');
+const JobList = () => import('./views/JobList.vue');
+const JobDetail = () => import('./views/JobDetail.vue');
 
-const WorkflowList = () => import(/* webpackChunkName: "group-workflow" */ './views/WorkflowList.vue');
-const WorkflowEdit = () => import(/* webpackChunkName: "group-workflow" */ './views/WorkflowEdit.vue');
-const WorkflowAdd = () => import(/* webpackChunkName: "group-workflow" */ './views/WorkflowAdd.vue');
+const WorkflowList = () => import('./views/WorkflowList.vue');
+const WorkflowEdit = () => import('./views/WorkflowEdit.vue');
+const WorkflowAdd = () => import('./views/WorkflowAdd.vue');
 
-const About = () => import(/* webpackChunkName: "group-global" */ './views/About.vue');
-const PageNotFound = () => import(/* webpackChunkName: "group-global" */ './views/PageNotFound.vue');
-const Home = () => import(/* webpackChunkName: "group-global" */ './views/Home.vue');
-const Index = () => import(/* webpackChunkName: "group-global" */ './views/Index.vue');
-const TermsOfService = () => import(/* webpackChunkName: "group-global" */ './views/TermsOfService.vue');
-const Welcome = () => import(/* webpackChunkName: "group-global" */ './views/Welcome.vue');
+const About = () => import('./views/About.vue');
+const PageNotFound = () => import('./views/PageNotFound.vue');
+const Home = () => import('./views/Home.vue');
+const Index = () => import('./views/Index.vue');
+const TermsOfService = () => import('./views/TermsOfService.vue');
+const Welcome = () => import('./views/Welcome.vue');
 
-const ConfigurationList = () => import(/* webpackChunkName: "group-configuration" */ './views/ConfigurationList.vue');
+const ConfigurationList = () => import('./views/ConfigurationList.vue');
 
-const AdministrationStart = () => import(/* webpackChunkName: "admin-role" */ './views/Administration/Start.vue');
-const RoleList = () => import(/* webpackChunkName: "group-role" */ './views/Administration/RoleList.vue');
-const RoleEdit = () => import(/* webpackChunkName: "group-app" */ './views/Administration/RoleEdit.vue');
+const AdministrationStart = () => import('./views/Administration/Start.vue');
+const RoleList = () => import('./views/Administration/RoleList.vue');
+const RoleEdit = () => import('./views/Administration/RoleEdit.vue');
 
-const UserList = () => import(/* webpackChunkName: "group-user" */ './views/Administration/UserList.vue');
-const UserAdd = () => import(/* webpackChunkName: "group-user" */ './views/Administration/UserAdd.vue');
-const UserEdit = () => import(/* webpackChunkName: "group-user" */ './views/Administration/UserEdit.vue');
+const UserList = () => import('./views/Administration/UserList.vue');
+const UserAdd = () => import('./views/Administration/UserAdd.vue');
+const UserEdit = () => import('./views/Administration/UserEdit.vue');
 
 const SourceCodeEdit = () => import('./views/Administration/SourceCodeEdit.vue');
 const SourceCodeList = () => import('./views/Administration/SourceCodeList.vue');
@@ -61,39 +61,39 @@ const SourceCodeList = () => import('./views/Administration/SourceCodeList.vue')
 const GlobalVariableList = () => import('./views/Administration/GlobalVariableList.vue');
 const GlobalVariableEdit = () => import('./views/Administration/GlobalVariableEdit.vue');
 
-const ClusterList = () => import(/* webpackChunkName: "group-cluster" */ './views/Administration/ClusterList.vue');
-const ClusterEdit = () => import(/* webpackChunkName: "group-cluster" */ './views/Administration/ClusterEdit.vue');
+const ClusterList = () => import('./views/Administration/ClusterList.vue');
+const ClusterEdit = () => import('./views/Administration/ClusterEdit.vue');
 
-const StorageList = () => import(/* webpackChunkName: "group-storage" */ './views/Administration/StorageList.vue');
-const StorageEdit = () => import(/* webpackChunkName: "group-storage" */ './views/Administration/StorageEdit.vue');
+const StorageList = () => import('./views/Administration/StorageList.vue');
+const StorageEdit = () => import('./views/Administration/StorageEdit.vue');
 
-const ModelList = () => import(/* webpackChunkName: "group-model" */ './views/ModelList.vue');
-const ModelAdd = () => import(/* webpackChunkName: "group-model" */ './views/ModelAdd.vue');
-const ModelEdit = () => import(/* webpackChunkName: "group-model" */ './views/ModelEdit.vue');
+const ModelList = () => import('./views/ModelList.vue');
+const ModelAdd = () => import('./views/ModelAdd.vue');
+const ModelEdit = () => import('./views/ModelEdit.vue');
 
-const DashboardList = () => import(/* webpackChunkName: "group-dashboard" */ './views/DashboardList.vue');
-const DashboardDetail = () => import(/* webpackChunkName: "group-dashboard" */ './views/DashboardDetail.vue');
-const DashboardBuilder = () => import(/* webpackChunkName: "group-dashboard" */ './views/DashboardBuilder.vue');
-const WebSocketPing = () => import(/* webpackChunkName: "group-util" */'./views/WebSocketPing.vue');
-const JsPlumbSandbox = () => import(/* webpackChunkName: "group-util" */'./views/JsPlumbSandbox.vue');
-const OpenIdSandbox = () => import(/* webpackChunkName: "group-util" */'./views/OpenIdSandbox.vue');
+const DashboardList = () => import('./views/DashboardList.vue');
+const DashboardDetail = () => import('./views/DashboardDetail.vue');
+const DashboardBuilder = () => import('./views/DashboardBuilder.vue');
+const WebSocketPing = () => import('./views/WebSocketPing.vue');
+const JsPlumbSandbox = () => import('./views/JsPlumbSandbox.vue');
+const OpenIdSandbox = () => import('./views/OpenIdSandbox.vue');
 
-const NotificationList = () => import(/* webpackChunkName: "group-notification" */ './views/NotificationList.vue');
+const NotificationList = () => import('./views/NotificationList.vue');
 
-const PlatformList = () => import(/* webpackChunkName: "group-platform" */ './views/Administration/PlatformList.vue');
-const PlatformAdd = () => import(/* webpackChunkName: "group-platform" */ './views/Administration/PlatformAdd.vue');
-const PlatformEdit = () => import(/* webpackChunkName: "group-platform" */ './views/Administration/PlatformEdit.vue');
+const PlatformList = () => import('./views/Administration/PlatformList.vue');
+const PlatformAdd = () => import('./views/Administration/PlatformAdd.vue');
+const PlatformEdit = () => import('./views/Administration/PlatformEdit.vue');
 
-const TrackPanel = () => import(/* webpackChunkName: "group-app" */ './views/TrackPanel.vue');
-const Track = () => import(/* webpackChunkName: "group-app" */'./views/Track.vue');
-const TrackAdd = () => import(/* webpackChunkName: "group-app" */'./views/TrackAdd.vue');
+const TrackPanel = () => import('./views/TrackPanel.vue');
+const Track = () => import('./views/Track.vue');
+const TrackAdd = () => import('./views/TrackAdd.vue');
 
-const DisplayHtml = () => import(/* webpackChunkName: "group-app" */'./views/DisplayHtml.vue');
+const DisplayHtml = () => import('./views/DisplayHtml.vue');
 
-const DeploymentList = () => import(/* webpackChunkName: "group-deployment" */ './views/DeploymentList.vue');
-const DeploymentEdit = () => import(/* webpackChunkName: "group-deployment" */ './views/DeploymentEdit.vue');
+const DeploymentList = () => import('./views/DeploymentList.vue');
+const DeploymentEdit = () => import('./views/DeploymentEdit.vue');
 
-const OperationList = () => import(/* webpackChunkName: "group-operation" */ './views/OperationList.vue');
+const OperationList = () => import('./views/OperationList.vue');
 
 const PipelineList = () => import('./views/PipelineList.vue');
 const PipelineRunsList = () => import('./views/PipelineRunsList.vue');

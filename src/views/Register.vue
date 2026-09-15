@@ -49,11 +49,11 @@
                             </div>
                             <div class="form-group no-margin text-center">
                                 <label>
-                                    <b-check v-model="accepted">
+                                    <b-form-checkbox v-model="accepted">
                                         <i18n path="messages.acceptTerms" tag="span">
                                             <router-link to="/conditions">{{$t('messages.acceptTerms0')}}</router-link>
                                         </i18n>
-                                    </b-check>
+                                    </b-form-checkbox>
                                 </label>
                             </div>
                             <div class="form-group no-margin text-center">
