@@ -65,7 +65,7 @@
                 </v-server-table>
             </div>
         </div>
-        <b-modal id="importModal" ref="importModal" size="lg" :title="$t('actions.import') + ' ' + $t('titles.workflow', 1)"
+        <b-modal id="importModal" v-model="showImport" size="lg" :title="$t('actions.import') + ' ' + $t('titles.workflow', 1)"
                  ok-disabled>
             <b-form-radio-group>
                 <div class="row">
@@ -103,6 +103,7 @@ export default {
     data() {
         const self = this;
         return {
+            showImport: false,
             platform: '',
             platforms: [],
             columns: [
@@ -249,10 +250,10 @@ export default {
             }
         },
         closeImport() {
-            this.$refs.importModal.hide();
+            this.showImport = false;
         },
         showImportWorkflow() {
-            this.$refs.importModal.show();
+            this.showImport = true;
         }
     }
 };
