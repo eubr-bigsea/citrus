@@ -146,7 +146,7 @@
                 <div class="d-flex justify-content-end align-items-center py-1">
                     <h4 class="m-0 me-auto">Comandos ({{ workflowObj.cells?.length }})</h4>
                     <div>
-                        <button @click="toggleExpand" class="btn btn-sm" :class="{'btn-info': expandedArea, 'btn-light': !expandedArea}">
+                        <button type="button" @click="toggleExpand" class="btn btn-sm" :class="{'btn-info': expandedArea, 'btn-light': !expandedArea}">
                             <span v-if="expandedArea">
                                 Restaurar área central <font-awesome-icon icon="fa fa-minimize"/>
                             </span>
@@ -156,16 +156,16 @@
                         </button>
                     </div>
 
-                    <div><button @click="toggleExpandAll" class="btn btn-secondary btn-sm mx-2">Expandir células <font-awesome-icon icon="fa fa-expand"/></button></div>
-                    <div><button @click="handleCollapseAll" class="btn btn-secondary btn-sm">Fechar céluas <font-awesome-icon icon="fa fa-compress"/></button></div>
+                    <div><button type="button" @click="toggleExpandAll" class="btn btn-secondary btn-sm mx-2">Expandir células <font-awesome-icon icon="fa fa-expand"/></button></div>
+                    <div><button type="button" @click="handleCollapseAll" class="btn btn-secondary btn-sm">Fechar céluas <font-awesome-icon icon="fa fa-compress"/></button></div>
                 </div>
 
                 <div v-if="workflowObj.cells?.length === 0">
-                    <button @click="handleAdd(null, 'sql', '\n')" class="btn btn-secondary btn-sm">
+                    <button type="button" @click="handleAdd(null, 'sql', '\n')" class="btn btn-secondary btn-sm">
                         <font-awesome-icon icon="fa fa-plus" /> {{ $t('actions.add') }} SQL</button>
-                    <button @click="handleAdd(null, 'python', '\n')" class="btn btn-secondary btn-sm ms-3">
+                    <button type="button" @click="handleAdd(null, 'python', '\n')" class="btn btn-secondary btn-sm ms-3">
                         <font-awesome-icon icon="fa fa-plus" /> {{ $t('actions.add') }} Python</button>
-                    <button @click="handleAdd(null, 'script', '\n')" class="btn btn-secondary btn-sm ms-3">
+                    <button type="button" @click="handleAdd(null, 'script', '\n')" class="btn btn-secondary btn-sm ms-3">
                         <font-awesome-icon icon="fa fa-plus" /> {{ $t('actions.add') }} Script Externo</button>
                     <blockquote class="blockquote">
                         <p class="mb-0">Nenhum comando ainda.</p>
@@ -692,7 +692,7 @@ const stop = async () => {
     }
 };
 const saveWorkflow = async () => {
-    let cloned = structuredClone(workflowObj.value);
+    let cloned = JSON.parse(JSON.stringify(workflowObj.value));
 
     let url = `${tahitiUrl}/workflows/${cloned.id}`;
 
@@ -1036,6 +1036,7 @@ table.dataframe {
 .editors .editor {
     background: white;
     width: 100%;
+    min-height: 200px;
     overflow-x: hidden;
 }
 

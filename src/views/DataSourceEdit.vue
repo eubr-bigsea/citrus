@@ -12,7 +12,7 @@
                         </div>
                         <div v-if="dataSource.id" class="col-md-10 col-xg-10 mx-auto">
                             <b-card no-body>
-                                <b-tabs card>
+                                <b-tabs card v-model="activeTab">
                                     <b-tab :title="$t('dataSource.basicInformation')" active>
                                         <div class="row" :class="!loggedUserIsOwnerOrAdmin ? 'disabled-mouse' : ''">
                                             <div class="col-md-9">
@@ -548,6 +548,7 @@ export default {
     data() {
         return {
             copyingStep: 0,
+            activeTab: 0,
             customTags: this.dataSource?.tags.split(',') || [],
             atmosphereExtension: import.meta.env.VITE_ATMOSPHERE,
             isDirty: false,

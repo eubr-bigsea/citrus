@@ -16,7 +16,7 @@ import {
     syntaxHighlighting
 } from '@codemirror/language'
 import { searchKeymap } from '@codemirror/search'
-import { EditorView, keymap, lineNumbers } from '@codemirror/view'
+import { EditorView, keymap, lineNumbers, tooltips } from '@codemirror/view'
 import { StateField } from '@codemirror/state';
 
 import { defineEmits, onMounted, ref } from "vue"
@@ -159,6 +159,7 @@ onMounted(() => {
                 ...completionKeymap,
             ]),
             autocompletion({ override: [sqlCompletion] }),
+            tooltips({ parent: document.body }),
             sql(),
             EditorView.lineWrapping,
 
