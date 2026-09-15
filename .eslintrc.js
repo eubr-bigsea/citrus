@@ -11,7 +11,6 @@ module.exports = {
         "indent": ["error", 4],
 
         "vue/mustache-interpolation-spacing": ["error", "never"],
-        "import/extensions": ["error", "ignorePackages", { "vue": "always" }],
         "vue/no-mutating-props": "warn",
         "vue/no-unused-vars": "warn",
         "vue/valid-v-model": "warn",
@@ -65,5 +64,4 @@ module.exports = {
             }
         }]
     },
-    plugins: ["import"],
 };
