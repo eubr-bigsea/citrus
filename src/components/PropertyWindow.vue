@@ -230,8 +230,7 @@ export default {
             //# Return the results of the in-line anonymous function we .call with the passed context
             return function () {
                 try {
-                    return eval(js);
-                    return true;
+                    return new Function('return (' + js + ');').call(this);
                 } catch (pass) {
                     return false;
                 }

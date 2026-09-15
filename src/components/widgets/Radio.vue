@@ -66,7 +66,7 @@ export default {
 };
 </script>
 <style scoped>
-    /deep/ .item label {
+    :deep(.item label) {
         margin-top: 0;
         margin-left: 5px;
         font-weight: normal;

@@ -171,7 +171,6 @@ import ChartBuilderAxis from '@/components/chart-builder/ChartBuilderAxis.vue';
 
 import ModalPreviewDataSource from '@/views/modal/ModalPreviewDataSource.vue';
 import { debounce } from "@/util.js";
-import Vue from 'vue';
 
 import Plotly from '@/components/visualization/Plotly.vue';
 import useNotifier from '@/composables/useNotifier.js';
