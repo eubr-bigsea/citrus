@@ -17,7 +17,7 @@
                 </span>
             </button>
         </div>
-        <div v-if="canEditWorkflow"  class="btn-group mr-2" role="group">
+        <div v-if="canEditWorkflow"  class="btn-group me-2" role="group">
             <button class="btn btn-sm btn-outline-success"
                     :title="$t('actions.save')"
                     @click.prevent="$emit('onsave-workflow')" :disabled="!isDirty">
@@ -51,7 +51,7 @@
             </b-dropdown>
             -->
         </div>
-        <div v-if="canEditWorkflow"  class="btn-group mr-2" role="group">
+        <div v-if="canEditWorkflow"  class="btn-group me-2" role="group">
             <button class="btn btn-sm btn-outline-dark"
                     :title="$t('actions.showProperties')"
                     @click.prevent="$emit('onshow-properties')">

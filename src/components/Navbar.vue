@@ -103,7 +103,7 @@
                     </b-dropdown-item>
                 </b-nav-item-dropdown>
             </b-navbar-nav>
-            <b-navbar-nav class="ml-auto mt-2">
+            <b-navbar-nav class="ms-auto mt-2">
                 <b-nav-item-dropdown ref="dropdown" right>
                     <template #button-content>
                         <font-awesome-icon icon="fa fa-user" class="text-success" />
@@ -120,7 +120,7 @@
                         <div class="text-center">
                             <strong>{{ $t('titles.role', 2) }}</strong><br>
                             <div class="mt-2">
-                                <span v-for="role in userRoles" :key="role.id" class="badge badge-info mr-1 p-1">
+                                <span v-for="role in userRoles" :key="role.id" class="badge badge-info me-1 p-1">
                                     {{ role.label }}
                                 </span>
                             </div>
@@ -129,7 +129,7 @@
                             <b-button variant="primary" size="sm" @click="profile" class="mx-1">
                                 {{ $t('titles.profile') }}
                             </b-button>
-                            <b-button variant="danger" size="sm" class="ml-2" @click="logout">
+                            <b-button variant="danger" size="sm" class="ms-2" @click="logout">
                                 {{ $t('common.logout') }}
                             </b-button>
                         </p>

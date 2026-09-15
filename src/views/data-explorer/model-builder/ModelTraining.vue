@@ -62,7 +62,7 @@
                                             experimento!</strong>
                                     </small>
                                 </div>
-                                <div class="col-md-8 text-left">
+                                <div class="col-md-8 text-start">
                                     <b-form-radio v-model="method" name="method" class="font-weight-bold" value="fast">
                                         Protótipo rápido
                                     </b-form-radio>
@@ -105,7 +105,7 @@
                                         o modelo a ser salvo.
                                     </small>
                                 </div>
-                                <div class="col-md-8 pt-5 text-left">
+                                <div class="col-md-8 pt-5 text-start">
                                     <b-form-radio v-model="method" name="method" class="font-weight-bold" value="custom">
                                         Escolha os
                                         algoritmos
@@ -158,7 +158,7 @@
                                         às metricas de avaliação (experimental).
                                     </small>
                                 </div>
-                                <div class="col-md-8 text-left">
+                                <div class="col-md-8 text-start">
                                     <b-form-radio v-model="method" name="method" class="font-weight-bold" value="fast">
                                         Protótipo rápido
                                     </b-form-radio>
@@ -190,7 +190,7 @@
                                         o modelo a ser salvo.
                                     </small>
                                 </div>
-                                <div class="col-md-8 text-left">
+                                <div class="col-md-8 text-start">
                                     <b-form-radio v-model="method" name="method" class="font-weight-bold" value="custom">
                                         Escolha os
                                         algoritmos

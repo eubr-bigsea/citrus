@@ -64,7 +64,7 @@
                             </v-select>
                             <label for="" class="mt-3">{{ $t('titles.dataSource', 2) }}
                                 ({{ workflowObj.dataSources?.length }}):</label> &nbsp;
-                            <button class="btn btn-sm btn-secondary mt-2 float-right" :title="$t('actions.add')"
+                            <button class="btn btn-sm btn-secondary mt-2 float-end" :title="$t('actions.add')"
                                 @click.prevent="handleAddDataSource" :disabled="addingDataSource">
                                 <font-awesome-icon icon="fa fa-plus" /> {{ $t('titles.dataSource', 1) }}</button>
                             <div v-if="addingDataSource" class="mt-2">
@@ -96,9 +96,9 @@
                                         {{ dataSource.forms.data_source.labelValue }}
                                     </div>
                                     <small>Apelido:</small>
-                                    <input type="text" class="form-control form-control-sm w-75 float-right mb-1"
+                                    <input type="text" class="form-control form-control-sm w-75 float-end mb-1"
                                         v-model="dataSource.name" maxlength="50" @change="handleChangeAlias" />
-                                    <div class="float-left">
+                                    <div class="float-start">
                                         <button class="btn btn-sm text-danger" :title="$t('actions.delete')"
                                             @click.prevent="handleRemoveDataSource(dataSource.id)"><font-awesome-icon
                                                 icon="fa fa-times" /></button>
@@ -117,7 +117,7 @@
                                         </button>
 
                                         <button title="Criar INSERT para fonte de dados"
-                                            class="btn btn-sm btn-light ml-1"
+                                            class="btn btn-sm btn-light ms-1"
                                             @click.prevent="handleAddSqlFromDataSource('stage', dataSource.forms.data_source.value)">
                                             CRIAR STAGE
                                         </button>
@@ -144,7 +144,7 @@
             </div>
             <div class="layout-center pt-2">
                 <div class="d-flex justify-content-end align-items-center py-1">
-                    <h4 class="m-0 me-auto mr-auto">Comandos ({{ workflowObj.cells?.length }})</h4>
+                    <h4 class="m-0 me-auto">Comandos ({{ workflowObj.cells?.length }})</h4>
                     <div>
                         <button @click="toggleExpand" class="btn btn-sm" :class="{'btn-info': expandedArea, 'btn-light': !expandedArea}">
                             <span v-if="expandedArea">
@@ -163,9 +163,9 @@
                 <div v-if="workflowObj.cells?.length === 0">
                     <button @click="handleAdd(null, 'sql', '\n')" class="btn btn-secondary btn-sm">
                         <font-awesome-icon icon="fa fa-plus" /> {{ $t('actions.add') }} SQL</button>
-                    <button @click="handleAdd(null, 'python', '\n')" class="btn btn-secondary btn-sm ml-3">
+                    <button @click="handleAdd(null, 'python', '\n')" class="btn btn-secondary btn-sm ms-3">
                         <font-awesome-icon icon="fa fa-plus" /> {{ $t('actions.add') }} Python</button>
-                    <button @click="handleAdd(null, 'script', '\n')" class="btn btn-secondary btn-sm ml-3">
+                    <button @click="handleAdd(null, 'script', '\n')" class="btn btn-secondary btn-sm ms-3">
                         <font-awesome-icon icon="fa fa-plus" /> {{ $t('actions.add') }} Script Externo</button>
                     <blockquote class="blockquote">
                         <p class="mb-0">Nenhum comando ainda.</p>
@@ -298,7 +298,7 @@
                             <div v-if="cell?.forms?.save?.value === 1" class="col-12 mt-1">
                                 <strong>Salvar habilitado. Pseudocódigo a ser executado:</strong>
                                 <div class="my-1">
-                                    <code class="text-left"
+                                    <code class="text-start"
                                         style="white-space: pre-wrap">{{ getSaveCommand(cell) }}</code>
                                 </div>
                                 Modo de sobrescrita: {{ cell.forms.mode.value }}
@@ -317,7 +317,7 @@
                                     </span>
                                 </div>
                                 <div v-if="cell.userMessages && cell.userMessages != ''" class="col-12">
-                                    <div class=" ml-4 mt-3 border-top notifications px-4 py-2">
+                                    <div class=" ms-4 mt-3 border-top notifications px-4 py-2">
                                         <div v-for="msg in cell.userMessages" class="mt-2 pt-2 border-top">
                                             <div v-if="msg.type.toUpperCase() === 'HTML'">
                                                 <span v-html="msg.message" />

@@ -36,13 +36,13 @@
         <div v-if="showWorkflowOps > -1">
             <label class="editPage-label mb-2">{{$t('pipeline.edit.settings.linkStepToWorkflow')}}</label>
             <div v-if="showWorkflowOps == 0" class="d-flex">
-                <b-button class="w-50 mr-2" variant="outline-primary" size="sm" @click="showWorkflowOps = 1">
-                    <font-awesome-icon icon="fa fa-flask" class="mr-2" size="xl" />
+                <b-button class="w-50 me-2" variant="outline-primary" size="sm" @click="showWorkflowOps = 1">
+                    <font-awesome-icon icon="fa fa-flask" class="me-2" size="xl" />
                     {{$t('pipeline.edit.settings.existingWorkflow')}}
                 </b-button>
-                <b-button class="50 ml-2 clickable" variant="outline-success" size="sm" @click="showWorkflowOps = 2">
+                <b-button class="50 ms-2 clickable" variant="outline-success" size="sm" @click="showWorkflowOps = 2">
                     <span class="editPage-workflow-label">
-                        <font-awesome-icon icon="fa fa-plus" class="mr-2" size="xl" />
+                        <font-awesome-icon icon="fa fa-plus" class="me-2" size="xl" />
                         {{$t('pipeline.edit.settings.newWorkflow')}}
                     </span>
                 </b-button>
@@ -76,13 +76,13 @@
                     </template>
                     <template #selected-option="option">
                         <div class="selected d-center">
-                            <font-awesome-icon icon="fa fa-flask" class="mr-2" />
+                            <font-awesome-icon icon="fa fa-flask" class="me-2" />
                             {{pad(option.id, 4, '&nbsp;')}} - {{option.name}} | {{option.type}}
                         </div>
                     </template>
                 </vue-select>
                 <div>
-                    <b-button :disabled="!selectedWorkflow" class="float-right mt-3" style="right: 15px; bottom: 0;" variant="primary"
+                    <b-button :disabled="!selectedWorkflow" class="float-end mt-3" style="right: 15px; bottom: 0;" variant="primary"
                               size="sm"
                               @click="editStepWorkflow">
                         {{$t('actions.confirm')}}

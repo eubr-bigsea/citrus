@@ -14,7 +14,7 @@
             </div>
             <div>
                 <router-link v-if="true || pipelineRunId" :to="{ name: 'pipelineRunsList' }"
-                    class="btn btn-outline-secondary d-print-none float-left btn-sm">
+                    class="btn btn-outline-secondary d-print-none float-start btn-sm">
                     <font-awesome-icon icon="fa-chevron-right" />
                     {{ $t('actions.back', 2) }}
                 </router-link>
@@ -131,7 +131,7 @@
                                 </div>
                                 <div class="flex-grow-1 d-flex justify-content-end" role="button">
                                     <div :class="job.status.toLowerCase()"
-                                        class="pipeline-runs-status small text-right">
+                                        class="pipeline-runs-status small text-end">
                                         <font-awesome-icon v-if="job.status === 'RUNNING'" icon="fa fa-refresh" spin />
                                         {{ $t(`status.${job.status}`) }}
                                     </div>

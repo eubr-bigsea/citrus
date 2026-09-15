@@ -232,43 +232,43 @@
                                         <td>
                                             <table class="table table-sm table-borderless">
                                                 <tr>
-                                                    <th class="text-left">
+                                                    <th class="text-start">
                                                         Min
                                                     </th>
                                                     <td>12</td>
                                                 </tr>
                                                 <tr>
-                                                    <th class="text-left">
+                                                    <th class="text-start">
                                                         Min
                                                     </th>
                                                     <td>12</td>
                                                 </tr>
                                                 <tr>
-                                                    <th class="text-left">
+                                                    <th class="text-start">
                                                         Min
                                                     </th>
                                                     <td>12</td>
                                                 </tr>
                                                 <tr>
-                                                    <th class="text-left">
+                                                    <th class="text-start">
                                                         Min
                                                     </th>
                                                     <td>12</td>
                                                 </tr>
                                                 <tr>
-                                                    <th class="text-left">
+                                                    <th class="text-start">
                                                         Min
                                                     </th>
                                                     <td>12</td>
                                                 </tr>
                                                 <tr>
-                                                    <th class="text-left">
+                                                    <th class="text-start">
                                                         Min
                                                     </th>
                                                     <td>12</td>
                                                 </tr>
                                                 <tr>
-                                                    <th class="text-left">
+                                                    <th class="text-start">
                                                         Min
                                                     </th>
                                                     <td>12</td>
@@ -278,49 +278,49 @@
                                         <td>
                                             <table class="table table-sm table-borderless">
                                                 <tr>
-                                                    <td class="text-left">
+                                                    <td class="text-start">
                                                         Min
                                                     </td>
                                                     <td>12</td>
                                                     <td>12%</td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="text-left">
+                                                    <td class="text-start">
                                                         Min
                                                     </td>
                                                     <td>12</td>
                                                     <td>12%</td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="text-left">
+                                                    <td class="text-start">
                                                         Min
                                                     </td>
                                                     <td>12</td>
                                                     <td>12%</td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="text-left">
+                                                    <td class="text-start">
                                                         Min
                                                     </td>
                                                     <td>12</td>
                                                     <td>12%</td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="text-left">
+                                                    <td class="text-start">
                                                         Min
                                                     </td>
                                                     <td>12</td>
                                                     <td>12%</td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="text-left">
+                                                    <td class="text-start">
                                                         Min
                                                     </td>
                                                     <td>12</td>
                                                     <td>12%</td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="text-left">
+                                                    <td class="text-start">
                                                         Min
                                                     </td>
                                                     <td>12</td>
@@ -332,28 +332,28 @@
                                         <td>
                                             <table class="table table-sm table-borderless">
                                                 <tr>
-                                                    <td class="text-left">
+                                                    <td class="text-start">
                                                         Min
                                                     </td>
                                                     <td>12</td>
                                                     <td>12%</td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="text-left">
+                                                    <td class="text-start">
                                                         Min
                                                     </td>
                                                     <td>12</td>
                                                     <td>12%</td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="text-left">
+                                                    <td class="text-start">
                                                         Min
                                                     </td>
                                                     <td>12</td>
                                                     <td>12%</td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="text-left">
+                                                    <td class="text-start">
                                                         Min
                                                     </td>
                                                     <td>12</td>
@@ -364,7 +364,7 @@
                                         <td>
                                             <table class="table table-sm table-borderless">
                                                 <tr>
-                                                    <td class="text-left">
+                                                    <td class="text-start">
                                                         343434
                                                     </td>
                                                 </tr>
