@@ -87,8 +87,11 @@
                                                 props.row.pipeline_id }} -
                                             {{ props.row.pipeline_name }}
                                         </router-link>
-                                        <div v-if="props.row.context_data && props.row.context_data.length > 0" class="mt-1" :title="$t('pipeline.list.contextVariables')">
-                                                <span v-for="data in props.row.context_data" :key="data.name" class="text-muted me-2 small">{{ data.name }}={{ data.value }}</span>
+                                        <div v-if="props.row.context_data && props.row.context_data.length > 0"
+                                             class="d-flex flex-wrap gap-1 mt-1" :title="$t('pipeline.list.contextVariables')">
+                                            <span v-for="data in props.row.context_data" :key="data.name" class="context-var-chip">
+                                                <strong>{{ data.name }}</strong>: {{ data.value }}
+                                            </span>
                                         </div>
                                     </template>
                                     <template #period="props">
@@ -378,6 +381,18 @@ export default {
 
 .highlight {
     animation: highlightRow 5s forwards;
+}
+
+.context-var-chip {
+    display: inline-block;
+    background: #e9ecef;
+    color: #495057;
+    border-radius: 1rem;
+    padding: 0.1rem 0.6rem;
+    font-size: 0.75rem;
+    max-width: 100%;
+    white-space: normal;
+    word-break: break-word;
 }
 
 .arrow-step {
