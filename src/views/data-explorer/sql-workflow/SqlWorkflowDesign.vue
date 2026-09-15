@@ -331,6 +331,16 @@
                             </div>
                         </div>
                     </transition-group>
+                    <div v-if="workflowObj.cells?.length > 0" class="text-center mt-2">
+                        <b-dropdown variant="outline-primary" size="sm" no-caret :title="$t('actions.add')">
+                            <template #button-content>
+                                <font-awesome-icon icon="fa fa-plus" /> {{ $t('actions.add') }}
+                            </template>
+                            <b-dropdown-item href="#" @click="handleAdd(null, 'sql', '\n')">SQL</b-dropdown-item>
+                            <b-dropdown-item href="#" @click="handleAdd(null, 'python', '\n')">Python</b-dropdown-item>
+                            <b-dropdown-item href="#" @click="handleAdd(null, 'script', '\n')">Script externo</b-dropdown-item>
+                        </b-dropdown>
+                    </div>
                 </div>
             </div>
             <div class="layout-help">
