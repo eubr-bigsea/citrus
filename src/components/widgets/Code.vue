@@ -159,8 +159,14 @@ export default {
                     return highlight(this.code || '', languages.sql, 'sql');
                 } else if (lang === 'python') {
                     return highlight(this?.code || '', languages.py, 'py');
-                } else {
+                } else if (lang) {
                     console.error(`Unsupported language ${lang}`);
+                    return this.code;
+                } else {
+                    // language not resolved yet (e.g. task metadata still
+                    // loading) - render plain text this pass, the reactive
+                    // highlighter reruns once it arrives
+                    return this.code;
                 }
             }
         },
