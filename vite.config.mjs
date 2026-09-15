@@ -79,12 +79,6 @@ export default defineConfig({
                             return id.toString().split('node_modules/')[1].split('/')[0].toString();
                         }
                     }
-                },
-                manualChunks1: {
-                    lodash: ['lodash'],
-                    'bootstrap-vue': ['bootstrap-vue'],
-                    plotly: ['plotly'],
-                    'oidc-client': ['oidc-client'],
                 }
             }
         }

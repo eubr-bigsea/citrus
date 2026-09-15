@@ -1,6 +1,8 @@
 .DS_Store
 node_modules
 /dist
+/components.d.ts
+/stats.html
 
 # Claude Code local settings (machine-specific paths) and graphify's
 # regenerable knowledge-graph output
