@@ -22,15 +22,15 @@
         <hr class="mt-4 mb-4">
         <label class="editPage-label mb-2" for="descricao">{{$t('pipeline.edit.settings.linkStepToWorkflow')}}</label>
         <div v-if="showWorkflowOps == 0" class="d-flex">
-            <b-card class="w-50 mr-2 clickable" @click="showWorkflowOps = 1">
+            <b-card class="w-50 me-2 clickable" @click="showWorkflowOps = 1">
                 <span class="editPage-workflow-label">
-                    <font-awesome-icon icon="fa fa-flask" class="mr-2" size="xl" />
+                    <font-awesome-icon icon="fa fa-flask" class="me-2" size="xl" />
                     {{$t('pipeline.edit.settings.existingWorkflow')}}
                 </span>
             </b-card>
-            <b-card class="w-50 ml-2 clickable" @click="showWorkflowOps = 2">
+            <b-card class="w-50 ms-2 clickable" @click="showWorkflowOps = 2">
                 <span class="editPage-workflow-label">
-                    <font-awesome-icon icon="fa fa-plus" class="mr-2" size="xl" />
+                    <font-awesome-icon icon="fa fa-plus" class="me-2" size="xl" />
                     {{$t('pipeline.edit.settings.newWorkflow')}}
                 </span>
             </b-card>
@@ -61,7 +61,7 @@
                 </template>
                 <template #selected-option="option">
                     <div class="selected d-center">
-                        <font-awesome-icon icon="fa fa-flask" class="mr-2" />
+                        <font-awesome-icon icon="fa fa-flask" class="me-2" />
                         {{pad(option.id, 4, '&nbsp;')}} - {{option.name}} | {{option.type}}
                     </div>
                 </template>

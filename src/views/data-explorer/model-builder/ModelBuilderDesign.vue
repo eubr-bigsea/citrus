@@ -5,29 +5,29 @@
                 <div class="title">
                     <h1>Construção de Modelos</h1>
                 </div>
-                <form class="float-right form-inline w-50 d-flex justify-content-end">
+                <form class="float-end form-inline w-50 d-flex justify-content-end">
                     <label>{{ $t('common.name') }}:</label>
-                    <input v-model="workflowObj.name" type="text" class="form-control form-control-sm ml-1 w-50"
+                    <input v-model="workflowObj.name" type="text" class="form-control form-control-sm ms-1 w-50"
                         :placeholder="$t('common.name')" maxlength="100">
-                    <button class="btn btn-sm btn-outline-success ml-1 float-right" @click.prevent="saveWorkflow">
+                    <button class="btn btn-sm btn-outline-success ms-1 float-end" @click.prevent="saveWorkflow">
                         <font-awesome-icon icon="fa fa-save" />
                         {{ $t('actions.save') }}
                     </button>
 
-                    <button v-if="notRunning" class="btn btn-sm btn-outline-primary ml-1 float-right"
+                    <button v-if="notRunning" class="btn btn-sm btn-outline-primary ms-1 float-end"
                         @click.prevent="handleTraining">
                         <font-awesome-icon icon="fa fa-play" />
                         {{ $t('actions.train') }}
                     </button>
 
-                    <button v-else class="btn btn-sm btn-outline-danger ml-1 float-right"
+                    <button v-else class="btn btn-sm btn-outline-danger ms-1 float-end"
                         @click.prevent="handleStopTrain">
                         <font-awesome-icon icon="fa fa-stop" />
                         {{ $t('actions.stop') }}
                     </button>
 
                     <!--
-                    <button @click.prevent="loadJobs" class="btn btn-sm btn-outline-secondary ml-1 float-right">
+                    <button @click.prevent="loadJobs" class="btn btn-sm btn-outline-secondary ms-1 float-end">
                         <font-awesome-icon icon="fa fa-sync" />
                         Reload jobs</button>
                         -->
@@ -42,7 +42,7 @@
                                     <SideBar :selected="selected" :supervised="supervised" @edit="edit" />
                                 </div>
                             </div>
-                            <div class="col-md-9 col-lg-10 pl-4 pr-4 bg-white expand">
+                            <div class="col-md-9 col-lg-10 ps-4 pe-4 bg-white expand">
                                 <form action="" class="form p-2">
                                     <template v-if="selected === 'target'">
                                         <DesignData :attributes="attributes" :data-source-list="dataSourceList"

@@ -134,7 +134,7 @@
             possível, ocorrerá um erro durante a execução.
         </p>
         <template #modal-footer>
-            <div class="w-100 text-right">
+            <div class="w-100 text-end">
                 <button class="btn btn-primary btn-sm me-1 ps-5 pe-5" @click="okClicked">
                     {{$t('common.ok')}}
                 </button>

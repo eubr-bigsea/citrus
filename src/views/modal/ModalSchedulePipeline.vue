@@ -17,11 +17,11 @@
                 <div class="contextData">
                     <div v-if="contextData" v-for="(pair, index) in contextData" :key="index"
                         class="d-flex align-items-center mb-2">
-                        <input type="text" class="form-control form-control-sm mr-2" v-model="pair.name"
+                        <input type="text" class="form-control form-control-sm me-2" v-model="pair.name"
                             :placeholder="$t('pipeline.schedule.contextName')" maxlength="50" />
-                        <input type="text" class="form-control form-control-sm mr-2" v-model="pair.value"
+                        <input type="text" class="form-control form-control-sm me-2" v-model="pair.value"
                             :placeholder="$t('pipeline.schedule.contextValue')" maxlength="200" />
-                        <button type="button" class="btn btn-sm btn-danger ml-2" @click="removeContextData(index)">
+                        <button type="button" class="btn btn-sm btn-danger ms-2" @click="removeContextData(index)">
                             <font-awesome-icon icon="fa fa-trash" />
                         </button>
                     </div>

@@ -44,7 +44,7 @@
             </template>
         </div>
         <div class="col-6">
-            <div v-if="split.forms.strategy.value === 'cross_validation' && folds >= 1 && folds <= 20" class="ml-5 mb-1"
+            <div v-if="split.forms.strategy.value === 'cross_validation' && folds >= 1 && folds <= 20" class="ms-5 mb-1"
                  data-test="example">
                 <label>Como ficará a divisão</label>
                 <div v-for="row in folds" :key="row" class="row">

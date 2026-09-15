@@ -13,7 +13,7 @@
                 </text>
             </svg>
         </div>
-        <div class="ml-4 mt-5">
+        <div class="ms-4 mt-5">
             <h1>403</h1>
             <p>{{ $t('titles.unauthorized') }}</p>
             <div>

@@ -4,7 +4,7 @@
             <h1 class="templatePage-title" data-test="title">
                 {{$t('pipeline.template.pipelineTemplates')}}
             </h1>
-            <button class="btn btn-primary btn-lemonade-primary float-left ms-2" data-test="addTemplateBtn" @click="openAddModal">
+            <button class="btn btn-primary btn-lemonade-primary float-start ms-2" data-test="addTemplateBtn" @click="openAddModal">
                 <font-awesome-icon icon="fa fa-plus" /> {{$t('actions.addItem')}}
             </button>
         </div>
@@ -48,7 +48,7 @@
                                         @click.stop="openEditModal(props.row)">
                                     <font-awesome-icon icon="pen" />
                                 </button>
-                                <button class="ml-2 btn btn-sm btn-danger"
+                                <button class="ms-2 btn btn-sm btn-danger"
                                         :title="$t('actions.delete') + ' ' + $t('titles.template')" 
                                         @click="deleteTemplate(props.row.id, props.row.name)">
                                     <font-awesome-icon icon="trash" />

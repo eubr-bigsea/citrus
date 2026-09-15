@@ -24,9 +24,9 @@
 
         <b-modal v-model="showImageModal" title="Resultado" hide-footer size="lg" centered>
             <div v-if="imageUrl" class="text-center">
-                <div class="mb-1 text-right">
+                <div class="mb-1 text-end">
                     <b-button variant="success" @click="downloadImage(imageUrl)">
-                        <font-awesome-icon icon="download" class="mr-2" />
+                        <font-awesome-icon icon="download" class="me-2" />
                     </b-button>
                 </div>
                 <img :src="imageUrl" class="img-fluid rounded shadow" alt="Resultado da Explicação" />
@@ -95,7 +95,7 @@
 
                         <template #resultado="props">
                             <div class="d-flex align-items-center mb-4">
-                                <b-spinner class="ml-2" v-if="loading" variant="primary" label="Spinning"></b-spinner>
+                                <b-spinner class="ms-2" v-if="loading" variant="primary" label="Spinning"></b-spinner>
                                 <template v-if="props.row.algorithm == 'shap'">
                                     <b-dropdown variant="link" toggle-class="text-decoration-none p-0" no-caret>
                                         <template #button-content class="mt-2">
@@ -104,10 +104,10 @@
                                             </button>
                                         </template>
                                         <b-dropdown-item @click="runResult(props.row, 'image')">
-                                            <span class="ml-2">SHAP Plot</span>
+                                            <span class="ms-2">SHAP Plot</span>
                                         </b-dropdown-item>
                                         <b-dropdown-item @click="runResult(props.row, 'raw')">
-                                            <span class="ml-2">Gráfico dinâmico</span>
+                                            <span class="ms-2">Gráfico dinâmico</span>
                                         </b-dropdown-item>
                                     </b-dropdown>
                                 </template>
@@ -297,7 +297,7 @@
                     </b-form-group>
                 </div>
 
-                <b-button v-if="!isViewMode" type="submit" variant="primary" class="float-right">Adicionar</b-button>
+                <b-button v-if="!isViewMode" type="submit" variant="primary" class="float-end">Adicionar</b-button>
             </b-form>
 
         </b-modal>

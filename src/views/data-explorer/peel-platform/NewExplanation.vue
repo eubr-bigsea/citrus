@@ -135,10 +135,10 @@
                     </b-modal>
                 </b-card>
                 <div class="mt-2 d-flex justify-content-end">
-                    <b-link :to="{ name: 'peel-home' }" class="btn btn-secondary btn-sm mr-1">
+                    <b-link :to="{ name: 'peel-home' }" class="btn btn-secondary btn-sm me-1">
                         {{ $t('actions.cancel') }}
                     </b-link>
-                    <b-button @click="onSubmit()" variant="primary" class="btn btn-sm btn-primary pr-4 pl-4">
+                    <b-button @click="onSubmit()" variant="primary" class="btn btn-sm btn-primary pe-4 ps-4">
                         {{ $t('actions.create2') }}
                     </b-button>
                 </div>

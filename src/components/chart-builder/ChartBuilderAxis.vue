@@ -100,10 +100,10 @@
             </template>
             <template v-else>
                 <div class="clearfix">
-                    <b-dropdown v-if="hasAxis" ref="axis" size="sm" class="mt-2 me-1 float-left"
+                    <b-dropdown v-if="hasAxis" ref="axis" size="sm" class="mt-2 me-1 float-start"
                                 variant="outline-secondary small-dd-title">
                         <template #button-content>
-                            <font-awesome-icon class="mr-2" prefix="fa" icon="y" />
+                            <font-awesome-icon class="me-2" prefix="fa" icon="y" />
                         </template>
                         <b-dropdown-form v-if="hasAxis" form-class="down-drop-form">
                             <div class="row axis-form">
@@ -375,7 +375,7 @@
                                                     -->
                                         </div>
                                         <div class="col-12 border-top pt-2">
-                                            <b-button size="sm" variant="danger" class="float-right"
+                                            <b-button size="sm" variant="danger" class="float-end"
                                                       @click="handleDeleteY(counter)">
                                                 {{$t('actions.delete')}}
                                             </b-button>
@@ -386,16 +386,16 @@
                             <font-awesome-icon v-if="canAddYDimension" icon="fa fa-grip-vertical" />
                         </div>
                     </draggable>
-                    <b-button v-if="canAddYDimension" size="sm" variant="success small-dd-title" class="mt-2 float-left"
+                    <b-button v-if="canAddYDimension" size="sm" variant="success small-dd-title" class="mt-2 float-start"
                               data-test="add-y" @click="handleAddY">
                         <font-awesome-icon prefix="fa" icon="plus" />
                     </b-button>
                 </div>
                 <div class="clearfix">
-                    <b-dropdown v-if="hasAxis" ref="axis" size="sm" class="mt-2 me-1 float-left"
+                    <b-dropdown v-if="hasAxis" ref="axis" size="sm" class="mt-2 me-1 float-start"
                                 variant="outline-secondary small-dd-title">
                         <template #button-content>
-                            <font-awesome-icon class="mr-2" prefix="fa" icon="x" />
+                            <font-awesome-icon class="me-2" prefix="fa" icon="x" />
                         </template>
                         <b-dropdown-form v-if="hasAxis" form-class="down-drop-form">
                             <div class="row axis-form">
@@ -662,7 +662,7 @@
                                                             -->
                                         </div>
                                         <div class="col-12">
-                                            <b-button size="sm" variant="danger" class="float-right"
+                                            <b-button size="sm" variant="danger" class="float-end"
                                                       @click="handleDeleteX(i)">
                                                 {{$t('actions.delete')}}
                                             </b-button>
@@ -674,7 +674,7 @@
                         </div>
                     </draggable>
                     <b-button v-if="canAddXDimension" size="sm" variant="success small-dd-title"
-                              class="mt-2 float-left clearfix" data-test="add-x" @click="handleAddX">
+                              class="mt-2 float-start clearfix" data-test="add-x" @click="handleAddX">
                         <font-awesome-icon prefix="fa" icon="plus" />
                     </b-button>
                 </div>

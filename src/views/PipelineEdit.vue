@@ -12,15 +12,15 @@
 
             <div class="btn-group">
                 <router-link :to="{ name: 'pipelines' }"
-                    class="btn btn-outline-secondary d-print-none float-left btn-sm">
+                    class="btn btn-outline-secondary d-print-none float-start btn-sm">
                     <font-awesome-icon icon="fa-chevron-right" />
                     {{ $t('actions.back') }}
                 </router-link>
-                <button class="btn btn-sm btn-outline-secondary float-left" @click="redirectToRuns">
+                <button class="btn btn-sm btn-outline-secondary float-start" @click="redirectToRuns">
                     <font-awesome-icon icon="fa fa-history" /> {{$t('common.history')}}
                 </button>
                 <button class="btn btn-sm btn-success" :disabled="!isDirty" @click="saveChanges">
-                    <font-awesome-icon icon="fa fa-save" class="mr-1" /> {{ $t('actions.save') }}
+                    <font-awesome-icon icon="fa fa-save" class="me-1" /> {{ $t('actions.save') }}
                 </button>
 
             </div>
@@ -41,7 +41,7 @@
                                 v-model="pipeline.identifier" @input="isDirty = true" />
                         </div>
                         <div class="d-flex flex-row">
-                            <div class="font-weight-bold mr-2">
+                            <div class="font-weight-bold me-2">
                                 <div>{{$t('common.created')}}:</div>
                                 <div>{{$t('common.updated')}}:</div>
                             </div>
@@ -69,19 +69,19 @@
                             </div>
                             <div class="mt-2">
                                 <div>
-                                    <label class="font-weight-bold mr-2">
+                                    <label class="font-weight-bold me-2">
                                         {{$t('pipeline.edit.periodicityStart')}}:
                                     </label>
                                     <input id="iniciar-data" v-model.number="pipeline.periodicity_start"
-                                        class="form-control mr-auto form-control-sm w-75" type="number" max="31"
+                                        class="form-control me-auto form-control-sm w-75" type="number" max="31"
                                         min="1">
                                 </div>
                                 <div class="mt-2">
-                                    <label class="font-weight-bold mr-2">
+                                    <label class="font-weight-bold me-2">
                                         {{$t('pipeline.edit.periodicityIntervalOptional')}}:
                                     </label>
                                     <input v-model.number="pipeline.periodicity_interval"
-                                        class="form-control form-control-sm mr-auto w-75" type="number" min="0"
+                                        class="form-control form-control-sm me-auto w-75" type="number" min="0"
                                         max="30">
                                 </div>
                             </div>
@@ -114,7 +114,7 @@
                                 </div>
                                 <div v-if="pipeline.steps && pipeline.steps.length === 0" class="editPage-no-steps">
                                     {{$t('pipeline.edit.addStepsToPipeline')}}
-                                    <button class="ml-1 btn btn-sm btn-secondary" :title="$t('pipeline.edit.addStep')"
+                                    <button class="ms-1 btn btn-sm btn-secondary" :title="$t('pipeline.edit.addStep')"
                                         @click="openAddStepModal(0)">
                                         <font-awesome-icon icon="plus" />
                                     </button>
@@ -133,11 +133,11 @@
                                         </div>
                                         <div class="editPage-drag-column">
                                             <div>
-                                                <button class="ml-1 btn btn-sm btn-danger" :title="$t('pipeline.edit.deleteStep')"
+                                                <button class="ms-1 btn btn-sm btn-danger" :title="$t('pipeline.edit.deleteStep')"
                                                     @click="deleteStep(step.id, step.name)">
                                                     <font-awesome-icon icon="trash" />
                                                 </button>
-                                                <button class="ml-1 btn btn-sm btn-secondary" :title="$t('pipeline.edit.addStep')"
+                                                <button class="ms-1 btn btn-sm btn-secondary" :title="$t('pipeline.edit.addStep')"
                                                     @click="openAddStepModal(step.order)">
                                                     <font-awesome-icon icon="plus" />
                                                 </button>

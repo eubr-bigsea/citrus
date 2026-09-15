@@ -276,7 +276,7 @@
                                                     </td>
                                                     <td class="text-center">
                                                         <button v-show="attr === selectedAttribute"
-                                                            class="ml-1 btn btn-sm btn-danger"
+                                                            class="ms-1 btn btn-sm btn-danger"
                                                             :title="$t('actions.delete')"
                                                             @click="deleteAttribute(index)">
                                                             <font-awesome-icon icon="trash" />
@@ -291,7 +291,7 @@
                                             </div>
                                         </div>
                                         <div>
-                                            <b-button class="ml-2" variant="outline-success"
+                                            <b-button class="ms-2" variant="outline-success"
                                                 :title="$t('actions.simpleAdd')" @click="addAttribute()">
                                                 <font-awesome-icon icon="plus" /> {{ $t('actions.simpleAdd') }}
                                             </b-button>
@@ -323,7 +323,7 @@
                                             <font-awesome-icon icon="fa fa-link" /> {{ $t('dataSource.relationship',
                                             2)}}
                                         </template>
-                                        <p class="pb-1 border-bottom text-right">
+                                        <p class="pb-1 border-bottom text-end">
                                             <button :disabled="userPermission === null || permission === null"
                                                 class="btn btn-sm btn-primary" @click="addPermission">
                                                 <font-awesome-icon icon="fa fa-link" />
@@ -385,7 +385,7 @@
                                                         <tbody>
                                                             <tr v-for="p in dataSource.permissions" :key="p.id">
                                                                 <td style="width:80px" class="text-center">
-                                                                    <div class="badge badge-secondary mt-2 pt-1 pb-1 pr-2 pl-2"
+                                                                    <div class="badge badge-secondary mt-2 pt-1 pb-1 pe-2 ps-2"
                                                                         :title="$t('permissions.' + p.permission)">
                                                                         {{ $t('permissions.'
                                                                             + p.permission).toUpperCase() }}
@@ -394,7 +394,7 @@
                                                                 <td>
                                                                     {{ p.user_name }} ({{ p.user_login }})
                                                                 </td>
-                                                                <td v-if="loggedUserIsOwnerOrAdmin" class="text-right">
+                                                                <td v-if="loggedUserIsOwnerOrAdmin" class="text-end">
                                                                     <button class="btn btn-sm btn-light"
                                                                         @click="removePermission(p)">
                                                                         <font-awesome-icon icon="trash" />
@@ -428,7 +428,7 @@
                                         <font-awesome-icon icon="spinner" pulse class="icon" />
                                         {{ $t('dataSource.inferSchema') }}
                                     </button>
-                                    <button class="btn btn-spinner ml-1 btn-outline-info" :disabled="isDirty"
+                                    <button class="btn btn-spinner ms-1 btn-outline-info" :disabled="isDirty"
                                         @click.stop="preview">
                                         <font-awesome-icon icon="spinner" pulse class="icon" />
                                         <font-awesome-icon icon="fa fa-eye" />
@@ -438,7 +438,7 @@
                                     <router-link :to="{ name: 'dataSources' }" class="btn btn-secondary">
                                         {{ $t('actions.cancel') }}
                                     </router-link>
-                                    <div v-if="isDirty" class="mt-2 pl-2">
+                                    <div v-if="isDirty" class="mt-2 ps-2">
                                         <small>Para inferir o esquema ou pré-visualizar os dados, salve primeiro a fonte
                                             de dados.</small>
                                     </div>
@@ -497,7 +497,7 @@
                                 v-model="currentAttribute.attribute_privacy.hierarchy" class="form-control" type="text"
                                 rows="5" />
                             <div slot="modal-footer" class="w-100">
-                                <button class="float-right mr-2 btn-primary" @click="okPrivacy">
+                                <button class="float-end me-2 btn-primary" @click="okPrivacy">
                                     {{ $t('actions.close') }}
                                 </button>
                             </div>
