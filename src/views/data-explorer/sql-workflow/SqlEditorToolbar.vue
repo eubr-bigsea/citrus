@@ -35,9 +35,9 @@
                 <template #button-content>
                     <font-awesome-icon icon="fa fa-plus" />
                 </template>
-                <b-dropdown-item href="#"  @click="emit('on-add', task.id, 'sql')">SQL</b-dropdown-item>
-                <b-dropdown-item href="#"  @click="emit('on-add', task.id, 'python')">Python</b-dropdown-item>
-                <b-dropdown-item href="#"  @click="emit('on-add', task.id, 'script')">Script externo</b-dropdown-item>
+                <b-dropdown-item href="#" @click.prevent="emit('on-add', task.id, 'sql')">SQL</b-dropdown-item>
+                <b-dropdown-item href="#" @click.prevent="emit('on-add', task.id, 'python')">Python</b-dropdown-item>
+                <b-dropdown-item href="#" @click.prevent="emit('on-add', task.id, 'script')">Script externo</b-dropdown-item>
             </b-dropdown>
             <b-dropdown variant="outline-success" right size="sm" no-caret  :title="$t('actions.execute')">
                 <template #button-content>
