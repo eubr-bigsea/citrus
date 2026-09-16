@@ -138,13 +138,20 @@ export default defineConfig({
         }
     },
     build: {
-        rollupOptions:{
+        rolldownOptions:{
             output: {
-                manualChunks:  (id) => {
-                    if (id.includes('node_modules')) {
-                        return id.toString().split('node_modules/')[1].split('/')[0].toString();
-                    }
-                    return routeChunkOf(id);
+                codeSplitting: {
+                    groups: [
+                        {
+                            name: (id) => {
+                                const normalized = id.replace(/\\/g, '/');
+                                if (normalized.includes('node_modules/')) {
+                                    return normalized.split('node_modules/').pop().split('/')[0];
+                                }
+                                return routeChunkOf(id);
+                            }
+                        }
+                    ]
                 }
             }
         }
