@@ -2,12 +2,15 @@
     <b-modal ref="modal" size="lg" :title="$t('common.history')" ok-disabled>
         <div class="historyArea">
             <table class="table table-sm table-striped text-center">
+                <thead>
                 <tr>
                     <th>{{$t('common.version')}}</th>
                     <th>{{$t('common.date')}}</th>
                     <th>{{$t('common.author')}}</th>
                     <th>{{$t('common.action')}}</th>
                 </tr>
+                </thead>
+                <tbody>
                 <tr v-for="h in history" :key="h.id">
                     <td>{{h.version}}</td>
                     <td>{{h.date}}</td>
@@ -18,6 +21,7 @@
                         </button>
                     </td>
                 </tr>
+                </tbody>
             </table>
         </div>
         <template #footer>

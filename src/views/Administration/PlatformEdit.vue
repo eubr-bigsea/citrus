@@ -75,6 +75,7 @@
                                 </div>
                                 <div>
                                     <table class="table table-bordered table-striped">
+                                        <tbody>
                                         <tr v-for="subset in platform.subsets" :key="subset.id" class="row">
                                             <td style="width: 80%">
                                                 <input v-model="subset.name" type="text" maxlength="50"
@@ -91,6 +92,7 @@
                                                 </button>
                                             </td>
                                         </tr>
+                                        </tbody>
                                     </table>
                                 </div>
                             </b-tab>
@@ -140,6 +142,7 @@
                                                         </th>
                                                     </tr>
                                                 </thead>
+                                                <tbody>
                                                 <tr v-for="op in operations" :key="op.id" class="child">
                                                     <td style="width: 50px" class="text-center">
                                                         <b-form-checkbox v-model="op.enabled"
@@ -158,6 +161,7 @@
                                                                          @change="toggleSubsetOperation(subset, op)" />
                                                     </td>
                                                 </tr>
+                                                </tbody>
                                             </table>
                                         </div>
                                     </div>

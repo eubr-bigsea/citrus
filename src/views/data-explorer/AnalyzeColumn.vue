@@ -27,6 +27,7 @@
                                 <strong class="text-uppercase">Sumário</strong>
                                 <QualityBar />
                                 <table class="table table-condensed table-sm table-borderless">
+                                    <tbody>
                                     <tr>
                                         <td>
                                             <font-awesome-icon icon="fa fa-circle"
@@ -73,6 +74,7 @@
                                             10%
                                         </td>
                                     </tr>
+                                    </tbody>
                                 </table>
                             </div>
                             <div class="col-md-8">
@@ -157,6 +159,7 @@
                                 <strong class="text-uppercase">Sumário</strong>
                                 <QualityBar />
                                 <table class="table table-condensed table-sm table-borderless">
+                                    <tbody>
                                     <tr>
                                         <td>
                                             <font-awesome-icon icon="fa fa-circle"
@@ -203,6 +206,7 @@
                                             10%
                                         </td>
                                     </tr>
+                                    </tbody>
                                 </table>
                             </div>
                             <div class="col-md-8">
@@ -214,6 +218,7 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <table class="table table-condensed table-sm small-text">
+                                    <thead>
                                     <tr>
                                         <th class="text-uppercase">
                                             Statistics
@@ -228,9 +233,12 @@
                                             Top invalids
                                         </th>
                                     </tr>
+                                    </thead>
+                                    <tbody>
                                     <tr class="text-center">
                                         <td>
                                             <table class="table table-sm table-borderless">
+                                                <tbody>
                                                 <tr>
                                                     <th class="text-start">
                                                         Min
@@ -273,10 +281,12 @@
                                                     </th>
                                                     <td>12</td>
                                                 </tr>
+                                                </tbody>
                                             </table>
                                         </td>
                                         <td>
                                             <table class="table table-sm table-borderless">
+                                                <tbody>
                                                 <tr>
                                                     <td class="text-start">
                                                         Min
@@ -326,11 +336,13 @@
                                                     <td>12</td>
                                                     <td>12%</td>
                                                 </tr>
+                                                </tbody>
                                             </table>
                                         </td>
 
                                         <td>
                                             <table class="table table-sm table-borderless">
+                                                <tbody>
                                                 <tr>
                                                     <td class="text-start">
                                                         Min
@@ -359,18 +371,22 @@
                                                     <td>12</td>
                                                     <td>12%</td>
                                                 </tr>
+                                                </tbody>
                                             </table>
                                         </td>
                                         <td>
                                             <table class="table table-sm table-borderless">
+                                                <tbody>
                                                 <tr>
                                                     <td class="text-start">
                                                         343434
                                                     </td>
                                                 </tr>
+                                                </tbody>
                                             </table>
                                         </td>
                                     </tr>
+                                    </tbody>
                                 </table>
                             </div>
                         </div>

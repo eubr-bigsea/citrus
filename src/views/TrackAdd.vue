@@ -20,8 +20,8 @@
                                             <b-form-radio-group id="radios2" v-model="selectedPlatform" name="platform"
                                                                 @change="selectOptions(false)">
                                                 <table class="table table-striped">
-                                                    <div v-for="platform in platforms" :key="platform.id"
-                                                         style="display: contents">
+                                                    <tbody>
+                                                    <template v-for="platform in platforms" :key="platform.id">
                                                         <tr v-if="platform.subsets.length" class="d-flex">
                                                             <td class="col-3">
                                                                 <b-form-radio v-if="platform.subsets.length == 0"
@@ -49,7 +49,8 @@
                                                                 </b-form-radio-group>
                                                             </td>
                                                         </tr>
-                                                    </div>
+                                                    </template>
+                                                    </tbody>
                                                 </table>
                                             </b-form-radio-group>
                                         </div>

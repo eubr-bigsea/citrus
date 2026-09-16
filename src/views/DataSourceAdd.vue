@@ -124,6 +124,7 @@
                 <!--
                 <div v-if="step === 3 && storageType === 'HDFS' " class="resumable-progress col-md-12">
                     <table v-if="showProgress">
+                        <tbody>
                         <tr>
                             <td width="100%">
                                 <div class="progress-container">
@@ -140,6 +141,7 @@
                                 </a>
                             </td>
                         </tr>
+                        </tbody>
                     </table>
                 </div>
                 -->

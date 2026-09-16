@@ -20,8 +20,8 @@
                                             <b-form-radio-group id="radios2" v-model="selectedPlatform" name="platform"
                                                                 @change="selectOptions(false)">
                                                 <table class="table table-striped">
-                                                    <div v-for="platform in platforms" :key="platform.id"
-                                                         style="display: contents">
+                                                    <tbody>
+                                                    <template v-for="platform in platforms" :key="platform.id">
                                                         <tr class="d-flex">
                                                             <td class="col-3">
                                                                 <b-form-radio v-if="platform.subsets && platform.subsets.length == 0 || !(hasAnyPermission(['APP_EDIT']) || isAdmin)"
@@ -53,7 +53,8 @@
                                                                 </td>
                                                             </tr>
                                                         </template>
-                                                    </div>
+                                                    </template>
+                                                    </tbody>
                                                 </table>
                                             </b-form-radio-group>
                                         </div>
@@ -61,6 +62,7 @@
                                     <b-tab :title="$t('workflow.fromTemplate')">
                                         <div class="col-md-12 mt-2">
                                             <table v-if="templates && templates.length" class="table">
+                                                <thead>
                                                 <tr class="d-flex">
                                                     <th class="col-3">
                                                         {{$t('common.name')}}
@@ -72,6 +74,8 @@
                                                         {{$t('titles.platform')}}
                                                     </th>
                                                 </tr>
+                                                </thead>
+                                                <tbody>
                                                 <tr v-for="template in templates" :key="template.id" class="d-flex">
                                                     <td class="col-3">
                                                         <b-form-radio v-model="selectedTemplate" :value="template.id"
@@ -86,6 +90,7 @@
                                                         {{template.platform ? template.platform.name: ''}}
                                                     </td>
                                                 </tr>
+                                                </tbody>
                                             </table>
                                             <div v-else>
                                                 <div class="alert alert-info">

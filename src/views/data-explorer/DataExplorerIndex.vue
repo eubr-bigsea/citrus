@@ -184,9 +184,11 @@
                                         <div v-if="stats.message.outliers && stats.message.outliers.length">
                                             <span>Valores atípicos (outliers)*</span>
                                             <table class="table table-sm table-stats table-bordered">
+                                                <tbody>
                                                 <tr v-for="t, i in stats.message.outliers" :key="i">
                                                     <td>{{t}}</td>
                                                 </tr>
+                                                </tbody>
                                             </table>
                                         </div>
                                         <div v-else>
@@ -196,17 +198,20 @@
                                     <div class="col-4">
                                         <span>Estatísticas (exclui nulos)</span>
                                         <table class="table table-sm table-stats table-bordered">
+                                            <tbody>
                                             <tr v-for="value, stat in stats.message.stats" :key="stat">
                                                 <td class="text-capitalize">
                                                     {{stat}}
                                                 </td>
                                                 <td>{{value}}</td>
                                             </tr>
+                                            </tbody>
                                         </table>
                                     </div>
                                     <div v-if="stats.message.top20" class="col-8">
                                         <span>Top valores *</span>
                                         <table class="table table-sm table-stats table-bordered">
+                                            <tbody>
                                             <tr v-for="t, i in stats.message.top20.slice(0, 10)" :key="i">
                                                 <td class="col-8">
                                                     {{t[0]}}
@@ -218,6 +223,7 @@
                                                     ({{(100 * t[1] / stats.message.stats.count).toFixed(2)}})%
                                                 </td>
                                             </tr>
+                                            </tbody>
                                         </table>
                                     </div>
 
@@ -256,6 +262,7 @@
                                 <div style="height: 500px; overflow-y:auto">
                                     <table v-if="valuesClusters && valuesClusters.length > 0"
                                            class="table table-sm table-smallest mt-4">
+                                        <thead>
                                         <tr>
                                             <th />
                                             <th class="col-6">
@@ -265,6 +272,8 @@
                                                 Substituir por
                                             </th>
                                         </tr>
+                                        </thead>
+                                        <tbody>
                                         <tr v-for="values in valuesClusters" :key="values[0]">
                                             <td>
                                                 <input type="checkbox" class="checkbox">
@@ -278,6 +287,7 @@
                                                        :value="values[0]">
                                             </td>
                                         </tr>
+                                        </tbody>
                                     </table>
                                 </div>
                             </b-tab>

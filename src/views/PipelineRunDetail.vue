@@ -47,10 +47,12 @@
                     </button>
                     <p v-if="showVariables" class="context-data">
                     <table class="table table-sm table-smallest">
+                        <tbody>
                         <tr v-for="vr in pipelineRun.context_data" :key="vr.name">
                             <td>{{ vr.name }}</td>
                             <td>{{ vr.value }}</td>
                         </tr>
+                        </tbody>
                     </table>
                     </p>
                 </div>

@@ -41,7 +41,8 @@
                         </b-tab>
                         <b-tab title="Operadores" class="p-0">
                             <table v-if="operators" class="table operators-table table-sm table-borderless">
-                                <div v-for="(group, groupName) in operators" :key="groupName" style="display: contents">
+                                <tbody>
+                                <template v-for="(group, groupName) in operators" :key="groupName">
                                     <tr>
                                         <th colspan="2">
                                             {{groupName}}
@@ -53,7 +54,8 @@
                                         </td>
                                         <td>{{description}}</td>
                                     </tr>
-                                </div>
+                                </template>
+                                </tbody>
                             </table>
                         </b-tab>
                     </b-tabs>

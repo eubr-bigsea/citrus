@@ -2,6 +2,7 @@
     <div>
         <div class="col-md-12 mt-1">
             <table class="table table-sm table-bordered" style="font-size:.8em">
+                <tbody>
                 <tr v-for="v in allVariables" :key="v">
                     <td style="width:20%">
                         <code v-html="'${' + v + '}'" />
@@ -10,6 +11,7 @@
                         {{$t('variables.names.' + v)}}
                     </td>
                 </tr>
+                </tbody>
             </table>
         </div>
     </div>

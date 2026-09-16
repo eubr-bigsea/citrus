@@ -9,16 +9,20 @@
                     {{$t('workflow.validationExplanation', validationErrors.length)}}
                 </b>
                 <table class="table table-sm">
+                    <thead>
                     <tr>
                         <th>{{$t('titles.tasks')}}</th>
                         <th>{{$t('titles.property')}}</th>
                         <th>{{$t('titles.error')}}</th>
                     </tr>
+                    </thead>
+                    <tbody>
                     <tr v-for="err in validationErrors" :key="err.sequential">
                         <td>{{err.task.name}}</td>
                         <td>{{err.field}}</td>
                         <td>{{err.message}}</td>
                     </tr>
+                    </tbody>
                 </table>
             </div>
             <div class="mt-2 p-2 border">
