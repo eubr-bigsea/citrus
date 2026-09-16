@@ -1,5 +1,5 @@
 import AttributeSelectorComponent from '@/components/widgets/AttributeSelector2.vue';
-import { action } from '@storybook/addon-actions';
+import { action } from 'storybook/actions';
 import "vue-select/dist/vue-select.css";
 
 const field1 = {

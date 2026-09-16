@@ -1,5 +1,5 @@
 import FilterEditorComponent from '@/components/widgets/FilterEditor.vue';
-import { action } from '@storybook/addon-actions';
+import { action } from 'storybook/actions';
 
 const field1 = {
     label: 'Inform an Filter',

@@ -1,5 +1,5 @@
 import ExpressionEditorComponent from '@/components/widgets/ExpressionEditor.vue';
-import { action } from '@storybook/addon-actions';
+import { action } from 'storybook/actions';
 
 const field1 = {
     label: 'Inform an expression',
