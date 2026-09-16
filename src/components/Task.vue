@@ -348,6 +348,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
+@use "sass:color";
 /* Colors */
 
 $color1: rgba(228, 87, 46, 1);
@@ -634,7 +635,7 @@ li.dragging {
         }
 
         &.service {
-            background-color: lighten($color5, 30%) !important;
+            background-color: color.adjust($color5, $lightness: 30%) !important;
         }
 
         &.comment {
@@ -719,15 +720,15 @@ li.dragging {
         }
 
         &.data-source {
-            background-color: lighten($color1, 30%);
+            background-color: color.adjust($color1, $lightness: 30%);
         }
 
         &.algorithm {
-            background-color: lighten($color4, 30%);
+            background-color: color.adjust($color4, $lightness: 30%);
         }
 
         &.model {
-            background-color: lighten($color3, 30%);
+            background-color: color.adjust($color3, $lightness: 30%);
         }
 
         &.selected {
