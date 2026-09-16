@@ -8,7 +8,7 @@
         </p>
         <div class="row">
             <div class="col-6">
-                <select v-model.number="month" class="form-control form-control-sm">
+                <select v-model.number="month" class="form-select form-control-sm">
                     <option />
                     <option v-for="m, i in getMonthNames" :key="m" :value="i + 1">
                         {{m}}
@@ -16,7 +16,7 @@
                 </select>
             </div>
             <div class="col-3">
-                <select v-model.number="year" class="form-control form-control-sm">
+                <select v-model.number="year" class="form-select form-control-sm">
                     <option />
                     <option v-for="y in getYears" :key="y" :value="y">
                         {{y}}
