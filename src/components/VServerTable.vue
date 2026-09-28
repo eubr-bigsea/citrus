@@ -48,16 +48,23 @@
                         </tr>
                     </thead>
                     <tbody v-if="tableData.length !== 0">
-                        <tr v-for="(row, rowIndex) in tableData" :key="rowIndex">
-                            <td v-for="colName in columns" :key="colName"
-                                :class="getColumnClass(options.columnsClasses, colName)">
-                                <slot :name="colName" :row="row">
-                                    <span :class="`${getColumnClass(options.columnsClasses, colName)}-scoped`">
-                                        {{row[colName]}}
-                                    </span>
-                                </slot>
-                            </td>
-                        </tr>
+                        <template v-for="(row, rowIndex) in tableData" :key="rowIndex">
+                            <tr>
+                                <td v-for="colName in columns" :key="colName"
+                                    :class="getColumnClass(options.columnsClasses, colName)">
+                                    <slot :name="colName" :row="row">
+                                        <span :class="`${getColumnClass(options.columnsClasses, colName)}-scoped`">
+                                            {{row[colName]}}
+                                        </span>
+                                    </slot>
+                                </td>
+                            </tr>
+                            <tr v-if="options.rowDetails && options.rowDetails(row)" class="row-details">
+                                <td :colspan="columns.length">
+                                    <slot name="rowDetails" :row="row" />
+                                </td>
+                            </tr>
+                        </template>
                     </tbody>
                 </table>
             </div>

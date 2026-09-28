@@ -41,20 +41,46 @@
                     <span>
                         {{ $filters.formatJsonDate(pipelineRun.updated) }}
                     </span>
-                    <button v-if="pipelineRun.context_data?.length" class="btn btn-link btn-sm p-0 mt-2"
-                        @click="showVariables = !showVariables">
-                        <font-awesome-icon icon="fa fa-dollar" /> {{ showVariables ? 'Ocultar variáveis' : 'Exibir variáveis'}}
-                    </button>
-                    <p v-if="showVariables" class="context-data">
-                    <table class="table table-sm table-smallest">
-                        <tbody>
-                        <tr v-for="vr in pipelineRun.context_data" :key="vr.name">
-                            <td>{{ vr.name }}</td>
-                            <td>{{ vr.value }}</td>
-                        </tr>
-                        </tbody>
-                    </table>
-                    </p>
+                    <div class="variables-header mt-2">
+                        <strong>{{ $t('pipeline.schedule.contextData') }}</strong>
+                        <button class="btn btn-sm btn-outline-primary" :title="$t('pipeline.schedule.addContextData')"
+                            @click="openVariableEditor()">
+                            <font-awesome-icon icon="plus" />
+                            {{$t('pipeline.schedule.addContextData')}}
+                        </button>
+                    </div>
+                    <div v-if="showVariables" class="context-data">
+                        <table class="table table-sm table-smallest mb-0">
+                            <thead>
+                                <tr>
+                                    <th>{{$t('pipeline.schedule.contextName')}}</th>
+                                    <th>{{$t('pipeline.schedule.contextValue')}}</th>
+                                    <th class="text-end">{{$t('common.action', 2)}}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="vr in pipelineRun.context_data || []" :key="vr.name">
+                                    <td class="variable-name">{{vr.name}}</td>
+                                    <td class="variable-value">{{vr.value}}</td>
+                                    <td class="text-end variable-actions">
+                                        <button class="btn btn-sm btn-light" :title="$t('actions.edit')"
+                                            @click="openVariableEditor(vr)">
+                                            <font-awesome-icon icon="pen" />
+                                        </button>
+                                        <button class="btn btn-sm btn-light text-danger" :title="$t('actions.delete')"
+                                            @click="removeVariable(vr)">
+                                            <font-awesome-icon icon="trash" />
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr v-if="!pipelineRun.context_data?.length">
+                                    <td colspan="3" class="text-muted text-center">
+                                        {{$t('pipeline.schedule.noContextData')}}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
                 <div class="border p-2 mt-2">
                     <h6>{{$t('titles.notification', 2)}}</h6>
@@ -195,11 +221,48 @@
                 </b-card>
             </div>
         </div>
+        <dialog ref="variableDialog" class="variable-dialog" @cancel.prevent="closeVariableEditor">
+            <form method="dialog" @submit.prevent="saveVariable">
+                <div class="variable-dialog-header">
+                    <h2 class="h5 mb-0">
+                        {{$t('pipeline.schedule.contextData')}}
+                    </h2>
+                    <button type="button" class="btn-close" :aria-label="$t('actions.cancel')"
+                        @click="closeVariableEditor" />
+                </div>
+                <div class="mb-3">
+                    <label for="pipeline-run-variable-name" class="form-label">
+                        {{$t('pipeline.schedule.contextName')}}
+                    </label>
+                    <input id="pipeline-run-variable-name" v-model="variableName" class="form-control"
+                        maxlength="200" required :readonly="Boolean(editingVariable)" />
+                </div>
+                <div class="mb-3">
+                    <label for="pipeline-run-variable-value" class="form-label">
+                        {{$t('pipeline.schedule.contextValue')}}
+                    </label>
+                    <textarea id="pipeline-run-variable-value" v-model="variableValue" class="form-control"
+                        rows="5" maxlength="4000" required />
+                    <div class="form-text text-end">{{variableValue.length}}/4000</div>
+                </div>
+                <div class="d-flex justify-content-end gap-2">
+                    <button type="button" class="btn btn-secondary" :disabled="variableSaving"
+                        @click="closeVariableEditor">
+                        {{$t('actions.cancel')}}
+                    </button>
+                    <button type="submit" class="btn btn-primary" :disabled="variableSaving">
+                        <font-awesome-icon v-if="variableSaving" icon="spinner" pulse />
+                        {{$t('actions.save')}}
+                    </button>
+                </div>
+            </form>
+        </dialog>
     </div>
 </template>
 
 <script setup>
-import { ref, getCurrentInstance, computed, onBeforeMount, onUnmounted, onMounted } from 'vue';
+import { ref, getCurrentInstance, computed, nextTick, onBeforeMount, onUnmounted, onMounted } from 'vue';
+import { useI18n } from 'vue-i18n';
 import useNotifier from '@/composables/useNotifier.js';
 import { useWebSocket } from '@/composables/websocket.js';
 import PipelineRunNotifications from '@/components/PipelineRunNotifications.vue';
@@ -212,6 +275,7 @@ const standSocketIoPath = import.meta.env.VITE_STAND_SOCKET_IO_PATH;
 const standNamespace = import.meta.env.VITE_STAND_NAMESPACE;
 
 const vm = getCurrentInstance();
+const { t } = useI18n();
 
 const { confirm, success, error } = useNotifier(vm.proxy);
 const router = vm.proxy.$router;
@@ -260,6 +324,11 @@ onMounted(() => {
         eventHandlers);
 });
 const selectedStep = ref({ jobs: [] });
+const variableDialog = ref(null);
+const editingVariable = ref(null);
+const variableName = ref('');
+const variableValue = ref('');
+const variableSaving = ref(false);
 
 const orderedJobs = computed(() => {
     if (selectedStep.value) {
@@ -315,6 +384,70 @@ const load = async () => {
 const setSelectedStep = (step) => {
     selectedStep.value = step;
 };
+const openVariableEditor = (variable = null) => {
+    editingVariable.value = variable;
+    variableName.value = variable?.name || '';
+    variableValue.value = variable?.value || '';
+    showVariables.value = true;
+    nextTick(() => variableDialog.value?.showModal());
+};
+const closeVariableEditor = () => {
+    if (variableDialog.value?.open) variableDialog.value.close();
+    editingVariable.value = null;
+    variableName.value = '';
+    variableValue.value = '';
+};
+const saveVariable = async () => {
+    const name = variableName.value.trim();
+    if (!name || variableSaving.value) return;
+
+    variableSaving.value = true;
+    try {
+        const resp = await axios.patch(
+            `${standUrl}/pipeline-runs/${pipelineRunId.value}/context`,
+            { name, value: variableValue.value }
+        );
+        const savedVariable = resp.data.data?.[0] || { name, value: variableValue.value };
+        const contextData = pipelineRun.value.context_data || [];
+        const index = contextData.findIndex(variable => variable.name === savedVariable.name);
+        if (index === -1) contextData.push(savedVariable);
+        else contextData.splice(index, 1, savedVariable);
+        pipelineRun.value.context_data = contextData;
+        const action = editingVariable.value
+            ? t('actions.edit')
+            : t('actions.add', { type: t('pipeline.schedule.contextData') });
+        success(
+            t('messages.savedWithSuccess', {
+                what: t('pipeline.schedule.contextData')
+            }),
+            action,
+            10000
+        );
+        closeVariableEditor();
+    } catch (e) {
+        error(e);
+    } finally {
+        variableSaving.value = false;
+    }
+};
+const removeVariable = (variable) => {
+    confirm(
+        t('actions.delete'),
+        `${t('actions.delete')} ${variable.name}?`,
+        async () => {
+            try {
+                await axios.delete(
+                    `${standUrl}/pipeline-runs/${pipelineRunId.value}/context/${encodeURIComponent(variable.name)}`
+                );
+                pipelineRun.value.context_data = (pipelineRun.value.context_data || [])
+                    .filter(context => context.name !== variable.name);
+                success(t('messages.successDeletion', { what: variable.name }));
+            } catch (e) {
+                error(e);
+            }
+        }
+    );
+};
 const cancelRun = () => {
     const callback = async (result) => {
         try {
@@ -329,7 +462,7 @@ const cancelRun = () => {
     confirm('Cancelar execução', 'Você quer realmente cancelar esta execução?',
         callback);
 };
-const showVariables = ref(false)
+const showVariables = ref(true)
 </script>
 
 <style lang="scss" scoped>
@@ -340,6 +473,43 @@ const showVariables = ref(false)
 .context-data {
     height: 16vh;
     overflow-y: auto
+}
+
+.variables-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.variable-name,
+.variable-value {
+    max-width: 10rem;
+    overflow-wrap: anywhere;
+}
+
+.variable-actions {
+    white-space: nowrap;
+}
+
+.variable-dialog {
+    width: min(36rem, calc(100vw - 2rem));
+    border: 0;
+    border-radius: 0.5rem;
+    box-shadow: 0 0.5rem 2rem rgb(0 0 0 / 25%);
+    padding: 1.25rem;
+}
+
+.variable-dialog::backdrop {
+    background: rgb(0 0 0 / 45%);
+}
+
+.variable-dialog-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
 }
 
 .execution-report,

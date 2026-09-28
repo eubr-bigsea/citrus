@@ -87,11 +87,44 @@
                                                 props.row.pipeline_id }} -
                                             {{ props.row.pipeline_name }}
                                         </router-link>
-                                        <div v-if="props.row.context_data && props.row.context_data.length > 0"
-                                             class="d-flex flex-wrap gap-1 mt-1" :title="$t('pipeline.list.contextVariables')">
-                                            <span v-for="data in props.row.context_data" :key="data.name" class="context-var-chip">
-                                                <strong>{{ data.name }}</strong>: {{ data.value }}
-                                            </span>
+                                        <button v-if="!props.row.context_data?.length" type="button"
+                                                class="btn btn-link btn-sm context-var-add"
+                                                :title="$t('pipeline.schedule.addContextData')"
+                                                @click.stop="openContextEditor(props.row)">
+                                            <font-awesome-icon icon="plus" />
+                                        </button>
+                                    </template>
+                                    <template #rowDetails="props">
+                                        <div class="context-vars-container" :title="$t('pipeline.list.contextVariables')">
+                                            <div class="context-vars-header">
+                                                <small class="text-muted">{{$t('pipeline.list.contextVariables')}}</small>
+                                                <button type="button" class="btn btn-link btn-sm context-var-add"
+                                                        :title="$t('pipeline.schedule.addContextData')"
+                                                        @click.stop="openContextEditor(props.row)">
+                                                    <font-awesome-icon icon="plus" />
+                                                </button>
+                                            </div>
+                                            <div class="context-vars-list d-flex flex-wrap gap-1">
+                                                <span v-for="data in props.row.context_data" :key="data.name"
+                                                      class="context-var-chip"
+                                                      :title="`${data.name}: ${data.value}`">
+                                                    <span class="context-var-value">
+                                                        <strong>{{ data.name }}</strong>: {{ data.value }}
+                                                    </span>
+                                                    <span class="context-var-actions">
+                                                        <button type="button" class="btn btn-link btn-sm"
+                                                                :title="$t('actions.edit')"
+                                                                @click.stop="openContextEditor(props.row, data)">
+                                                            <font-awesome-icon icon="pen" />
+                                                        </button>
+                                                        <button type="button" class="btn btn-link btn-sm text-danger"
+                                                                :title="$t('actions.delete')"
+                                                                @click.stop="removeContextVariable(props.row, data)">
+                                                            <font-awesome-icon icon="trash" />
+                                                        </button>
+                                                    </span>
+                                                </span>
+                                            </div>
                                         </div>
                                     </template>
                                     <template #period="props">
@@ -232,6 +265,40 @@
                 </div>
             </form>
         </dialog>
+        <dialog ref="contextDialog" class="context-dialog" @cancel.prevent="closeContextEditor">
+            <form method="dialog" @submit.prevent="saveContextVariable">
+                <div class="context-dialog-header">
+                    <h2 class="h5 mb-0">{{$t('pipeline.schedule.contextData')}}</h2>
+                    <button type="button" class="btn-close" :aria-label="$t('actions.cancel')"
+                            @click="closeContextEditor" />
+                </div>
+                <div class="mb-3">
+                    <label for="pipeline-run-context-name" class="form-label">
+                        {{$t('pipeline.schedule.contextName')}}
+                    </label>
+                    <input id="pipeline-run-context-name" v-model="contextName" class="form-control"
+                           maxlength="200" required :readonly="Boolean(editingContextVariable)" />
+                </div>
+                <div class="mb-3">
+                    <label for="pipeline-run-context-value" class="form-label">
+                        {{$t('pipeline.schedule.contextValue')}}
+                    </label>
+                    <textarea id="pipeline-run-context-value" v-model="contextValue" class="form-control"
+                              rows="5" maxlength="4000" required />
+                    <div class="form-text text-end">{{contextValue.length}}/4000</div>
+                </div>
+                <div class="d-flex justify-content-end gap-2">
+                    <button type="button" class="btn btn-secondary" :disabled="contextSaving"
+                            @click="closeContextEditor">
+                        {{$t('actions.cancel')}}
+                    </button>
+                    <button type="submit" class="btn btn-primary" :disabled="contextSaving">
+                        <font-awesome-icon v-if="contextSaving" icon="spinner" pulse />
+                        {{$t('actions.save')}}
+                    </button>
+                </div>
+            </form>
+        </dialog>
     </main>
 </template>
 
@@ -272,6 +339,11 @@ export default {
             editingCommentRun: null,
             commentDraft: '',
             commentSaving: false,
+            editingContextRun: null,
+            editingContextVariable: null,
+            contextName: '',
+            contextValue: '',
+            contextSaving: false,
             ...new DataTableBuilder(this.$t)
                 .columns(
                     'id',
@@ -304,6 +376,7 @@ export default {
                 })
                 .sortable('id', 'pipeline_id', 'pipeline_name', 'period', 'updated')
                 .filterable()
+                .rowDetails(row => Boolean(row.context_data?.length))
                 .requestFunction(this.load)
                 .build()
         };
@@ -384,6 +457,75 @@ export default {
                 this.commentSaving = false;
             }
         },
+        openContextEditor(run, variable = null) {
+            this.editingContextRun = run;
+            this.editingContextVariable = variable;
+            this.contextName = variable?.name || '';
+            this.contextValue = variable?.value || '';
+            this.$nextTick(() => this.$refs.contextDialog.showModal());
+        },
+        closeContextEditor() {
+            if (this.$refs.contextDialog?.open) {
+                this.$refs.contextDialog.close();
+            }
+            this.editingContextRun = null;
+            this.editingContextVariable = null;
+            this.contextName = '';
+            this.contextValue = '';
+        },
+        async saveContextVariable() {
+            const name = this.contextName.trim();
+            if (!this.editingContextRun || !name || this.contextSaving) return;
+
+            this.contextSaving = true;
+            try {
+                const resp = await axios.patch(
+                    `${standUrl}/pipeline-runs/${this.editingContextRun.id}/context`,
+                    { name, value: this.contextValue }
+                );
+                const savedVariable = resp.data.data?.[0] || { name, value: this.contextValue };
+                const contextData = this.editingContextRun.context_data || [];
+                const index = contextData.findIndex(variable => variable.name === savedVariable.name);
+                if (index === -1) contextData.push(savedVariable);
+                else contextData.splice(index, 1, savedVariable);
+                this.editingContextRun.context_data = [...contextData];
+                const action = this.editingContextVariable
+                    ? this.$t('actions.edit')
+                    : this.$t('actions.add', {
+                        type: this.$t('pipeline.schedule.contextData')
+                    });
+                this.success(
+                    `${action}: ${this.$t('messages.savedWithSuccess', {
+                        what: this.$t('pipeline.schedule.contextData')
+                    })}`,
+                    10000
+                );
+                this.$refs.runsList.refresh();
+                this.closeContextEditor();
+            } catch (e) {
+                this.error(e);
+            } finally {
+                this.contextSaving = false;
+            }
+        },
+        removeContextVariable(run, variable) {
+            this.confirm(
+                this.$t('actions.delete'),
+                `${this.$t('actions.delete')} ${variable.name}?`,
+                async () => {
+                    try {
+                        await axios.delete(
+                            `${standUrl}/pipeline-runs/${run.id}/context/${encodeURIComponent(variable.name)}`
+                        );
+                        run.context_data = (run.context_data || [])
+                            .filter(context => context.name !== variable.name);
+                        this.success(this.$t('messages.successDeletion', { what: variable.name }));
+                    } catch (e) {
+                        this.error(e);
+                    }
+                }
+            );
+        },
         detail(step) {
             console.debug(step)
         },
@@ -462,15 +604,60 @@ export default {
 }
 
 .context-var-chip {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.15rem;
     background: #e9ecef;
     color: #495057;
     border-radius: 1rem;
     padding: 0.1rem 0.6rem;
     font-size: 0.75rem;
     max-width: 100%;
-    white-space: normal;
-    word-break: break-word;
+    white-space: nowrap;
+}
+
+.context-vars-container {
+    max-width: 100%;
+    margin-left: 1.25rem;
+    padding-left: 0.75rem;
+    border-left: 3px solid #ced4da;
+}
+
+.context-vars-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.15rem;
+}
+
+.context-vars-list {
+    align-items: flex-start;
+}
+
+.context-var-add {
+    padding: 0 0.25rem;
+}
+
+.row-details > td {
+    background-color: #f8f9fa;
+    border-top: 0;
+    padding: 0.35rem 0.5rem 0.6rem;
+}
+
+.context-var-value {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.context-var-actions {
+    display: inline-flex;
+    white-space: nowrap;
+}
+
+.context-var-actions .btn {
+    padding: 0 0.2rem;
 }
 
 .comment-cell {
@@ -502,6 +689,25 @@ export default {
 }
 
 .comment-dialog-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+}
+
+.context-dialog {
+    width: min(36rem, calc(100vw - 2rem));
+    border: 0;
+    border-radius: 0.5rem;
+    box-shadow: 0 0.5rem 2rem rgb(0 0 0 / 25%);
+    padding: 1.25rem;
+}
+
+.context-dialog::backdrop {
+    background: rgb(0 0 0 / 45%);
+}
+
+.context-dialog-header {
     display: flex;
     align-items: center;
     justify-content: space-between;

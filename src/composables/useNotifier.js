@@ -23,7 +23,7 @@ export default (vm) => {
         toaster.toast(elems, {
             title,
             type: variant,
-            // autoHideDelay, appendToast: true,
+            timeout: autoHideDelay,
             // toaster: position, solid: true, fixed: true, position: 'top'
         });
     };

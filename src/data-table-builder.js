@@ -68,4 +68,8 @@ export default class DataTableBuilder {
         this.options.perPageValues = v;
         return this;
     }
+    rowDetails(fn) {
+        this.options.rowDetails = fn;
+        return this;
+    }
 }
