@@ -309,6 +309,9 @@ export default {
             this.$router.replace({ query }).catch(() => { });
             this.$refs.runsList.refresh();
         },
+        detail(step) {
+            console.debug(step)
+        },
         async load(data) {
             localStorage.setItem('pipeline_run:list:filters', JSON.stringify(this.filters));
             data.sort = data.orderBy;

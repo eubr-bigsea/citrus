@@ -4,7 +4,7 @@
             <div class="col">
                 <div>
                     <div class="d-flex justify-content-between align-items-center">
-                        <h1>Editar Código</h1>
+                        <h1>Editar Variável Global</h1>
                     </div>
                     <hr>
                     <div class="row" v-if="sourceCode">
@@ -112,29 +112,29 @@ const { success, error } = useNotifier(vm.proxy);
 onMounted(() => {
     load();
 });
-const tahitiUrl = import.meta.env.VITE_TAHITI_URL;
+const standUrl = import.meta.env.VITE_STAND_URL;
 const props = defineProps({
     add: { type: Boolean, required: false, default: false },
 });
 const isDirty = ref(false);
-const sourceCode = ref();
+const globalVariable = ref();
 
 const load = async () => {
     if (props.add) {
-        sourceCode.value = { id: null, suspicious: false, imports: '', code: ''};
+        globalVariable.value = { id: null, description: '', name: '', value: '', enabled: true };
     } else {
         const resp = await axios
-            .get(`${tahitiUrl}/source-codes/${route.params.id}`);
-        sourceCode.value = resp.data.data[0];
+            .get(`${standUrl}/global-variables/${route.params.id}`);
+        globalVariable.value = resp.data.data[0];
     }
 };
 const save = async (event) => {
-    let url = `${tahitiUrl}/source-codes/${sourceCode.value.id}`;
+    let url = `${standUrl}/global-variables/${globalVariable.value.id}`;
     let axiosCall = axios.patch;
 
 
     if (props.add) {
-        url = `${tahitiUrl}/source-codes`;
+        url = `${standUrl}/global-variables`;
         axiosCall = axios.post
     }
     event.target.setAttribute('disabled', 'disabled');
@@ -155,13 +155,13 @@ const save = async (event) => {
 };
 /* Prism */
 const highlighter = () => {
-    if (sourceCode.value !== '') {
-        return highlight(sourceCode.value.code, languages.py, 'py');
+    if (globalVariable.value !== '') {
+        return highlight(globalVariable.value.code, languages.py, 'py');
     }
 };
 const highlighterImport = () => {
-    if (sourceCode.value !== '') {
-        return highlight(sourceCode.value.imports || '', languages.py, 'py');
+    if (globalVariable.value !== '') {
+        return highlight(globalVariable.value.imports || '', languages.py, 'py');
     }
 };
 const focusTextarea = (event) => {
