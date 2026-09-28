@@ -5,29 +5,29 @@
                 <div class="title">
                     <h1>Construção de Modelos</h1>
                 </div>
-                <form class="float-right form-inline w-50 d-flex justify-content-end">
-                    <label>{{ $tc('common.name') }}:</label>
-                    <input v-model="workflowObj.name" type="text" class="form-control form-control-sm ml-1 w-50"
-                        :placeholder="$tc('common.name')" maxlength="100">
-                    <button class="btn btn-sm btn-outline-success ml-1 float-right" @click.prevent="saveWorkflow">
+                <form class="float-end form-inline w-50 d-flex justify-content-end">
+                    <label>{{ $t('common.name') }}:</label>
+                    <input v-model="workflowObj.name" type="text" class="form-control form-control-sm ms-1 w-50"
+                        :placeholder="$t('common.name')" maxlength="100">
+                    <button class="btn btn-sm btn-outline-success ms-1 float-end" @click.prevent="saveWorkflow">
                         <font-awesome-icon icon="fa fa-save" />
                         {{ $t('actions.save') }}
                     </button>
 
-                    <button v-if="notRunning" class="btn btn-sm btn-outline-primary ml-1 float-right"
+                    <button v-if="notRunning" class="btn btn-sm btn-outline-primary ms-1 float-end"
                         @click.prevent="handleTraining">
                         <font-awesome-icon icon="fa fa-play" />
                         {{ $t('actions.train') }}
                     </button>
 
-                    <button v-else class="btn btn-sm btn-outline-danger ml-1 float-right"
+                    <button v-else class="btn btn-sm btn-outline-danger ms-1 float-end"
                         @click.prevent="handleStopTrain">
                         <font-awesome-icon icon="fa fa-stop" />
                         {{ $t('actions.stop') }}
                     </button>
 
                     <!--
-                    <button @click.prevent="loadJobs" class="btn btn-sm btn-outline-secondary ml-1 float-right">
+                    <button @click.prevent="loadJobs" class="btn btn-sm btn-outline-secondary ms-1 float-end">
                         <font-awesome-icon icon="fa fa-sync" />
                         Reload jobs</button>
                         -->
@@ -42,7 +42,7 @@
                                     <SideBar :selected="selected" :supervised="supervised" @edit="edit" />
                                 </div>
                             </div>
-                            <div class="col-md-9 col-lg-10 pl-4 pr-4 bg-white expand">
+                            <div class="col-md-9 col-lg-10 ps-4 pe-4 bg-white expand">
                                 <form action="" class="form p-2">
                                     <template v-if="selected === 'target'">
                                         <DesignData :attributes="attributes" :data-source-list="dataSourceList"
@@ -65,10 +65,10 @@
                                         <FeatureGeneration />
                                     </template>
                                     <template v-if="selected === 'reduction'">
-                                        <FeatureReduction :reduction="workflowObj.reduction" />
+                                        <ModelBulderFeatureReduction :reduction="workflowObj.reduction" />
                                     </template>
                                     <template v-if="selected === 'algorithms'">
-                                        <Algorithms ref="algorithms" :operations="algorithmOperation"
+                                        <ModelBulderAlgorithms ref="algorithms" :operations="algorithmOperation"
                                             :workflow="workflowObj" :operation-map="operationsMap" :task-type="taskType"/>
                                     </template>
                                     <template v-if="selected === 'grid'">
@@ -99,21 +99,20 @@
     </div>
 </template>
 <script>
-import Vue from 'vue';
-import io from 'socket.io-client';
-import SideBar from './SideBar.vue';
+import { useWebSocket } from '@/composables/websocket.js';
+import SideBar from './ModelBuilderSideBar.vue';
 import DesignData from './DesignData.vue';
 import TrainTest from './TrainTest.vue';
-import Metric from './Metric.vue';
+import Metric from './ModelBuilderMetric.vue';
 import FeatureSelection from './FeatureSelection.vue';
 import FeatureGeneration from './FeatureGeneration.vue';
-import FeatureReduction from './FeatureReduction.vue';
 import ModelBuilderSaveResults from './ModelBuilderSaveResults.vue';
-import Algorithms from './Algorithms.vue';
-import Grid from './Grid.vue';
-import Runtime from './Runtime.vue';
+import ModelBuilderFeatureReduction from './ModelBuilderFeatureReduction.vue';
 import Result from './result/Result.vue';
 import Weighting from './Weighting.vue';
+import ModelBuilderAlgorithmList from './ModelBuilderAlgorithmList.vue';
+import ModelBuilderRuntime from './ModelBuilderRuntime.vue';
+import ModelBuilderGrid from './ModelBuilderGrid.vue';
 
 import DataSourceMixin from '../DataSourceMixin.js';
 import Notifier from '@/mixins/Notifier.js';
@@ -129,12 +128,13 @@ const standSocketIoPath = import.meta.env.VITE_STAND_SOCKET_IO_PATH;
 const standSocketServer = import.meta.env.VITE_STAND_SOCKET_IO_SERVER;
 
 const META_PLATFORM_ID = 1000;
+const { connectWebSocket, disconnectWebSocket, joinRoom } = useWebSocket();
 
 export default {
     name: 'DesignComponent',
     components: {
         SideBar, DesignData, TrainTest, Metric, FeatureSelection, FeatureGeneration,
-        FeatureReduction, Algorithms, Grid, Runtime, Weighting, Result,
+        ModelBuilderFeatureReduction, ModelBuilderAlgorithmList, ModelBuilderGrid, ModelBuilderRuntime, Weighting, Result,
         ModelBuilderSaveResults
     },
     mixins: [DataSourceMixin, Notifier],
@@ -156,7 +156,7 @@ export default {
             operationsMap: new Map(),
             selectedAlgorithm: { forms: [] },
             selected: 'target',
-            socket: null, // used by socketio (web sockets)
+            wsConnected: false, // guards against reconnecting an already-open socket
             targetPlatform: 1,
             workflowObj: { forms: { $meta: { value: { target: '', taskType: '' } } } },
 
@@ -210,63 +210,49 @@ export default {
         await this.load();
     },
     beforeUnmount() {
-        this.disconnectWebSocket();
+        disconnectWebSocket();
     },
     methods: {
         /* WebSocket Handling */
-        disconnectWebSocket() {
-            if (this.socket) {
-                this.socket.emit('leave', { room: this.job.id });
-                this.socket.close();
-            }
-        },
-        changeRoom(room) {
-            this.socket.emit('join', { cached: false, room });
-        },
-        connectWebSocket() {
+        initWebSocketConnection() {
             const self = this;
-            if (self.socket === null) {
-                const opts = { upgrade: true };
-                if (standSocketIoPath !== '') {
-                    opts['path'] = standSocketIoPath;
-                }
+            if (!self.wsConnected) {
+                self.wsConnected = true;
 
-                const socket = io(
-                    `${standSocketServer}${standNamespace}`, opts);
-                self.socket = socket;
+                connectWebSocket(standSocketServer, standNamespace, standSocketIoPath, {
+                    connect: () => joinRoom(self.job.id),
 
-                socket.on('connect', () => { socket.emit('join', { cached: false, room: self.job.id }); });
-
-                socket.on('task result', (msg, callback) => { // eslint-disable-line no-unused-vars
-                    //const task = self.workflowObj.getTaskById(msg.id);
-                    this.jobs[0].results.push({
-                        task_id: msg.id,
-                        operation_id: msg.operation_id,
-                        title: msg.title,
-                        type: msg.type,
-                        content: msg.type === 'VISUALIZATION' ? JSON.parse(msg.message) : msg.message
-                    })
-                    this.jobs[0].groupedResults = this.jobs[0].results.reduce((rv, x) => {
-                        const key = `${x.task_id}:${x.title}`;
-                        (rv[key] = rv[key] || []).push(x);
-                        return rv;
-                    }, {});
-                    this.$refs.results.selectFirst();
-                });
-                socket.on('update job', msg => {
-                    if (msg.status === 'ERROR') {
-                        self.error(msg);
-                        self.notRunning = true;
-                    }
-                    if (msg.status === 'COMPLETED') {
-                        self.jobStatus = msg.message;
-                        self.notRunning = true;
-                    }
-                    //self.job && (self.job.status = msg.status);
-                    this.loadJobs();
+                    'task result': (msg, callback) => { // eslint-disable-line no-unused-vars
+                        //const task = self.workflowObj.getTaskById(msg.id);
+                        this.jobs[0].results.push({
+                            task_id: msg.id,
+                            operation_id: msg.operation_id,
+                            title: msg.title,
+                            type: msg.type,
+                            content: msg.type === 'VISUALIZATION' ? JSON.parse(msg.message) : msg.message
+                        })
+                        this.jobs[0].groupedResults = this.jobs[0].results.reduce((rv, x) => {
+                            const key = `${x.task_id}:${x.title}`;
+                            (rv[key] = rv[key] || []).push(x);
+                            return rv;
+                        }, {});
+                        this.$refs.results.selectFirst();
+                    },
+                    'update job': msg => {
+                        if (msg.status === 'ERROR') {
+                            self.error(msg);
+                            self.notRunning = true;
+                        }
+                        if (msg.status === 'COMPLETED') {
+                            self.jobStatus = msg.message;
+                            self.notRunning = true;
+                        }
+                        //self.job && (self.job.status = msg.status);
+                        this.loadJobs();
+                    },
                 });
             } else if (self.job) {
-                self.changeRoom(self.job.id);
+                joinRoom(self.job.id);
             }
         },
         updateSaveResults(name, value){
@@ -353,7 +339,7 @@ export default {
                 self.success('Construção dos modelos foi iniciada.');
                 this.notRunning = false;
                 this.$refs.results.selectFirst();
-                self.connectWebSocket();
+                self.initWebSocketConnection();
             } catch (ex) {
                 if (ex.data) {
                     self.error(ex.data.message);
@@ -374,7 +360,7 @@ export default {
                 let resp = await axios.get(`${tahitiUrl}/workflows/${this.internalWorkflowId}`)
                 this.workflowObj = new ModelBuilderWorkflow(resp.data, this.operationsMap);
                 if (this.workflowObj.type !== 'MODEL_BUILDER') {
-                    this.error(null, this.$tc('modelBuilder.invalidType'));
+                    this.error(null, this.$t('modelBuilder.invalidType'));
                     this.$router.push({ name: 'index-explorer' })
                     return;
                 }
@@ -394,7 +380,7 @@ export default {
                 this.error(e);
                 this.$router.push({ name: 'index-explorer' })
             } finally {
-                Vue.nextTick(() => {
+                this.nextTick(() => {
                     this.$Progress.finish();
                     this.loadingData = false;
                     this.isDirty = false;
@@ -437,7 +423,7 @@ export default {
                                 best = r.content.metric.value;
                             }
                         });
-                        Vue.set(result0, 'best', best);
+                        this.set(result0, 'best', best);
                     }
 
                 });
@@ -449,7 +435,7 @@ export default {
 
             this.notRunning = this.jobs.length === 0 || this.jobs.every(job => runningStatuses.indexOf(job.status) === -1);
             if (this.job) {
-                this.connectWebSocket();
+                this.initWebSocketConnection();
             }
         },
         async loadOperations() {
@@ -510,7 +496,7 @@ export default {
             try {
                 await axios.patch(url, cloned, { headers: { 'Content-Type': 'application/json' } });
                 this.isDirty = false;
-                this.success(this.$t('messages.savedWithSuccess', { what: this.$tc('titles.workflow') }));
+                this.success(this.$t('messages.savedWithSuccess', { what: this.$t('titles.workflow') }));
             } catch (e) {
                 this.error(e);
             }

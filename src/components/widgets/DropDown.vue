@@ -7,7 +7,7 @@
                         :value="value" />
         <div v-if="!field.multiplicity || field.multiplicity === 1 || field.multiplicity === 0">
             <select v-model="selected"
-                    class="form-control input-sm "
+                    class="form-select form-select-sm input-sm "
                     :data-field="field.name"
                     :required="field.required"
                     @change="updated">
@@ -20,7 +20,7 @@
             </select>
             <a v-if="help"
                :href="help"
-               target="_blank">{{$tc('titles.reference')}} <font-awesome-icon icon="fa fa-external-link-alt" /></a>
+               target="_blank">{{$t('titles.reference')}} <font-awesome-icon icon="fa fa-external-link-alt" /></a>
             <small v-if="optionHelp">{{optionHelp[0]}}</small>
         </div>
         <b-form-tags v-else-if="field.multiplicity === 2 || field.multiplicity === 3"
@@ -29,7 +29,7 @@
                      no-outer-focus
                      :name="field.name"
                      @input="updatedTag">
-            <template #default="{ tags, inputAttrs, inputHandlers, disabled, removeTag }">
+            <template #default="{ inputAttrs, inputHandlers, disabled, removeTag }">
                 <b-form-select v-bind="inputAttrs"
                                :disabled="pairOptionValueList.length === 0"
                                :options="pairOptionValueList"
@@ -63,7 +63,7 @@
     </div>
 </template>
 <script>
-import LabelComponent from './Label.vue'
+import LabelComponent from './Label.vue';
 import Widget from '../../mixins/Widget.js';
 export default {
     components: { LabelComponent },
@@ -73,11 +73,11 @@ export default {
             internalSelected: null,
             helpLink: null,
             optionHelp: null
-        }
+        };
     },
     computed: {
         help(){
-            return this.helpLink && this.value ? this.helpLink.replace('${key}', this.value) : null
+            return this.helpLink && this.value ? this.helpLink.replace('${key}', this.value) : null;
         },
         pairOptionValueList() {
             this.tags; //In order to recompute if tags is changed
@@ -144,6 +144,6 @@ export default {
         }
     }
 
-}
+};
 
 </script>

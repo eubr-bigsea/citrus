@@ -7,10 +7,10 @@
                   class="source-editor" />
 </template>
 <script>
-import 'vue-prism-editor/dist/prismeditor.min.css'
+import 'vue-prism-editor/dist/prismeditor.min.css';
 import axios from 'axios';
 
-import { PrismEditor } from 'vue-prism-editor'
+import { PrismEditor } from 'vue-prism-editor';
 import { highlight, languages } from 'prismjs/components/prism-core';
 import 'prismjs/components/prism-python';
 import 'prismjs/themes/prism.css';
@@ -39,7 +39,7 @@ export default {
             return highlight(this?.sourceCode?.source || '', languages.py, 'py');
         },
     }
-}
+};
 </script>
 <style>
     .prism-editor__editor > span, .prism-editor-wrapper .prism-editor__editor {

@@ -1,13 +1,13 @@
 <template>
     <div class="w-100">
-        <div v-if="task.operation.slug === 'execute-sql'" class="float-left mt-1">
+        <div v-if="task.operation.slug === 'execute-sql'" class="float-start mt-1">
             <button class="btn btn-sm btn-outline-secondary" :title="$t('actions.save')" @click="handleShowModal">
                 <font-awesome-icon icon="fa fa-save" :class="task.forms.save.value === 1 ? 'text-success': 'text-secondary'" />
                 <span v-if="task.forms.save.value == 1"> Editar opções para salvar...</span>
                 <span v-else> Habilitar salvar dados...</span>
             </button>
         </div>
-        <div v-if="task.operation.slug === 'execute-sql'" class="float-left ml-4 mt-1">
+        <div v-if="task.operation.slug === 'execute-sql'" class="float-start ms-4 mt-1">
             <select class="form-control form-control-sm" @change="emit('on-toggle-use-hwc', task, useHWCVal)"
                 v-model="useHWCVal">
                 <optgroup label="Spark">
@@ -21,7 +21,7 @@
             </select>
         </div>
 
-        <b-button-group class="float-right mt-1">
+        <b-button-group class="float-end mt-1">
             <button v-if="showMoveDown" class="btn btn-sm btn-outline-secondary" :title="$t('actions.moveDown')"
                 @click="emit('on-move', task.id, 'down')"><font-awesome-icon icon="fa fa-caret-down" /></button>
             <button v-if="showMoveUp" class="btn btn-sm btn-outline-secondary" :title="$t('actions.moveUp')"
@@ -35,16 +35,16 @@
                 <template #button-content>
                     <font-awesome-icon icon="fa fa-plus" />
                 </template>
-                <b-dropdown-item href="#"  @click="emit('on-add', task.id, 'sql')">SQL</b-dropdown-item>
-                <b-dropdown-item href="#"  @click="emit('on-add', task.id, 'python')">Python</b-dropdown-item>
-                <b-dropdown-item href="#"  @click="emit('on-add', task.id, 'script')">Script externo</b-dropdown-item>
+                <b-dropdown-item @click="emit('on-add', task.id, 'sql')">SQL</b-dropdown-item>
+                <b-dropdown-item @click="emit('on-add', task.id, 'python')">Python</b-dropdown-item>
+                <b-dropdown-item @click="emit('on-add', task.id, 'script')">Script externo</b-dropdown-item>
             </b-dropdown>
             <b-dropdown variant="outline-success" right size="sm" no-caret  :title="$t('actions.execute')">
                 <template #button-content>
                     <font-awesome-icon icon="fa fa-play" />
                 </template>
-                <b-dropdown-item href="#" @click="emit('on-execute', task.id, true)">Até esta célula (usando dados do cache)</b-dropdown-item>
-                <b-dropdown-item href="#" @click="emit('on-execute', task.id, false)">Até esta célula (sem uso de dados do cache)</b-dropdown-item>
+                <b-dropdown-item @click="emit('on-execute', task.id, true)">Até esta célula (usando dados do cache)</b-dropdown-item>
+                <b-dropdown-item @click="emit('on-execute', task.id, false)">Até esta célula (sem uso de dados do cache)</b-dropdown-item>
             </b-dropdown>
             <button class="btn btn-sm btn-outline-secondary" title="Fechar" @click="emit('on-toggle', task.id)">
                 <font-awesome-icon :icon="opened ? 'fa fa-compress' : 'fa fa-expand'" />

@@ -1,4 +1,4 @@
-import Explorer from '../../views/data-explorer/Explorer.vue';
+import Explorer from '@/views/data-explorer/DataExplorerIndex.vue';
 export default {
     title: 'DataExplorer/Explorer'
 };

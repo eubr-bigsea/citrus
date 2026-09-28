@@ -1,6 +1,6 @@
 // Common operations need by more than one view. Related to loading data source
 import axios from 'axios';
-import { debounce } from "../../util.js";
+import { debounce, pad } from "../../util.js";
 
 const limoneroUrl = import.meta.env.VITE_LIMONERO_URL;
 export default {
@@ -11,7 +11,7 @@ export default {
         };
     },
     methods: {
-        pad: (num, places, ch) => String(num).padStart(places, ch),
+        pad,
         loadDataSourceList: debounce(function (search, loading) {
             if (search) {
                 this.asyncLoadDataSourceList(search, loading);
@@ -19,7 +19,6 @@ export default {
         }, 800),
         async retrieveAttributes() {
             if (this.selectedDataSource) {
-                this.$Progress.start();
                 /*
                 const params = {
                     fields: 'id,name,attributes'
@@ -31,8 +30,6 @@ export default {
                     this.attributes = dataSourceList.data.attributes.map(attr => attr.name).sort();
                 } catch (e) {
                     this.error(e);
-                } finally {
-                    this.$Progress.finish();
                 }
             } else {
                 this.selectedAttribute = null;
@@ -40,7 +37,6 @@ export default {
             }
         },
         async asyncLoadDataSourceList(search, loading) {
-            this.$Progress.start();
             const params = {
                 sort: 'name', size: 20, name: search,
                 enabled: true, simple: true, fields: 'id,name'
@@ -52,9 +48,8 @@ export default {
             } catch (e) {
                 this.error(e);
             } finally {
-                this.$Progress.finish();
                 loading(false);
             }
         }
     }
-}
+};

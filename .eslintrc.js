@@ -2,20 +2,15 @@ module.exports = {
     env: {
         es2021: true,
     },
-    extends: [
-        // add more generic rulesets here, such as:
-        // 'eslint:recommended',
-        'plugin:vue/vue3-recommended',
-        // 'plugin:vue/recommended' // Use this if you are using Vue.js 2.x.
-    ],
+    extends: ["plugin:vue/vue3-recommended", "plugin:storybook/recommended"],
     rules: {
         // override/add rules settings here, such as:
         // 'vue/no-unused-vars': 'error'
         //"no-trailing-spaces": "error",
         "semi": ["error",],
         "indent": ["error", 4],
+
         "vue/mustache-interpolation-spacing": ["error", "never"],
-        "import/extensions": ["error", "ignorePackages", { "vue": "always" }],
         "vue/no-mutating-props": "warn",
         "vue/no-unused-vars": "warn",
         "vue/valid-v-model": "warn",
@@ -24,7 +19,7 @@ module.exports = {
         "vue/require-explicit-emits": "warn",
         "vue/no-deprecated-slot-attribute": "warn",
         "vue/no-v-html": "off",
-        "vue/no-deprecated-filter": "off",
+        "vue/no-deprecated-filter": "warn",
         "vue/no-v-for-template-key-on-child": "off",
 
         "vue/html-indent": ["error", 4, /*{
@@ -69,5 +64,4 @@ module.exports = {
             }
         }]
     },
-    plugins: ["import"],
 };

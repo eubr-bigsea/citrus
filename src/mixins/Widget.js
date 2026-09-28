@@ -35,12 +35,19 @@ export default {
         value: {
             default: '',
         },
+        modelValue: {
+            default: ''
+        },
+        label: {
+            default: ''
+        }
     },
     methods: {
         triggerUpdateEvent(message, field, value, labelValue) {
-            this.$root.$emit(message, field, value, labelValue);
+            //this.$root.$emit(message, field, value, labelValue);
             this.$emit(message, field, value, labelValue);
             this.$emit('update', field, value, labelValue);
+            this.$emit('update:modelValue', value);
         }
     },
-}
+};

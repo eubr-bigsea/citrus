@@ -4,29 +4,30 @@ export default {
             this.$snotify.confirm(
                 question, title,
                 {
+                    callback,
                     position: 'centerTop',
                     xbuttons: {
                         text: 'Yes', action: () => callback()
                     },
                     buttons: [
-                        { text: this.$t('common.yes'), action: (toast) => { callback(); this.$snotify.remove(toast.id) }, },
+                        { text: this.$t('common.yes'), action: (toast) => { callback(); this.$snotify.remove(toast.id); }, },
                         { text: this.$t('common.no'), action: (toast) => { console.log('Clicked: No'); this.$snotify.remove(toast.id); }, bold: true },
                     ],
                     closeOnClick: true
                 }
-            )
+            );
         },
         success(msg, timeout, bodyMaxLength) {
             this.$snotify.success(
                 msg,
                 this.$t('titles.success'),
-                { timeout: timeout || 2000, bodyMaxLength: bodyMaxLength || 150 }
+                { timeout: timeout || 5000, bodyMaxLength: bodyMaxLength || 150 }
             );
         },
         info(msg, timeout, bodyMaxLength) {
             this.$snotify.info(
                 msg,
-                this.$tc('titles.info', 2),
+                this.$t('titles.info', 2),
                 { timeout: timeout || 2000, bodyMaxLength: bodyMaxLength || 150 }
             );
         },
@@ -96,4 +97,4 @@ export default {
             }
         }
     }
-}
+};

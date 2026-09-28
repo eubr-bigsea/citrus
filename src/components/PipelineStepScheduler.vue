@@ -72,7 +72,7 @@
                     </p>
                     <select class="form-control form-control-sm" v-model="schedulerData.startDay">
                         <option v-for="i in 31" :value="i" :key="i">{{ i }}</option>
-                        <option value="last">Último</option>
+                        <option value="last">{{$t('pipeline.edit.scheduler.lastDayOfMonth')}}</option>
                     </select>
                     <!--
                     <input id="iniciar-data" v-model="schedulerData.startDate" class="editPage-input" type="date"
@@ -161,137 +161,15 @@
                         </b-form-checkbox>
                     </div>
                 </div>
-                <!--
-                <b-form-group>
-                    <p class="font-weight-bold mb-2">
-                        {{$t('pipeline.edit.scheduler.selectDays')}}:
-                    </p>
-                    <b-form-checkbox v-model="schedulerData.selectAllDays" class="mb-2" @change="toggleAllDays">
-                        <span data-test="select-all-days">
-                            {{$t('pipeline.edit.scheduler.selectAll')}}
-                        </span>
-                    </b-form-checkbox>
-                    <div class="editPage-chackbox-div meses">
-                        <div>
-                            <b-form-checkbox v-model="schedulerData.selectedDays" value="1">
-                                1
-                            </b-form-checkbox>
-                            <b-form-checkbox v-model="schedulerData.selectedDays" value="2">
-                                2
-                            </b-form-checkbox>
-                            <b-form-checkbox v-model="schedulerData.selectedDays" value="3">
-                                3
-                            </b-form-checkbox>
-                            <b-form-checkbox v-model="schedulerData.selectedDays" value="4">
-                                4
-                            </b-form-checkbox>
-                            <b-form-checkbox v-model="schedulerData.selectedDays" value="5">
-                                5
-                            </b-form-checkbox>
-                            <b-form-checkbox v-model="schedulerData.selectedDays" value="6">
-                                6
-                            </b-form-checkbox>
-                        </div>
-                        <div>
-                            <b-form-checkbox v-model="schedulerData.selectedDays" value="7">
-                                7
-                            </b-form-checkbox>
-                            <b-form-checkbox v-model="schedulerData.selectedDays" value="8">
-                                8
-                            </b-form-checkbox>
-                            <b-form-checkbox v-model="schedulerData.selectedDays" value="9">
-                                9
-                            </b-form-checkbox>
-                            <b-form-checkbox v-model="schedulerData.selectedDays" value="10">
-                                10
-                            </b-form-checkbox>
-                            <b-form-checkbox v-model="schedulerData.selectedDays" value="11">
-                                11
-                            </b-form-checkbox>
-                            <b-form-checkbox v-model="schedulerData.selectedDays" value="12">
-                                12
-                            </b-form-checkbox>
-                        </div>
-                        <div>
-                            <b-form-checkbox v-model="schedulerData.selectedDays" value="13">
-                                13
-                            </b-form-checkbox>
-                            <b-form-checkbox v-model="schedulerData.selectedDays" value="14">
-                                14
-                            </b-form-checkbox>
-                            <b-form-checkbox v-model="schedulerData.selectedDays" value="15">
-                                15
-                            </b-form-checkbox>
-                            <b-form-checkbox v-model="schedulerData.selectedDays" value="16">
-                                16
-                            </b-form-checkbox>
-                            <b-form-checkbox v-model="schedulerData.selectedDays" value="17">
-                                17
-                            </b-form-checkbox>
-                            <b-form-checkbox v-model="schedulerData.selectedDays" value="18">
-                                18
-                            </b-form-checkbox>
-                        </div>
-                        <div>
-                            <b-form-checkbox v-model="schedulerData.selectedDays" value="19">
-                                19
-                            </b-form-checkbox>
-                            <b-form-checkbox v-model="schedulerData.selectedDays" value="20">
-                                20
-                            </b-form-checkbox>
-                            <b-form-checkbox v-model="schedulerData.selectedDays" value="21">
-                                21
-                            </b-form-checkbox>
-                            <b-form-checkbox v-model="schedulerData.selectedDays" value="22">
-                                22
-                            </b-form-checkbox>
-                            <b-form-checkbox v-model="schedulerData.selectedDays" value="23">
-                                23
-                            </b-form-checkbox>
-                            <b-form-checkbox v-model="schedulerData.selectedDays" value="24">
-                                24
-                            </b-form-checkbox>
-                        </div>
-                        <div>
-                            <b-form-checkbox v-model="schedulerData.selectedDays" value="25">
-                                25
-                            </b-form-checkbox>
-                            <b-form-checkbox v-model="schedulerData.selectedDays" value="26">
-                                26
-                            </b-form-checkbox>
-                            <b-form-checkbox v-model="schedulerData.selectedDays" value="27">
-                                27
-                            </b-form-checkbox>
-                            <b-form-checkbox v-model="schedulerData.selectedDays" value="28">
-                                28
-                            </b-form-checkbox>
-                            <b-form-checkbox v-model="schedulerData.selectedDays" value="29">
-                                29
-                            </b-form-checkbox>
-                            <b-form-checkbox v-model="schedulerData.selectedDays" value="30">
-                                30
-                            </b-form-checkbox>
-                        </div>
-                        <div>
-                            <b-form-checkbox v-model="schedulerData.selectedDays" value="31">
-                                31
-                            </b-form-checkbox>
-                            <b-form-checkbox v-model="schedulerData.selectedDays" value="ultimo">
-                                Último
-                            </b-form-checkbox>
-                        </div>
-                    </div>
-                </b-form-group>
-                -->
             </div>
         </div>
     </div>
 </template>
 
 <script setup>
-import { reactive, computed, watch, toRefs } from 'vue';
+import { reactive, computed, watch, toRefs, nextTick } from 'vue';
 import { ref, onMounted } from 'vue';
-import { useI18n } from 'vue-i18n-bridge';
+import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
 
@@ -301,7 +179,7 @@ const props = defineProps({
     pipelineId: { type: Number, default: 0 },
 });
 
-const emit = defineEmits(['send-scheduler-changes']);
+const emit = defineEmits(['update-step']);
 
 const stepCopy = ref({});
 const schedulerData = reactive({
@@ -315,7 +193,6 @@ const schedulerData = reactive({
     selectedMonths: [],
     selectAllMonths: false,
     selectedDays: [],
-    selectAllDays: false,
     executeImmediately: false,
 });
 
@@ -342,9 +219,12 @@ const minDate = computed(() => {
     return currentDate.toISOString().split('T')[0];
 });
 
+let loadingStep = false;
+
 watch(
     () => props.selectedStep,
     (newStep) => {
+        loadingStep = true;
         if (newStep.scheduling !== undefined) {
             loadStepInfo();
         } else {
@@ -352,6 +232,7 @@ watch(
             resetSelect();
         }
         stepCopy.value = JSON.parse(JSON.stringify(newStep));
+        nextTick(() => { loadingStep = false; });
     },
     { immediate: true }
 );
@@ -359,6 +240,7 @@ watch(
 watch(
     schedulerData,
     () => {
+        if (loadingStep) return;
         saveSchedulerChanges();
     },
     { deep: true }
@@ -369,14 +251,6 @@ function toggleAllMonths() {
         schedulerData.selectedMonths = Array.from({ length: 12 }, (_, i) => (i + 1).toString());
     } else {
         schedulerData.selectedMonths = [];
-    }
-}
-
-function toggleAllDays() {
-    if (schedulerData.selectAllDays) {
-        schedulerData.selectedDays = Array.from({ length: 31 }, (_, i) => (i + 1).toString());
-    } else {
-        schedulerData.selectedDays = [];
     }
 }
 
@@ -392,6 +266,9 @@ function loadStepInfo() {
     schedulerData.executeImmediately = scheduling.stepSchedule.executeImmediately;
     schedulerData.startDay = scheduling.stepSchedule.startDay;
     schedulerData.startTime = scheduling.stepSchedule.startTime;
+    schedulerData.startDate = scheduling.stepSchedule.startDateTime
+        ? scheduling.stepSchedule.startDateTime.split('T')[0]
+        : null;
 }
 
 function resetSelect() {
@@ -406,7 +283,6 @@ function resetSelect() {
         selectedMonths: [],
         selectAllMonths: false,
         selectedDays: [],
-        selectAllDays: false,
         executeImmediately: false,
     });
 }
@@ -434,7 +310,7 @@ function saveSchedulerChanges() {
 
     stepCopy.value.scheduling = JSON.stringify(data);
 
-    emit('send-scheduler-changes', stepCopy.value, props.selectedStep);
+    emit('update-step', stepCopy.value, props.selectedStep);
 }
 
 onMounted(() => {

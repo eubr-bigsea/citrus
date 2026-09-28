@@ -4,13 +4,13 @@
             <div class="col">
                 <div>
                     <div class="d-flex justify-content-between align-items-center">
-                        <h1>{{$t('actions.create', {type: $tc('titles.workflow', 1).toLowerCase()})}}</h1>
+                        <h1>{{$t('actions.create', {type: $t('titles.workflow', 1).toLowerCase()})}}</h1>
                     </div>
                     <hr>
                     <b-card>
                         <div class="row">
                             <div class="col-md-4">
-                                <label>{{$tc('common.name')}}:</label>
+                                <label>{{$t('common.name')}}:</label>
                                 <input v-model="name" v-focus class="form-control mb-1">
                             </div>
                             <div class="col-md-12">
@@ -20,8 +20,8 @@
                                             <b-form-radio-group id="radios2" v-model="selectedPlatform" name="platform"
                                                                 @change="selectOptions(false)">
                                                 <table class="table table-striped">
-                                                    <div v-for="platform in platforms" :key="platform.id"
-                                                         style="display: contents">
+                                                    <tbody>
+                                                    <template v-for="platform in platforms" :key="platform.id">
                                                         <tr class="d-flex">
                                                             <td class="col-3">
                                                                 <b-form-radio v-if="platform.subsets && platform.subsets.length == 0 || !(hasAnyPermission(['APP_EDIT']) || isAdmin)"
@@ -43,7 +43,7 @@
                                                                 <td class="col-12">
                                                                     <b-form-radio-group id="radios2"
                                                                                         v-model="selectedSubset" name="subset"
-                                                                                        class="pl-4"
+                                                                                        class="ps-4"
                                                                                         @change="selectOptions(true, platform.id)">
                                                                         <b-form-radio v-model="selectedSubset"
                                                                                       :value="subset.id" name="subset">
@@ -53,7 +53,8 @@
                                                                 </td>
                                                             </tr>
                                                         </template>
-                                                    </div>
+                                                    </template>
+                                                    </tbody>
                                                 </table>
                                             </b-form-radio-group>
                                         </div>
@@ -61,17 +62,20 @@
                                     <b-tab :title="$t('workflow.fromTemplate')">
                                         <div class="col-md-12 mt-2">
                                             <table v-if="templates && templates.length" class="table">
+                                                <thead>
                                                 <tr class="d-flex">
                                                     <th class="col-3">
-                                                        {{$tc('common.name')}}
+                                                        {{$t('common.name')}}
                                                     </th>
                                                     <th class="col-6">
-                                                        {{$tc('common.description')}}
+                                                        {{$t('common.description')}}
                                                     </th>
                                                     <th class="col-3">
-                                                        {{$tc('titles.platform')}}
+                                                        {{$t('titles.platform')}}
                                                     </th>
                                                 </tr>
+                                                </thead>
+                                                <tbody>
                                                 <tr v-for="template in templates" :key="template.id" class="d-flex">
                                                     <td class="col-3">
                                                         <b-form-radio v-model="selectedTemplate" :value="template.id"
@@ -86,6 +90,7 @@
                                                         {{template.platform ? template.platform.name: ''}}
                                                     </td>
                                                 </tr>
+                                                </tbody>
                                             </table>
                                             <div v-else>
                                                 <div class="alert alert-info">
@@ -97,7 +102,7 @@
                                 </b-tabs>
                             </div>
                             <div class="col-md-12 mt-3 border-top pt-1">
-                                <button class="btn float-right" :class="{'btn-success': true }" :disabled="!canCreate"
+                                <button class="btn float-end" :class="{'btn-success': true }" :disabled="!canCreate"
                                         @click="choose($event)">
                                     {{$t('actions.confirm')}}
                                 </button>

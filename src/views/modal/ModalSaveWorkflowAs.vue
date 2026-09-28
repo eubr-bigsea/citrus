@@ -26,14 +26,14 @@
                 -->
             </div>
         </b-form-radio-group>
-        <template #modal-footer>
-            <b-btn variant="secondary_sm" size="sm" class="btn-outline-secondary float-right" @click="close">
+        <template #footer>
+            <b-button variant="secondary_sm" size="sm" class="btn-outline-secondary float-end" @click="close">
                 {{$t('actions.cancel')}}
-            </b-btn>
-            <b-btn variant="primary" class="float-right mr-1" size="sm" :disabled="(newName === '')"
-                   @click="okClicked">
+            </b-button>
+            <b-button variant="primary" class="float-end me-1" size="sm" :disabled="(newName === '')"
+                      @click="okClicked">
                 {{$t('actions.save')}}
-            </b-btn>
+            </b-button>
         </template>
     </b-modal>
 </template>
@@ -41,11 +41,12 @@
 import Notifier from '../../mixins/Notifier.js';
 export default {
     mixins: [Notifier],
+    emits: ['onsave-workflow-as'],
     data() {
         return {
             newName: '',
             saveOption: 'new',
-        }
+        };
     },
     methods: {
         close() {
@@ -56,7 +57,7 @@ export default {
                 this.$emit('onsave-workflow-as', this.saveOption, this.newName);
                 this.$refs.saveAsModal.hide();
             } else {
-                this.warning(this.$tc('titles.validationErrors', 2));
+                this.warning(this.$t('titles.validationErrors', 2));
             }
         },
         show(newName) {
@@ -64,5 +65,5 @@ export default {
             this.$refs.saveAsModal.show();
         }
     }
-}
+};
 </script>

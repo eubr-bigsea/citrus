@@ -1,5 +1,5 @@
-import Step from '../../views/data-explorer/Step.vue';
-import { Task } from '../../views/data-explorer/entities.js';
+import Step from '@/views/data-explorer/DataExplorerStep.vue';
+import { Task } from '@/views/data-explorer/entities.js';
 export default {
     title: 'DataExplorer/Step'
 };

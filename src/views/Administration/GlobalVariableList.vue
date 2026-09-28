@@ -5,7 +5,7 @@
                 <div>
                     <div class="d-flex justify-content-between align-items-center">
                         <h1>Variáveis Globais</h1>
-                        <router-link :to="{ name: 'sourceCodeAdd' }" class="btn btn-lemonade-primary btn-success">
+                        <router-link :to="{ name: 'globalVariableAdd' }" class="btn btn-lemonade-primary btn-success">
                             <font-awesome-icon icon="plus" /> {{ $t('actions.add') }}
                         </router-link>
                     </div>
@@ -17,12 +17,12 @@
                                     <v-server-table :columns="options.columns" :options="options.options"
                                         name="codeList" ref="codeList">
                                         <template #id="props">
-                                            <router-link :to="{ name: 'sourceCodeEdit', params: { id: props.row.id } }">
+                                            <router-link :to="{ name: 'globalVariableEdit', params: { id: props.row.id } }">
                                                 {{ props.row.id }}
                                             </router-link>
                                         </template>
                                         <template #name="props">
-                                            <router-link :to="{ name: 'sourceCodeEdit', params: { id: props.row.id } }">
+                                            <router-link :to="{ name: 'globalVariableEdit', params: { id: props.row.id } }">
                                                 {{ props.row.name }}
                                             </router-link>
                                         </template>
@@ -49,7 +49,7 @@
 <script setup>
 import axios from 'axios';
 import { ref } from 'vue'
-import { useI18n } from 'vue-i18n-bridge';
+import { useI18n } from 'vue-i18n';
 import DataTableBuilder from '../../data-table-builder.js';
 import useNotifier from '@/composables/useNotifier.js';
 import { getCurrentInstance } from 'vue';

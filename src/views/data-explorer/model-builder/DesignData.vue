@@ -102,6 +102,7 @@
 </template>
 <script>
 import vSelect from 'vue-select';
+import { pad } from '@/util.js';
 export default {
     components: { 'vue-select': vSelect, },
     props: {
@@ -117,20 +118,20 @@ export default {
             labelAttribute: null,
             editableLabel: null,
             dataSource_: null,
-        }
+        };
     },
     mounted() {
         this.editableLabel = this.label;
         this.dataSource_ = this.dataSource;
     },
     methods: {
-        pad: (num, places, ch) => String(num).padStart(places, ch),
+        pad,
         searchDataSource(search, loading) {
-            this.$emit('search-data-source', search, loading)
+            this.$emit('search-data-source', search, loading);
         },
         retrieveAttributes(ds) {
             this.$emit('retrieve-attributes', ds);
         }
     }
-}
+};
 </script>

@@ -2,12 +2,15 @@
     <b-modal ref="modal" size="lg" :title="$t('common.history')" ok-disabled>
         <div class="historyArea">
             <table class="table table-sm table-striped text-center">
+                <thead>
                 <tr>
-                    <th>{{$tc('common.version')}}</th>
-                    <th>{{$tc('common.date')}}</th>
-                    <th>{{$tc('common.author')}}</th>
-                    <th>{{$tc('common.action')}}</th>
+                    <th>{{$t('common.version')}}</th>
+                    <th>{{$t('common.date')}}</th>
+                    <th>{{$t('common.author')}}</th>
+                    <th>{{$t('common.action')}}</th>
                 </tr>
+                </thead>
+                <tbody>
                 <tr v-for="h in history" :key="h.id">
                     <td>{{h.version}}</td>
                     <td>{{h.date}}</td>
@@ -18,13 +21,16 @@
                         </button>
                     </td>
                 </tr>
+                </tbody>
             </table>
         </div>
-        <div slot="modal-footer" class="w-100">
-            <b-btn variant="secondary_sm" class="float-right btn-outline-secondary" @click="close">
-                {{$t('actions.cancel')}}
-            </b-btn>
-        </div>
+        <template #footer>
+            <div class="w-100">
+                <b-button variant="secondary_sm" class="float-end btn-outline-secondary" @click="close">
+                    {{$t('actions.cancel')}}
+                </b-button>
+            </div>
+        </template>
     </b-modal>
 </template>
 <script>
@@ -32,7 +38,7 @@ export default {
     props: {
         history: { type: Array, default: () => [] },
     },
-    emit: ['onrestore-workflow'],
+    emits: ['onrestore-workflow',],
     methods: {
         restore(version) {
             this.$emit('onrestore-workflow', version);
@@ -44,5 +50,5 @@ export default {
             this.$refs.modal.hide();
         }
     }
-}
+};
 </script>

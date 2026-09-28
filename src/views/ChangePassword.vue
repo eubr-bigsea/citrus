@@ -7,10 +7,10 @@
                     <div class="card-body">
                         <div class="row">
                             <div class="col-md-12">
-                                <h4 class="card-title float-left">
+                                <h4 class="card-title float-start">
                                     {{$t('titles.changePassword')}}
                                 </h4>
-                                <div class="float-right navbar-brand logo" />
+                                <div class="float-end navbar-brand logo" />
                             </div>
                         </div>
                         <div v-if="tokenOk==='PENDING'" class="row mt-2 mb-2 pt-2 border-top">

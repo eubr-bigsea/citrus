@@ -1,6 +1,41 @@
 /* Set of common methods used in diagram toolboxes */
+import { debounce } from '../util.js';
+
 export default {
+    computed: {
+        searcheableOperations() {
+            let result = {};
+            if (this.search) {
+                this.operations.filter(op => op.name != null).forEach(op => {
+                    result[op.id] = op.name
+                        .replace('ı́', 'i')
+                        .normalize('NFD')
+                        .replace(/\p{M}/gu, '')
+                        .toLowerCase();
+                });
+            }
+            return result;
+        }
+    },
     methods: {
+        getOperationFromId(id) {
+            return this.operations.find(v => v.id === parseInt(id));
+        },
+        searchOperation: debounce(function () {
+            let search = this.search
+                .normalize('NFD')
+                .replace(/\p{M}/gu, '')
+                .toLowerCase();
+            let searcheable = this.searcheableOperations;
+
+            this.filteredOperations = this.operations.filter(op => {
+                return (
+                    op.enabled &&
+                        searcheable[op.id] &&
+                        searcheable[op.id].indexOf(search) > -1
+                );
+            });
+        }, 500),
         startDrag(event) {
             const target = event.target;
             let crt = this.$refs.opDrag;
@@ -32,20 +67,27 @@ export default {
                 const lastTaskId = self.workflow.tasks[index].id;
                 elem = document.getElementById(lastTaskId);
             }
-            let rect = elem.getBoundingClientRect();
+            const diagramRect = diagram.getBoundingClientRect();
+            const elemRect = elem.getBoundingClientRect();
 
-            let offsetLeft = rect.left + 250 //Math.floor(Math.random() * 300);
-            let offsetTop = rect.top //Math.floor(Math.random() * 50);
+            // Position relative to the diagram element itself - a
+            // synthetic DragEvent's offsetX/offsetY (what drop() reads)
+            // isn't reliably derived from clientX/clientY the way a real
+            // drag's would be, so pass explicit coordinates instead.
+            const left = elemRect.left - diagramRect.left + 250; //Math.floor(Math.random() * 300);
+            const top = elemRect.top - diagramRect.top; //Math.floor(Math.random() * 50);
 
             dataTransfer.setData('id', target.dataset.id);
+            dataTransfer.setData('left', left);
+            dataTransfer.setData('top', top);
             diagram.dispatchEvent(
                 new DragEvent('drop', {
                     dataTransfer: dataTransfer,
-                    clientX: offsetLeft,
-                    clientY: offsetTop
+                    clientX: elemRect.left + 250,
+                    clientY: elemRect.top
                 })
             );
             return false;
         }
     },
-}
+};

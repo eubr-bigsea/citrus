@@ -3,7 +3,7 @@
     <main role="main">
         <div class="row header">
             <div class="title col-md">
-                <h1>{{ $tc('titles.dataSource', 1) }} {{ dataSource?.name }}</h1>
+                <h1>{{$t('titles.dataSource', 1)}} {{dataSource?.name}}</h1>
             </div>
         </div>
         <div class="row">
@@ -14,7 +14,7 @@
                     </div>
                     <div class="col-md-10">
                         <div class="border p-4">
-                            <h4>{{ $t('titles.storage') }}</h4>
+                            <h4>{{$t('titles.storage')}}</h4>
                             <div v-if="dataSource && dataSource.format === 'CSV'">
                                 <div>
                                     <div class="alert alert-warning">
@@ -30,8 +30,10 @@
                                         suporta a conversão para o formato <a href="https://parquet.apache.org/"
                                             target="_blank">Parquet</a>.
                                     </p>
-                                    <button @click="convert()" class="btn btn-sm btn-success">Converter para
-                                        Parquet</button>
+                                    <button class="btn btn-sm btn-success" @click="convert()">
+Converter para
+                                        Parquet
+</button>
                                 </div>
                             </div>
                             <div v-if="dataSource && dataSource.format === 'PARQUET'">

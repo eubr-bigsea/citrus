@@ -6,7 +6,7 @@
         <div class="row">
             <div class="col-md-12">
                 <b-list-group>
-                    <b-list-group-item class="p-0 pl-2">
+                    <b-list-group-item class="p-0 ps-2">
                         <div class="d-flex w-100 justify-content-between p-1">
                             <b-form-checkbox switch>
                                 Combinação linear par a par
@@ -50,5 +50,5 @@
 <script>
 export default {
 
-}
+};
 </script>

@@ -11,7 +11,7 @@ export default {
     data: function() {
         return {
             html: this.visualizationData.html
-        }
+        };
     }
 };
 </script>

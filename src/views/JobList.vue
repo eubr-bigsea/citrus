@@ -1,7 +1,7 @@
 <template>
     <main role="main">
         <div class="d-flex justify-content-between align-items-center pb-2 mb-2 border-bottom">
-            <h1>{{$tc('titles.jobs', 2)}}</h1>
+            <h1>{{$t('titles.jobs', 2)}}</h1>
         </div>
         <div class="card">
             <div class="card-body">
@@ -9,22 +9,21 @@
                                 name="jobList">
                     <template #id="props">
                         <router-link v-if="props.row.type !== 'MODEL_BUILDER'"
-                                     :to="{name: 'jobDetail', params: {platform: props.row.workflow.platform.id, id: props.row.id}}">
+                                     :to="{ name: 'jobDetail', params: { platform: props.row.workflow.platform.id, id: props.row.id } }">
                             {{props.row.id}}
                         </router-link>
                         <span v-else>{{props.row.id}}</span>
                     </template>
                     <template #name="props">
                         <router-link v-if="props.row.type !== 'MODEL_BUILDER'"
-                                     :to="{name: 'jobDetail', params: {platform: props.row.workflow.platform.id, id: props.row.id}}">
+                                     :to="{ name: 'jobDetail', params: { platform: props.row.workflow.platform.id, id: props.row.id } }">
                             {{props.row.name}}
                         </router-link>
                         <span v-else>{{props.row.name}}</span>
                     </template>
                     <template #actions="props">
-                        <button v-if="props.row.status === 'RUNNING' || props.row.status === 'PENDING' || props.row.status === 'WAITING' "
-                                class="btn btn-sm btn-outline-danger mr-1" :title="$t('actions.stop')"
-                                @click="stop(props.row)">
+                        <button v-if="props.row.status === 'RUNNING' || props.row.status === 'PENDING' || props.row.status === 'WAITING'"
+                                class="btn btn-sm btn-outline-danger me-1" :title="$t('actions.stop')" @click="stop(props.row)">
                             <font-awesome-icon icon="stop" />
                         </button>
 
@@ -37,16 +36,18 @@
                             {{props.row.status}}
                         </div>
                     </template>
+                    <template #user_name="props">
+                        {{props.row.user.name}}
+                    </template>
                     <template #created="props">
-                        {{props.row.created |
-                            formatJsonDate}}
+                        {{$filters.formatJsonDate(props.row.created)}}
                     </template>
                     <template #workflow="props">
                         <router-link v-if="props.row.type !== 'MODEL_BUILDER'"
-                                     :to="{name: 'editWorkflow', params: {'id': props.row.workflow.id, platform: props.row.workflow.platform.id}}">
+                                     :to="{ name: 'editWorkflow', params: { 'id': props.row.workflow.id, platform: props.row.workflow.platform.id } }">
                             {{props.row.workflow.id}} - {{props.row.workflow.name}}
                         </router-link>
-                        <router-link v-else :to="{name: 'model-design', params: {'id': props.row.workflow.id}}">
+                        <router-link v-else :to="{ name: 'model-design', params: { 'id': props.row.workflow.id } }">
                             {{props.row.workflow.id}} - {{props.row.workflow.name}}
                         </router-link>
                     </template>
@@ -72,13 +73,14 @@ export default {
                 'name',
                 'workflow',
                 'created',
-                'user.name',
+                'user_name',
                 'actions'
             ],
             tableData: [],
             showSideBar: false,
             options: {
-                skin: 'table-sm table table-hover',
+                perPageValues: [5, 10, 20],
+                skin: 'table table-hover',
                 columnsClasses: {
                     name: 'th-20',
                     description: 'th-20',
@@ -88,23 +90,24 @@ export default {
                 headings: {
                     id: 'ID',
                     created: this.$t('common.created'),
-                    actions: this.$tc('common.action', 2),
-                    name: this.$tc('common.name'),
-                    'user.name': this.$t('common.user.name')
+                    actions: this.$t('common.action', 2),
+                    name: this.$t('common.name'),
+                    'user_name': this.$t('common.user.name'),
+                    status: this.$t('common.status'),
                 },
                 sortable: ['name', 'id', 'created'],
                 sortIcon: {
-                    base: 'fa fas',
-                    is: 'fa-sort ml-10',
-                    up: 'fa-sort-amount-up',
-                    down: 'fa-sort-amount-down'
+                    base: 'sort-base',
+                    is: 'sort-is ms-10',
+                    up: 'sort-up',
+                    down: 'sort-down'
                 },
                 preserveState: true,
                 saveState: true,
                 filterable: ['name', 'album'],
                 requestFunction: this.load,
                 texts: {
-                    filter: this.$tc('common.filter'),
+                    filter: this.$t('common.filter'),
                     count: this.$t('common.pagerShowing'),
                     limit: this.$t('common.limit'),
                     noResults: this.$t('common.noData'),
@@ -121,13 +124,12 @@ export default {
             data.asc = data.ascending === 1 ? 'true' : 'false';
             data.size = data.limit;
             data.name = data.query;
-            this.$Progress.start();
+            data.fields = 'id,status,name,workflow.id,created,user';
             return axios
                 .get(`${standUrl}/jobs`, {
                     params: data
                 })
                 .then(resp => {
-                    this.$Progress.finish();
                     return { data: resp.data.data, count: resp.data.pagination.total };
                 })
                 .catch(
@@ -141,21 +143,18 @@ export default {
                 this.$t('actions.stop'),
                 this.$t('messages.doYouWantToStop'),
                 () => {
-                    this.$Progress.start();
                     axios
                         .post(`${standUrl}/jobs/${job.id}/stop`, {})
                         .then(() => {
                             this.success(
                                 this.$t('messages.successStop', {
-                                    what: this.$tc('titles.job', 1)
+                                    what: this.$t('titles.job', 1)
                                 })
                             );
                             this.$refs.jobList.getData();
-                            this.$Progress.finish();
                         })
                         .catch(
                             function (e) {
-                                this.$Progress.finish();
                                 this.dispatch('error', e);
                             }.bind(this)
                         );
@@ -167,21 +166,18 @@ export default {
                 this.$t('actions.delete'),
                 this.$t('messages.doYouWantToDelete'),
                 () => {
-                    this.$Progress.start();
                     axios
                         .delete(`${standUrl}/jobs/${job.id}`, {})
                         .then(() => {
                             this.success(
                                 this.$t('messages.successDeletion', {
-                                    what: this.$tc('titles.job', 1)
+                                    what: this.$t('titles.job', 1)
                                 })
                             );
                             this.$refs.jobList.getData();
-                            this.$Progress.finish();
                         })
                         .catch(
                             function (e) {
-                                this.$Progress.finish();
                                 this.dispatch('error', e);
                             }.bind(this)
                         );

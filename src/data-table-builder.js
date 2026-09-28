@@ -3,17 +3,12 @@ export default class DataTableBuilder {
         // Initialize with default options
         this.options = {
             debounce: 800,
-            skin: 'table-sm table table-hover',
+            skin: 'table table-hover',
             columnClasses: { actions: 'th-10' },
             preserveState: true,
             saveState: true,
             filterByColumn: false,
             sortIcon: {
-                /*
-                base: 'fa fas',
-                is: 'fa-sort ml-10',
-                up: 'fa-sort-amount-up',
-                down: 'fa-sort-amount-down'*/
                 base: 'sort-base',
                 is: 'sort-is ml-10',
                 up: 'sort-up',
@@ -42,7 +37,7 @@ export default class DataTableBuilder {
         return this;
     }
     filterable(...names) {
-        this.options.filterable = names;
+        this.options.filterable = names.length ? names : false;
         return this;
     }
     requestFunction(fn) {
@@ -51,6 +46,26 @@ export default class DataTableBuilder {
     }
     headings(h) {
         this.options.headings = h;
+        return this;
+    }
+    columnClasses(c) {
+        this.options.columnsClasses = c;
+        return this;
+    }
+    skin(s) {
+        this.options.skin = s;
+        return this;
+    }
+    saveState(v) {
+        this.options.saveState = v;
+        return this;
+    }
+    preserveState(v) {
+        this.options.preserveState = v;
+        return this;
+    }
+    perPageValues(v) {
+        this.options.perPageValues = v;
         return this;
     }
 }

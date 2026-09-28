@@ -15,7 +15,7 @@
                             </font-awesome-layers>
                         </div>
                         <div class="col-md-9 text-center">
-                            <h6>{{ $t('dataExplorer.task.classification') }}</h6>
+                            <h6>{{$t('dataExplorer.task.classification')}}</h6>
                             <small>
                                 Usar dados passados para predizer novas ocorrências.
                                 Detecção de fraudes, retenção de clientes, chance de venda, etc.
@@ -32,7 +32,7 @@
                             </font-awesome-layers>
                         </div>
                         <div class="col-md-9 text-center">
-                            <h6>{{ $t('dataExplorer.task.regression') }}</h6>
+                            <h6>{{$t('dataExplorer.task.regression')}}</h6>
                             <small>
                                 Buscar padrões escondidos nos dados e revelar grupos de itens que compartilham
                                 alguma semelhança no corportamento,
@@ -50,7 +50,7 @@
                             </font-awesome-layers>
                         </div>
                         <div class="col-md-9 text-center">
-                            <h6>{{ $t('dataExplorer.task.clustering') }}</h6>
+                            <h6>{{$t('dataExplorer.task.clustering')}}</h6>
                             <small>
                                 Buscar padrões escondidos nos dados e revelar grupos de itens que compartilham
                                 alguma semelhança no corportamento,
@@ -68,7 +68,6 @@
                                 <font-awesome-icon icon="circle" class="fa-solid fa-stack-2x" />
                                 <font-awesome-icon icon="bug" inverse />
                             </font-awesome-layers>
-
                         </div>
                         <div class="col-md-9 text-center">
                             <h6>Detecção de anomalias</h6>
@@ -119,8 +118,8 @@
                 </b-card>
             </div>
         </div>
-        <router-link :to="{ name: 'index-explorer' }" class="btn btn-sm btn-secondary mt-4 pl-4 pr-4">
-            {{ $t('actions.back') }}
+        <router-link :to="{ name: 'index-explorer' }" class="btn btn-sm btn-secondary mt-4 ps-4 pe-4">
+            {{$t('actions.back')}}
         </router-link>
     </main>
 </template>
@@ -168,7 +167,7 @@
                     <div class="row">
                         <div class="col-md-4 text-secondary xtext-center offset-md-4 mt-3 mb-5">
                             <label>Variável-alvo do modelo:</label>
-                            <select name="" id="" class="form-control">
+                            <select name="" id="" class="form-select">
                                 <option>fraude</option>
                             </select>
                         </div>
@@ -203,8 +202,8 @@
                 </div>
                 <div v-if="step === 3"></div>
             </b-card-text>
-            <div class="float-right">
-                <b-button v-if="step !== 1" href="#" variant="secondary" size="sm" class="mr-1" @click="previous">
+            <div class="float-end">
+                <b-button v-if="step !== 1" href="#" variant="secondary" size="sm" class="me-1" @click="previous">
                     Anterior</b-button>
                 <b-button href="#" variant="primary" size="sm" @click="next">Próximo</b-button>
             </div>
@@ -218,5 +217,5 @@ export default {
             this.$router.push({ name, params });
         }
     }
-}
+};
 </script>

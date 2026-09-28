@@ -7,16 +7,16 @@
         </div>
         <div class="row">
             <div class="col-md-12">
-                <button class="btn btn-sm btn-secondary ml-1">
+                <button class="btn btn-sm btn-secondary ms-1">
                     Adicionar SQL
                 </button>
-                <button class="btn btn-sm btn-secondary ml-1">
+                <button class="btn btn-sm btn-secondary ms-1">
                     Adicionar filtro
                 </button>
-                <button class="btn btn-sm btn-secondary ml-1">
+                <button class="btn btn-sm btn-secondary ms-1">
                     Adicionar texto
                 </button>
-                <button class="btn btn-sm btn-secondary ml-1">
+                <button class="btn btn-sm btn-secondary ms-1">
                     Adicionar visualização
                 </button>
             </div>
@@ -61,13 +61,10 @@ export default {
     },
     methods: {
         uuid() {
-            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-                var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
-                return v.toString(16);
-            });
+            return crypto.randomUUID();
         },
     }
-}
+};
 </script>
 <style scoped>
     .dashboard-grid {

@@ -3,7 +3,7 @@
         <div class="border-bottom">
             <b-nav>
                 <b-nav-item active>
-                    {{$t('titles.list', {what: $tc('titles.project', 2)})}}
+                    {{ $t('titles.list', { what: $t('titles.project', 2) }) }}
                 </b-nav-item>
                 <b-nav-item>Link</b-nav-item>
                 <b-nav-item>Another Link</b-nav-item>
@@ -14,15 +14,14 @@
         </div>
 
         <div class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom">
-            <h1>{{$tc('titles.project', 1)}}</h1>
+            <h1>{{ $t('titles.project', 1) }}</h1>
         </div>
         <div class="row">
             <div class="col-10">
                 <div class="diagram-limit">
                     <div id="query-diagram-lemonade" class="query-diagram">
-                        <template v-for="table in tables">
-                            <project-item :key="`${table.type}-${table.id}`" :item="table"
-                                          :jsplumb-instance="jsplumbInstance" @click="handleItemClick" />
+                        <template v-for="table in tables" :key="`${table.type}-${table.id}`">
+                            <project-item :item="table" :jsplumb-instance="jsplumbInstance" @click="handleItemClick" />
                         </template>
                     </div>
                 </div>
@@ -156,7 +155,7 @@ export default {
 
                 },
             ]
-        )
+        );
         const links = computed(() => {
             return [
                 ['lemonade-data-source-1', 'lemonade-workflow-1', 'queried by'],
@@ -178,9 +177,9 @@ export default {
 
                 ['lemonade-workflow-4', 'lemonade-app-1', 'defines'],
                 ['lemonade-data-source-2', 'lemonade-python-1', 'queried by'],
-            ]
+            ];
         });
-            // Layout graph
+        // Layout graph
         const g = new dagre.graphlib.Graph();
         // Set an object for the graph label
         g.setGraph({ rankdir: 'LR', edgesep: 0, ranksep: 140, nodesep: 0 });
@@ -199,7 +198,7 @@ export default {
             //this.tables.log("Node " + v + ": " + JSON.stringify(g.node(v)));
             const node = g.node(v);
             if (node) {
-                const table = node.table
+                const table = node.table;
                 table.top = node.y;
                 table.left = node.x;
             }
@@ -209,7 +208,7 @@ export default {
                 jsplumbInstance.reset();
                 jsplumbInstance = null;
             }
-        })
+        });
         onMounted(() => {
             jsplumbInstance = jsPlumb.getInstance({
                 PaintStyle: {
@@ -251,51 +250,51 @@ export default {
             }
             activeItem.value = item;
             item.addClass('active');
-        }
+        };
         return {
             activeItem,
             jsplumbInstance,
             tables, links,
             handleItemClick
-        }
+        };
     },
-}
+};
 </script>
 <style scoped>
-    #query-diagram-lemonade>>>.connectorLabel {
-        font-size: 7pt;
-        margin-top: -10px;
-        text-align: center;
-        width: 140px;
-    }
+#query-diagram-lemonade :deep(.connectorLabel) {
+    font-size: 7pt;
+    margin-top: -10px;
+    text-align: center;
+    width: 140px;
+}
 
-    .query-diagram {
-        xbackground: url('../../assets/grid1.png');
-        background-color: #fcfcfc;
-        border: 1px solid #aaa;
-        height: 2000px;
-        position: relative;
-        width: 2000px;
-    }
+.query-diagram {
+    xbackground: url('../../assets/grid1.png');
+    background-color: #fcfcfc;
+    border: 1px solid #aaa;
+    height: 2000px;
+    position: relative;
+    width: 2000px;
+}
 
-    .diagram-limit {
-        width: 100%;
-        height: 82vh;
-        overflow: auto;
-    }
+.diagram-limit {
+    width: 100%;
+    height: 82vh;
+    overflow: auto;
+}
 
-    .diagram-limit::-webkit-scrollbar {
-        height: 10px;
-        width: 10px;
-        background: #eee;
-    }
+.diagram-limit::-webkit-scrollbar {
+    height: 10px;
+    width: 10px;
+    background: #eee;
+}
 
-    .diagram-limit::-webkit-scrollbar-thumb {
-        background: #aaa;
-        -webkit-border-radius: 1ex;
-    }
+.diagram-limit::-webkit-scrollbar-thumb {
+    background: #aaa;
+    -webkit-border-radius: 1ex;
+}
 
-    .diagram-limit::-webkit-scrollbar-corner {
-        background: #000;
-    }
+.diagram-limit::-webkit-scrollbar-corner {
+    background: #000;
+}
 </style>

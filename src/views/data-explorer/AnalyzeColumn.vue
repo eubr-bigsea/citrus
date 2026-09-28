@@ -14,7 +14,7 @@
                 </b-button>
                 COLUMN_NAME (999 distinct values)
             </template>
-            <template #modal-footer>
+            <template #footer>
                 &nbsp;
             </template>
             <div>
@@ -27,15 +27,16 @@
                                 <strong class="text-uppercase">Sumário</strong>
                                 <QualityBar />
                                 <table class="table table-condensed table-sm table-borderless">
+                                    <tbody>
                                     <tr>
                                         <td>
                                             <font-awesome-icon icon="fa fa-circle"
                                                                class="quality-ok-text" /> Valid
                                         </td>
-                                        <td class="text-right">
+                                        <td class="text-end">
                                             21
                                         </td>
-                                        <td class="text-right">
+                                        <td class="text-end">
                                             10%
                                         </td>
                                     </tr>
@@ -44,10 +45,10 @@
                                             <font-awesome-icon icon="fa fa-circle"
                                                                class="quality-nok-text" /> Invalid
                                         </td>
-                                        <td class="text-right">
+                                        <td class="text-end">
                                             221
                                         </td>
-                                        <td class="text-right">
+                                        <td class="text-end">
                                             80%
                                         </td>
                                     </tr>
@@ -57,22 +58,23 @@
                                                                class="quality-missing-text" />
                                             Missing
                                         </td>
-                                        <td class="text-right">
+                                        <td class="text-end">
                                             1
                                         </td>
-                                        <td class="text-right">
+                                        <td class="text-end">
                                             1%
                                         </td>
                                     </tr>
                                     <tr>
                                         <td>Unique</td>
-                                        <td class="text-right">
+                                        <td class="text-end">
                                             21
                                         </td>
-                                        <td class="text-right">
+                                        <td class="text-end">
                                             10%
                                         </td>
                                     </tr>
+                                    </tbody>
                                 </table>
                             </div>
                             <div class="col-md-8">
@@ -80,13 +82,13 @@
                                     <thead>
                                         <tr>
                                             <th class="w-70" />
-                                            <th class="w-10 text-right">
+                                            <th class="w-10 text-end">
                                                 Count
                                             </th>
-                                            <th class="w-10 text-right">
+                                            <th class="w-10 text-end">
                                                 %
                                             </th>
-                                            <th class="w-10 text-right">
+                                            <th class="w-10 text-end">
                                                 Cumul. %
                                             </th>
                                         </tr>
@@ -100,13 +102,13 @@
                                                     &nbsp;
                                                 </div>
                                             </td>
-                                            <td class="text-right">
+                                            <td class="text-end">
                                                 232
                                             </td>
-                                            <td class="text-right">
+                                            <td class="text-end">
                                                 13%
                                             </td>
-                                            <td class="text-right">
+                                            <td class="text-end">
                                                 13%
                                             </td>
                                         </tr>
@@ -118,13 +120,13 @@
                                                     &nbsp;
                                                 </div>
                                             </td>
-                                            <td class="text-right">
+                                            <td class="text-end">
                                                 232
                                             </td>
-                                            <td class="text-right">
+                                            <td class="text-end">
                                                 13%
                                             </td>
-                                            <td class="text-right">
+                                            <td class="text-end">
                                                 13%
                                             </td>
                                         </tr>
@@ -136,13 +138,13 @@
                                                     &nbsp;
                                                 </div>
                                             </td>
-                                            <td class="text-right">
+                                            <td class="text-end">
                                                 232
                                             </td>
-                                            <td class="text-right">
+                                            <td class="text-end">
                                                 13%
                                             </td>
-                                            <td class="text-right">
+                                            <td class="text-end">
                                                 13%
                                             </td>
                                         </tr>
@@ -157,15 +159,16 @@
                                 <strong class="text-uppercase">Sumário</strong>
                                 <QualityBar />
                                 <table class="table table-condensed table-sm table-borderless">
+                                    <tbody>
                                     <tr>
                                         <td>
                                             <font-awesome-icon icon="fa fa-circle"
                                                                class="quality-ok-text" /> Valid
                                         </td>
-                                        <td class="text-right">
+                                        <td class="text-end">
                                             21
                                         </td>
-                                        <td class="text-right">
+                                        <td class="text-end">
                                             10%
                                         </td>
                                     </tr>
@@ -174,10 +177,10 @@
                                             <font-awesome-icon icon="fa fa-circle"
                                                                class="quality-nok-text" /> Invalid
                                         </td>
-                                        <td class="text-right">
+                                        <td class="text-end">
                                             221
                                         </td>
-                                        <td class="text-right">
+                                        <td class="text-end">
                                             80%
                                         </td>
                                     </tr>
@@ -187,22 +190,23 @@
                                                                class="quality-missing-text" />
                                             Missing
                                         </td>
-                                        <td class="text-right">
+                                        <td class="text-end">
                                             1
                                         </td>
-                                        <td class="text-right">
+                                        <td class="text-end">
                                             1%
                                         </td>
                                     </tr>
                                     <tr>
                                         <td>Unique</td>
-                                        <td class="text-right">
+                                        <td class="text-end">
                                             21
                                         </td>
-                                        <td class="text-right">
+                                        <td class="text-end">
                                             10%
                                         </td>
                                     </tr>
+                                    </tbody>
                                 </table>
                             </div>
                             <div class="col-md-8">
@@ -214,6 +218,7 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <table class="table table-condensed table-sm small-text">
+                                    <thead>
                                     <tr>
                                         <th class="text-uppercase">
                                             Statistics
@@ -228,149 +233,160 @@
                                             Top invalids
                                         </th>
                                     </tr>
+                                    </thead>
+                                    <tbody>
                                     <tr class="text-center">
                                         <td>
                                             <table class="table table-sm table-borderless">
+                                                <tbody>
                                                 <tr>
-                                                    <th class="text-left">
+                                                    <th class="text-start">
                                                         Min
                                                     </th>
                                                     <td>12</td>
                                                 </tr>
                                                 <tr>
-                                                    <th class="text-left">
+                                                    <th class="text-start">
                                                         Min
                                                     </th>
                                                     <td>12</td>
                                                 </tr>
                                                 <tr>
-                                                    <th class="text-left">
+                                                    <th class="text-start">
                                                         Min
                                                     </th>
                                                     <td>12</td>
                                                 </tr>
                                                 <tr>
-                                                    <th class="text-left">
+                                                    <th class="text-start">
                                                         Min
                                                     </th>
                                                     <td>12</td>
                                                 </tr>
                                                 <tr>
-                                                    <th class="text-left">
+                                                    <th class="text-start">
                                                         Min
                                                     </th>
                                                     <td>12</td>
                                                 </tr>
                                                 <tr>
-                                                    <th class="text-left">
+                                                    <th class="text-start">
                                                         Min
                                                     </th>
                                                     <td>12</td>
                                                 </tr>
                                                 <tr>
-                                                    <th class="text-left">
+                                                    <th class="text-start">
                                                         Min
                                                     </th>
                                                     <td>12</td>
                                                 </tr>
+                                                </tbody>
                                             </table>
                                         </td>
                                         <td>
                                             <table class="table table-sm table-borderless">
+                                                <tbody>
                                                 <tr>
-                                                    <td class="text-left">
+                                                    <td class="text-start">
                                                         Min
                                                     </td>
                                                     <td>12</td>
                                                     <td>12%</td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="text-left">
+                                                    <td class="text-start">
                                                         Min
                                                     </td>
                                                     <td>12</td>
                                                     <td>12%</td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="text-left">
+                                                    <td class="text-start">
                                                         Min
                                                     </td>
                                                     <td>12</td>
                                                     <td>12%</td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="text-left">
+                                                    <td class="text-start">
                                                         Min
                                                     </td>
                                                     <td>12</td>
                                                     <td>12%</td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="text-left">
+                                                    <td class="text-start">
                                                         Min
                                                     </td>
                                                     <td>12</td>
                                                     <td>12%</td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="text-left">
+                                                    <td class="text-start">
                                                         Min
                                                     </td>
                                                     <td>12</td>
                                                     <td>12%</td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="text-left">
+                                                    <td class="text-start">
                                                         Min
                                                     </td>
                                                     <td>12</td>
                                                     <td>12%</td>
                                                 </tr>
+                                                </tbody>
                                             </table>
                                         </td>
 
                                         <td>
                                             <table class="table table-sm table-borderless">
+                                                <tbody>
                                                 <tr>
-                                                    <td class="text-left">
+                                                    <td class="text-start">
                                                         Min
                                                     </td>
                                                     <td>12</td>
                                                     <td>12%</td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="text-left">
+                                                    <td class="text-start">
                                                         Min
                                                     </td>
                                                     <td>12</td>
                                                     <td>12%</td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="text-left">
+                                                    <td class="text-start">
                                                         Min
                                                     </td>
                                                     <td>12</td>
                                                     <td>12%</td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="text-left">
+                                                    <td class="text-start">
                                                         Min
                                                     </td>
                                                     <td>12</td>
                                                     <td>12%</td>
                                                 </tr>
+                                                </tbody>
                                             </table>
                                         </td>
                                         <td>
                                             <table class="table table-sm table-borderless">
+                                                <tbody>
                                                 <tr>
-                                                    <td class="text-left">
+                                                    <td class="text-start">
                                                         343434
                                                     </td>
                                                 </tr>
+                                                </tbody>
                                             </table>
                                         </td>
                                     </tr>
+                                    </tbody>
                                 </table>
                             </div>
                         </div>
@@ -418,14 +434,14 @@ export default {
                 }
             }
 
-        }
+        };
     },
     methods: {
         show() {
             this.$refs.modal.show();
         }
     },
-}
+};
 </script>
 <style>
     .analyze-modal {

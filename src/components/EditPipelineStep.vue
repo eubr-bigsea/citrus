@@ -2,125 +2,127 @@
     <div class="editPage-step-config-body">
         <div class="mt-2">
             <div>
-                <label for="nome">{{ $tc('common.name') }}:</label>
+                <label for="nome">{{$t('common.name')}}:</label>
                 <input id="nome" v-model="editedStep.name" class="form-control form-control-sm" type="text"
-                    placeholder="Nome da etapa" @input="handleInput" maxlength="50">
+                       :placeholder="$t('pipeline.template.stepName')" maxlength="50" @input="handleInput">
             </div>
 
             <div class="mt-2">
-                <label for="descricao">{{ $tc('common.description') }}:</label>
+                <label for="descricao">{{$t('common.description')}}:</label>
                 <textarea id="descricao" v-model="editedStep.description" class="form-control form-control-sm"
-                    type="text" placeholder="Descrição da etapa" @input="handleInput" maxlength="200" />
+                          type="text" :placeholder="$t('pipeline.template.stepDescription')" maxlength="200" @input="handleInput" />
             </div>
         </div>
         <hr class="mt-4 mb-3">
         <div v-if="editedStep.workflow !== undefined && showWorkflowOps < 0" class="d-flex flex-column">
-            <label class="editPage-label">Etapa associada a um fluxo de trabalho:</label>
+            <label class="editPage-label">{{$t('pipeline.edit.settings.stepLinkedToWorkflow')}}:</label>
             <button class="btn text-center btn-outline-secondary my-2" @click="redirectToWorkflow(editedStep)">
-                <font-awesome-icon icon="fa fa-flask" class="mr-1" size="lg" />
+                <font-awesome-icon icon="fa fa-flask" class="me-1" size="lg" />
                 <span class="editPage-workflow-label">
-                    {{$tc('actions.edit')}} {{ editedStep.workflow.id }} - {{ editedStep.workflow.name }}
+                    {{$t('actions.edit')}} {{editedStep.workflow.id}} - {{editedStep.workflow.name}}
                 </span>
             </button>
             <div>
-                <b-button class="w-25" @click="showWorkflowOps = 0" size="sm" variant="outline-primary">
-                    {{ $tc('actions.change') }}
+                <b-button class="w-25" size="sm" variant="outline-primary" @click="showWorkflowOps = 0">
+                    {{$t('actions.change')}}
                 </b-button>
                 <!--
-                    <b-button class="w-25 ml-2" @click="removeWorkflow(editStep)" size="sm" variant="outline-danger">
-                        {{ $tc('actions.delete') }}
+                    <b-button class="w-25 ms-2" @click="removeWorkflow(editStep)" size="sm" variant="outline-danger">
+                        {{ $t('actions.delete') }}
                     </b-button>
                     -->
             </div>
         </div>
         <div v-if="showWorkflowOps > -1">
-            <label class="editPage-label mb-2">Associar etapa a um workflow</label>
+            <label class="editPage-label mb-2">{{$t('pipeline.edit.settings.linkStepToWorkflow')}}</label>
             <div v-if="showWorkflowOps == 0" class="d-flex">
-                <b-button class="w-50 mr-2" @click="showWorkflowOps = 1" variant="outline-primary" size="sm">
-                    <font-awesome-icon icon="fa fa-flask" class="mr-2" size="xl" />
-                    Workflow existente
+                <b-button class="w-50 me-2" variant="outline-primary" size="sm" @click="showWorkflowOps = 1">
+                    <font-awesome-icon icon="fa fa-flask" class="me-2" size="xl" />
+                    {{$t('pipeline.edit.settings.existingWorkflow')}}
                 </b-button>
-                <b-button class="50 ml-2 clickable" @click="showWorkflowOps = 2" variant="outline-success" size="sm">
+                <b-button class="50 ms-2 clickable" variant="outline-success" size="sm" @click="showWorkflowOps = 2">
                     <span class="editPage-workflow-label">
-                        <font-awesome-icon icon="fa fa-plus" class="mr-2" size="xl" />
-                        Novo workflow
+                        <font-awesome-icon icon="fa fa-plus" class="me-2" size="xl" />
+                        {{$t('pipeline.edit.settings.newWorkflow')}}
                     </span>
                 </b-button>
-                <b-button v-if="editedStep.workflow" class="ml-2" variant="outline-secondary" @click="showWorkflowOps = -1" size="sm">
-                    {{ $tc('actions.cancel') }}
+                <b-button v-if="editedStep.workflow" class="ms-2" variant="outline-secondary" size="sm"
+                          @click="showWorkflowOps = -1">
+                    {{$t('actions.cancel')}}
                 </b-button>
             </div>
             <div v-if="showWorkflowOps == 1" class="mb-3">
-                <label>Escolha um fluxo existente para associar a esta etapa:</label>
+                <label>{{$t('pipeline.edit.settings.chooseExistingWorkflow')}}:</label>
                 <vue-select v-model="selectedWorkflow" :filterable="false" :options="workflowList" label="name"
-                    class="w-100" @search="loadWorkflowList" @input="handleInput">
+                            class="w-100" @search="loadWorkflowList" @input="handleInput">
                     <template #no-options="{}">
-                        <small>Digite parte do nome para pesquisar...</small>
+                        <small>{{$t('common.typeToSearch')}}</small>
                     </template>
                     <template #option="option">
                         <div class="container">
                             <div class="row align-items-center">
                                 <font-awesome-icon icon="fa fa-flask" />
                                 <div class="col-9">
-                                    {{ pad(option.id, 4, '&nbsp;') }} - {{ option.name }}
+                                    {{pad(option.id, 4, '&nbsp;')}} - {{option.name}}
                                 </div>
                                 <div class="col-2">
-                                    {{ option.type }}
+                                    {{option.type}}
                                 </div>
                             </div>
                         </div>
                     </template>
                     <template #default="option">
-                        {{ pad(option.id, 4, '&nbsp;') }} - {{ option.name }} - {{ option.type }}
+                        {{pad(option.id, 4, '&nbsp;')}} - {{option.name}} - {{option.type}}
                     </template>
                     <template #selected-option="option">
                         <div class="selected d-center">
-                            <font-awesome-icon icon="fa fa-flask" class="mr-2" />
-                            {{ pad(option.id, 4, '&nbsp;') }} - {{ option.name }} | {{ option.type }}
+                            <font-awesome-icon icon="fa fa-flask" class="me-2" />
+                            {{pad(option.id, 4, '&nbsp;')}} - {{option.name}} | {{option.type}}
                         </div>
                     </template>
                 </vue-select>
                 <div>
-                    <b-button :disabled="!selectedWorkflow" class="float-right mt-3" style="right: 15px; bottom: 0;" variant="primary" size="sm"
-                        @click="editStepWorkflow">
-                        Confirmar
+                    <b-button :disabled="!selectedWorkflow" class="float-end mt-3" style="right: 15px; bottom: 0;" variant="primary"
+                              size="sm"
+                              @click="editStepWorkflow">
+                        {{$t('actions.confirm')}}
                     </b-button>
-                    <b-button class="mt-3" @click="showWorkflowOps = -1" size="sm" variant="outline-secondary">
-                        Cancelar
+                    <b-button class="mt-3" size="sm" variant="outline-secondary" @click="showWorkflowOps = -1">
+                        {{$t('actions.cancel')}}
                     </b-button>
                 </div>
             </div>
             <div v-if="showWorkflowOps == 2" class="d-flex flex-column">
                 <b-container class="editPage-workflow-box p-3">
-                    <label class="editPage-label mb-2" for="identificador">Criação do fluxo de trabalho</label>
+                    <label class="editPage-label mb-2" for="identificador">{{$t('pipeline.edit.settings.workflowCreation')}}</label>
                     <b-row>
                         <b-col>
-                            <label class="" for="name">Nome:</label>
+                            <label class="" for="name">{{$t('common.name')}}:</label>
                             <input id="name" v-model="workflowName" v-focus type="text"
-                                class="form-control w-100 form-control-sm mb-2" maxlength="100">
+                                   class="form-control w-100 form-control-sm mb-2" maxlength="100">
                         </b-col>
-                        <input type="hidden" id="platform" value="META" />
+                        <input id="platform" type="hidden" value="META">
                         <b-col class="d-none">
-                            <label class="" for="platform">Plataforma:</label>
+                            <label class="" for="platform">{{$t('common.platform')}}:</label>
                             <input id="platform" v-focus value="META" type="text"
-                                class="form-control w-100 form-control-sm mb-2" maxlength="100" disabled>
+                                   class="form-control w-100 form-control-sm mb-2" maxlength="100" disabled>
                         </b-col>
                     </b-row>
                     <b-row>
                         <b-col cols="6">
-                            <label>Tipo:</label>
-                            <input type="text" v-model="selectedWorkflowType" value="SQL" disabled
-                                class="form-control " />
+                            <label>{{$t('common.type')}}:</label>
+                            <input v-model="selectedWorkflowType" type="text" value="SQL" disabled
+                                   class="form-control ">
                             <!-- b-form-select v-model="selectedWorkflowType" :options="workflowTypeOptions" class="w-100 mb-2" /-->
                         </b-col>
                         <b-col class="position-relative">
                             <b-button class="position-absolute" style="right: 15px; bottom: 0;" variant="success"
-                                @click="createWorkflow">
-                                Confirmar
+                                      @click="createWorkflow">
+                                {{$t('actions.confirm')}}
                             </b-button>
                             <b-button class="position-absolute" style="right: 120px; bottom: 0;"
-                                @click="showWorkflowOps = 0">
-                                Cancelar
+                                      @click="showWorkflowOps = 0">
+                                {{$t('actions.cancel')}}
                             </b-button>
                         </b-col>
                     </b-row>
@@ -148,13 +150,12 @@ export default {
         selectedStepIndex: { type: Number, default: null },
         pipeline: { type: Object, default: () => { } },
     },
-    emits: ['send-step-changes'],
+    emits: ['update-step'],
     data() {
         return {
             showWorkflowOps: this.editedStep.workflow === undefined ? 0 : -1,
             selectedWorkflow: null,
             workflowName: '',
-            workflowPlatform: 1000, // meta platform - FIXME
             selectedWorkflowType: 'SQL',
             workflowTypeOptions: [
                 { value: 'DATA_EXPLORER', text: 'Explorador de dados' },
@@ -176,7 +177,7 @@ export default {
             // eslint-disable-next-line vue/no-mutating-props
             if (this.selectedWorkflow !== null) this.editedStep.workflow_id = this.selectedWorkflow.id;
 
-            this.$emit('send-step-changes', this.editedStep);
+            this.$emit('update-step', this.editedStep);
         },
         handleInput() {
             this.editStep();
@@ -208,7 +209,7 @@ export default {
         async editStepWorkflow() {
             if (! this.selectedWorkflow) {
                 this.warning('Selecione um fluxo de trabalho');
-                return
+                return;
             }
             const stepWorkflow = {
                 id: this.selectedWorkflow?.id, //may be null
@@ -238,32 +239,27 @@ export default {
                 this.error(e);
             }
         },
-        createWorkflow() {
+        async createWorkflow() {
             const workflow = {
                 name: this.workflowName,
                 platform_id: this.workflowPlatform,
                 type: this.selectedWorkflowType
             };
 
-            axios
-                .post(`${tahitiUrl}/workflows`, workflow)
-                .then((resp) => {
-                    // eslint-disable-next-line vue/no-mutating-props
-                    this.editedStep.workflow_id = resp.data.id;
-                    // eslint-disable-next-line vue/no-mutating-props
-                    this.editedStep.workflow = resp.data;
-                    this.editStep();
-                    this.success('Workflow criado e associado com sucesso à etapa.');
-                })
-                .catch(
-                    function (e) {
-                        this.error(e);
-                    }.bind(this)
-                );
-
-            this.showWorkflowOps = -1;
-            this.workflowName = '';
-            this.selectedWorkflowType = null;
+            try {
+                const resp = await axios.post(`${tahitiUrl}/workflows`, workflow);
+                // eslint-disable-next-line vue/no-mutating-props
+                this.editedStep.workflow_id = resp.data.id;
+                // eslint-disable-next-line vue/no-mutating-props
+                this.editedStep.workflow = resp.data;
+                this.editStep();
+                this.success('Workflow criado e associado com sucesso à etapa.');
+                this.showWorkflowOps = -1;
+                this.workflowName = '';
+                this.selectedWorkflowType = 'SQL';
+            } catch (e) {
+                this.error(e);
+            }
         }
     }
 

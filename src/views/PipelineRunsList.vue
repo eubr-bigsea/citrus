@@ -2,16 +2,16 @@
     <main role="main">
         <div class="d-flex justify-content-between align-items-center pb-2 mb-2 border-bottom">
             <h1 v-if="fromPipelineEdit">
-                Execuções - {{ $route.params.name }}
+                {{$t('titles.pipelineRuns', 2)}} - {{$route.params.name}}
             </h1>
             <h1 v-else class="runsList-title">
-                {{ $t('titles.pipelineRuns', 2) }}
+                {{$t('titles.pipelineRuns', 2)}}
             </h1>
             <router-link v-if="fromPipelineEdit" :to="{ name: 'pipelineEdit', params: { id: $route.params.id } }"
-                class="btn btn-outline-primary d-print-none float-right btn-sm">
+                         class="btn btn-outline-primary d-print-none float-end btn-sm">
                 <font-awesome-icon icon="fa-chevron-left" />
-                &nbsp; {{ $t('actions.back') }} -
-                Pipeline #{{ $route.params.id }}
+                &nbsp; {{$t('actions.back')}} -
+                Pipeline #{{$route.params.id}}
             </router-link>
         </div>
         <div class="row">
@@ -20,58 +20,64 @@
                     <div class="runsList-container custom-table">
                         <div class="row">
                             <div class="col-12">
-                                <form class="form-row list-filter">
-                                    <div class="form-group col-3">
-                                        <label for="search">Id ou {{ $tc('common.name') }} da pipeline:</label>
+                                <form class="row g-2 list-filter">
+                                    <div class="col-3 mb-2">
+                                        <label for="search">{{$t('pipeline.list.searchByIdOrName')}}:</label>
                                         <input v-model="filters.name" type="text" class="form-control form-control-sm"
-                                            :placeholder="$tc('common.name')">
+                                               :placeholder="$t('common.name')">
                                     </div>
-                                    <div class="form-group col-2">
-                                        <label for="range">{{ $tc('titles.start') }} do período: </label>
+                                    <div class="col-2 mb-2">
+                                        <label for="range">{{$t('pipeline.list.periodStart')}}: </label>
                                         <input v-model="filters.start" type="date"
-                                            class="form-control form-control-sm" />
+                                               class="form-control form-control-sm">
                                     </div>
 
-                                    <div class="form-group col-2">
-                                        <label for="range">{{ $tc('common.end') }} do período: </label>
-                                        <input v-model="filters.end" type="date" class="form-control form-control-sm" />
+                                    <div class="col-2 mb-2">
+                                        <label for="range">{{$t('pipeline.list.periodFinish')}}: </label>
+                                        <input v-model="filters.end" type="date" class="form-control form-control-sm">
                                     </div>
 
-                                    <div class="form-group col-2">
-                                        <label for="status">{{ $tc('common.status') }}: </label>
-                                        <select v-model="filters.status" class="form-control form-control-sm"
-                                            name="status">
-                                            <option selected value=""></option>
-                                            <option v-for="status in statuses" :value="status">{{
-                                                $tc(`status.${status}`) }}
+                                    <div class="col-2 mb-2">
+                                        <label for="status">{{$t('common.status')}}: </label>
+                                        <select v-model="filters.status" class="form-select form-select-sm"
+                                                name="status">
+                                            <option selected value="" />
+                                            <option v-for="status in statuses" :key="status" :value="status">
+                                                {{$t(`status.${status}`)}}
                                             </option>
                                         </select>
                                     </div>
-                                    <div class="form-group col-1">
-                                        <label for="limit">{{ $tc('common.limit') }}: </label>
-                                        <select v-model="filters.limit" class="form-control form-control-sm"
-                                            name="limit">
-                                            <option selected value="10">10</option>
-                                            <option selected value="25">25</option>
-                                            <option selected value="50">50</option>
-                                            <option selected value="100">100</option>
+                                    <div class="col-1 mb-2">
+                                        <label for="limit">{{$t('common.limit')}}: </label>
+                                        <select v-model="filters.limit" class="form-select form-select-sm"
+                                                name="limit">
+                                            <option selected value="10">
+                                                10
+                                            </option>
+                                            <option selected value="25">
+                                                25
+                                            </option>
+                                            <option selected value="50">
+                                                50
+                                            </option>
+                                            <option selected value="100">
+                                                100
+                                            </option>
                                         </select>
                                     </div>
                                     <div class="col-12 mt-2">
                                         <button ref="searchBtn" class="btn btn-secondary btn-sm mb-2 btn-spinner"
-                                            @click.prevent="search">
-                                            <font-awesome-icon icon="fa fa-search default-icon" /> {{
-                                                $t('actions.search') }}
+                                                @click.prevent="search">
+                                            <font-awesome-icon icon="fa fa-search default-icon" /> {{$t('actions.search')}}
                                             <font-awesome-icon icon="spinner" pulse class="icon" />
                                         </button>
                                     </div>
                                 </form>
-
-                                <v-server-table ref="runsList" :columns="columns" :options="options" name="runsList"
-                                    :key="key" id="runsList">
+                                <v-server-table id="runsList" ref="runsList" :columns="columns"
+                                                :options="options" name="runsList">
                                     <template #id="props">
                                         <router-link :to="{ name: 'pipelineRunDetail', params: { id: props.row.id } }">
-                                            {{ props.row.id }}
+                                            {{props.row.id}}
                                         </router-link>
                                     </template>
                                     <template #pipeline_name="props">
@@ -81,20 +87,22 @@
                                                 props.row.pipeline_id }} -
                                             {{ props.row.pipeline_name }}
                                         </router-link>
-                                        <div v-if="props.row.context_data && props.row.context_data.length > 0" class="mt-1" title="Variáveis de contexto">
-                                                <span v-for="data in props.row.context_data" :key="data.name" class="text-muted mr-2 small">{{ data.name }}={{ data.value }}</span>
+                                        <div v-if="props.row.context_data && props.row.context_data.length > 0"
+                                             class="d-flex flex-wrap gap-1 mt-1" :title="$t('pipeline.list.contextVariables')">
+                                            <span v-for="data in props.row.context_data" :key="data.name" class="context-var-chip">
+                                                <strong>{{ data.name }}</strong>: {{ data.value }}
+                                            </span>
                                         </div>
                                     </template>
                                     <template #period="props">
-                                        {{ props.row.start | formatJsonDate('dd/MM/yyyy') }} até {{ props.row.finish |
-                                            formatJsonDate('dd/MM/yyyy') }}
+                                       {{ $filters.formatJsonDate(props.row.start) }} {{$t('common.until')}} {{ $filters.formatJsonDate(props.row.finish) }}
                                     </template>
                                     <template #updated="props" class="text-center">
 
                                         <font-awesome-icon icon="fa fa-calendar-alt"
-                                            :title="props.row.updated | formatJsonDate('dd/MM/yyyy HH:mm:SS')"
+                                            :title="$filters.formatJsonDate(props.row.updated, 'dd/MM/yyyy HH:mm:SS')"
                                             class="text-info" />
-                                        {{ props.row.updated | formatJsonDate('dd/MM/yyyy HH:mm:SS') }}
+                                        {{ $filters.formatJsonDate(props.row.updated, 'dd/MM/yyyy HH:mm:SS') }}
 
                                     </template>
                                     <template #comment="props">
@@ -113,17 +121,16 @@
                                                     <div class="fw-bold text-uppercase" style="font-size: 0.65rem;">{{
                                                         step.name }}</div>
                                                     <div style="font-size: 0.55rem; opacity: 0.9;">{{
-                                                        $tc(`status.${step.status}`) }}
+                                                        $t(`status.${step.status}`) }}
                                                     </div>
                                                 </div>
                                                 <b-tooltip :target="'tooltip-target-' + step.id" triggers="hover"
                                                     custom-class="tooltip-large">
                                                     <div>
-                                                        <strong>Atualização:</strong> {{ step.updated |
-                                                            formatJsonDate('dd/MM/yyyy HH:mm:SS') }} <br>
+                                                        <strong>{{$t('common.updated')}}:</strong> {{ $filters.formatJsonDate(step.updated, 'dd/MM/yyyy HH:mm:SS') }} <br>
                                                         <router-link
-                                                            :to="{ name: 'sql-workflow', params: { id: step.workflow_id, platform: 2 } }">
-                                                            Ir para o fluxo de trabalho #{{ step.workflow_id }}
+                                                            :to="{ name: 'sql-workflow', params: { id: step.workflow_id } }">
+                                                            {{$t('pipeline.list.goToWorkflow')}} #{{ step.workflow_id }}
                                                         </router-link>
                                                     </div>
                                                 </b-tooltip>
@@ -185,8 +192,8 @@
                             </div>
                         </div>
                         <div class="col-12 border-left">
-                            <h6>Notificações</h6>
-                            <pipeline-run-notifications :notifications="notifications" />
+                            <h6>{{$t('titles.notification', 2)}}</h6>
+                            <pipeline-run-notifications ref="notificationsList" />
                         </div>
                     </div>
                 </div>
@@ -200,6 +207,7 @@ import axios from 'axios';
 import { useWebSocket } from '@/composables/websocket.js';
 import PipelineRunNotifications from '@/components/PipelineRunNotifications.vue';
 import Notifier from '@/mixins/Notifier.js';
+import DataTableBuilder from '@/data-table-builder.js';
 
 const standUrl = import.meta.env.VITE_STAND_URL;
 const standNamespace = import.meta.env.VITE_STAND_NAMESPACE;
@@ -215,7 +223,6 @@ export default {
     mixins: [Notifier],
     data() {
         return {
-            notifications: [],
             statuses: ['COMPLETED', 'CANCELED', 'ERROR', 'INTERRUPTED', 'PENDING',
                 'RUNNING', 'WAITING', 'WAITING_INTERVENTION'],
             filters: { // binding
@@ -229,61 +236,39 @@ export default {
 
             },
             fromPipelineEdit: false,
-            columns: [
-                'id',
-                //'pipeline_id',
-                'pipeline_name',
-                'status',
-                'period',
-                'updated',
-                //'last_executed_step',
-                'comment',
-                //'context',
-                'statusStatus',
-                'actions',
-            ],
-            options: {
-                skin: 'table-sm table table-hover',
-                perPageValues: [],
-                dateColumns: [],
-                columnsClasses: {
+            ...new DataTableBuilder(this.$t)
+                .columns(
+                    'id',
+                    //'pipeline_id',
+                    'pipeline_name',
+                    'status',
+                    'period',
+                    'updated',
+                    //'last_executed_step',
+                    'comment',
+                    //'context',
+                    'statusStatus',
+                    'actions',
+                )
+                .skin('table-sm table table-hover')
+                .perPageValues([])
+                .columnClasses({
                     last_executed_step: 'text-center',
                     status: 'text-center',
-                },
-                headings: {
+                })
+                .headings({
                     id: 'ID',
-                    pipeline_name: this.$tc('titles.pipeline'),
-                    pipeline_id: `${this.$tc('titles.pipeline')} Id`,
-                    period: this.$tc('common.period'),
-                    updated: this.$tc('common.updated'),
-                    last_executed_step: 'Última Etapa',
-                    status: this.$tc('common.status'),
-                    actions: this.$tc('titles.action', 2),
-                    comment: this.$tc('titles.comment', 2),
-                    context: 'Variáveis',
-                },
-                sortable: ['id', 'pipeline_id', 'pipeline_name', 'period', 'updated',],
-                filterable: false,
-                sortIcon: {
-                    base: 'sort-base',
-                    is: 'sort-is ml-10',
-                    up: 'sort-up',
-                    down: 'sort-down'
-                },
-                preserveState: true,
-                saveState: true,
-                texts: {
-                    count: this.$t('common.pagerShowing'),
-                    limit: this.$t('common.limit'),
-                    noResults: this.$t('common.noData'),
-                    loading: this.$t('common.loading'),
-                },
-                requestFunction: this.load,
-                width: ['5%', '25%', '10%', '10%', '10%', '40%'],
-            },
-            orderBy: null,
-            ascending: null,
-            key: 1
+                    pipeline_name: this.$t('titles.pipeline'),
+                    period: this.$t('common.period'),
+                    updated: this.$t('common.updated'),
+                    status: this.$t('common.status'),
+                    actions: this.$t('titles.action', 2),
+                    comment: this.$t('titles.comment', 2),
+                })
+                .sortable('id', 'pipeline_id', 'pipeline_name', 'period', 'updated')
+                .filterable()
+                .requestFunction(this.load)
+                .build()
         };
     },
     mounted() {
@@ -298,39 +283,9 @@ export default {
                 if (!msg.pipeline_run) {
                     return;
                 }
-                this.notifications.unshift({
-                    id: msg.pipeline_run.id,
-                    status: msg.pipeline_step_run.status, date: msg.date,
-                    order: msg.pipeline_step_run.order
-                });
-                this.notifications.length = this.notifications.length > 100 ? 100
-                    : this.notifications.length;
+                this.$refs.notificationsList.push(msg);
                 if (!msg.cache) {
-                    const run = msg.pipeline_run;
-                    let elem = document.getElementById('runsList');
-                    if (elem)
-                        elem = elem.querySelector(`[data-id="${run.id}"]`);
-                    if (elem) {
-                        elem.className = 'pipeline-runs-status';
-                        elem.classList.add(run.status.toLowerCase());
-                        elem.innerText = this.$tc(`status.${run.status}`).toUpperCase();
-
-                        const row = elem.parentNode.parentNode;
-                        const children = row.childNodes;
-                        if (run.updated) {
-                            children[4].innerText = run.updated;
-                        }
-                        if (run.last_step) {
-                            children[5].innerText = run.last_step;
-                        }
-
-                        row.classList.add('highlight');
-                        row.classList.add('font-weight-bold');
-                        row.addEventListener('animationend', () => {
-                            row.classList.remove('highlight');
-                            row.classList.remove('font-weight-bold');
-                        });
-                    }
+                    this.$refs.runsList.refresh();
                 }
             },
         };
@@ -338,14 +293,13 @@ export default {
             eventHandlers);
     },
     beforeMount() {
-        this.filters = JSON.parse(localStorage.getItem('pipeline_run:list:filters') || '{}');
+        Object.assign(this.filters, JSON.parse(localStorage.getItem('pipeline_run:list:filters') || '{}'));
     },
     unmounted() {
-        debugger
+        disconnectWebSocket();
     },
     watch: {
-        '$route': function (to, from) {
-            debugger
+        '$route'() {
             disconnectWebSocket();
         }
     },
@@ -369,9 +323,6 @@ export default {
             data.start = this.filters.start;
             data.end = this.filters.end;
             data.dateType = this.filters.dateType;
-
-            this.orderBy = data.sort;
-            this.ascending = data.asc;
 
             if (this.$route.query.id) {
                 data.name = this.$route.query.id;
@@ -433,6 +384,18 @@ export default {
 
 .highlight {
     animation: highlightRow 5s forwards;
+}
+
+.context-var-chip {
+    display: inline-block;
+    background: #e9ecef;
+    color: #495057;
+    border-radius: 1rem;
+    padding: 0.1rem 0.6rem;
+    font-size: 0.75rem;
+    max-width: 100%;
+    white-space: normal;
+    word-break: break-word;
 }
 
 .arrow-step {

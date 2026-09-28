@@ -17,7 +17,7 @@ export default {
         options() {
             this.visualizationData.data.forEach((result, index) => {
                 // workaround in order to display the last point
-                result["xAxis"]["tickmarkPlacement"] = 'on'
+                result["xAxis"]["tickmarkPlacement"] = 'on';
                 result["xAxis"]["tickWidth"] = 1;
 
                 result["xAxis"]["categories"].push('');

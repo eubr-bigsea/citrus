@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { debounce } from "../util.js";
+import { debounce, pad } from "../util.js";
 
 const tahitiUrl = import.meta.env.VITE_TAHITI_URL;
 
@@ -7,10 +7,14 @@ export default {
     data() {
         return {
             workflowList: [],
+            // shared by ModalAddPipelineStep.vue and EditPipelineStep.vue's
+            // createWorkflow() - the two used to disagree (1 vs 1000/meta),
+            // silently creating workflows against different platforms
+            workflowPlatform: 1,
         };
     },
     methods: {
-        pad: (num, places, ch) => String(num).padStart(places, ch),
+        pad,
         loadWorkflowList: debounce(function (search, loading) {
             if (search) {
                 this.asyncLoadWorkflowList(search, loading);

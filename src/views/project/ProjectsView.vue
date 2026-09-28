@@ -36,17 +36,20 @@
     </main>
 </template>
 <script>
-import { useI18n } from 'vue-i18n-bridge';
+import { getCurrentInstance } from 'vue';
+import { useI18n } from 'vue-i18n';
 
-import Vue from 'vue';
+;
 import axios from 'axios';
 import DataTableBuilder from '../../data-table-builder.js';
+import useNotifier from '../../composables/useNotifier.js';
 
 const limoneroUrl = import.meta.env.VITE_LIMONERO_URL;
 
 export default {
     setup() {
         const { t } = useI18n();
+        const { error } = useNotifier(getCurrentInstance().proxy);
         const reqFn = async (data) => {
             data.sort = data.orderBy;
             data.asc = data.ascending === 1 ? 'true' : 'false';
@@ -63,9 +66,9 @@ export default {
                     count: resp.data.pagination.total
                 };
             } catch (e) {
-                Vue.prototype.$snotify.error(e);
+                error(e);
             }
-        }
+        };
         const dtBuilder = new DataTableBuilder(t)
             .headings({
                 id: 'ID',
@@ -81,7 +84,7 @@ export default {
         return {
             ...dtBuilder.build(),
             t
-        }
+        };
     }
 };
 </script>

@@ -1,47 +1,47 @@
 <template>
     <b-modal ref="addStepModal"
-             title="Adicionar etapa"
+             :title="$t('pipeline.edit.addStep')"
              size="lg"
-             :cancelTitle="$tc('actions.cancel')"
+             :cancel-title="$t('actions.cancel')"
              scrollable
              @hidden="closeStepModal"
              @ok="addStep">
         <div class="configPage-card-modal">
             <div>
-                <label for="nome">{{ $tc('common.name') }}:</label>
+                <label for="nome">{{ $t('common.name') }}:</label>
                 <input id="nome" v-model="newStep.name" class="form-control form-control-sm focus" type="text" focus
-                       placeholder="Nome da etapa" maxlength="50"/>
+                       :placeholder="$t('pipeline.template.stepName')" maxlength="50"/>
             </div>
 
             <div class="mt-2">
-                <label for="descricao">{{ $tc('common.description') }}</label>
+                <label for="descricao">{{$t('common.description')}}</label>
                 <textarea id="descricao" v-model="newStep.description" class="form-control form-control-sm" type="text"
-                          placeholder="Descrição da etapa" maxlength="200"/>
+                          :placeholder="$t('pipeline.template.stepDescription')" maxlength="200" />
             </div>
         </div>
         <hr class="mt-4 mb-4">
-        <label class="editPage-label mb-2" for="descricao">Vincular etapa a um fluxo de trabalho</label>
+        <label class="editPage-label mb-2" for="descricao">{{$t('pipeline.edit.settings.linkStepToWorkflow')}}</label>
         <div v-if="showWorkflowOps == 0" class="d-flex">
-            <b-card class="w-50 mr-2 clickable" @click="showWorkflowOps = 1">
+            <b-card class="w-50 me-2 clickable" @click="showWorkflowOps = 1">
                 <span class="editPage-workflow-label">
-                    <font-awesome-icon icon="fa fa-flask" class="mr-2" size="xl" />
-                    Workflow existente
+                    <font-awesome-icon icon="fa fa-flask" class="me-2" size="xl" />
+                    {{$t('pipeline.edit.settings.existingWorkflow')}}
                 </span>
             </b-card>
-            <b-card class="w-50 ml-2 clickable" @click="showWorkflowOps = 2">
+            <b-card class="w-50 ms-2 clickable" @click="showWorkflowOps = 2">
                 <span class="editPage-workflow-label">
-                    <font-awesome-icon icon="fa fa-plus" class="mr-2" size="xl" />
-                    Novo fluxo de trabalho
+                    <font-awesome-icon icon="fa fa-plus" class="me-2" size="xl" />
+                    {{$t('pipeline.edit.settings.newWorkflow')}}
                 </span>
             </b-card>
         </div>
 
         <div v-if="showWorkflowOps == 1" class="mb-3">
-            <label>Escolha um fluxo de trabalho existente para vincular a esta etapa:</label>
+            <label>{{$t('pipeline.edit.settings.chooseExistingWorkflow')}}:</label>
             <vue-select v-model="selectedWorkflow" :filterable="false" :options="workflowList" label="name"
                         class="w-100" @search="loadWorkflowList">
                 <template #no-options="{ }">
-                    <small>Digite parte do nome para pesquisar...</small>
+                    <small>{{$t('common.typeToSearch')}}</small>
                 </template>
                 <template #option="option">
                     <b-container>
@@ -61,27 +61,27 @@
                 </template>
                 <template #selected-option="option">
                     <div class="selected d-center">
-                        <font-awesome-icon icon="fa fa-flask" class="mr-2" />
+                        <font-awesome-icon icon="fa fa-flask" class="me-2" />
                         {{pad(option.id, 4, '&nbsp;')}} - {{option.name}} | {{option.type}}
                     </div>
                 </template>
             </vue-select>
             <b-button class="mt-3" @click="showWorkflowOps = 0">
-                Cancelar
+                {{$t('actions.cancel')}}
             </b-button>
         </div>
         <div v-if="showWorkflowOps == 2" class="d-flex flex-column">
             <b-container class="editPage-workflow-box p-3">
-                <label class="editPage-label mb-2" for="identificador">Criação do fluxo de trabalho</label>
+                <label class="editPage-label mb-2" for="identificador">{{$t('pipeline.edit.settings.workflowCreation')}}</label>
                 <b-row>
                     <b-col>
-                        <label class="" for="name">Nome:</label>
+                        <label class="" for="name">{{$t('common.name')}}:</label>
                         <input id="name" v-model="workflowName" v-focus type="text"
                                class="form-control w-100 form-control-sm mb-2"
                                maxlength="100">
                     </b-col>
                     <b-col>
-                        <label class="" for="platform">Plataforma:</label>
+                        <label class="" for="platform">{{$t('common.platform')}}:</label>
                         <input id="platform" v-focus value="SPARK" type="text"
                                class="form-control w-100 form-control-sm mb-2"
                                maxlength="100" disabled>
@@ -89,15 +89,15 @@
                 </b-row>
                 <b-row>
                     <b-col cols="6">
-                        <label>Tipo:</label>
+                        <label>{{$t('common.type')}}:</label>
                         <b-form-select v-model="selectedWorkflowType" :options="workflowTypeOptions" class="w-100 mb-2" />
                     </b-col>
                     <b-col class="position-relative">
                         <b-button class="position-absolute" style="right: 15px; bottom: 0;" variant="success" @click="createWorkflow">
-                            Confirmar
+                            {{$t('actions.confirm')}}
                         </b-button>
                         <b-button class="position-absolute" style="right: 120px; bottom: 0;" @click="showWorkflowOps = 0">
-                            Cancelar
+                            {{$t('actions.cancel')}}
                         </b-button>
                     </b-col>
                 </b-row>
@@ -109,7 +109,6 @@
 <script>
 import axios from 'axios';
 import PipelineEditMixin from '../../mixins/PipelineEditMixin.js';
-import { BModal } from 'bootstrap-vue';
 import vSelect from 'vue-select';
 import Notifier from '../../mixins/Notifier.js';
 
@@ -117,7 +116,6 @@ let tahitiUrl = import.meta.env.VITE_TAHITI_URL;
 
 export default {
     components: {
-        BModal,
         'vue-select': vSelect,
     },
     mixins: [PipelineEditMixin, Notifier],
@@ -132,7 +130,6 @@ export default {
             showWorkflowOps: 0,
             selectedWorkflow: null,
             workflowName: '',
-            workflowPlatform: 1,
             selectedWorkflowType: null,
             workflowTypeOptions: [
                 { value: 'DATA_EXPLORER', text: 'Explorador de dados' },
@@ -146,63 +143,33 @@ export default {
             this.selectedWorkflow = null;
             this.showWorkflowOps = 0;
             this.selectedWorkflowType = null;
-            this.newStep.name = '';
-            this.newStep.description = '';
+            this.newStep = { name: '', description: '', enabled: true, order: null };
         },
         show() {
             this.$refs.addStepModal.show();
         },
-        redirectToWorkflow(step) {
-            if(step.workflow === undefined) this.warning('Etapa não associada a um fluxo de trabalho.');
-            else this.$router.push({ name: 'editWorkflow', params: { id: step.workflow.id, platform: 1 } });
-        },
-        /*
-        editPipeline(msg) {
-            const changedPipeline = { ...this.pipeline };
-            axios
-                .patch(`${tahitiUrl}/pipelines/${this.pipeline.id}`, changedPipeline)
-                .then((resp) => {
-                    // eslint-disable-next-line vue/no-mutating-props
-                    const pipelineData = resp.data.data[0];
-                    this.$emit('onupdate-pipeline', pipelineData);
-                    this.success(msg);
-                    this.selectedWorkflow = null;
-                })
-                .catch(
-                    function (e) {
-                        this.error(e);
-                    }.bind(this)
-                );
-        },*/
         addStep() {
             this.newStep.order = this.pipeline.steps.length+1;
 
             if (this.selectedWorkflow !== null) this.newStep.workflow_id = this.selectedWorkflow.id;
 
             const copy = {... this.newStep};
-            // insert the new step at the specified order position
-            //this.pipeline.steps.splice(this.stepOrder, 0, copy);
-            //this.pipeline.steps.push(copy);
-            //this.editPipeline('Etapa adicionada com sucesso.');
             this.$emit('onadd-step', copy, this.stepOrder);
         },
-        createWorkflow() {
+        async createWorkflow() {
             const workflow = {
                 name: this.workflowName,
                 platform_id: this.workflowPlatform,
                 type: this.selectedWorkflowType
             };
 
-            axios
-                .post(`${tahitiUrl}/workflows`, workflow)
-                .then(() => {
-                    this.success('Fluxo de trabalho criado com sucesso.');
-                })
-                .catch(
-                    function (e) {
-                        this.error(e);
-                    }.bind(this)
-                );
+            try {
+                const resp = await axios.post(`${tahitiUrl}/workflows`, workflow);
+                this.newStep.workflow_id = resp.data.id;
+                this.success('Fluxo de trabalho criado com sucesso.');
+            } catch (e) {
+                this.error(e);
+            }
 
             this.showWorkflowOps = 0;
             this.workflowName = '';

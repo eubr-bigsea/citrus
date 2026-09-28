@@ -3,41 +3,40 @@
         <diagram-toolbar v-if="showToolbar" class="diagram-toolbar" :selected="selectedElements" :copied-tasks="copiedTasks"
             :use-data-source="useDataSource" @onclick-task="clickTask" @oncopy-tasks="_copy" @onpaste-tasks="_paste"
             @ontoggle-tasks="toggleTasks" @ondistribute-tasks="distribute" @onalign-tasks="align"
-            @onremove-tasks="removeSelectedTasks" />
+            @onremove-tasks="removeSelectedTasks" @onzoom="setZoomPercent"
+            @ontoggle-tasks-panel="$emit('ontoggle-tasks-panel')"
+            @ontoggle-data-sources-panel="$emit('ontoggle-data-sources-panel')"
+            @ontoggle-dark-mode="$emit('ontoggle-dark-mode')" />
         <div v-else class="border"></div>
         <div id="lemonade-container" :class="{'with-grid': showGrid, 'dark-mode': darkMode}"
-            class="lemonade-container not-selectable" @click="diagramClick">
-            <!--
-                 <VuePerfectScrollbar :settings="settings" class="scroll-area" @ps-scroll-y="scrollHandle" />
-                -->
+             class="lemonade-container not-selectable" @click="diagramClick">
             <div class="scroll-area">
-                <div v-if="loaded" id="lemonade-diagram" ref="diagram" :show-task-decoration="true"
-                    :style="{'pointer-events': showToolbarInternal && showToolbar ? 'auto' : 'auto'}" class="lemonade"
-                    @drop="drop" @dragover="allowDrop">
+                <div id="lemonade-diagram" ref="diagram" :show-task-decoration="true"
+                     :style="{'pointer-events': showToolbarInternal && showToolbar ? 'auto' : 'auto'}" class="lemonade"
+                     @drop="drop" @dragover="allowDrop">
                     <template v-if="workflow.tasks.length > 0">
                         <task-component v-for="task of workflow.tasks"
-                            :key="`${$parent.version ? $parent.version : 0}/${task.id}`" :task="task" :instance="instance"
-                            :enable-context-menu="editable" :draggable="editable"
-                            :show-decoration="showTaskDecoration || showTaskDecorationInternal" @onstart-flow="startFlow"
-                            @onstop-flow="stopFlow" @onset-isDirty="setDirty" @ontask-ready="taskReady"
-                            @onkeyboard-keyup="keyboardKeyUpHandler" @onclick-task="clickTask" @onshow-result="showResult"
-                            @onremove-task="removeTask" />
+                                        :key="`${$parent.version ? $parent.version : 0}/${task.id}`" :task="task" :instance="instance"
+                                        :enable-context-menu="editable" :draggable="editable"
+                                        :show-decoration="showTaskDecoration || showTaskDecorationInternal" @onstart-flow="startFlow"
+                                        @onstop-flow="stopFlow" @onset-is-dirty="setDirty" @ontask-ready="taskReady"
+                                        @onkeyboard-keyup="keyboardKeyUpHandler" @onclick-task="clickTask" @onshow-result="showResult"
+                                        @onremove-task="removeTask" @onupdate-task="(prop, value) => task[prop] = value" />
                         <div ref="ghostSelect" class="ghost-select">
                             <span />
-                        </div>
-                        <div v-for="group in groups" :key="group.id">
-                            <group-component :key="group.id" :group="group" :instance="instance" />
                         </div>
                     </template>
                     <div v-else>
                         <div class="no-task-diagram">
-                            {{ $t('workflow.noTasks') }}
+                            {{$t('workflow.noTasks')}}
                         </div>
                     </div>
                 </div>
+                <!--
                 <div v-else>
-                    <font-awesome-icon icon="spinner" pulse class="icon" /> {{ $t('common.loading') }}
+                    <font-awesome-icon icon="spinner" pulse class="icon" /> {{$t('common.loading')}}
                 </div>
+            -->
             </div>
         </div>
     </div>
@@ -45,41 +44,20 @@
 
 <script>
 
-import Vue from 'vue';
+;
 
 import TaskComponent from './Task.vue';
 import DiagramToolbar from './DiagramToolbar.vue';
+import ToolboxMixin from '../mixins/Toolbox.js';
 import {jsPlumb} from 'jsplumb';
 
-const tahitiUrl = import.meta.env.VITE_TAHITI_URL;
-const standUrl = import.meta.env.VITE_STAND_URL;
-const connectorPaintStyle = {
-    lineWidth: 1,
-    radius: 8,
-    strokeStyle: "#111",
-    stroke: "#111",
-    outlineColor: 'white',
-    outlineWidth: 2,
-};
-
-const DiagramComponent = Vue.extend({
+export default {
     name: 'DiagramComponent',
     components: {
         'task-component': TaskComponent,
         'diagram-toolbar': DiagramToolbar,
     },
-    emit: ['addFlow', 'addTask', 'onblur-selection', 'onclear-selection',
-        'onclick-task', 'onkeyboard-keyup',
-        'onremove-task', 'onset-isDirty', 'onshow-deploy', 'onshow-result',
-        'removeFlow'],
-        /*
-    emit: [
-        'oncopy-tasks', 'onpaste-tasks', 'onremove-tasks',
-        'ontoggle-tasksPanel', 'ontoggle-dataSourcesPanel',
-        'ontoggle-darkMode', 'onzoom',
-        'oncopy-tasks', 'onpaste-tasks', 'onremove-tasks', 'ontoggle-task',
-        'onshow-deploy', 'onclear-selection', 'addTask', 'onclick-task'
-    ],*/
+    mixins: [ToolboxMixin],
     props: {
         formContainer: {
             type: Boolean,
@@ -142,67 +120,33 @@ const DiagramComponent = Vue.extend({
             type: Boolean,
         }
     },
+    emits: [
+        'onclear-selection', 'addFlow', 'add-task',
+        'onkeyboard-keyup', 'onblur-selection', 'removeFlow',
+        'onclick-task', 'onset-is-dirty', 'onshow-result', 'remove-task',
+        'onzoom', 'ontoggle-tasks-panel', 'ontoggle-data-sources-panel',
+        'ontoggle-dark-mode'
+    ],
 
     data() {
         return {
-            clusters: [],
-            clusterDescription: '',
-            cluster: null,
-            deployInfo: {},
-            name: '',
+            platform: null,
             readyTasks: new Set(),
             selectedTask: null,
             tryConnections: false,
             selectedElements: [],
             copiedTasks: [],
 
-            settings: {
-                maxScrollbarLength: 60,
-                handlers: ['click-rail', 'drag-scrollbar', 'wheel', 'touch']
-            },
-            showDeployModal: false,
-            showExecutionModal: false,
             tasksRendered: false,
             showToolbarInternal: true,
             showTaskDecorationInternal: false,
 
-            zoomInEnabled: true,
-            zoomOutEnabled: true,
             zoom: this.initialZoom,
 
             darkMode: localStorage.getItem('darkMode') ? localStorage.getItem('darkMode') == "true" : false
         };
     },
-    computed: {
-        flows() {
-            if (this.renderFrom) {
-                if (this.renderFrom && this.renderFrom.flows) {
-                    return this.renderFrom.flows;
-                } else {
-                    return {};
-                }
-            } else {
-                return this.workflow.flows;
-            }
-        },
-        tasks() {
-            if (this.renderFrom) {
-                if (this.renderFrom && this.renderFrom.tasks) {
-                    return this.renderFrom.tasks;
-                } else {
-                    return {};
-                }
-            } else {
-                return this.workflow.tasks;
-            }
-        },
-        groups() {
-            return this.$store.getters.getGroups;
-        },
-        zoomPercent: function () {
-            return `${Math.round(100 * this.zoom, 0)}%`;
-        }
-    },
+
     watch: {
         workflow() {
             this.tasksRendered = false;
@@ -214,27 +158,15 @@ const DiagramComponent = Vue.extend({
         });
     },
     created() {
-        const self = this;
-
-        if (this.$route.params.id) {
-            this.init();
-        }
-
-        // this.$on('oncancel-deploy', () => {
-        //   this.setZoomPercent(null, this.oldZoom);
-        //   this.showToolbarInternal = true;
-        //   this.showTaskDecorationInternal = false;
-        // });
-
-        // this.$on('xupdate-form-field-value', (field, value) => {
-        //   this.$emit('update-form-field-value-in-diagram', field, value);
-        //   this.updateAttributeSuggestion();
-        // });
-
+        this.init();
     },
 
     beforeUnmount() {
         this.readyTasks = new Set();
+        this.$el.removeEventListener('keyup', this.keyboardKeyUpTrigger, true);
+        if (this.diagramElement) {
+            this.diagramElement.removeEventListener('mousedown', this.handleDiagramMousedown);
+        }
     },
 
     mounted() {
@@ -258,12 +190,22 @@ const DiagramComponent = Vue.extend({
         );
 
         /* scroll bars */
-        // @FIXME PerfectScrollbar.initialize(self.diagramElement.parentElement);
-
         this.$el.addEventListener('keyup', this.keyboardKeyUpTrigger, true);
 
         /* selection by dragging */
-        self.diagramElement.addEventListener('mousedown', ev => {
+        self.diagramElement.addEventListener('mousedown', this.handleDiagramMousedown);
+        if (self.shink) {
+            // const z = parseFloat(self.zoom);
+            // const width = z * (Math.max.apply(null, self.workflow.tasks.map(t => t.left)) + 200);
+            // const height = z * (Math.max.apply(null, self.workflow.tasks.map(t => t.top)) + 200);
+            self.$refs.diagram.style.width = '100%'; //width + 'px';
+            self.$refs.diagram.style.height = '100%';
+        }
+    },
+
+    methods: {
+        handleDiagramMousedown(ev) {
+            const self = this;
             if (self.$refs.diagram === ev.target) {
                 let rightClick =
                     ev.which === 3 || ev.button == 2; // Gecko (Firefox), WebKit (Safari/Chrome) & Opera // IE, Opera
@@ -275,8 +217,8 @@ const DiagramComponent = Vue.extend({
                 const ghostSelect = self.$refs.ghostSelect;
                 if (ghostSelect) {
                     ghostSelect.classList.add('ghost-active');
-                    ghostSelect.style.left = ev.offsetY + 'px';
-                    ghostSelect.style.top = ev.offsetX + 'px';
+                    ghostSelect.style.left = ev.offsetX + 'px';
+                    ghostSelect.style.top = ev.offsetY + 'px';
                     ghostSelect.style.width = '0px';
                     ghostSelect.style.height = '0px';
                     self.initialW = ev.offsetX;
@@ -285,19 +227,9 @@ const DiagramComponent = Vue.extend({
                     document.addEventListener('mousemove', self.openSelector);
                 }
             }
-        });
-        if (self.shink) {
-            // const z = parseFloat(self.zoom);
-            // const width = z * (Math.max.apply(null, self.workflow.tasks.map(t => t.left)) + 200);
-            // const height = z * (Math.max.apply(null, self.workflow.tasks.map(t => t.top)) + 200);
-            self.$refs.diagram.style.width = '100%'; //width + 'px';
-            self.$refs.diagram.style.height = '100%';
-        }
-    },
-
-    methods: {
-        showResult() {
-            this.$emit('onshow-result', this.task);
+        },
+        showResult(task) {
+            this.$emit('onshow-result', task);
         },
 
         /* Flow management  */
@@ -327,7 +259,7 @@ const DiagramComponent = Vue.extend({
         },
 
         setDirty(value) {
-            this.$emit('onset-isDirty', value);
+            this.$emit('onset-is-dirty', value);
         },
         clickTask(taskComponent, showProperties) {
             if (!this.selectedElements.includes(taskComponent.task.id)) {
@@ -337,13 +269,6 @@ const DiagramComponent = Vue.extend({
             this.$emit('onclick-task', taskComponent, showProperties);
         },
         scrollHandle() {},
-        changeCluster() {
-            let self = this;
-            let c = self.clusters.filter(c => c.id === self.cluster);
-            if (c.length) {
-                this.clusterDescription = c[0].description;
-            }
-        },
         removeSelectedTasks() {
             // Two steps, because this.removeTask changes the array used in the loop
             const tasksToRemove = this.workflow.tasks.filter(task => {
@@ -361,43 +286,6 @@ const DiagramComponent = Vue.extend({
                 }
             });
         },
-        addGroup() {
-            let self = this;
-            let group = {};
-            self.$store.dispatch('addGroup', group);
-            return false;
-        },
-        deploy(ev) {
-            this.$emit('onshow-deploy');
-            this.oldZoom = this.zoom;
-            this.setZoomPercent(ev, 0.85);
-            this.showToolbarInternal = false;
-            this.showTaskDecorationInternal = true;
-            // if (false) {
-            //     let self = this;
-            //     let dataSources = self.tasks.filter(task => {
-            //         return (
-            //             task.operation.categories.filter(cat => {
-            //                 return cat.type === 'data source';
-            //             }).length > 0
-            //         );
-            //     });
-            //     let ports = self.tasks.map(task => {
-            //         let dataPorts = task.operation.ports.filter(port => {
-            //             let itfs = port.interfaces.filter(iface => {
-            //                 return iface.name === 'Data' || iface.name === 'IData';
-            //             });
-            //             return itfs.length > 0 && port.type === 'OUTPUT';
-            //         });
-            //         return [task, dataPorts];
-            //     });
-            //     self.showDeployModal = true;
-            //     self.deployInfo['dataSources'] = dataSources;
-            //     self.deployInfo['ports'] = ports;
-            // }
-            ev.preventDefault();
-            return false;
-        },
         addTask(task) {
             task.forms = task.forms || {};
             Object.assign(task.forms,
@@ -414,7 +302,7 @@ const DiagramComponent = Vue.extend({
                 task.name = `${task.operation.name} ${this.workflow.tasks.length}`;
             }
             task.enabled = true;
-            this.$emit('addTask', task);
+            this.$emit('add-task', task);
         },
 
         removeTask(task) {
@@ -430,10 +318,7 @@ const DiagramComponent = Vue.extend({
 
             //console.debug(this.instance.getConnections());
             this.instance.repaintEverything();
-            const inx = this.workflow.tasks.indexOf(task);
-            if (inx >= 0) {
-                this.workflow.tasks.splice(inx, 1);
-            }
+            this.$emit('remove-task', task);
 
             this.clearSelection();
             this.instance.repaintEverything();
@@ -459,16 +344,9 @@ const DiagramComponent = Vue.extend({
 
                 const connection = self.instance.connect({uuids});
                 if (connection) {
-                    connection.bind('mouseover', (c, originalEvent) => {
-                        //var arr = self.instance.select({ source: con.sourceId, target: con.targetId });
-                        if (originalEvent) {
-                            const currentStyle = c ? c.getPaintStyle() : null;
-                            currentStyle.lineWidth = 20;
-                            currentStyle.outlineColor = '#ed8';
-                            c.setPaintStyle(currentStyle);
-                            self.instance.repaintEverything();
-                        }
-                    });
+                    // hover thickening/color is handled by the
+                    // instance's HoverPaintStyle (getJsPlumbInstance)
+                    // instead of a hand-rolled mouseover/mouseout pair
                     const currentStyle = connection ? connection.getPaintStyle() : null;
                     if (currentStyle) {
                         currentStyle[
@@ -542,18 +420,12 @@ const DiagramComponent = Vue.extend({
         removeFlow(flow) {
             this.$emit('removeFlow', flow);
         },
-        getOperationFromId(id) {
-            let result = this.operations.find(v => {
-                return v.id === parseInt(id);
-            });
-            return result;
-        },
         getJsPlumbInstance() {
             const instance = jsPlumb.getInstance({
                 //Anchors: anchors,
                 Endpoints: [['Dot', {radius: 2}], ['Dot', {radius: 1}]],
-                EndpointHoverStyle: {fillStyle: 'orange'},
-                HoverPaintStyle: {strokeStyle: 'blue'}
+                EndpointHoverStyle: {fill: 'orange'},
+                HoverPaintStyle: {stroke: 'blue', strokeWidth: 3}
             });
             if (this.initialZoom) instance.setZoom(this.initialZoom);
             return instance;
@@ -582,11 +454,17 @@ const DiagramComponent = Vue.extend({
                 self.initialW = 0;
                 self.initialH = 0;
 
+                // ghostSelect's left/top/width/height were set from
+                // getBoundingClientRect-derived screen pixels in
+                // openSelector(), i.e. already scaled by zoom; convert
+                // back to diagram space (same units as task.left/top)
+                // before comparing, instead of mixing the two.
+                const zoom = this.zoom || 1;
                 let ghostSelect = self.$refs.ghostSelect;
-                let x1 = parseInt(ghostSelect.style.left);
-                let y1 = parseInt(ghostSelect.style.top);
-                let x2 = parseInt(ghostSelect.style.width) + x1;
-                let y2 = parseInt(ghostSelect.style.height) + y1;
+                let x1 = parseInt(ghostSelect.style.left) / zoom;
+                let y1 = parseInt(ghostSelect.style.top) / zoom;
+                let x2 = parseInt(ghostSelect.style.width) / zoom + x1;
+                let y2 = parseInt(ghostSelect.style.height) / zoom + y1;
 
                 ghostSelect.classList.remove('ghost-active');
                 ghostSelect.style.width = 0;
@@ -598,6 +476,8 @@ const DiagramComponent = Vue.extend({
                     const taskElem = document.getElementById(task.id);
                     if (taskElem) {
                         let bounds = taskElem.getBoundingClientRect();
+                        const width = bounds.width / zoom;
+                        const height = bounds.height / zoom;
 
                         // Uses task left and top because offset calculation
                         // was already done
@@ -608,9 +488,9 @@ const DiagramComponent = Vue.extend({
 
                         if (
                             x1 <= task.left &&
-                            x2 >= task.left + bounds.width &&
+                            x2 >= task.left + width &&
                             y1 <= task.top &&
-                            y2 >= task.top + bounds.height
+                            y2 >= task.top + height
                         ) {
                             // console.debug(`overlap with ${task.operation.name}`)
                             self.instance.addToDragSelection(task.id);
@@ -672,22 +552,6 @@ const DiagramComponent = Vue.extend({
             this.$emit('onblur-selection');
             this.selectedElements = [];
         },
-        flowClick(connection, e) {
-            var self = this;
-            self.selectedFlow = connection;
-            self.instance.select().setPaintStyle(connectorPaintStyle);
-            connection.setPaintStyle({
-                lineWidth: 2,
-                radius: 1,
-                strokeStyle: 'rgba(242, 141, 0, 1)'
-            });
-            let tasks = document.querySelectorAll('.task.selected');
-            Array.prototype.slice.call(tasks, 0).forEach(e => {
-                e.classList.remove('selected');
-            });
-            e.stopPropagation();
-            e.preventDefault();
-        },
         drop(ev) {
             const self = this;
             ev.preventDefault();
@@ -704,13 +568,19 @@ const DiagramComponent = Vue.extend({
                 })
                 .join(' ');
             const tryConnections = ev.dataTransfer.getData('tryConnections');
+            // dbClickAddTask (Toolbox mixin) passes explicit
+            // coordinates via dataTransfer since a synthetic drop
+            // event's offsetX/offsetY can't be relied on; a real
+            // drag-and-drop never sets these, so it falls back as before
+            const explicitLeft = ev.dataTransfer.getData('left');
+            const explicitTop = ev.dataTransfer.getData('top');
             const newTask = {
                 id: self.generateId(),
                 forms: {},
                 operation,
                 operation_id: operation.id,
-                left: ev.offsetX,
-                top: ev.offsetY,
+                left: explicitLeft !== '' ? Number(explicitLeft) : ev.offsetX,
+                top: explicitTop !== '' ? Number(explicitTop) : ev.offsetY,
                 z_index: ++self.currentZIndex,
                 classes,
                 status: 'WAITING',
@@ -745,51 +615,51 @@ const DiagramComponent = Vue.extend({
 
 
             switch (ev.code) {
-                case 'Delete':
-                    if (task) {
-                        this.removeTask(task);
-                    } else if (tasks.length) {
-                        this.deleteTasks(tasks);
-                    }
-                    break;
-                case 'ArrowRight':
-                    if (task) {
-                        this.moveTask({task, position: 'right', inc});
-                    } else if (tasks.length) {
-                        this.moveTasks({tasks, position: 'right', inc});
-                    }
-                    break;
-                case 'ArrowLeft':
-                    if (task) {
-                        this.moveTask({task, position: 'left', inc});
-                    } else if (tasks.length) {
-                        this.moveTasks({tasks, position: 'left', inc});
-                    }
-                    break;
-                case 'ArrowUp':
-                    if (task) {
-                        this.moveTask({task, position: 'up', inc});
-                    } else if (tasks.length) {
-                        this.moveTasks({tasks, position: 'up', inc});
-                    }
-                    break;
-                case 'ArrowDown':
-                    if (task) {
-                        this.moveTask({task, position: 'down', inc});
-                    } else if (tasks.length) {
-                        this.moveTasks({tasks, position: 'down', inc});
-                    }
-                    break;
-                case 'KeyC':
-                    if (ev.ctrlKey) {
-                        this._copy();
-                    }
-                    break;
-                case 'KeyV':
-                    if (ev.ctrlKey) {
-                        this._paste();
-                    }
-                    break;
+            case 'Delete':
+                if (task) {
+                    this.removeTask(task);
+                } else if (tasks.length) {
+                    this.deleteTasks(tasks);
+                }
+                break;
+            case 'ArrowRight':
+                if (task) {
+                    this.moveTask({task, position: 'right', inc});
+                } else if (tasks.length) {
+                    this.moveTasks({tasks, position: 'right', inc});
+                }
+                break;
+            case 'ArrowLeft':
+                if (task) {
+                    this.moveTask({task, position: 'left', inc});
+                } else if (tasks.length) {
+                    this.moveTasks({tasks, position: 'left', inc});
+                }
+                break;
+            case 'ArrowUp':
+                if (task) {
+                    this.moveTask({task, position: 'up', inc});
+                } else if (tasks.length) {
+                    this.moveTasks({tasks, position: 'up', inc});
+                }
+                break;
+            case 'ArrowDown':
+                if (task) {
+                    this.moveTask({task, position: 'down', inc});
+                } else if (tasks.length) {
+                    this.moveTasks({tasks, position: 'down', inc});
+                }
+                break;
+            case 'KeyC':
+                if (ev.ctrlKey) {
+                    this._copy();
+                }
+                break;
+            case 'KeyV':
+                if (ev.ctrlKey) {
+                    this._paste();
+                }
+                break;
             }
 
             self.instance.repaintEverything();
@@ -841,26 +711,26 @@ const DiagramComponent = Vue.extend({
             let v = 0;
 
             switch (position) {
-                case 'right':
-                    v = parseInt(elem.style.left, 10) + inc;
-                    elem.style.left = `${v}px`;
-                    task.left = v;
-                    break;
-                case 'left':
-                    v = parseInt(elem.style.left, 10) - inc;
-                    elem.style.left = `${v}px`;
-                    task.left = v;
-                    break;
-                case 'up':
-                    v = parseInt(elem.style.top, 10) - inc;
-                    elem.style.top = `${v}px`;
-                    task.top = v;
-                    break;
-                case 'down':
-                    v = parseInt(elem.style.top, 10) + inc;
-                    elem.style.top = `${v}px`;
-                    task.top = v;
-                    break;
+            case 'right':
+                v = parseInt(elem.style.left, 10) + inc;
+                elem.style.left = `${v}px`;
+                task.left = v;
+                break;
+            case 'left':
+                v = parseInt(elem.style.left, 10) - inc;
+                elem.style.left = `${v}px`;
+                task.left = v;
+                break;
+            case 'up':
+                v = parseInt(elem.style.top, 10) - inc;
+                elem.style.top = `${v}px`;
+                task.top = v;
+                break;
+            case 'down':
+                v = parseInt(elem.style.top, 10) + inc;
+                elem.style.top = `${v}px`;
+                task.top = v;
+                break;
             }
         },
         moveTasks({tasks, position, inc}) {
@@ -885,7 +755,8 @@ const DiagramComponent = Vue.extend({
             copiedTask.name = `${copiedTask.operation.name} ${self.workflow.tasks.length}`;
             copiedTask.enabled = true;
 
-            this.$emit('addTask', copiedTask);
+            this.$emit('add-task', copiedTask);
+
             return copiedTask;
         },
 
@@ -926,19 +797,16 @@ const DiagramComponent = Vue.extend({
             this.$emit('onclear-selection');
         },
         generateId() {
-            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (
-                c
-            ) {
-                let r = (Math.random() * 16) | 0,
-                    v = c == 'x' ? r : (r & 0x3) | 0x8;
-                return v.toString(16);
-            });
+            return crypto.randomUUID();
         },
 
         setZoom(zoom, instance, transformOrigin, el) {
             transformOrigin = transformOrigin || [0.5, 0.5];
             //instance = instance || jsPlumb;
             el = el || instance.getContainer();
+            if (!el) {
+                return;
+            }
             var p = ['webkit', 'moz', 'ms', 'o'],
                 s = 'scale(' + zoom + ')',
                 oString =
@@ -956,33 +824,10 @@ const DiagramComponent = Vue.extend({
             let adjust = (1.0 / zoom) * 5000 + 'px';
             el.style.width = adjust;
             el.style.height = adjust;
-            // @FIXME PerfectScrollbar.update(this.diagramElement.parentElement);
         },
         setZoomPercent(zoom) {
             this.zoom = zoom;
             this.setZoom(this.zoom, this.instance, null, this.diagramElement);
-        },
-        zoomIn(ev) {
-            let self = this;
-            self.zoom += 0.1;
-            if (self.zoom > 1.3) {
-                self.zoomInEnabled = false;
-            }
-            self.zoomOutEnabled = true;
-            this.setZoom(self.zoom, self.instance, null, self.diagramElement);
-            ev.preventDefault();
-            return false;
-        },
-        zoomOut(ev) {
-            let self = this;
-            self.zoom -= 0.1;
-            if (self.zoom < 0.8) {
-                self.zoomOutEnabled = false;
-            }
-            self.zoomInEnabled = true;
-            this.setZoom(self.zoom, self.instance, null, self.diagramElement);
-            ev.preventDefault();
-            return false;
         },
         distribute(mode, prop) {
             if (this.selectedElements.length < 3) {
@@ -1015,19 +860,10 @@ const DiagramComponent = Vue.extend({
                     }
                     finalPos = t[prop] + distance + parseInt(elem.offsetWidth);
                 });
-                Vue.nextTick(function () {
+                this.$nextTick(function () {
                     self.instance.repaintEverything();
                 });
             }
-        },
-        showHistory() {
-            let self = this;
-            let url = `${tahitiUrl}/workflows/${self.workflow.id}/history`;
-            let headers = {};
-
-            self.$http.get(url, {headers}).then(response => {
-                console.debug(response);
-            });
         },
         align(pos, fn) {
             let self = this;
@@ -1052,103 +888,10 @@ const DiagramComponent = Vue.extend({
                         task[pos] = minPosTask[pos];
                     });
                 }
-                Vue.nextTick(function () {
+                this.$nextTick(function () {
                     self.instance.repaintEverything();
                 });
             }
-        },
-        scrollToTask(taskId) {
-            let elemTask = document.getElementById(taskId);
-            let container = self.diagramElement.parentElement;
-            container.scrollTop = parseInt(elemTask.style.top);
-            container.scrollLeft = parseInt(elemTask.style.left);
-        },
-        cancelExecute() {
-            this.showExecutionModal = false;
-        },
-        execute() {
-            this.showExecutionModal = false;
-
-            let cloned = JSON.parse(JSON.stringify(this.workflow));
-            cloned.platform_id = cloned.platform.id;
-            cloned.tasks.forEach(task => {
-                task.operation = {id: task.operation.id};
-                delete task.version;
-            });
-
-            let body = {
-                workflow: cloned,
-                cluster: {id: this.cluster},
-                name: this.name,
-                user: {
-                    id: 0,
-                    login: '',
-                    name: ''
-                }
-            };
-            let self = this;
-
-            let locale = this.$store.getters.getLanguage;
-            let headers = {
-                Locale: locale
-            };
-            Vue.http
-                .post(`${standUrl}/jobs`, body, {headers})
-                .then(function (response) {
-                    self.$router.push({
-                        name: 'job-child-diagram',
-                        params: {
-                            id: response.body.data.id,
-                            platform: self.platform
-                        }
-                    });
-                })
-                .catch(ex => {
-                    if (ex.body) {
-                        self.$root.$refs.toastr.e(ex.body.message);
-                    } else if (ex.status === 0) {
-                        self.$root.$refs.toastr.e(
-                            `Error connecting to the backend (connection refused).`
-                        );
-                    } else {
-                        self.$root.$refs.toastr.e(`Unhandled error: ${JSON.stringify(ex)}`);
-                    }
-                });
-        },
-        onClickExecute() {
-            let self = this;
-            let headers = {
-            };
-            // Retrieve clusters
-            Vue.http
-                .get(`${standUrl}/clusters`, {headers})
-                .then(response => {
-                    self.clusters.length = 0;
-                    Array.prototype.push.apply(self.clusters, response.body);
-                    if (self.clusters.length) {
-                        self.cluster = self.clusters[0].id;
-                        self.clusterDescription = self.clusters[0].description;
-                        self.showExecutionModal = true;
-                        if (self.name === '') {
-                            self.name = self.workflow.name;
-                        }
-                    } else {
-                        self.$root.$refs.toastr.e(
-                            'Unable to execute workflow: There is not cluster available.'
-                        );
-                    }
-                })
-                .catch(ex => {
-                    if (ex.body) {
-                        self.$root.$refs.toastr.e(ex.body.message);
-                    } else if (ex.status === 0) {
-                        self.$root.$refs.toastr.e(
-                            `Error connecting to the backend (connection refused).`
-                        );
-                    } else {
-                        self.$root.$refs.toastr.e(`Unhandled error: ${JSON.stringify(ex)}`);
-                    }
-                });
         },
         _fixGroupConnections(self) {
             return function (group) {
@@ -1185,45 +928,11 @@ const DiagramComponent = Vue.extend({
                 });
             };
         },
-        _customUpdateConnectionsForGroup(_jsPlumb) {// eslint-disable-line no-unused-vars
-            // return function (group) {
-            //     var members = group.getMembers();
-            //     var c1 = _jsPlumb.getConnections({ source: members, scope: '*' }, true);
-            //     var c2 = _jsPlumb.getConnections({ target: members, scope: '*' }, true);
-            //     var processed = {};
-            //     group.connections.source.length = 0;
-            //     group.connections.target.length = 0;
-            //     var oneSet = function (c) {
-            //         for (var i = 0; i < c.length; i++) {
-            //             if (processed[c[i].id]) {
-            //                 continue;
-            //             }
-            //             processed[c[i].id] = true;
-            //             if (c[i].source._jsPlumbGroup === group) {
-            //                 if (c[i].target._jsPlumbGroup !== group) {
-            //                     group.connections.source.push(c[i]);
-            //                 }
-            //                 _connectionSourceMap[c[i].id] = group;
-            //             }
-            //             else if (c[i].target._jsPlumbGroup === group) {
-            //                 group.connections.target.push(c[i]);
-            //                 _connectionTargetMap[c[i].id] = group;
-            //             }
-            //         }
-            //     };
-            //     oneSet(c1); oneSet(c2);
-            // }
-        },
         _bindJsPlumbEvents() {
             let self = this;
             self.instance.getGroupManager().updateConnectionsForGroup = self._fixGroupConnections(
                 self
             );
-            // self.instance.getContainer().addEventListener('click', function (ev) {
-            //     //self.clearSelection(ev);
-            // });
-            // self.instance.bind("click", self.flowClick);
-
             self.instance.bind('group:removeMember', p => {
                 console.log('Group', p.group.id, 'removed', p.el.id);
                 self._fixGroupConnections(self, p);
@@ -1280,9 +989,8 @@ const DiagramComponent = Vue.extend({
             self.instance.setContainer('lemonade-diagram');
         }
     },
-});
+};
 
-export default DiagramComponent;
 </script>
 
 <style scoped lang="scss">

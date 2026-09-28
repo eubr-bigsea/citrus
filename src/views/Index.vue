@@ -15,9 +15,9 @@ export default {
             const mgr = new UserManager({
                 response_mode: 'query',
                 userStore: new WebStorageStateStore()
-            })
+            });
             mgr.readSigninResponseState().then(({state, response}) => {
-                    console.debug(state)
+                console.debug(state);
             });
             mgr.signinRedirectCallback().then(async function (user) { // eslint-disable-line no-unused-vars
                 await self.getThornProfile();
@@ -26,7 +26,7 @@ export default {
                 console.log(err);
                 self.$router.push({ name: 'home' });
             });
-           
+
         } else if (q?.sp && q?.error_description !== "End User denied the logout request") { //logout
             self.$store.dispatch('logout');
             self.$router.push({ name: 'home' });
@@ -42,8 +42,8 @@ export default {
             //const headers = { 'Authorization': token };
             const headers = {};
             const resp = await axios.get(`${thornUrl}/users/me`, { headers });
-            this.$store.dispatch('setUser', { user: resp.data.data[0], token })
+            this.$store.dispatch('setUser', { user: resp.data.data[0], token });
         },
     },
-}
+};
 </script>

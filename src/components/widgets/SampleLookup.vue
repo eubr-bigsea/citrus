@@ -3,7 +3,7 @@
         <LabelComponent :field="field"
                         :value="value" />
         <div>
-            <v-select v-model:value="value"
+            <v-select v-model:value="clonedValue"
                       :options="suggestions"
                       :multiple="multiple"
                       label="label"
@@ -11,7 +11,9 @@
                       :close-on-select="true"
                       :reduce="option => option.value"
                       @input="updated">
-                <div slot="no-options" />
+                <template #no-options>
+&nbsp;
+                </template>
             </v-select>
         </div>
     </div>
@@ -19,7 +21,7 @@
 <script>
 import vSelect from "vue-select";
 import axios from 'axios';
-import LabelComponent from './Label.vue'
+import LabelComponent from './Label.vue';
 import Widget from '../../mixins/Widget.js';
 
 const limoneroUrl = import.meta.env.VITE_LIMONERO_URL;
@@ -41,7 +43,8 @@ export default {
         return {
             values: [],
             suggestions: [],
-        }
+            clonedValue: this.value
+        };
     },
     computed: {
         multiple(){
@@ -55,11 +58,11 @@ export default {
         }
     },
     mounted() {
-        this._loadLookup()
+        this._loadLookup();
     },
     methods: {
         updated(val) {
-            console.debug('Valor', val, this.field)
+            console.debug('Valor', val, this.field);
             this.$root.$emit(this.message, this.field, val);
         },
         _loadLookup() {
@@ -70,7 +73,7 @@ export default {
                 });
         }
     }
-}
+};
 </script>
 <style>
     .v-select ul.dropdown-menu {

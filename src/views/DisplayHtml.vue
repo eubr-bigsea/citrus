@@ -10,7 +10,7 @@ import Notifier from '../mixins/Notifier.js';
 export default {
     mixins: [Notifier],
     data() {
-        return { data: null }
+        return { data: null };
     },
     async mounted() {
         const url = `/api/v1/caipirinha/visualizations/0/0/${this.$route.params.id}`;
@@ -25,7 +25,7 @@ export default {
             this.error(e);
         }
     },
-}
+};
 </script>
 <style scoped>
     iframe {

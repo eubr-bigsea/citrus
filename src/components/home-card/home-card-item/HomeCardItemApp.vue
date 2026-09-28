@@ -14,8 +14,8 @@
 </template>
 
 <script>
-import HomeCardMixin from '../../../mixins/HomeCard.js'
-import HomeCardItemBase from './HomeCardItemBase.vue'
+import HomeCardMixin from '../../../mixins/HomeCard.js';
+import HomeCardItemBase from './HomeCardItemBase.vue';
 
 export default {
     name: 'HomeCardItemWorkflow',
@@ -23,5 +23,5 @@ export default {
         HomeCardItemBase
     },
     mixins: [HomeCardMixin]
-}
+};
 </script>

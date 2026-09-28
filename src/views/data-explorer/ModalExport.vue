@@ -16,8 +16,8 @@
         </div>
         <div class="row mt-2">
             <div class="col-6">
-                <label>{{$tc('titles.platform')}}:</label>
-                <select v-model="platform" class="form-control form-control-sm">
+                <label>{{$t('titles.platform')}}:</label>
+                <select v-model="platform" class="form-select form-select-sm">
                     <option value="spark">
                         Spark
                     </option>
@@ -40,12 +40,13 @@ export default {
         name: { type: String, required: true },
         isDirty: { type: Boolean }
     },
+    emits: ['ok'],
     data() {
         return {
             newName: null,
             exportDisabled: true,
             platform: 'spark'
-        }
+        };
     },
     mounted() {
         this.newName = this.name;
@@ -58,5 +59,5 @@ export default {
             this.$emit("ok", { newName: this.newName, platform: this.platform, exportDisabled: this.exportDisabled });
         }
     }
-}
+};
 </script>

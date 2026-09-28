@@ -9,16 +9,16 @@
                     stroke-width="3" />
                 <text x="50" y="55" font-size="20" font-weight="bold" fill="white" text-anchor="middle"
                     font-family="Arial">
-                    {{ $tc('titles.stop').toUpperCase() }}
+                    {{ $t('titles.stop').toUpperCase() }}
                 </text>
             </svg>
         </div>
-        <div class="ml-4 mt-5">
+        <div class="ms-4 mt-5">
             <h1>403</h1>
             <p>{{ $t('titles.unauthorized') }}</p>
             <div>
                 <router-link :to="{ name: 'home' }" class="btn btn-primary btn-sm">
-                    {{ $tc('actions.back') }}
+                    {{ $t('actions.back') }}
                 </router-link>
             </div>
         </div>

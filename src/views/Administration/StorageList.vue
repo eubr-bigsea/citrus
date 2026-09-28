@@ -4,7 +4,7 @@
             <div class="col">
                 <div>
                     <div class="d-flex justify-content-between align-items-center">
-                        <h1>{{$tc('titles.storage', 2)}}</h1>
+                        <h1>{{$t('titles.storage', 2)}}</h1>
                         <router-link :to="{name: 'addStorage'}"
                                      class="btn btn-sm btn-outline-primary">
                             {{$t('actions.addItem')}}
@@ -33,7 +33,7 @@
                                             {{props.row.type}}
                                         </template>
                                         <template #enabled="props">
-                                            {{$tc(props.row.enabled ? 'common.yes': 'common.no')}}
+                                            {{$t(props.row.enabled ? 'common.yes': 'common.no')}}
                                         </template>
                                         <template #actions="props">
                                             <button class="btn btn-sm btn-light"
@@ -68,22 +68,22 @@ export default {
             columns: ['id', 'name', 'type', 'enabled', 'actions'],
             options: {
                 debounce: 800,
-                skin: 'table-sm table table-hover',
+                skin: 'table table-hover',
                 columnClasses: {actions: 'th-10'},
                 headings: {
                     id: 'ID',
-                    name: this.$tc('common.name'),
-                    type: this.$tc('common.type'),
-                    enabled: this.$tc('common.enabled'),
-                    actions: this.$tc('common.action', 2)
+                    name: this.$t('common.name'),
+                    type: this.$t('common.type'),
+                    enabled: this.$t('common.enabled'),
+                    actions: this.$t('common.action', 2)
                 },
                 sortable: ['name', 'id', 'type'],
                 filterable: ['name', 'id'],
                 sortIcon: {
-                    base: 'fa fas',
-                    is: 'fa-sort ml-10',
-                    up: 'fa-sort-amount-up',
-                    down: 'fa-sort-amount-down'
+                    base: 'sort-base',
+                    is: 'sort-is ms-10',
+                    up: 'sort-up',
+                    down: 'sort-down'
                 },
                 preserveState: true,
                 saveState: true,
@@ -97,11 +97,9 @@ export default {
                     data.fields = 'id,name,type,enabled';
 
                     let url = `${limoneroUrl}/storages?enabled=true`;
-                    this.$Progress.start();
                     return axios
                         .get(url, {params: data})
                         .then(resp => {
-                            this.$Progress.finish();
                             return {
                                 data: resp.data.data,
                                 count: resp.data.pagination.total
@@ -109,13 +107,12 @@ export default {
                         })
                         .catch(
                             function (e){
-                                self.$Progress.finish();
                                 self.error(e);
                             }.bind(this)
                         );
                 },
                 texts: {
-                    filter: this.$tc('common.filter'),
+                    filter: this.$t('common.filter'),
                     count: this.$t('common.pagerShowing'),
                     limit: this.$t('common.limit'),
                     noResults: this.$t('common.noData'),
@@ -143,7 +140,7 @@ export default {
                         .then(()=> {
                             self.success(
                                 self.$t('messages.successDeletion', {
-                                    what: this.$tc('titles.storage', 1)
+                                    what: this.$t('titles.storage', 1)
                                 })
                             );
                             self.$refs.storageList.refresh();

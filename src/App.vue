@@ -1,15 +1,14 @@
 <template>
     <div>
         <!--web-socket / -->
-        <vue-snotify />
         <l-navbar v-if="isLoggedIn" />
+        <DialogsWrapper />
         <div id="wrapperx">
             <!--<side-bar ref="sidebar" />-->
             <div id="page-content-wrapperx">
                 <div class="container-fluid main-container">
                     <router-view />
 
-                    <vue-progress-bar />
                     <l-footer v-if="isLoggedIn" />
                 </div>
             </div>
@@ -18,18 +17,16 @@
 </template>
 
 <script>
-import WebSocket from './components/WebSocket.vue';
 import Navbar from './components/Navbar.vue';
 import Footer from './components/Footer.vue';
 import axios from 'axios';
-import SideBar from './components/SideBar.vue';
+import { DialogsWrapper } from 'vuejs-confirm-dialog';
 
 export default {
     name: 'App',
     components: {
         'l-navbar': Navbar,
-        'l-footer': Footer,
-        SideBar, WebSocket
+        'l-footer': Footer
     },
     computed: {
         isLoggedIn() {

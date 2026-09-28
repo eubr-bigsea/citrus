@@ -4,7 +4,7 @@
             <div class="col">
                 <div>
                     <div class="d-flex justify-content-between align-items-center">
-                        <h1>{{$tc('titles.user', 1)}}</h1>
+                        <h1>{{$t('titles.user', 1)}}</h1>
                     </div>
                     <hr>
                     <div class="row">
@@ -56,7 +56,8 @@
                                                        type="text"
                                                        class="form-control"
                                                        required
-                                                       maxlength="100">
+                                                       maxlength="100"
+                                                       autocomplete="off">
                                             </div>
                                         </div>
                                         <div class="form-group row">
@@ -66,7 +67,7 @@
                                                     {{$t('common.language')}}:
                                                 </label>
                                                 <select v-model="user.locale"
-                                                        class="form-control">
+                                                        class="form-control form-select">
                                                     <option value="en">
                                                         English/Inglês
                                                     </option>
@@ -84,14 +85,15 @@
                                                 <input v-model="user.password"
                                                        type="password"
                                                        class="form-control"
-                                                       maxlength="50">
+                                                       maxlength="50"
+                                                       autocomplete="new-password">
                                             </div>
                                             <div class="col-sm-3">
                                                 <label class="col-form-label">
                                                     {{$t('common.user.authenticationType')}}:
                                                 </label>
                                                 <select v-model="user.authentication_type"
-                                                        class="form-control">
+                                                        class="form-control form-select">
                                                     <option value="INTERNAL">
                                                         {{$t('common.user.authenticationInternal')}}
                                                     </option>
@@ -103,7 +105,7 @@
                                                     </option>
                                                 </select>
                                             </div>
-                                            <div class="col-sm-3">
+                                            <div class="col-sm-3 pt-2">
                                                 <b-form-checkbox v-model="user.enabled">
                                                     {{$t('common.enabled')}}
                                                 </b-form-checkbox>
@@ -111,7 +113,7 @@
                                         </div>
                                         <div class="row">
                                             <div class="col-md-12">
-                                                <label>{{$tc('common.user.apiToken')}}</label>
+                                                <label>{{$t('common.user.apiToken')}}</label>
                                                 <div class="input-group mb-3">
                                                     <input type="text"
                                                            class="form-control"
@@ -130,15 +132,15 @@
                                         <div class="form-group row">
                                             <div class="col-sm-6">
                                                 <label class="col-form-label">
-                                                    {{$tc('common.user.notes', 2)}}:
+                                                    {{$t('common.user.notes', 2)}}:
                                                 </label>
                                                 <textarea v-model="user.notes"
-                                                          rows="4"
+                                                          rows="4" maxlength="250"
                                                           class="form-control" />
                                             </div>
                                             <div class="col-sm-6">
                                                 <label class="col-form-label">
-                                                    {{$tc('common.roles', 2)}}:
+                                                    {{$t('common.roles', 2)}}:
                                                 </label>
                                                 <v-select v-model="user.roles"
                                                           :options="roles"
@@ -147,10 +149,10 @@
                                                           :taggable="false"
                                                           :close-on-select="false" />
                                                 <label class="mt-3">{{$t('common.user.globalRoles')}}:</label>
-                                                <div>
+                                                <div class="mt-2 ps-1">
                                                     <div v-for="gr in globalRoles"
                                                          :key="gr.id"
-                                                         class="badge badge-info mr-1">
+                                                         class="badge bg-info me-1">
                                                         {{gr.label}}
                                                     </div>
                                                 </div>
@@ -158,17 +160,17 @@
                                         </div>
                                         <div class="row">
                                             <div class="col-md-12 mt-4 border-top pt-2">
-                                                <button class="btn btn-primary mr-1 btn-spinner"
+                                                <button class="btn btn-primary me-1 btn-spinner"
                                                         @click.stop="save">
                                                     <font-awesome-icon icon="spinner"
                                                                        pulse
                                                                        class="icon" />
                                                     <font-awesome-icon icon="fa fa-save" />
-                                                    {{$tc('actions.save')}}
+                                                    {{$t('actions.save')}}
                                                 </button>
                                                 <router-link :to="{name: 'AdministrationUserList'}"
-                                                             class="btn btn-secondary mr-1">
-                                                    {{$tc('actions.cancel')}}
+                                                             class="btn btn-secondary me-1">
+                                                    {{$t('actions.cancel')}}
                                                 </router-link>
                                             </div>
                                         </div>
@@ -185,7 +187,7 @@
 
 <script>
 import axios from 'axios';
-import Notifier from '../../mixins/Notifier.js';
+import Notifier from '@/mixins/Notifier.js';
 import {mapGetters} from 'vuex';
 import vSelect from "vue-select";
 
@@ -252,14 +254,13 @@ export default {
             event.target.setAttribute('disabled', 'disabled');
             event.target.classList.remove('btn-spinner');
 
-            this.$Progress.start();
             return axios
                 .patch(url, user)
                 .then(() => {
                     this.$router.push({name: 'AdministrationUserList'});
                     self.success(
                         this.$t('messages.savedWithSuccess', {
-                            what: this.$tc('titles.user', 1)
+                            what: this.$t('titles.user', 1)
                         })
                     );
 
@@ -271,7 +272,6 @@ export default {
                 ).finally(() => {
                     event.target.removeAttribute('disabled');
                     event.target.classList.add('btn-spinner');
-                    this.$Progress.finish();
                 });
         },
         update(event){
@@ -291,7 +291,6 @@ export default {
                     ).finally(() => {
                         event.target.removeAttribute('disabled');
                         event.target.classList.add('btn-spinner');
-                        this.$Progress.finish();
                     });
             }
         }

@@ -19,7 +19,7 @@
 <script>
 // Deprecated
 import vSelect from "vue-select";
-import LabelComponent from './Label.vue'
+import LabelComponent from './Label.vue';
 import Widget from '../../mixins/Widget.js';
 export default {
     components: {
@@ -41,5 +41,5 @@ export default {
             this.$root.$emit(this.message, this.field, val);
         }
     },
-}
+};
 </script>

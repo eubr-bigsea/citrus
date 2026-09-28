@@ -27,26 +27,27 @@
                     <Markdown :text="code" />
                 </div>
             </div>
-            <div slot="modal-footer"
-                 class="w-100 text-right">
-                <b-btn variant="primary"
-                       class="mr-1"
-                       @click="okClicked">
-                    {{$t('common.ok')}}
-                </b-btn>
-                <b-btn variant="secondary"
-                       @click="cancelClicked">
-                    {{$t('actions.cancel')}}
-                </b-btn>
-            </div>
+            <template #footer>
+                <div class="w-100 text-end">
+                    <b-button variant="primary"
+                              class="me-1"
+                              @click="okClicked">
+                        {{$t('common.ok')}}
+                    </b-button>
+                    <b-button variant="secondary"
+                              @click="cancelClicked">
+                        {{$t('actions.cancel')}}
+                    </b-button>
+                </div>
+            </template>
         </b-modal>
     </div>
 </template>
 <script>
 import LabelComponent from './Label.vue';
-import Markdown from './Markdown.vue';
+import Markdown from './MarkdownComponent.vue';
 import "prismjs/themes/prism.css";
-import Widget from '../../mixins/Widget.js';
+import Widget from '@/mixins/Widget.js';
 
 export default {
     components: { LabelComponent, Markdown},
@@ -55,7 +56,7 @@ export default {
         return {
             displayValue: '',
             code: '',
-        }
+        };
     },
     methods: {
         openModal() {
@@ -70,7 +71,7 @@ export default {
             this.$refs.modal.hide();
         }
     },
-}
+};
 </script>
 <style scoped>
     .editor {

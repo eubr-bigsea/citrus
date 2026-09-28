@@ -15,7 +15,7 @@ const OTHERS = [
     "TIME",
     "TIMESTAMP",
     "VECTOR",
-]
+];
 function isNumeric(dataType) {
     return NUMERIC.includes(dataType);
 }

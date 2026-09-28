@@ -1,41 +1,32 @@
 <template>
     <div class="lemonade-toolbox">
-        <VuePerfectScrollbar class="scroll-area" :settings="settings">
-            <div>
-                <ul class="list-group">
-                    <!-- <li
-                        class="list-group-item truncate sidebar-separator-title text-muted d-flex align-items-center menu-collapsed">
-                        <input v-model="search" type="text" class="form-control" :placeholder="$tc('actions.search')"
-                            @input="searchOperation" />
-                    </li> -->
-                    <div>
-                        <span v-for="item in items" :key="item.op.id + ':' + item.id">
-                            <b-link class="list-group-item truncate list-group-item-action flex-column align-items-start"
-                                    draggable="true"
-                                    :data-id="item.op.id"
-                                    :data-lookup-id="item.id"
-                                    :data-name="item.name"
-                                    :data-lookup-name="item.fieldName"
-                                    @dblclick="dbClickAddTask"
-                                    @dragstart="startDrag2"
-                                    @dragend="stopDrag">
-                                {{item.name}}
-                                <font-awesome-icon icon="fa fa-bars fa-1x"
-                                                   class="float-right" />
-                            </b-link>
-                        </span>
-                    </div>
-                </ul>
-            </div>
-        </VuePerfectScrollbar>
+        <div>
+            <ul class="list-group">
+                <div>
+                    <span v-for="item in items" :key="item.op.id + ':' + item.id">
+                        <b-link class="list-group-item truncate list-group-item-action flex-column align-items-start"
+                                draggable="true"
+                                :data-id="item.op.id"
+                                :data-lookup-id="item.id"
+                                :data-name="item.name"
+                                :data-lookup-name="item.fieldName"
+                                @dblclick="dbClickAddTask"
+                                @dragstart="startDrag2"
+                                @dragend="stopDrag">
+                            {{item.name}}
+                            <font-awesome-icon icon="fa fa-bars fa-1x"
+                                               class="float-end" />
+                        </b-link>
+                    </span>
+                </div>
+            </ul>
+        </div>
         <div ref="opDrag" />
     </div>
 </template>
 <script>
-import VuePerfectScrollbar from 'vue-perfect-scrollbar';
 import ToolboxMixin from '../mixins/Toolbox.js';
 import Notifier from '../mixins/Notifier.js';
-import { debounce } from '../util.js';
 import axios from 'axios';
 
 const limoneroUrl = import.meta.env.VITE_LIMONERO_URL;
@@ -45,9 +36,7 @@ const standUrl = import.meta.env.VITE_STAND_URL;
 
 export default {
     name: 'CustomToolbox',
-    components: {
-        VuePerfectScrollbar
-    },
+
     mixins: [ToolboxMixin, Notifier],
     props: {
         operations: {
@@ -65,9 +54,6 @@ export default {
     },
     data() {
         return {
-            filteredOperations: [],
-            search: '',
-            settings: { maxScrollbarLength: 100 },
             expandedOperations: [],
             items: [],
             alreadyLoaded: new Set(),
@@ -76,18 +62,6 @@ export default {
     computed: {
         shortcutOperations() {
             return this.operations.filter(op => op.enabled && op.type === 'SHORTCUT');
-        },
-        searcheableOperations() {
-            let result = new Map();
-            if (this.search) {
-                this.operations.forEach(op => {
-                    result[op.id] = op.name
-                        .normalize('NFD')
-                        .replace(/[\u0300-\u036f]/g, '')
-                        .toLowerCase();
-                });
-            }
-            return result;
         }
     },
     watch: {
@@ -118,7 +92,7 @@ export default {
                                     STAND_URL: standUrl,
                                     THORN_URL: thornUrl,
                                 });
-                            console.debug(url);
+                            //console.debug(url);
                         }
                         axios.get(url).then((resp) => {
                             const values = resp.data;
@@ -129,7 +103,7 @@ export default {
                             this.items.push(... resp.data);
                             this.alreadyLoaded.add(op.id);
                         }).catch(function (e) {
-                            this.$root.$emit('on-error', e);
+                            this.error(e);
                         }.bind(this));
                     }
                 }
@@ -152,28 +126,12 @@ export default {
             let match = null;
             while ((match = re.exec(tpl))) {
                 if (data[match[2]]) {
-                    tpl = tpl.replace(match[1], data[match[2]])
+                    tpl = tpl.replace(match[1], data[match[2]]);
                 }
                 re.lastIndex = 0;
             }
             return tpl;
-        },
-        searchOperation: debounce(function () {
-            let search = this.search
-                .normalize('NFD')
-                .replace(/[\u0300-\u036f]/g, '')
-                .toLowerCase();
-            let searcheable = this.searcheableOperations;
-
-            this.filteredOperations = this.operations.filter(op => {
-                return (
-                    op.enabled &&
-                        searcheable[op.id] &&
-                        searcheable[op.id].indexOf(search) > -1
-                );
-            });
-        }, 500),
-
+        }
     }
 };
 </script>

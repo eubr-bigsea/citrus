@@ -1,43 +1,46 @@
 <template>
     <div>
-        <div class="btn-group mr-2"
-             role="group">
-            <button class="btn btn-sm btn-outline-dark"
-                    :title="$tc('titles.job', 2)"
-                    @click.prevent="showExecutions">
-                <font-awesome-icon icon="fa fa-tasks" /> {{$tc('titles.job', 2)}}
+        <div class="btn-group me-2" role="group">
+            <button class="btn btn-sm btn-outline-dark" :title="$t('titles.job', 2)" @click.prevent="$emit('onshow-executions')">
+                <font-awesome-icon icon="fa fa-tasks" /> {{$t('titles.job', 2)}}
+                <span class="position-absolute top-0 start-0 translate-middle badge rounded-pill bg-info">
+                    {{totalJobs}}
+                    <span class="visually-hidden">{{$t('titles.job', 2)}}</span>
+                </span>
             </button>
             <button v-if="(hasAnyPermission(['APP_EDIT']) || isAdmin) && workflow.publishing_enabled"
-                    class="btn btn-sm btn-outline-dark"
-                    :title="$t('actions.showVariables')"
-                    @click.prevent="showVariables">
-                <font-awesome-icon icon="fa fa-dollar-sign" /> Variáveis
+                    class="btn btn-sm btn-outline-dark" :title="$t('actions.showVariables')" @click.prevent="$emit('onshow-variables')">
+                <font-awesome-icon icon="fa fa-dollar-sign" /> {{$t('workflow.variables', 2)}}
+                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-info">
+                    {{totalVariables}}
+                    <span class="visually-hidden">{{$t('workflow.variables', 2)}}</span>
+                </span>
             </button>
         </div>
-        <div v-if="canEditWorkflow"  class="btn-group mr-2" role="group">
+        <div v-if="canEditWorkflow"  class="btn-group me-2" role="group">
             <button class="btn btn-sm btn-outline-success"
                     :title="$t('actions.save')"
-                    @click.prevent="saveWorkflow" :disabled="!isDirty">
+                    @click.prevent="$emit('onsave-workflow')" :disabled="!isDirty">
                 <font-awesome-icon icon="fa fa-save"/> {{$t('actions.save')}}
             </button>
-            <button class="btn btn-sm btn-outline-dark"
-                    :title="$t('actions.saveAs')"
-                    @click.prevent="saveWorkflowAs">
+            <button class="btn btn-sm btn-outline-dark" :title="$t('actions.saveAs')" @click.prevent="$emit('onsaveas-workflow')">
                 <font-awesome-icon icon="fa fa-copy" /> {{$t('actions.saveAs')}}...
             </button>
         </div>
-        <div class="btn-group mr-2">
-            <b-dropdown right
-                        split
-                        variant="sm btn-outline-dark"
-                        @click.prevent.stop="exportWorkflow()">
+
+        <div class="btn-group me-2">
+            <button class="btn btn-sm btn-outline-dark" :title="$t('actions.export')"
+                    @click.prevent.stop="$emit('onclick-export')">
+                <font-awesome-icon icon="fa fa-save" /> {{$t('actions.export')}}
+            </button>
+            <!---
+            <b-dropdown right split variant="sm btn-outline-dark" @click.prevent.stop="exportWorkflow()">
                 <template #button-content>
-                    <font-awesome-icon icon="fa fa-download" /> {{$t('actions.export')}}
+                    <font-awesome-icon icon="fa fa-download" /> {{ $t('actions.export') }}
                 </template>
                 <b-dropdown-item @click.prevent="exportWorkflow()">
-                    {{$t('common.json')}}
+                    {{ $t('common.json') }}
                 </b-dropdown-item>
-                <!--
                 <b-dropdown-divider />
                 <b-dropdown-item @click.prevent="exportWorkflow('python')">
                     {{$t('common.python')}}
@@ -45,13 +48,13 @@
                 <b-dropdown-item @click.prevent="exportWorkflow('notebook')">
                     {{$t('common.jupyter')}}
                 </b-dropdown-item>
-                -->
             </b-dropdown>
+            -->
         </div>
-        <div v-if="canEditWorkflow"  class="btn-group mr-2" role="group">
+        <div v-if="canEditWorkflow"  class="btn-group me-2" role="group">
             <button class="btn btn-sm btn-outline-dark"
                     :title="$t('actions.showProperties')"
-                    @click.prevent="showProperties">
+                    @click.prevent="$emit('onshow-properties')">
                 <font-awesome-icon icon="fa fa-cogs" />
             </button>
             <!--
@@ -61,24 +64,17 @@
                 <font-awesome-icon icon="fa fa-image" />
             </button>
             -->
-            <button class="btn btn-sm btn-outline-dark"
-                    :title="$t('actions.showHistory')"
-                    @click.prevent="showHistory">
+            <button class="btn btn-sm btn-outline-dark" :title="$t('actions.showHistory')" @click.prevent="$emit('onshow-history')">
                 <font-awesome-icon icon="fa fa-history" />
             </button>
         </div>
-        <div class="btn-group"
-             role="group">
-            <button id="tlb-execute-wf"
-                    class="btn btn-sm btn-outline-dark runBtn"
-                    :title="$t('actions.execute')"
-                    variant="success"
-                    @click.prevent="execute">
-                <font-awesome-icon icon="fa fa-play"
-                                   class=" text-primary" /> {{$t('actions.execute')}}
+        <div class="btn-group" role="group">
+            <button id="tlb-execute-wf" class="btn btn-sm btn-outline-dark runBtn" :title="$t('actions.execute')"
+                    variant="success" @click.prevent="$emit('onclick-execute')">
+                <font-awesome-icon icon="fa fa-play" class=" text-primary" /> {{$t('actions.execute')}}
             </button>
             <!--
-        <button class="btn btn-sm btn-outline-dark" @click.prevent="restart" :title="$tc('actions.stop')"
+        <button class="btn btn-sm btn-outline-dark" @click.prevent="restart" :title="$t('actions.stop')"
             variant="danger" id="tlb-restart-wf">
             <font-awesome-icon icon="fa fa-stop red" />
         </button>
@@ -93,45 +89,20 @@ import { mapGetters } from 'vuex';
 export default {
     name: 'WorkflowToolbar',
     props: {
-        workflow: {type: Object, default: () => null},
-        isDirty: {type: Boolean, default: () => false},
+        workflow: { type: Object, default: () => null },
+        isDirty: { type: Boolean, default: () => false },
+        totalJobs: { type: Number, default: 0 },
         canEditWorkflow: {type: Boolean, default: () => true}
     },
-    computed: {
-        ...mapGetters(['hasAnyPermission', 'isAdmin', 'user']),
-    },
-    emit: ['onsave-workflow', 'onsaveas-workflow', 'onshow-history',
+    emits: ['onsave-workflow', 'onsaveas-workflow', 'onshow-history',
         'onclick-execute', 'onclick-export', 'onshow-properties', 'onshow-executions',
         'onshow-variables', 'onselect-image'
     ],
-    methods: {
-        saveWorkflow() {
-            this.$emit('onsave-workflow')
-        },
-        saveWorkflowAs() {
-            this.$emit('onsaveas-workflow')
-        },
-        showHistory() {
-            this.$emit('onshow-history');
-        },
-        execute() {
-            this.$emit('onclick-execute');
-        },
-        exportWorkflow(format) {
-            this.$emit('onclick-export', format);
-        },
-        showProperties() {
-            this.$emit('onshow-properties')
-        },
-        showExecutions() {
-            this.$emit('onshow-executions')
-        },
-        showVariables() {
-            this.$emit('onshow-variables')
-        },
-        selectImage() {
-            this.$emit('onselect-image');
+    computed: {
+        ...mapGetters(['hasAnyPermission', 'isAdmin', 'user']),
+        totalVariables() {
+            return this.workflow?.variables?.length ?? 0;
         }
     }
-}
+};
 </script>
