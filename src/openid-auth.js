@@ -1,4 +1,4 @@
-import { UserManager, WebStorageStateStore } from 'oidc-client';
+import { UserManager, WebStorageStateStore } from 'oidc-client-ts';
 import axios from 'axios';
 const thornUrl = import.meta.env.VITE_THORN_URL;
 

@@ -51,7 +51,7 @@
 <script>
 import axios from 'axios';
 import { openIdService } from '../openid-auth.js';
-import { UserManager, WebStorageStateStore } from 'oidc-client';
+import { UserManager, WebStorageStateStore } from 'oidc-client-ts';
 const thornUrl = import.meta.env.VITE_THORN_URL;
 const parseJwt = (token) => {
     try {

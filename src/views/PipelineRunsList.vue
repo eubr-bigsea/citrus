@@ -106,9 +106,14 @@
 
                                     </template>
                                     <template #comment="props">
-                                        <div class="">
-                                            <font-awesome-icon icon="fa fa-info-circle" :title="props.row.comment"
-                                                class="text-primary" size="2x" />
+                                        <div class="comment-cell" :title="props.row.comment || ''">
+                                            <span class="comment-text">{{ commentPreview(props.row.comment) }}</span>
+                                            <button type="button" class="btn btn-link btn-sm comment-edit"
+                                                    :aria-label="$t('actions.edit') + ' ' + $t('titles.comment')"
+                                                    :title="$t('actions.edit') + ' ' + $t('titles.comment')"
+                                                    @click.stop="openCommentEditor(props.row)">
+                                                <font-awesome-icon icon="fa fa-pen-to-square" />
+                                            </button>
                                         </div>
                                     </template>
                                     <template #statusStatus="props">
@@ -199,6 +204,34 @@
                 </div>
             </div>
         </div>
+        <dialog ref="commentDialog" class="comment-dialog" @cancel.prevent="closeCommentEditor">
+            <form method="dialog" @submit.prevent="saveComment">
+                <div class="comment-dialog-header">
+                    <h2 class="h5 mb-0">
+                        {{$t('titles.comment')}}
+                        <span v-if="editingCommentRun">#{{editingCommentRun.id}}</span>
+                    </h2>
+                    <button type="button" class="btn-close" :aria-label="$t('actions.cancel')"
+                            @click="closeCommentEditor" />
+                </div>
+                <div class="mb-3">
+                    <label for="pipeline-run-comment" class="form-label">{{$t('titles.comment')}}</label>
+                    <textarea id="pipeline-run-comment" v-model="commentDraft" class="form-control"
+                              rows="6" maxlength="200" autofocus />
+                    <div class="form-text text-end">{{commentDraft.length}}/200</div>
+                </div>
+                <div class="d-flex justify-content-end gap-2">
+                    <button type="button" class="btn btn-secondary" :disabled="commentSaving"
+                            @click="closeCommentEditor">
+                        {{$t('actions.cancel')}}
+                    </button>
+                    <button type="submit" class="btn btn-primary" :disabled="commentSaving">
+                        <font-awesome-icon v-if="commentSaving" icon="spinner" pulse />
+                        {{$t('actions.save')}}
+                    </button>
+                </div>
+            </form>
+        </dialog>
     </main>
 </template>
 
@@ -236,6 +269,9 @@ export default {
 
             },
             fromPipelineEdit: false,
+            editingCommentRun: null,
+            commentDraft: '',
+            commentSaving: false,
             ...new DataTableBuilder(this.$t)
                 .columns(
                     'id',
@@ -262,6 +298,7 @@ export default {
                     period: this.$t('common.period'),
                     updated: this.$t('common.updated'),
                     status: this.$t('common.status'),
+                    statusStatus: this.$t('common.status'),
                     actions: this.$t('titles.action', 2),
                     comment: this.$t('titles.comment', 2),
                 })
@@ -308,6 +345,44 @@ export default {
             const query = {};
             this.$router.replace({ query }).catch(() => { });
             this.$refs.runsList.refresh();
+        },
+        openCommentEditor(run) {
+            this.editingCommentRun = run;
+            this.commentDraft = run.comment || '';
+            this.$nextTick(() => this.$refs.commentDialog.showModal());
+        },
+        commentPreview(comment) {
+            if (!comment) return '—';
+            return comment.length > 50 ? `${comment.slice(0, 50)}…` : comment;
+        },
+        closeCommentEditor() {
+            if (this.$refs.commentDialog?.open) {
+                this.$refs.commentDialog.close();
+            }
+            this.editingCommentRun = null;
+            this.commentDraft = '';
+        },
+        async saveComment() {
+            if (!this.editingCommentRun || this.commentSaving) return;
+
+            this.commentSaving = true;
+            try {
+                const comment = this.commentDraft === '' ? null : this.commentDraft;
+                const resp = await axios.patch(
+                    `${standUrl}/pipeline-runs/${this.editingCommentRun.id}/comment`,
+                    { comment }
+                );
+                Object.assign(this.editingCommentRun, resp.data.data?.[0] || { comment });
+                this.$refs.runsList.refresh();
+                this.success(this.$t('messages.savedWithSuccess', {
+                    what: this.$t('titles.comment')
+                }));
+                this.closeCommentEditor();
+            } catch (e) {
+                this.error(e);
+            } finally {
+                this.commentSaving = false;
+            }
         },
         detail(step) {
             console.debug(step)
@@ -396,6 +471,41 @@ export default {
     max-width: 100%;
     white-space: normal;
     word-break: break-word;
+}
+
+.comment-cell {
+    display: block;
+    min-width: 16rem;
+    max-width: 32rem;
+}
+
+.comment-text {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+.comment-edit {
+    margin-left: 0.35rem;
+    padding: 0.1rem 0.25rem;
+}
+
+.comment-dialog {
+    width: min(42rem, calc(100vw - 2rem));
+    border: 0;
+    border-radius: 0.5rem;
+    box-shadow: 0 0.5rem 2rem rgb(0 0 0 / 25%);
+    padding: 1.25rem;
+}
+
+.comment-dialog::backdrop {
+    background: rgb(0 0 0 / 45%);
+}
+
+.comment-dialog-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
 }
 
 .arrow-step {

@@ -3,7 +3,7 @@
 </template>
 <script>
 import axios from 'axios';
-import { UserManager, WebStorageStateStore } from 'oidc-client';
+import { UserManager, WebStorageStateStore } from 'oidc-client-ts';
 let thornUrl = import.meta.env.VITE_THORN_URL;
 export default {
     name: 'IndexView',
