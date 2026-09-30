@@ -521,6 +521,7 @@ export default {
             error:
                 'Erro durante a execução. Veja mais detalhes na janela de log acima.',
             logs: 'Log | Logs',
+            noLogs: 'Nenhum log disponível para esta execução.',
             parameters: 'Parâmetro | Parâmetros',
             results: 'Resultado | Resultados',
             sourceCode: 'Código-fonte',
@@ -1541,6 +1542,7 @@ export default {
             details: 'Detail | Details',
             error: 'Error running job. See more details in the log window above.',
             logs: 'Log | Logs',
+            noLogs: 'No logs are available for this execution.',
             parameters: 'Parameter | Parameters',
             results: 'Result | Results',
             sourceCode: 'Source code',

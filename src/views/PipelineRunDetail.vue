@@ -158,16 +158,21 @@
                                     Tentativa #{{ orderedJobs.length - index }}
                                 </div>
                                 <div class="flex-grow-1 d-flex justify-content-end" role="button">
-                                    <div :class="job.status.toLowerCase()"
-                                        class="pipeline-runs-status small text-end">
-                                        <font-awesome-icon v-if="job.status === 'RUNNING'" icon="fa fa-refresh" spin />
-                                        {{ $t(`status.${job.status}`) }}
-                                    </div>
-                                    <div v-if="job.steps && job.steps.length">
-                                        <font-awesome-icon icon="fa-chevron-down" />
+                                        <div :class="job.status.toLowerCase()"
+                                            class="pipeline-runs-status small text-end">
+                                            <font-awesome-icon v-if="job.status === 'RUNNING'" icon="fa fa-refresh" spin />
+                                            {{ $t(`status.${job.status}`) }}
+                                        </div>
+                                        <div v-if="job.steps && job.steps.length">
+                                            <font-awesome-icon icon="fa-chevron-down" />
+                                        </div>
+                                        <button type="button"
+                                            class="btn btn-sm btn-outline-secondary ms-2"
+                                            @click.stop="toggleJobLogs(job.id)">
+                                            {{ $t('actions.view') }} {{ $t('job.logs', 2) }}
+                                        </button>
                                     </div>
                                 </div>
-                            </div>
                             <div>
                                 <div class="p-2 small">
                                     Início: {{ $filters.formatJsonDate(job.started, 'dd/MM/yyyy HH:mm:ss') }}
@@ -196,25 +201,30 @@
                                         </span>
                                     -->
                                         </div>
-                                        <div v-for="log, counter_log in step.logs" :key="counter_log">
-                                            <span v-if="log.type === 'TEXT'">
-                                                {{ log.message }}
-                                            </span>
+                                    </div>
+                                </b-collapse>
+                            </div>
+                            <div v-if="isJobLogsVisible(job.id)" class="execution-logs mt-2">
+                                <template v-if="hasJobLogs(job)">
+                                    <div v-for="step, counter_step in job.steps" :key="counter_step"
+                                        class="job-log-step border-start border-info ps-2 mb-3">
+                                        <div class="fw-bold mb-1">
+                                            {{ step.operation.name }}
+                                        </div>
+                                        <div v-for="log, counter_log in step.logs" :key="counter_log" class="log-entry">
+                                            <span v-if="log.type === 'TEXT'">{{ log.message }}</span>
                                             <span v-else-if="log.type === 'HTML'" v-html="log.message" />
-                                            <span v-else-if="log.type === 'OBJECT'">
-                                                {{ log.message }}
-                                            </span>
-                                            <span v-else-if="log.type === 'USER'" class="text-info">
-                                                {{ log.message }}
-                                            </span>
+                                            <span v-else-if="log.type === 'OBJECT'">{{ log.message }}</span>
+                                            <span v-else-if="log.type === 'USER'" class="text-info">{{ log.message }}</span>
                                         </div>
                                     </div>
                                     <code v-if="job.exception_stack">
-                                        <pre>
-                                                {{ job.exception_stack }}
-                                            </pre>
+                                        <pre>{{ job.exception_stack }}</pre>
                                     </code>
-                                </b-collapse>
+                                </template>
+                                <p v-else class="text-muted mb-0">
+                                    {{ $t('job.noLogs') }}
+                                </p>
                             </div>
                         </div>
                     </b-card-body>
@@ -329,6 +339,18 @@ const editingVariable = ref(null);
 const variableName = ref('');
 const variableValue = ref('');
 const variableSaving = ref(false);
+const visibleLogJobs = ref(new Set());
+
+const hasJobLogs = (job) => Boolean(
+    job.exception_stack || job.steps?.some(step => step.logs?.length)
+);
+const isJobLogsVisible = (jobId) => visibleLogJobs.value.has(jobId);
+const toggleJobLogs = (jobId) => {
+    const visibleJobs = new Set(visibleLogJobs.value);
+    if (visibleJobs.has(jobId)) visibleJobs.delete(jobId);
+    else visibleJobs.add(jobId);
+    visibleLogJobs.value = visibleJobs;
+};
 
 const orderedJobs = computed(() => {
     if (selectedStep.value) {
@@ -530,5 +552,30 @@ const showVariables = ref(true)
 
 .job-step {
     font-size: 9pt;
+}
+
+.execution-logs {
+    max-height: 32vh;
+    overflow-y: auto;
+    padding: 0.75rem;
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 0.25rem;
+    font-size: 0.85rem;
+}
+
+.job-log-step {
+    overflow-wrap: anywhere;
+}
+
+.log-entry {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+.execution-logs pre {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    margin-bottom: 0;
 }
 </style>
