@@ -1,5 +1,5 @@
 <template>
-    <b-modal ref="modal" size="xl" hide-header>
+    <b-modal ref="modal" size="xl" hide-header no-close-on-backdrop no-close-on-esc>
         <b-tabs class="filter-field">
             <b-tab :title="$t('workflow.variables', 2)">
                 <div class="row user-filter">
@@ -128,14 +128,20 @@
             Variáveis podem ser usadas como parâmetros na construção do fluxo de trabalho. Para usar uma variável,
             use a representação <code>${nome-variável}</code> por exemplo nas propriedades das tarefas.
         </p>
-        <p class="lead mark small bg-light p-3 m-2">
+        <p class="mark small bg-light p-3 m-2">
             Ao informar o tipo da variável para algo diferente de "Texto curto", o Lemonade
             tentará converter o "Valor-padrão" para o tipo especificado. Caso não seja
             possível, ocorrerá um erro durante a execução.
         </p>
         <template #footer>
             <div class="w-100 text-end">
-                <button class="btn btn-primary btn-sm me-1 ps-5 pe-5" @click="okClicked">
+                <span class="small text-muted float-start mt-2">
+                    {{$t('variables.changesAppliedOnConfirm')}}
+                </span>
+                <button type="button" class="btn btn-secondary btn-sm me-1" @click="cancelClicked">
+                    {{$t('actions.cancel')}}
+                </button>
+                <button type="button" class="btn btn-primary btn-sm ps-5 pe-5" @click="okClicked">
                     {{$t('common.ok')}}
                 </button>
             </div>
@@ -209,6 +215,10 @@ export default {
             const variables = JSON.parse(JSON.stringify(this.itemsCopy));
             this.$emit('confirm', variables);
             this.$emit('input', variables);
+            this.$refs.modal.hide();
+        },
+        cancelClicked() {
+            this.selected = null;
             this.$refs.modal.hide();
         },
     }

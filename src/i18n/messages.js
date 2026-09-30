@@ -946,6 +946,7 @@ export default {
         variables: {
             addOrEdit: 'Adicione um ou mais itens ou clique um dos filtros à direita para editá-lo.',
             addOrSelect: 'Adicione ou clique em um dos itens na listagem para editá-lo',
+            changesAppliedOnConfirm: 'As alterações são aplicadas ao confirmar.',
             attribute: 'Atributo',
             associateTo: 'Associar a variável',
             associateToLookup: 'Associar a tabela de referência',
@@ -1910,6 +1911,7 @@ export default {
         variables: {
             addOrEdit: 'Add one or more items or click one of them at the right side to edit it.',
             addOrSelect: 'Add or click on one of the items in the listing to edit it',
+            changesAppliedOnConfirm: 'Changes are applied when confirmed.',
             attribute: 'Attribute',
             associateTo: 'Associate to variable',
             associateToLookup: 'Associate to lookup table',
