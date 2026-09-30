@@ -5,7 +5,7 @@
                 <div class="row user-filter">
                     <div class="col-md-4 mt-4">
                         <div class="values pb-1 border">
-                            <div v-for="(row, index) in items" :key="row.name" class="clear-fix item-list"
+                            <div v-for="(row, index) in itemsCopy" :key="row.name" class="clear-fix item-list"
                                  :class="{selected: selected && selected.index === row.index }"
                                  @click.prevent="select(row, index)">
                                 <small>{{row.name}} <em v-if="! row.name">&lt;variável sem nome&gt;</em>
@@ -133,7 +133,7 @@
             tentará converter o "Valor-padrão" para o tipo especificado. Caso não seja
             possível, ocorrerá um erro durante a execução.
         </p>
-        <template #modal-footer>
+        <template #footer>
             <div class="w-100 text-end">
                 <button class="btn btn-primary btn-sm me-1 ps-5 pe-5" @click="okClicked">
                     {{$t('common.ok')}}
@@ -154,7 +154,7 @@ export default {
         items: { type: Array, default: () => [], required: true },
         simple: { type: Boolean, default: false }
     },
-    emits: ['confirm'],
+    emits: ['confirm', 'input'],
     data() {
         return {
             variables: [
@@ -168,7 +168,7 @@ export default {
                 'BINARY',
             ],
             selected: null,
-            itemsCopy: this.items
+            itemsCopy: []
         };
     },
     methods: {
@@ -201,12 +201,14 @@ export default {
             }
         },
         show() {
+            this.itemsCopy = JSON.parse(JSON.stringify(this.items || []));
             this.selected = null;
             this.$refs.modal.show();
         },
         okClicked() {
-            this.$emit('confirm', this.itemsCopy);
-            this.$emit('input', this.itemsCopy);
+            const variables = JSON.parse(JSON.stringify(this.itemsCopy));
+            this.$emit('confirm', variables);
+            this.$emit('input', variables);
             this.$refs.modal.hide();
         },
     }

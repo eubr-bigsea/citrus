@@ -355,8 +355,8 @@
         </div>
         <modal-preview-data-source ref="previewWindow" />
         <sql-sample v-show="sample" :sample="sample" ref="modalSample" />
-        <modal-workflow-variables ref="variablesModal" :simple="true" :workflow="workflowObj"
-            :items="workflowObj.variables" />
+        <modal-workflow-variables ref="variablesModal" :simple="true" :items="workflowObj.variables"
+            @confirm="handleVariablesConfirm" />
         <sql-editor-use-code-library v-if="showUseCodeLibrary" ref="modalUseCodeLibrary" :task="workflowObj" />
 
     </main>
@@ -726,6 +726,11 @@ const saveWorkflow = async () => {
     } catch (e) {
         error(e);
     }
+};
+
+const handleVariablesConfirm = (variables) => {
+    workflowObj.value.variables = variables;
+    isDirty.value = true;
 };
 
 const sample = ref();
