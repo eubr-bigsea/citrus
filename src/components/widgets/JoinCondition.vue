@@ -36,7 +36,7 @@
                     </td>
                     <td class="text-center">
                         <select v-model="row.op"
-                                class="form-control text-center"
+                                class="form-select text-center"
                                 @change="(v) => attrUpdated(row, 'op', v)">
                             <option value="eq"
                                     selected>

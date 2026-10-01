@@ -118,7 +118,7 @@
                                                     <div class="col-10">
                                                         <b-form-group :label="$t('common.attribute', 1) + ':'"
                                                             label-for="dropdown-form-email">
-                                                            <select class="form-control form-control-sm mt-2"
+                                                            <select class="form-select form-select-sm mt-2"
                                                                 v-model="editableVisualization.color_attribute.value">
                                                                 <option value="*"># Total de registros</option>
                                                                 <option v-for="attr in attributes" :value="attr.name">
@@ -130,7 +130,7 @@
 
                                                         <b-form-group v-if="editableVisualization.color_atribute !== '*'"
                                                             label="Função de agregação:">
-                                                            <select class="form-control form-control-sm"
+                                                            <select class="form-select form-select-sm"
                                                                 v-model="editableVisualization.color_aggregation.value">
                                                                 <option label="" value="">Usar valor sem agregar</option>
                                                                 <option label="COUNT" value="COUNT">COUNT</option>
@@ -610,7 +610,7 @@
                                         </b-dropdown>
                                         <b-form-group>
                                             <label>Exibir legenda:</label>
-                                            <select v-model="editableVisualization.display_legend.value" class="form-control form-control-sm">
+                                            <select v-model="editableVisualization.display_legend.value" class="form-select form-select-sm">
                                                 <option value="HIDE">Ocultar</option>
                                                 <option value="AUTO">Posicionar automaticamente</option>
                                                 <option value="LEFT">Topo à esquerda</option>

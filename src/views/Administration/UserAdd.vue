@@ -53,7 +53,7 @@
                                 </label>
                                 <div class="col-sm-9">
                                     <select v-model="user.locale"
-                                            class="form-control">
+                                            class="form-select">
                                         <option value="en">
                                             English/Inglês
                                         </option>

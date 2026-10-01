@@ -11,7 +11,7 @@
                 <b-input-group class="w-25 float-start">
                     <input v-bind="inputAttrs"
                            :type="inputType.type"
-                           onKeyPress="return this.value.length < 12"
+                           @keypress="limitLength"
                            class="w-50 form-control form-control-sm"
                            :step="inputType.step"
                            v-on="inputHandlers"
@@ -74,6 +74,11 @@ export default {
         }
     },
     methods: {
+        limitLength(ev) {
+            if (ev.target.value.length >= 12) {
+                ev.preventDefault();
+            }
+        },
         handleKeyUp(ev) {
             if (this.field.suggested_widget === 'integer')
                 ev.target.value = ev.target.value.replace(/[^0-9]/g, '');

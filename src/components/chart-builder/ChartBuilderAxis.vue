@@ -160,7 +160,7 @@
                                     <b-form-group v-if="chartType.endsWith('bar') || chartType.endsWith('area')"
                                                   label="Normalizar:">
                                         <select v-model="editableVisualization.y_axis.value.normalization"
-                                                class="form-control form-control-sm">
+                                                class="form-select form-select-sm">
                                             <option value="">
                                                 Sem normalização
                                             </option>
@@ -217,7 +217,7 @@
                                                     </template>
                                                 </v-select>
                                                 <!--
-                                                        <select class="form-control form-control-sm mt-2" v-model="y.attribute">
+                                                        <select class="form-select form-select-sm mt-2" v-model="y.attribute">
                                                             <option value="*"># Total de registros</option>
                                                             <option v-for="attr in attributes" :value="attr.name">
                                                                 {{ attr.name }}
@@ -238,7 +238,7 @@
                                             </b-form-group>
 
                                             <b-form-group label="Função de agregação:">
-                                                <select v-model="ySerie.aggregation" class="form-control form-control-sm">
+                                                <select v-model="ySerie.aggregation" class="form-select form-select-sm">
                                                     <option v-if="ySerie.attribute !== '*'" label="" value="">
                                                         Usar valor sem
                                                         agregar
@@ -264,7 +264,7 @@
                                                 </select>
                                             </b-form-group>
                                             <b-form-group v-if="false" label="Computação:">
-                                                <select v-model="ySerie.compute" class="form-control form-control-sm">
+                                                <select v-model="ySerie.compute" class="form-select form-select-sm">
                                                     <option label="NORMAL" value="NORMAL">
                                                         NORMAL
                                                     </option>
@@ -315,7 +315,7 @@
                                                               class="form-control form-control-sm" />
                                             </b-form-group>
                                             <b-form-group v-if="!pieFamily" label="Tipo de linha:">
-                                                <select v-model="ySerie.stroke" class="form-control form-control-sm w-50">
+                                                <select v-model="ySerie.stroke" class="form-select form-select-sm w-50">
                                                     <option v-for="opt in ['solid', 'dot', 'dash', 'longdash', 'dashdot', 'longdashdot']"
                                                             :key="opt" :value="opt">
                                                         {{opt}}
@@ -324,7 +324,7 @@
                                             </b-form-group>
                                             <b-form-group label="Espessura da linha:">
                                                 <select v-model.number="ySerie.strokeSize"
-                                                        class="form-control form-control-sm w-50">
+                                                        class="form-select form-select-sm w-50">
                                                     <option v-for="i in 11" :key="i - 1" :value="i - 1">
                                                         {{i - 1}}
                                                     </option>
@@ -358,7 +358,7 @@
                                             </b-form-group>
                                             <!-- FIXME
                                                     <b-form-group label="Exibir eixo:">
-                                                        <select class="form-control form-control-sm">
+                                                        <select class="form-select form-select-sm">
                                                             <option label="LEFT" value="LEFT">Esquerda</option>
                                                             <option label="DIREITA" value="DIREITA">Direita</option>
                                                             <option label="HIDE" value="HIDE">Ocultar</option>
@@ -489,7 +489,7 @@
                                                     </template>
                                                 </v-select>
                                                 <!--
-                                                        <select class="form-control form-control-sm" v-model="x.attribute"
+                                                        <select class="form-select form-select-sm" v-model="x.attribute"
                                                             @change="handleSelectAttribute(x)">
                                                             <option v-for="attr in attributes" :value="attr.name">
                                                                 {{ attr.name }}
@@ -509,7 +509,7 @@
                                                 </b-form-checkbox>
 
                                                 <b-form-group label="Agrupamento (bins):">
-                                                    <select v-model="xSerie.binning" class="form-control form-control-sm">
+                                                    <select v-model="xSerie.binning" class="form-select form-select-sm">
                                                         <option value="EQUAL_INTERVAL">
                                                             Número fixo de
                                                             grupos com intervalos iguais
@@ -549,7 +549,7 @@
                                                 </b-form-group>
 
                                                 <b-form-group v-if="false" label="Computação:">
-                                                    <select v-model="xSerie.compute" class="form-control form-control-sm">
+                                                    <select v-model="xSerie.compute" class="form-select form-select-sm">
                                                         <option label="NORMAL" value="NORMAL">
                                                             NORMAL
                                                         </option>
@@ -583,7 +583,7 @@
                                         </div>
                                         <div class="col-6">
                                             <b-form-group v-if="!pieFamily" label="Tratar valores vazios:">
-                                                <select class="form-control-sm">
+                                                <select class="form-select-sm">
                                                     <option label="Replace with zeros" value="ZEROS"
                                                             selected="selected">
                                                         Replace with zeros
@@ -597,7 +597,7 @@
                                                 </select>
                                             </b-form-group>
                                             <b-form-group label="Ordenação:">
-                                                <select v-model="xSerie.sorting" class="form-control form-control-sm">
+                                                <select v-model="xSerie.sorting" class="form-select form-select-sm">
                                                     <option label="Ordenação natural" value="NATURAL"
                                                             selected="selected">
                                                         Ordenação natural
@@ -645,7 +645,7 @@
                                             </template>
                                             <!-- FIXME
                                                             <b-form-group label="Exibir eixo:">
-                                                                <select class="form-control form-control-sm">
+                                                                <select class="form-select form-select-sm">
                                                                     <option label="LEFT" value="LEFT">Esquerda</option>
                                                                     <option label="DIREITA" value="DIREITA">Direita</option>
                                                                     <option label="HIDE" value="HIDE">Ocultar</option>

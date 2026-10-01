@@ -12,13 +12,13 @@
                 <keep-alive>
                     <div v-if="['checkboxes-component', 'checkbox-component', 'dropdown-component'].includes(getWidget(field))">
                         <checkboxes-component :field="field" :value="getFieldValue(field.name, true)"
-                                              :language="$root.$i18n.locale" :type="field.suggested_widget" :small="true"
+                                              :language="locale" :type="field.suggested_widget" :small="true"
                                               :read-only="!field.editable" context="context" @update="handleUpdateField"
                                               @xinput="handleUpdateField" @update-form-field="handleUpdateField" />
                     </div>
                     <component :is="getWidget(field)"
                                v-else-if="getWidget(field) !== 'attribute-selector-component' " visual-style="explorer" :field="field"
-                               :value="getFieldValue(field.name, false)" :language="$root.$i18n.locale"
+                               :value="getFieldValue(field.name, false)" :language="locale"
                                :type="field.suggested_widget" :small="true" :read-only="!field.editable" context="context"
                                :show-quantity="gridStrategy === 'grid'" @update="handleUpdateField" @input="handleUpdateField"
                                @update-form-field="handleUpdateField" />
@@ -35,10 +35,10 @@
 </template>
 <script setup>
 import { ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 import CheckboxesComponent from '@/components/widgets/Checkboxes.vue';
 
-//const conditional = /\bthis\..+?\b/g;
-
+const { locale } = useI18n();
 const counter = ref(0);
 
 const props = defineProps({
@@ -108,7 +108,7 @@ const getWidget = (field) => {
     }
 };
 const getFieldValue = (name, checkboxes) => {
-    
+
     if (checkboxes) {
         return form.value[name]?.value?.list;
     } else if (form.value[name]?.value){

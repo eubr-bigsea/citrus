@@ -108,7 +108,7 @@
                                     </b-form-group>
                                     <b-form-group label="Espessura da linha:">
                                         <select v-model.number="element.strokeSize"
-                                                class="form-control form-control-sm w-50">
+                                                class="form-select form-select-sm w-50">
                                             <option v-for="inx in 11" :key="inx - 1" :value="inx - 1">
                                                 {{inx - 1}}
                                             </option>
@@ -139,7 +139,7 @@
                                     </b-form-group>
                                     <!-- FIXME 
                                     <b-form-group label="Exibir eixo:">
-                                        <select class="form-control form-control-sm">
+                                        <select class="form-select form-select-sm">
                                             <option label="LEFT" value="LEFT">Esquerda</option>
                                             <option label="DIREITA" value="DIREITA">Direita</option>
                                             <option label="HIDE" value="HIDE">Ocultar</option>

@@ -238,7 +238,7 @@
                                     <div class="form-group mb-2">
                                         <label for="similarity">Similaridade:</label> &nbsp;
                                         <select v-model.number="similarity" name="similarity"
-                                                class="form-control-sm ms-3 me-3">
+                                                class="form-select-sm ms-3 me-3">
                                             <option value="0.5">
                                                 0.5 (menos semelhantes)
                                             </option>

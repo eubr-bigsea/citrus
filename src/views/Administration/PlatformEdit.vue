@@ -169,7 +169,7 @@
                             </b-tab>
                             <!--
                             <b-tab :title="$t('platform.subset', 2)">
-                                <select class="form-control" @change="loadSubsetOperations" v-model="subsetId">
+                                <select class="form-select" @change="loadSubsetOperations" v-model="subsetId">
                                     <option></option>
                                     <option v-for="subset in platform.subsets" :key="subset.id" :value="subset.id">
                                         {{subset.name}}</option>

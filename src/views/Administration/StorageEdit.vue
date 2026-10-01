@@ -25,7 +25,7 @@
                             <div class="col-md-2">
                                 <label class="font-weight-bold">{{$t('common.type')}}:</label>
                                 <select v-model="storage.type"
-                                        class="form-control"
+                                        class="form-select"
                                         required>
                                     <option v-for="typ in types"
                                             :key="typ"

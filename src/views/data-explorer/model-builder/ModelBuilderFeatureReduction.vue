@@ -41,8 +41,20 @@ const props = defineProps({
     reduction: { type: Object, required: true },
 });
 
-const method = defineModel('method');
-const k = defineModel('k');
+// A workflow saved before a field was introduced has no entry for it in forms.
+const field = (name) => computed({
+    get: () => props.reduction.forms[name]?.value,
+    set: (value) => {
+        if (props.reduction.forms[name]) {
+            props.reduction.forms[name].value = value;
+        } else {
+            props.reduction.forms[name] = { value };
+        }
+    }
+});
+
+const method = field('method');
+const k = field('k');
 
 const options = [
     { value: '', label: 'Sem redução', description: '' },

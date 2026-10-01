@@ -15,25 +15,25 @@
 
         <label v-if="taskType" class="mt-3" data-test="metric">Otimizar os
             hiperparâmetros para a métrica:</label> &nbsp;
-        <select v-if="taskType === 'binary-classification'" v-model="binaryMetric" class="form-select w-50 form-select-sm"
+        <select v-if="taskType === 'binary-classification'" :value="binaryMetric" @change="(e) => $emit('update:binaryMetric', e.target.value)" class="form-select w-50 form-select-sm"
                 data-test="bin-classification">
             <option v-for="opt in evaluator.operation.fieldsMap.get('bin_metric').values" :key="opt.key" :value="opt.key">
                 {{opt.pt}}
             </option>
         </select>
-        <select v-else-if="taskType === 'multiclass-classification'" v-model="multiClassMetric"
+        <select v-else-if="taskType === 'multiclass-classification'" :value="multiClassMetric" @change="(e) => $emit('update:multiClassMetric', e.target.value)"
                 class="form-select w-50 form-select-sm" data-test="multiclass-classification">
             <option v-for="opt in evaluator.operation.fieldsMap.get('multi_metric').values" :key="opt.key" :value="opt.key">
                 {{opt.pt}}
             </option>
         </select>
-        <select v-else-if="taskType === 'regression'" v-model="regressionMetric" class="form-select w-50 form-select-sm"
+        <select v-else-if="taskType === 'regression'" :value="regressionMetric" @change="(e) => $emit('update:regressionMetric', e.target.value)" class="form-select w-50 form-select-sm"
                 data-test="regression">
             <option v-for="opt in evaluator.operation.fieldsMap.get('reg_metric').values" :key="opt.key" :value="opt.key">
                 {{opt.pt}}
             </option>
         </select>
-        <select v-else-if="taskType === 'clustering'" v-model="clusteringMetric" class="form-select w-50 form-select-sm"
+        <select v-else-if="taskType === 'clustering'" :value="clusteringMetric" @change="(e) => $emit('update:clusteringMetric', e.target.value)" class="form-select w-50 form-select-sm"
                 data-test="clustering">
             <option v-for="opt in evaluator.operation.fieldsMap.get('clust_metric').values" :key="opt.key" :value="opt.key">
                 {{opt.pt}}
@@ -42,26 +42,28 @@
     </div>
 </template>
 <script setup>
-import {ref, getCurrentInstance} from 'vue';
+import {ref, getCurrentInstance, watch} from 'vue';
 import useNotifier from '@/composables/useNotifier.js';
 
-const taskType = defineModel('taskType');
-const binaryMetric = defineModel('binaryMetric');
-const multiClassMetric = defineModel('multiClassMetric');
-const regressionMetric = defineModel('regressionMetric');
-const clusteringMetric = defineModel('clusteringMetric');
-
-const taskTypeInternal = ref(taskType.value);
-
 const props = defineProps({
-    evaluator: { type: Object, default: () => null }
+    evaluator: { type: Object, default: () => null },
+    taskType: { type: String, default: 'classification' },
+    binaryMetric: { type: String, default: '' },
+    multiClassMetric: { type: String, default: '' },
+    regressionMetric: { type: String, default: '' },
+    clusteringMetric: { type: String, default: '' },
 });
+
+const emit = defineEmits(['update:taskType', 'update:binaryMetric', 'update:multiClassMetric', 'update:regressionMetric', 'update:clusteringMetric']);
+
+const taskTypeInternal = ref(props.taskType);
+
 const vm = getCurrentInstance();
 const { confirm } = useNotifier(vm.proxy);
 
 const changeType = (v) => {
     confirm('Alteração do tipo da tarefa',
         'Alterar esta opção pode fazer com que o experimento pare de funcionar. Continuar?',
-        () => {taskType.value = taskTypeInternal.value; });
+        () => {emit('update:taskType', taskTypeInternal.value); });
 };
 </script>

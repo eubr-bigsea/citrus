@@ -23,7 +23,7 @@
                 </div>
                 <div class="col-12 mt-2">
                     <label>Armazenamento:</label>
-                    <select class="form-control form-control-sm" name="storage" v-model.number="formData.data_storage"
+                    <select class="form-select form-select-sm" name="storage" v-model.number="formData.data_storage"
                         @change="doEmit('data_storage', $event)">
                         <option></option>
                         <option v-for="st in storages" :key="st.id" :value="st.id">
@@ -38,7 +38,7 @@
                 </div>
                 <div class="col-12 mt-2">
                     <label>Opção de sobrescrita (se existir):</label>
-                    <select class="form-control form-control-sm" name="mode" v-model.number="formData.data_overwrite"
+                    <select class="form-select form-select-sm" name="mode" v-model.number="formData.data_overwrite"
                         @change="doEmit('data_overwrite', $event)">
                         <option value="error">Gerar erro (não salvar)</option>
                         <option value="ignore">Ignorar (não salvar)</option>
@@ -61,7 +61,7 @@
                 </div>
                 <div class="col-12 mt-2">
                     <label>Armazenamento:</label>
-                    <select class="form-control form-control-sm" name="storage" v-model.number="formData.model_storage"
+                    <select class="form-select form-select-sm" name="storage" v-model.number="formData.model_storage"
                         @change="doEmit('model_storage', $event)">
                         <option></option>
                         <option v-for="st in storages" :key="st.id" :value="st.id">
@@ -76,7 +76,7 @@
                 </div>
                 <div class="col-12 mt-2">
                     <label>Opção de sobrescrita (se existir):</label>
-                    <select class="form-control form-control-sm" name="mode" v-model.number="formData.model_overwrite"
+                    <select class="form-select form-select-sm" name="mode" v-model.number="formData.model_overwrite"
                         @change="doEmit('model_overwrite', $event)">
                         <option value="error">Gerar erro (não salvar)</option>
                         <option value="ignore">Ignorar (não salvar)</option>

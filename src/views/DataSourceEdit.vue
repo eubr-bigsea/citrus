@@ -25,7 +25,7 @@
                                                     <div class="col-md-3">
                                                         <label
                                                             class="font-weight-bold">{{ $t('common.format') }}:</label>
-                                                        <select v-model="dataSource.format" class="form-control">
+                                                        <select v-model="dataSource.format" class="form-select">
                                                             <option v-for="fmt in formats" :key="fmt" :value="fmt">
                                                                 {{ fmt }}
                                                             </option>
@@ -63,7 +63,7 @@
                                                     </div>
                                                     <div v-if="dataSource.storage.type === 'HIVE'" class="col-md-4">
                                                         <label>{{ $t('dataSource.tablesReference') }}</label>
-                                                        <select v-model="selectedTable" class="form-control" size="10"
+                                                        <select v-model="selectedTable" class="form-select" size="10"
                                                             style="font-size:.7em" @dblclick.stop="copyTableName">
                                                             <option v-for="tb in tables" :key="tb">
                                                                 {{ tb }}
@@ -232,7 +232,7 @@
                                                     </td>
                                                     <td>
                                                         <select v-model="attr.type"
-                                                            class="form-control-sm form-control">
+                                                            class="form-select-sm form-select">
                                                             <option v-for="dt in dataTypes" :key="dt" :value="dt">
                                                                 {{ dt }}
                                                             </option>
@@ -358,7 +358,7 @@
                                                 </div>
                                                 <div>
                                                     <label>{{ $t('common.permission', 1) }}:</label>
-                                                    <select v-model="permission" class="form-control">
+                                                    <select v-model="permission" class="form-select">
                                                         <option value="MANAGE">
                                                             {{ $t('permissions.MANAGE') }}
                                                         </option>
@@ -456,7 +456,7 @@
                                         {{ $t('privacy.privacyType') }}:
                                     </label>
                                     <select v-if="currentAttribute.attribute_privacy"
-                                        v-model="currentAttribute.attribute_privacy.privacy_type" class="form-control">
+                                        v-model="currentAttribute.attribute_privacy.privacy_type" class="form-select">
                                         <option />
                                         <option v-for="t in privacy_types" :key="t" :value="t">
                                             {{ t }}
@@ -469,7 +469,7 @@
                                     </label>
                                     <select v-if="currentAttribute.attribute_privacy"
                                         v-model="currentAttribute.attribute_privacy.anonymization_technique"
-                                        class="form-control">
+                                        class="form-select">
                                         <option />
                                         <option v-for="t in anonymization" :key="t" :value="t">
                                             {{ t }}
@@ -482,7 +482,7 @@
                                     </label>
                                     <select v-if="currentAttribute.attribute_privacy"
                                         v-model="currentAttribute.attribute_privacy.attribute_privacy_group_id"
-                                        class="form-control">
+                                        class="form-select">
                                         <option />
                                         <option v-for="t in attributeGroups" :key="t.id" :value="t.id">
                                             {{ t.name }}

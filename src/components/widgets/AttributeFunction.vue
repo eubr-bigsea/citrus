@@ -85,7 +85,7 @@
                                     </v-select>
                                 </td>
                                 <td style="width:30%">
-                                    <select class="form-control form-control-sm"
+                                    <select class="form-select form-select-sm"
                                             :value="row.f"
                                             @change="updated($event, row, 'f')">
                                         <option v-for="opt in parameters.functions"

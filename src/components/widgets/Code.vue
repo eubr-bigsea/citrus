@@ -39,7 +39,7 @@
 
                     <div class="col-md-4">
                         {{$t('common.attribute', 2)}}:
-                        <select class="form-control mt-2"
+                        <select class="form-select mt-2"
                                 size="10">
                             <option v-for="suggestion in suggestions"
                                     :key="suggestion">

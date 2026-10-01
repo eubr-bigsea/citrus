@@ -9,19 +9,19 @@
                             <label for="inline-form-input-name">Min:</label>
                             <input v-model.number="internalValue.min" type="number"
                                    class="form-control form-control-sm ms-2 me-2 small-text"
-                                   onKeyPress="return this.value.length < 12">
+                                   @keypress="limitLength">
                         </div>
                         <div class="d-inline-flex align-items-center">
                             <label for="inline-form-input-username">Máx:</label>
                             <input v-model.number="internalValue.max" type="number"
                                    class="form-control form-control-sm ms-2 me-2 small-text"
-                                   onKeyPress="return this.value.length < 12">
+                                   @keypress="limitLength">
 
                             <template v-if="showQuantity">
                                 <label for="inline-form-input-username">Qtde. valores:</label>
                                 <input v-model.number="internalValue.quantity" type="number" min="1"
                                        class="form-control form-control-sm ms-2 me-2 small-text"
-                                       onKeyPress="return this.value.length < 12">
+                                       @keypress="limitLength">
                             </template>
                         </div>
                         <div class="d-inline-flex align-items-center">
@@ -43,7 +43,7 @@
                              @input="handleInput">
                     <template #default="{ tags, inputHandlers, addTag, removeTag }">
                         <b-input-group class="w-25 float-start">
-                            <input :type="inputType.type" onKeyPress="return this.value.length < 12"
+                            <input :type="inputType.type" @keypress="limitLength"
                                    class="border-0 w-50 form-control form-control-sm " :step="inputType.step"
                                    placeholder="Valor" xkeydown.enter="handleAdd(addTag, $event, inputHandlers.keydown)"
                                    xkeyup.stop="handleKeyUp" v-on="inputHandlers">
@@ -145,6 +145,11 @@ export default {
         };
     },
     methods: {
+        limitLength(ev) {
+            if (ev.target.value.length >= 12) {
+                ev.preventDefault();
+            }
+        },
         handleAdd(addTag, ev, ch) {
             if (ch)
                 ch(ev);
