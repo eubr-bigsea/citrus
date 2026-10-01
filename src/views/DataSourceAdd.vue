@@ -186,7 +186,7 @@
 
                     <div class="col-md-3">
                         <label class="font-weight-bold">{{$t('common.format')}}*:</label>
-                        <select v-model="dataSource.format" class="form-control">
+                        <select v-model="dataSource.format" class="form-select">
                             <option v-for="fmt in formats" :key="fmt" :value="fmt">
                                 {{fmt}}
                             </option>
@@ -200,7 +200,7 @@
 
                     <div class="col-md-12" style="display: flex; justify-content: center; flex-direction: column; margin-top: 2%;">
                         <label>Sistema de arquivos atualmente escolhido:</label>
-                        <select v-model="storage[options[0].prop]" class="form-control" :name="`storage-${options[0].prop}`">
+                        <select v-model="storage[options[0].prop]" class="form-select" :name="`storage-${options[0].prop}`">
                             <option v-for="s in storages[options[0].items]" :key="s.id" :value="s.id">
                                 {{s.name}}
                             </option>

@@ -67,7 +67,7 @@
                                                     {{$t('common.language')}}:
                                                 </label>
                                                 <select v-model="user.locale"
-                                                        class="form-control form-select">
+                                                        class="form-select">
                                                     <option value="en">
                                                         English/Inglês
                                                     </option>
@@ -93,7 +93,7 @@
                                                     {{$t('common.user.authenticationType')}}:
                                                 </label>
                                                 <select v-model="user.authentication_type"
-                                                        class="form-control form-select">
+                                                        class="form-select">
                                                     <option value="INTERNAL">
                                                         {{$t('common.user.authenticationInternal')}}
                                                     </option>

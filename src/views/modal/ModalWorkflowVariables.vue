@@ -30,7 +30,7 @@
                                 </div>
                                 <div class="col-md-4">
                                     <label>{{ $t('variables.type') }}:</label>
-                                    <select v-model="selected.type" class="form-control">
+                                    <select v-model="selected.type" class="form-select">
                                         <option />
                                         <option v-for="dt in dataTypes" :key="dt" :value="dt">
                                             {{$t('dataTypes.' + dt)}}
@@ -50,7 +50,7 @@
                                     </div>
                                     <div class="col-md-4">
                                         <label>{{$t('variables.multiplicity')}}:</label>
-                                        <select v-model="selected.multiplicity" class="form-control" tabindex="0">
+                                        <select v-model="selected.multiplicity" class="form-select" tabindex="0">
                                             <option value="0">
                                                 Opcional
                                             </option>

@@ -53,7 +53,7 @@
                                             <label>{{$t('variables.attribute')}}:</label>
                                             <select ref="name"
                                                     v-model="selected.name"
-                                                    class="form-control"
+                                                    class="form-select"
                                                     @change="selectAttribute">
                                                 <option />
                                                 <option v-for="suggestion in suggestions"
@@ -80,7 +80,7 @@
                                         <div class="col-md-4">
                                             <label>{{$t('variables.type')}}:</label>
                                             <select v-model="selected.type"
-                                                    class="form-control">
+                                                    class="form-select">
                                                 <option />
                                                 <option v-for="dt in dataTypes"
                                                         :key="dt"
@@ -92,7 +92,7 @@
                                         <div class="col-md-4">
                                             <label>{{$t('variables.operator', 1)}}:</label>
                                             <select v-model="selected.operator"
-                                                    class="form-control"
+                                                    class="form-select"
                                                     tabindex="0">
                                                 <option value="eq">
                                                     {{$t('variables.operators.eq')}}
@@ -133,7 +133,7 @@
                                         <div class="col-md-4">
                                             <label>{{$t('variables.multiplicity')}}:</label>
                                             <select v-model="selected.multiplicity"
-                                                    class="form-control"
+                                                    class="form-select"
                                                     tabindex="0">
                                                 <option value="OPTIONAL">
                                                     Opcional
@@ -177,7 +177,7 @@
                                 <div slot="no-options"></div>
                             </v-select> -->
                                     <select v-model="selected.lookup"
-                                            class="w-50 form-control">
+                                            class="w-50 form-select">
                                         <option />
                                         <option v-for="opt in lookups"
                                                 :key="opt.id"

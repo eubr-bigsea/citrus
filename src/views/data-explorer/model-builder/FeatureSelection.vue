@@ -79,7 +79,7 @@
                         <div class="col-8">
                             <template v-if="selectedAttributeUsed && selectedAttribute.feature_type === 'categorical'">
                                 <label for="">Tratamento para dado categórico:</label>
-                                <select v-model="selectedAttribute.transform" class="form-control form-control-sm mb-3">
+                                <select v-model="selectedAttribute.transform" class="form-select form-select-sm mb-3">
                                     <option value="string_indexer">
                                         Dummy encoding (indexação)
                                     </option>
@@ -92,7 +92,7 @@
                                 </select>
 
                                 <label for="">Tratamento para valores ausentes:</label>
-                                <select v-model="selectedAttribute.missing_data" class="form-control form-control-sm">
+                                <select v-model="selectedAttribute.missing_data" class="form-select form-select-sm">
                                     <!-- <option value="mode">Moda</option> -->
                                     <option value="constant">
                                         Valor constante
@@ -104,7 +104,7 @@
                             </template>
                             <template v-if="selectedAttributeUsed && selectedAttribute.feature_type === 'numerical'">
                                 <label for="">Tratamento para dado numérico:</label>
-                                <select v-model="selectedAttribute.transform" class="form-control form-control-sm mb-3">
+                                <select v-model="selectedAttribute.transform" class="form-select form-select-sm mb-3">
                                     <option value="keep">
                                         Manter como está
                                     </option>
@@ -123,7 +123,7 @@
                                 </select>
                                 <template v-if="selectedAttribute.transform === 'keep'">
                                     <label>Mudar a escala do número:</label>
-                                    <select v-model="selectedAttribute.scale" class="form-control form-control-sm mb-3">
+                                    <select v-model="selectedAttribute.scale" class="form-select form-select-sm mb-3">
                                         <option />
                                         <option value="standard">
                                             Usar escalador padrão (z-score)
@@ -157,7 +157,7 @@
                                 </template>
 
                                 <label for="">Tratamento para valores ausentes:</label>
-                                <select v-model="selectedAttribute.missing_data" class="form-control form-control-sm">
+                                <select v-model="selectedAttribute.missing_data" class="form-select form-select-sm">
                                     <option />
                                     <option value="media">
                                         Substituir pela média aproximada
@@ -176,7 +176,7 @@
                             </template>
                             <template v-if="selectedAttributeUsed && selectedAttribute.feature_type === 'textual'">
                                 <label for="">Tratamento para dado textual:</label>
-                                <select v-model="selectedAttribute.transform" class="form-control form-control-sm mb-3">
+                                <select v-model="selectedAttribute.transform" class="form-select form-select-sm mb-3">
                                     <option value="token_hash">
                                         Tokenizar e hash
                                     </option>
@@ -191,7 +191,7 @@
                                     </option>
                                 </select>
                                 <label for="">Tratamento para valores ausentes:</label>
-                                <select v-model="selectedAttribute.missing_data" class="form-control form-control-sm">
+                                <select v-model="selectedAttribute.missing_data" class="form-select form-select-sm">
                                     <option />
                                     <option value="constant">
                                         Valor constante

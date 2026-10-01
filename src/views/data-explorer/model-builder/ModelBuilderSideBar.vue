@@ -4,9 +4,11 @@
             <b-nav-text>
                 {{ header.name }}
             </b-nav-text>
-            <b-nav-item v-for="menu in header.items" :class="{ active: selected === menu.action }"
+            <b-nav-item v-for="menu in header.items" :key="menu.action" href="#" :class="{ active: selected === menu.action }"
                 @click.prevent="edit(menu.action)">
                 {{ menu.name }}
+                <font-awesome-icon v-if="pending[menu.action]" icon="fa fa-warning"
+                    class="text-danger float-end" :title="pending[menu.action].join(' ')" />
             </b-nav-item>
         </template>
     </b-nav>
@@ -75,7 +77,8 @@ const menus = [
 
 const props = defineProps({
     selected: { type: String, default: () => 'target' },
-    supervised: { type: Boolean }
+    supervised: { type: Boolean },
+    pending: { type: Object, default: () => ({}) }
 });
 const emit = defineEmits(['edit']);
 const edit = (item) => {

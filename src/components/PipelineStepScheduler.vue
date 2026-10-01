@@ -70,7 +70,7 @@
                     <p class="font-weight-bold">
                         {{ $t('titles.day') }}:
                     </p>
-                    <select class="form-control form-control-sm" v-model="schedulerData.startDay">
+                    <select class="form-select form-select-sm" v-model="schedulerData.startDay">
                         <option v-for="i in 31" :value="i" :key="i">{{ i }}</option>
                         <option value="last">{{$t('pipeline.edit.scheduler.lastDayOfMonth')}}</option>
                     </select>

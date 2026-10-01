@@ -16,7 +16,7 @@
                     <h6>Referência</h6>
                     <b-tabs card>
                         <b-tab title="Funções" class="p-1">
-                            <select class="form-control shadow-none" @change="changeFunctionType($event)">
+                            <select class="form-select shadow-none" @change="changeFunctionType($event)">
                                 <option value="all">
                                     Todas
                                 </option>
@@ -24,7 +24,7 @@
                                     {{f.name}}
                                 </option>
                             </select>
-                            <select class="form-control shadow-none" size="10" @change="displayFunctionHelp($event)"
+                            <select class="form-select shadow-none" size="10" @change="displayFunctionHelp($event)"
                                     @dblclick="copyPasteValue">
                                 <option v-for="f in displayFunctions" :key="f" :value="f">
                                     {{f}}
@@ -33,7 +33,7 @@
                             <div class="function-help" v-html="currentFunctionHelp" />
                         </b-tab>
                         <b-tab title="Atributos">
-                            <select class="form-control shadow-none" size="18" @dblclick="copyPasteValue">
+                            <select class="form-select shadow-none" size="18" @dblclick="copyPasteValue">
                                 <option v-for="sg in suggestions" :key="sg">
                                     {{sg}}
                                 </option>
@@ -117,7 +117,7 @@
                 </div>
                 <!-- <div class="col-md-4 border-left">
                     <strong>{{$t('property.expression.availableAttribute', 2)}}:</strong>
-                    <select class="form-control no-border mt-2" size="10" @dblclick="copyPasteValue"
+                    <select class="form-select no-border mt-2" size="10" @dblclick="copyPasteValue"
                         style="font-size:.9em">
                         <option v-for="sg in suggestions">{{sg}}</option>
                     </select>

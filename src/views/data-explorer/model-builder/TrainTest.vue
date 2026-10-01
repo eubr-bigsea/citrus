@@ -6,41 +6,41 @@
         </div>
         <div class="col-6">
             <label for="">Estratégia de particionamento:</label> &nbsp;
-            <select v-model="split.forms.strategy.value" class="form-control w-75 form-control-sm">
+            <select v-model="split.forms.strategy.value" class="form-select w-75 form-select-sm">
                 <option v-for="opt in split.operation.fieldsMap.get('strategy').values" :key="opt.key" :value="opt.key">
                     {{opt.pt}}
                 </option>
             </select>
-            <small class="form-text text-muted mb-3">
+            <div class="form-text text-muted mb-3">
                 Como dividir os dados de entrada entre treino e teste.
-            </small>
+            </div>
 
             <template v-if="split.forms.strategy.value === 'split'">
                 <label for="ratio">Razão treino/teste:</label> &nbsp;
                 <input v-model="split.forms.ratio.value" type="number" class="form-control form-control-sm w-25"
                        min="0.01" max="0.99" step="0.01" data-test="ratio"
                        name="ratio">
-                <small class="form-text text-muted mb-3">
+                <div class="form-text text-muted mb-3">
                     Entre 0,01 e 0,99 (1% e 99%). Por exemplo, 0,8 significa 80% dos
                     dados destinados ao treino e 20% ao teste.
-                </small>
+                </div>
             </template>
             <template v-if="split.forms.strategy.value === 'cross_validation'">
                 <label for="folds">Número de <em>folds</em> para a validação cruzada:</label> &nbsp;
                 <input v-model.number="split.forms.folds.value" type="number" class="form-control form-control-sm w-25"
                        min="2" max="100" step="1" maxlength="2"
                        data-test="folds" name="folds">
-                <small class="form-text text-muted mb-3">
+                <div class="form-text text-muted mb-3">
                     Em quantas partes os dados de entrada serão divididos.
-                </small>
+                </div>
             </template>
             <template v-if="split.forms.strategy.value">
                 <label for="seed">Semente para números aleatórios (seed):</label> &nbsp;
                 <input v-model.number="split.forms.seed.value" type="number" class="form-control form-control-sm w-25"
                        min="0" maxlength="15" data-test="seed" name="seed">
-                <small class="form-text text-muted mb-3">
+                <div class="form-text text-muted mb-3">
                     Semente usada para poder repetir o experimento.
-                </small>
+                </div>
             </template>
         </div>
         <div class="col-6">

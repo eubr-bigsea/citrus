@@ -112,7 +112,7 @@
                                     </template>
                                     <!-- FIXME 
                                     <b-form-group label="Exibir eixo:">
-                                        <select class="form-control form-control-sm">
+                                        <select class="form-select form-select-sm">
                                             <option label="LEFT" value="LEFT">Esquerda</option>
                                             <option label="DIREITA" value="DIREITA">Direita</option>
                                             <option label="HIDE" value="HIDE">Ocultar</option>

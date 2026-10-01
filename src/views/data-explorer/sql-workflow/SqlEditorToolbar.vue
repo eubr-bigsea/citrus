@@ -8,7 +8,7 @@
             </button>
         </div>
         <div v-if="task.operation.slug === 'execute-sql'" class="float-start ms-4 mt-1">
-            <select class="form-control form-control-sm" @change="emit('on-toggle-use-hwc', task, useHWCVal)"
+            <select class="form-select form-select-sm" @change="emit('on-toggle-use-hwc', task, useHWCVal)"
                 v-model="useHWCVal">
                 <optgroup label="Spark">
                     <option value="spark">Usar o Spark SQLContext</option>

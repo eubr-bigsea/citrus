@@ -15,11 +15,11 @@
     </div>
 </template>
 <script setup>
-const preferred_cluster_id = defineModel('preferred_cluster_id');
-
 import VueSelect from 'vue-select';
 
-const props = defineProps({
+const preferred_cluster_id = defineModel('preferred_cluster_id');
+
+defineProps({
     clusters: { type: Array, required: true },
 });
 </script>

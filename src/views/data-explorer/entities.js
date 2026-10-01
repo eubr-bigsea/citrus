@@ -215,9 +215,14 @@ class ModelBuilderWorkflow extends Workflow {
             ['grid', 'grid']
         ]);
         this.tasks.forEach((task) => {
+            // The workflow endpoint omits forms/fields, so every task needs the
+            // full Operation - not only the ones listed in pairs.
+            const op = operations.get(task.operation.slug);
+            if (op) {
+                task.operation = op;
+            }
             if (pairs.has(task.operation.slug)) {
                 this[pairs.get(task.operation.slug)] = task;
-                task.operation = operations.get(task.operation.slug);
             }
         });
         for (let [slug, prop] of pairs.entries()) {

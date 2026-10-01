@@ -39,7 +39,8 @@
                         <div class="row size-full">
                             <div class="col-md-3 col-lg-2 border-right">
                                 <div class="explorer-nav p-1">
-                                    <SideBar :selected="selected" :supervised="supervised" @edit="edit" />
+                                    <ModelBuilderSideBar :selected="selected" :supervised="supervised"
+                                        :pending="pendingBySection" @edit="edit" />
                                 </div>
                             </div>
                             <div class="col-md-9 col-lg-10 ps-4 pe-4 bg-white expand">
@@ -54,7 +55,17 @@
                                         <TrainTest :split="workflowObj.split" />
                                     </template>
                                     <template v-if="selected === 'metric'">
-                                        <Metric :evaluator="workflowObj.evaluator" :attributes="attributes" />
+                                        <Metric :evaluator="workflowObj.evaluator"
+                                            :task-type="workflowObj.evaluator?.forms?.task_type?.value"
+                                            :binary-metric="workflowObj.evaluator?.forms?.bin_metric?.value || ''"
+                                            :multi-class-metric="workflowObj.evaluator?.forms?.multi_metric?.value || ''"
+                                            :regression-metric="workflowObj.evaluator?.forms?.reg_metric?.value || ''"
+                                            :clustering-metric="workflowObj.evaluator?.forms?.clust_metric?.value || ''"
+                                            @update:task-type="(v) => { if (workflowObj.evaluator?.forms?.task_type) workflowObj.evaluator.forms.task_type.value = v; }"
+                                            @update:binary-metric="(v) => { if (workflowObj.evaluator?.forms?.bin_metric) workflowObj.evaluator.forms.bin_metric.value = v; }"
+                                            @update:multi-class-metric="(v) => { if (workflowObj.evaluator?.forms?.multi_metric) workflowObj.evaluator.forms.multi_metric.value = v; }"
+                                            @update:regression-metric="(v) => { if (workflowObj.evaluator?.forms?.reg_metric) workflowObj.evaluator.forms.reg_metric.value = v; }"
+                                            @update:clustering-metric="(v) => { if (workflowObj.evaluator?.forms?.clust_metric) workflowObj.evaluator.forms.clust_metric.value = v; }" />
                                     </template>
                                     <template v-if="selected === 'adjusts'">
                                         <FeatureSelection :attributes="attributes" :features="workflowObj.features"
@@ -65,20 +76,22 @@
                                         <FeatureGeneration />
                                     </template>
                                     <template v-if="selected === 'reduction'">
-                                        <ModelBulderFeatureReduction :reduction="workflowObj.reduction" />
+                                        <ModelBuilderFeatureReduction :reduction="workflowObj.reduction" />
                                     </template>
                                     <template v-if="selected === 'algorithms'">
-                                        <ModelBulderAlgorithms ref="algorithms" :operations="algorithmOperation"
-                                            :workflow="workflowObj" :operation-map="operationsMap" :task-type="taskType"/>
+                                        <ModelBuilderAlgorithmList ref="algorithms"
+                                            :tasks="workflowObj.tasks.filter(t => algorithmOperation.some(op => op.slug === t.operation.slug))"
+                                            :operations="algorithmOperation" />
                                     </template>
                                     <template v-if="selected === 'grid'">
-                                        <Grid :grid="workflowObj.grid" />
+                                        <ModelBuilderGrid :grid="workflowObj.grid" />
                                     </template>
                                     <template v-if="selected === 'weighting'">
                                         <Weighting />
                                     </template>
                                     <template v-if="selected === 'runtime'">
-                                        <Runtime :clusters="clusters" :workflow="workflowObj" />
+                                        <ModelBuilderRuntime :clusters="clusters"
+                                            v-model:preferred_cluster_id="workflowObj.preferred_cluster_id" />
                                     </template>
                                     <template v-if="selected === 'save'">
                                         <model-builder-save-results
@@ -99,41 +112,43 @@
     </div>
 </template>
 <script>
+import axios from 'axios';
+
 import { useWebSocket } from '@/composables/websocket.js';
-import SideBar from './ModelBuilderSideBar.vue';
-import DesignData from './DesignData.vue';
-import TrainTest from './TrainTest.vue';
-import Metric from './ModelBuilderMetric.vue';
-import FeatureSelection from './FeatureSelection.vue';
-import FeatureGeneration from './FeatureGeneration.vue';
-import ModelBuilderSaveResults from './ModelBuilderSaveResults.vue';
-import ModelBuilderFeatureReduction from './ModelBuilderFeatureReduction.vue';
-import Result from './result/Result.vue';
-import Weighting from './Weighting.vue';
-import ModelBuilderAlgorithmList from './ModelBuilderAlgorithmList.vue';
-import ModelBuilderRuntime from './ModelBuilderRuntime.vue';
-import ModelBuilderGrid from './ModelBuilderGrid.vue';
+import Notifier from '@/mixins/Notifier.js';
+import { ModelBuilderWorkflow, Operation } from '@/views/data-explorer/entities.js';
 
 import DataSourceMixin from '../DataSourceMixin.js';
-import Notifier from '@/mixins/Notifier.js';
 
-import { ModelBuilderWorkflow, Operation } from '../entities.js';
+import ModelBuilderAlgorithmList from './ModelBuilderAlgorithmList.vue';
+import ModelBuilderFeatureReduction from './ModelBuilderFeatureReduction.vue';
+import ModelBuilderGrid from './ModelBuilderGrid.vue';
+import ModelBuilderRuntime from './ModelBuilderRuntime.vue';
+import ModelBuilderSaveResults from './ModelBuilderSaveResults.vue';
+import ModelBuilderSideBar from './ModelBuilderSideBar.vue';
+import DesignData from './DesignData.vue';
+import FeatureGeneration from './FeatureGeneration.vue';
+import FeatureSelection from './FeatureSelection.vue';
+import Metric from './ModelBuilderMetric.vue';
+import Result from './result/Result.vue';
+import TrainTest from './TrainTest.vue';
+import Weighting from './Weighting.vue';
 
-import axios from 'axios';
+const META_PLATFORM_ID = 1000;
+
 const limoneroUrl = import.meta.env.VITE_LIMONERO_URL;
-const tahitiUrl = import.meta.env.VITE_TAHITI_URL;
-const standUrl = import.meta.env.VITE_STAND_URL;
 const standNamespace = import.meta.env.VITE_STAND_NAMESPACE;
 const standSocketIoPath = import.meta.env.VITE_STAND_SOCKET_IO_PATH;
 const standSocketServer = import.meta.env.VITE_STAND_SOCKET_IO_SERVER;
+const standUrl = import.meta.env.VITE_STAND_URL;
+const tahitiUrl = import.meta.env.VITE_TAHITI_URL;
 
-const META_PLATFORM_ID = 1000;
 const { connectWebSocket, disconnectWebSocket, joinRoom } = useWebSocket();
 
 export default {
     name: 'DesignComponent',
     components: {
-        SideBar, DesignData, TrainTest, Metric, FeatureSelection, FeatureGeneration,
+        ModelBuilderSideBar, DesignData, TrainTest, Metric, FeatureSelection, FeatureGeneration,
         ModelBuilderFeatureReduction, ModelBuilderAlgorithmList, ModelBuilderGrid, ModelBuilderRuntime, Weighting, Result,
         ModelBuilderSaveResults
     },
@@ -187,6 +202,36 @@ export default {
         },
         features() {
             return this.workflowObj?.features?.forms?.features?.value || [];
+        },
+        // Blocking problems, keyed by the sidebar step that fixes them.
+        pendingBySection() {
+            if (!this.loaded) {
+                return {};
+            }
+            const pending = {};
+            const add = (section, message) => {
+                (pending[section] = pending[section] || []).push(message);
+            };
+
+            if (this.dataSourceId === null) {
+                add('target', 'Fonte de dados inválida.');
+            }
+            if (this.supervised && !this.features.some(f => f.usage === 'label')) {
+                add('adjusts', 'Nenhum atributo alvo (rótulo) foi especificado.');
+            }
+            if (!this.features.some(f => f.usage === 'feature')) {
+                add('adjusts', 'Nenhum atributo preditor foi especificado.');
+            }
+            const hasAlgorithm = this.workflowObj.tasks.some(t => t.enabled
+                && this.operationsMap.has(t.operation.slug)
+                && this.operationsMap.get(t.operation.slug).categories.find(c => c.type === 'algorithm'));
+            if (!hasAlgorithm) {
+                add('algorithms', 'É necessário habilitar pelo menos um algoritmo.');
+            }
+            if (this.workflowObj.preferred_cluster_id === null) {
+                add('runtime', 'Você deve escolher um ambiente de processamento para a execução.');
+            }
+            return pending;
         }
     },
     watch: {
@@ -259,43 +304,13 @@ export default {
             this.workflowObj.forms[name] = {value};
         },
         validate() {
-            const self = this;
-            const errors = [];
-            if (this.dataSourceId === null) {
-                errors.push("Fonte de dados inválida.");
+            if (!this.loaded) {
+                return false;
             }
-
-            const features = self.workflowObj.features.forms.features.value;
-            let hasLabel = false;
-            let hasFeature = false;
-            features.forEach(f => {
-                if (f.usage === 'label') {
-                    hasLabel = true;
-                } else if (f.usage === 'feature') {
-                    hasFeature = true;
-                }
-            });
-
-            if (!hasLabel && this.supervised) {
-                errors.push('Nenhum atributo alvo (rótulo) foi especificado.');
-            }
-            if (!hasFeature) {
-                errors.push('Nenhum atributo preditor foi especificado.');
-            }
-            const atLeastOneAlgorithm = self.workflowObj.tasks.find(a => {
-                return a.enabled
-                    && self.operationsMap.has(a.operation.slug)
-                    && self.operationsMap.get(a.operation.slug).categories.find(c => c.type === 'algorithm')
-            });
-            if (!atLeastOneAlgorithm) {
-                errors.push('É necessário habilitar pelo menos um algoritmo.');
-            }
-            if (self.workflowObj.preferred_cluster_id === null) {
-                errors.push("Você deve escolher um ambiente de processamento para a execução.")
-            }
+            const errors = Object.values(this.pendingBySection).flat();
             if (errors.length > 0) {
                 this.html(
-                    'Existe ao menos uma  inconsistência no fluxo que precisa ser resolvida antes de iniciar o treino: <br/><ul>' +
+                    'Existe ao menos uma inconsistência no fluxo que precisa ser resolvida antes de iniciar o treino: <br/><ul>' +
                     errors.map(e => `<li>${e}</li>`).join("") + '</ul>',
                     'Inconsistência(s) detectada(s)', 10000)
                 return false;
@@ -380,7 +395,7 @@ export default {
                 this.error(e);
                 this.$router.push({ name: 'index-explorer' })
             } finally {
-                this.nextTick(() => {
+                this.$nextTick(() => {
                     this.$Progress.finish();
                     this.loadingData = false;
                     this.isDirty = false;
@@ -423,7 +438,7 @@ export default {
                                 best = r.content.metric.value;
                             }
                         });
-                        this.set(result0, 'best', best);
+                        result0.best = best;
                     }
 
                 });

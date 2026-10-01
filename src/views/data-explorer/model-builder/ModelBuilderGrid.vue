@@ -139,34 +139,26 @@
 <script setup>
 import { computed } from 'vue';
 
-const strategy = defineModel('strategy');
-const random_grid = defineModel('random_grid');
-const max_iterations = defineModel('max_iterations');
-const max_search_time = defineModel('max_search_time');
-const parallelism = defineModel('parallelism');
-const seed = defineModel('seed');
-
 const props = defineProps({
     grid: { type: Object, required: true }
 });
-const emit = defineEmits(['update-value']);
-const errors = {};
 
-const validation = computed(() => this.errors);
-/*watch: {
-    copy: {
-        deep: true,
-            handler(newValues) {
-            this.$emit('update-value', newValues);
-        }
-    },
-    'seed'() {
-        if (!this.seed) {
-            this.errors['seed'] = { error: 'required' };
+// A workflow saved before a field was introduced has no entry for it in forms.
+const field = (name) => computed({
+    get: () => props.grid.forms[name]?.value,
+    set: (value) => {
+        if (props.grid.forms[name]) {
+            props.grid.forms[name].value = value;
         } else {
-            delete this.errors['seed'];
+            props.grid.forms[name] = { value };
         }
     }
-}*/
+});
 
+const strategy = field('strategy');
+const random_grid = field('random_grid');
+const max_iterations = field('max_iterations');
+const max_search_time = field('max_search_time');
+const parallelism = field('parallelism');
+const seed = field('seed');
 </script>

@@ -16,7 +16,7 @@
                                 :options="options">
                     <template #actions="props">
                         <select v-model="props.row.permission"
-                                class="form-control"
+                                class="form-select"
                                 @change="permissionChange(props.row, $event)">
                             <option value="NONE">
                                 NONE
