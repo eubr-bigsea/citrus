@@ -71,7 +71,7 @@
     "@storybook/vue3": "^10.6.0",
     "@storybook/vue3-vite": "^10.6.0",
     "@vitejs/plugin-vue": "^6.0.9",
-    "@vitest/coverage-v8": "^5.0.1",
+    "@vitest/coverage-v8": "^5.0.3",
     "@vue-leaflet/vue-leaflet": "^0.10.1",
     "@vue/compiler-sfc": "^3.1.0",
     "cypress": "^16.1.0",
