@@ -1,7 +1,11 @@
 <template>
     <section :key="counter">
-        <h6 class="mb-3 border-bottom">
-            {{name}}
+        <h6 class="mb-3 border-bottom d-flex justify-content-between align-items-end">
+            <span>{{name}}</span>
+            <small class="fw-normal" :class="combinations > 100 ? 'text-danger' : 'text-muted'"
+                   title="Número de modelos que serão treinados com as combinações de parâmetros informadas">
+                {{combinations}} {{combinations === 1 ? 'combinação' : 'combinações'}}
+            </small>
         </h6>
         <template v-for="opForm in operation.forms" :key="opForm.id">
             <div v-for="field in opForm.fields" :key="field.name" class="mb-2 property clearfix" :data-name="field.name">
@@ -22,32 +26,38 @@
                                :type="field.suggested_widget" :small="true" :read-only="!field.editable" context="context"
                                :show-quantity="gridStrategy === 'grid'" @update="handleUpdateField" @input="handleUpdateField"
                                @update-form-field="handleUpdateField" />
-                    <div v-else>
-                        Tipo de campo de formulário não suportado: {{field.suggested_widget}} para campo {{field.name}}
+                    <div v-else class="text-muted small"
+                         :title="`Widget nao suportado: ${field.suggested_widget} (campo ${field.name})`">
+                        Este parâmetro não pode ser editado por aqui.
                     </div>
                 </keep-alive>
             </div>
-            <button type="button" class="btn btn-sm btn-outline-secondary" @click.prevent="handleCleanAll">
-                Limpar parâmetros
-            </button>
         </template>
+        <button type="button" class="btn btn-sm btn-outline-secondary mt-2" @click.prevent="handleCleanAll">
+            Limpar parâmetros
+        </button>
     </section>
 </template>
 <script setup>
-import { ref } from 'vue';
+import { ref, computed, getCurrentInstance } from 'vue';
 import { useI18n } from 'vue-i18n';
+import useNotifier from '@/composables/useNotifier.js';
 import CheckboxesComponent from '@/components/widgets/Checkboxes.vue';
+import { countCombinations } from './combinations.js';
 
 const { locale } = useI18n();
+const { confirm } = useNotifier(getCurrentInstance().proxy);
 const counter = ref(0);
 
 const props = defineProps({
     operation: { type: Object, required: true },
-    name: { type: String, required: true, default: () => { } },
+    name: { type: String, required: true },
     gridStrategy: { type: String, required: true }
 });
 
-const form = defineModel('form');
+const form = defineModel('form', { type: Object });
+
+const combinations = computed(() => countCombinations(props.operation, form.value));
 /*
 const evalInContext = (js, context) => {
     return new Function("return `" + js + "`;").call(context);
@@ -119,8 +129,14 @@ const getFieldValue = (name, checkboxes) => {
 
 };
 const handleCleanAll = () => {
-    form.value = {};
-    counter.value++;
+    confirm(
+        'Limpar parâmetros',
+        `Todos os parâmetros informados para ${props.name} serão apagados. Continuar?`,
+        () => {
+            form.value = {};
+            counter.value++;
+        }
+    );
 };
 
 const handleUpdateField = (field, value, label) => {

@@ -1,19 +1,30 @@
 <template>
     <div>
-        <h5 class="pb-3 mb-3 border-bottom">
-            Algoritmos
+        <h5 class="pb-3 mb-3 border-bottom d-flex justify-content-between align-items-end">
+            <span>Algoritmos</span>
+            <small class="fw-normal" :class="totalCombinations > 100 ? 'text-danger' : 'text-muted'"
+                   title="Total de modelos que serão treinados com os algoritmos habilitados">
+                {{totalCombinations}} {{totalCombinations === 1 ? 'modelo' : 'modelos'}} no total
+            </small>
         </h5>
         <div class="row">
             <div class="col-md-3 border-start border-end">
-                <small>Informe os parâmetros para a execução do algoritmo. <u>Nenhum parâmetro é
-                    obrigatório.</u></small>
+                <small class="text-muted">Habilite os algoritmos que deseja treinar e comparar.</small>
 
                 <b-list-group class="mb-3 border-bottom">
                     <b-list-group-item v-for="task in algorithms" :key="task.id" class="p-0 ps-2"
                                        :class="{ 'bg-light': selectedAlgorithm === task }">
-                        <div class="d-flex w-100 p-1" role="button" @click="handleSelectTask(task)">
-                            <b-form-checkbox v-model="task.enabled" switch />
-                            {{task.operation?.name || task.name}}
+                        <div class="d-flex w-100 p-1 align-items-center">
+                            <b-form-checkbox v-model="task.enabled" switch
+                                             :aria-label="`Habilitar ${task.operation?.name || task.name}`" />
+                            <button type="button" class="algorithm-name flex-grow-1 text-start"
+                                    :aria-current="selectedAlgorithm === task ? 'true' : null"
+                                    @click="handleSelectTask(task)">
+                                {{task.operation?.name || task.name}}
+                            </button>
+                            <small v-if="task.enabled" class="text-muted ms-1 text-nowrap">
+                                {{combinationsFor(task)}}&times;
+                            </small>
                         </div>
                     </b-list-group-item>
                 </b-list-group>
@@ -24,16 +35,21 @@
                 </div>
                 <div v-else-if="!selectedAlgorithm.enabled" class="text-center text-secondary mt-5 pt-5">
                     <h4>{{selectedAlgorithm.operation.name}} está desabilitado</h4>
-                    <p>Não é possível alterar os parâmetros de um algoritmo desabilitado.
-                        Habilite-o no seletor à esquerda para editá-los.</p>
+                    <p>
+                        Não é possível alterar os parâmetros de um algoritmo desabilitado.
+                        Habilite-o no seletor à esquerda para editá-los.
+                    </p>
                 </div>
                 <div v-else>
+                    <small class="text-muted">
+                        Informe os parâmetros para a execução do algoritmo. Nenhum parâmetro é obrigatório.
+                    </small>
                     <ModelBuilderAlgorithm :key="selectedAlgorithm.operation.slug"
                                            :form="selectedAlgorithm.forms"
-                                           @update:form="(v) => selectedAlgorithm.forms = v"
                                            :operation="selectedAlgorithm.operation"
                                            :name="selectedAlgorithm.name"
-                                           :grid-strategy="'grid'" />
+                                           :grid-strategy="gridStrategy"
+                                           @update:form="(v) => selectedAlgorithm.forms = v" />
                 </div>
             </div>
         </div>
@@ -44,10 +60,12 @@
 import ModelBuilderAlgorithm from './ModelBuilderAlgorithm.vue';
 
 import { ref, onMounted, computed } from 'vue';
+import { countCombinations } from './combinations.js';
 
 const props = defineProps({
     tasks: { type: Array, required: true },
     operations: { type: Array, required: true },
+    gridStrategy: { type: String, default: 'grid' },
 });
 
 const algorithms = ref([]);
@@ -72,6 +90,13 @@ onMounted(() => {
     }
 });
 
+const combinationsFor = (task) => countCombinations(task.operation, task.forms);
+
+// Only enabled algorithms are trained, so they are what costs time.
+const totalCombinations = computed(() => algorithms.value
+    .filter((task) => task.enabled)
+    .reduce((total, task) => total + combinationsFor(task), 0));
+
 const handleSelectTask = (task) => {
     selectedAlgorithm.value = task;
 };
@@ -80,5 +105,20 @@ const handleSelectTask = (task) => {
 .algorithm {
     height: 75vh;
     overflow: auto;
+}
+
+/* Selecting an algorithm is a real button so it is reachable by keyboard,
+   but it should read as a list row. */
+.algorithm-name {
+    background: none;
+    border: 0;
+    padding: 0 0 0 .25rem;
+    color: inherit;
+    font: inherit;
+}
+
+.algorithm-name:focus-visible {
+    outline: 2px solid #86b7fe;
+    outline-offset: 2px;
 }
 </style>

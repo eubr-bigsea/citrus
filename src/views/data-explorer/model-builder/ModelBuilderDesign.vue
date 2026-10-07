@@ -3,38 +3,42 @@
         <div>
             <div class="d-flex justify-content-between align-items-center border-bottom">
                 <div class="title">
-                    <h1>Construção de Modelos</h1>
+                    <router-link :to="{ name: 'index-explorer' }" class="small text-muted text-decoration-none">
+                        <font-awesome-icon icon="fa fa-chevron-left" /> Construção de Modelos
+                    </router-link>
+                    <input v-model="workflowObj.name" type="text" class="experiment-name d-block"
+                        :placeholder="$t('common.name')" :aria-label="$t('common.name')" maxlength="100">
                 </div>
-                <form class="float-end form-inline w-50 d-flex justify-content-end">
-                    <label>{{ $t('common.name') }}:</label>
-                    <input v-model="workflowObj.name" type="text" class="form-control form-control-sm ms-1 w-50"
-                        :placeholder="$t('common.name')" maxlength="100">
-                    <button class="btn btn-sm btn-outline-success ms-1 float-end" @click.prevent="saveWorkflow">
+                <div class="d-flex align-items-center">
+                    <span v-if="isDirty" class="badge text-bg-warning me-2"
+                        title="Há alterações que ainda não foram salvas">
+                        Não salvo
+                    </span>
+
+                    <span v-if="!notRunning" class="badge text-bg-info me-2">
+                        <font-awesome-icon icon="fa fa-spinner" spin /> Treinando
+                    </span>
+
+                    <button class="btn btn-sm btn-outline-secondary ms-1" @click.prevent="saveWorkflow">
                         <font-awesome-icon icon="fa fa-save" />
                         {{ $t('actions.save') }}
                     </button>
 
-                    <button v-if="notRunning" class="btn btn-sm btn-outline-primary ms-1 float-end"
+                    <button class="btn btn-sm btn-primary ms-1" :disabled="!notRunning"
                         @click.prevent="handleTraining">
                         <font-awesome-icon icon="fa fa-play" />
                         {{ $t('actions.train') }}
                     </button>
 
-                    <button v-else class="btn btn-sm btn-outline-danger ms-1 float-end"
+                    <button v-if="!notRunning" class="btn btn-sm btn-outline-danger ms-1"
                         @click.prevent="handleStopTrain">
                         <font-awesome-icon icon="fa fa-stop" />
                         {{ $t('actions.stop') }}
                     </button>
-
-                    <!--
-                    <button @click.prevent="loadJobs" class="btn btn-sm btn-outline-secondary ms-1 float-end">
-                        <font-awesome-icon icon="fa fa-sync" />
-                        Reload jobs</button>
-                        -->
-                </form>
+                </div>
             </div>
             <div class="custom-card">
-                <b-tabs v-if="loaded" class="p-2 custom-tab bg-white" align="center">
+                <b-tabs v-if="loaded" class="p-2 custom-tab bg-white">
                     <b-tab title="Parâmetros" class="m-1 parameters">
                         <div class="row size-full">
                             <div class="col-md-3 col-lg-2 border-right">
@@ -81,7 +85,8 @@
                                     <template v-if="selected === 'algorithms'">
                                         <ModelBuilderAlgorithmList ref="algorithms"
                                             :tasks="workflowObj.tasks.filter(t => algorithmOperation.some(op => op.slug === t.operation.slug))"
-                                            :operations="algorithmOperation" />
+                                            :operations="algorithmOperation"
+                                            :grid-strategy="workflowObj.grid.forms.strategy?.value || 'grid'" />
                                     </template>
                                     <template v-if="selected === 'grid'">
                                         <ModelBuilderGrid :grid="workflowObj.grid" />
@@ -102,7 +107,8 @@
                             </div>
                         </div>
                     </b-tab>
-                    <b-tab ref="tabResults" title="Resultados" class="pt-2">
+                    <b-tab ref="tabResults" :title="jobs.length ? `Resultados (${jobs.length})` : 'Resultados'"
+                        class="pt-2">
                         <Result ref="results" :jobs="jobs" :number-of-features="numberOfFeatures"
                             @delete-job="handleDeleteJob" :features="features" />
                     </b-tab>
@@ -161,6 +167,7 @@ export default {
             dataSourceOptions: [],
             internalWorkflowId: null,
             isDirty: false,
+            leavingConfirmed: false,
             job: null,
             jobs: [],
             groupedJobs: null,
@@ -235,6 +242,15 @@ export default {
         }
     },
     watch: {
+        workflowObj: {
+            deep: true,
+            handler() {
+                // load() mutates the workflow while loadingData is still set.
+                if (this.loaded && !this.loadingData) {
+                    this.isDirty = true;
+                }
+            }
+        },
         async selected() {
             if (this.selected === 'algorithms') {
                 const params = {
@@ -252,12 +268,37 @@ export default {
     },
     async created() {
         this.internalWorkflowId = (this.$route) ? this.$route.params.id : 0;
+        window.addEventListener('beforeunload', this.warnUnsavedChanges);
         await this.load();
     },
     beforeUnmount() {
+        window.removeEventListener('beforeunload', this.warnUnsavedChanges);
         disconnectWebSocket();
     },
+    beforeRouteLeave(to, from, next) {
+        if (!this.isDirty || this.leavingConfirmed) {
+            next();
+            return;
+        }
+        // confirm() only reports the "yes" answer, so cancel now and
+        // navigate again once the user confirms.
+        this.confirm(
+            'Alterações não salvas',
+            'Há alterações que ainda não foram salvas. Sair mesmo assim?',
+            () => {
+                this.leavingConfirmed = true;
+                this.$router.push(to.fullPath);
+            }
+        );
+        next(false);
+    },
     methods: {
+        warnUnsavedChanges(event) {
+            if (this.isDirty) {
+                event.preventDefault();
+                event.returnValue = '';
+            }
+        },
         /* WebSocket Handling */
         initWebSocketConnection() {
             const self = this;
@@ -561,6 +602,30 @@ export default {
 </script>
 
 <style scoped>
+/* The experiment name is the page title and the way to rename it, so it
+   only looks like a field on hover/focus. */
+.experiment-name {
+    font-size: 1.6rem;
+    font-weight: 500;
+    color: #212529;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    padding: 2px 6px;
+    margin-left: -6px;
+    min-width: 28rem;
+    background: transparent;
+}
+
+.experiment-name:hover {
+    border-color: #dee2e6;
+}
+
+.experiment-name:focus {
+    border-color: #86b7fe;
+    outline: 0;
+    background: #fff;
+}
+
 .custom-card {
     padding: 0 5px;
 }
