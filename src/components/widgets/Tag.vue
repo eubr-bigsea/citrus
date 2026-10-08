@@ -40,12 +40,12 @@ export default {
         }
     },
     mounted() {
-        this.$root.$emit(this.message,
+        this.$emit(this.message,
             this.field, this.value || this.field['default']);
     },
     methods: {
         updatedTag(values) {
-            this.$root.$emit(this.message, this.field, values, values);
+            this.$emit(this.message, this.field, values, values);
 
         },
     },

@@ -123,9 +123,9 @@
                             </div>
                             <div v-else>
                                 <b-card>
-                                    <b-placeholder animation="fade" width="85%" height="40px" />
-                                    <b-placeholder animation="fade" width="55%" height="40px" />
-                                    <b-placeholder animation="fade" width="70%" height="40px" />
+                                    <b-placeholder animation="fade" width="85%" style="height: 40px" />
+                                    <b-placeholder animation="fade" width="55%" style="height: 40px" />
+                                    <b-placeholder animation="fade" width="70%" style="height: 40px" />
                                 </b-card>
                             </div>
                         </div>

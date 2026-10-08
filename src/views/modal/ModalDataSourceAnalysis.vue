@@ -1,5 +1,5 @@
 <template>
-    <b-modal id="modal" title="Adicionar Análise">
+    <b-modal id="modal" ref="modal" title="Adicionar Análise">
         <label>{{$t('common.attribute', 1)}}:</label>
         <select v-model="attribute" class="form-select" @change="analysis = []">
             <option v-for="attr in attributes" :key="attr.name" :value="attr">
@@ -35,15 +35,15 @@
                                  :key="option.name" 
                                  :disabled="!(currentAttributeIsNumeric && option.numeric || !currentAttributeIsNumeric && option.categorical)" :value="option.name">
                     {{$t(`dataSource.analysis.${option.name}`)}}
-                </b-form-checkbox>AAA
+                </b-form-checkbox>
             </b-form-checkbox-group>
         </b-form-group>
         <template #footer>
             <b-button :disabled="analysis.length === 0" variant="primary" size="sm"
-                      @click="[addCard(), $bvModal.hide('modal')]">
+                      @click="[addCard(), hide()]">
                 {{$t('common.ok')}}
             </b-button>
-            <b-button variant="secondary" size="sm" @click="$bvModal.hide('modal')">
+            <b-button variant="secondary" size="sm" @click="hide()">
                 {{$t('actions.cancel')}}
             </b-button>
         </template>
@@ -104,6 +104,8 @@ export default {
         }
     },
     methods: {
+        show() { this.$refs.modal.show(); },
+        hide() { this.$refs.modal.hide(); },
         addCard() {
             let cardInfo = {
                 analysisType: this.type,

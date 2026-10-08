@@ -25,7 +25,7 @@
                 </button>
             </div>
             <!--
-            <b-dropdown id="dropdown-right" right class="m-2 float-end" variant="outline-dark" size="sm">
+            <b-dropdown id="dropdown-right" end class="m-2 float-end" variant="outline-dark" size="sm">
                 <b-dropdown-item href="#" @click="deleteCard">
                     <font-awesome-icon icon="trash" /> {{ $t('actions.delete') }}
                 </b-dropdown-item>

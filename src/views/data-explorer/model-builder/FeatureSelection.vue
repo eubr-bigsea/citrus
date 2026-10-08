@@ -18,7 +18,7 @@
                                            role="button" @click="handleSelectAttribute(attr)">
                             <div v-if="attr.usage !== 'label'" class="w-100 p-1"
                                  :class="{ 'bg-light': selectedAttribute === attr }">
-                                <b-form-checkbox v-model="attr.usage" switch value="feature">
+                                <b-form-checkbox v-model="attr.usage" switch value="feature" unchecked-value="unused">
                                     {{attr.name}}
                                 </b-form-checkbox>
                             </div>
@@ -41,8 +41,8 @@
                     <div class="row">
                         <div class="col-4">
                             <b-form-group label="Uso do atributo:">
-                                <b-form-radio-group name="radio-usage" :checked="selectedAttribute.usage" stacked
-                                                    @input="changeUsage($event)">
+                                <b-form-radio-group v-model="selectedAttribute.usage" name="radio-usage" stacked
+                                                    @update:model-value="changeUsage">
                                     <b-form-radio name="usage" value="unused">
                                         <font-awesome-icon icon="fa fa-times" class="text-danger" /> Não usar
                                     </b-form-radio>
@@ -293,7 +293,7 @@ export default {
                 }
                 this.selectedTarget = this.selectedAttribute;
                 this.$emit('update-target', this.selectedTarget.name);
-            } else if (usage == 'unsed') {
+            } else if (usage == 'unused') {
                 if (this.selectedTarget && this.selectedAttribute === this.selectedTarget) {
                     this.selectedTarget = null;
                 }

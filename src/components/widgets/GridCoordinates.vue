@@ -115,11 +115,11 @@ export default {
                 height: 0,
                 width: 0,
             };
-            this.$root.$emit(this.message, this.field, null, null);
+            this.$emit(this.message, this.field, null, null);
             this.closeModal();
         },
         closeModal() {
-            this.$root.$emit(this.message, this.field, this.coordinates, null);
+            this.$emit(this.message, this.field, this.coordinates, null);
             this.$refs.modal.hide();
         },
     },

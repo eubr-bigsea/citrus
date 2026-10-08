@@ -57,7 +57,7 @@ export default {
     },
     methods: {
         okClicked() {
-            this.$root.$emit(this.message, this.field,
+            this.$emit(this.message, this.field,
                 this.sql);
             this.$refs.modal.hide();
         },

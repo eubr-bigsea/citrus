@@ -75,7 +75,7 @@
                             <font-awesome-icon icon="copy" />
                         </b-input-group-text>
                     </template>
-                    <b-form-input :value="link" readonly />
+                    <b-form-input :model-value="link" readonly />
                 </b-input-group>
             </b-form>
         </b-modal>

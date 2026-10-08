@@ -6,7 +6,7 @@
                         :options="options"
                         @row-click="onClick">
             <!-- eslint-disable -->
-            <template v-for="col in columns" :slot="col" slot-scope="props">
+            <template v-for="col in columns" #[col]="props">
                 <a href="javascript:void(0)">{{props.row[col]}}</a>
             </template>
             <!-- eslint-enable -->

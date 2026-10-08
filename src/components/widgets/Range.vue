@@ -47,7 +47,7 @@ export default {
     mounted() {
         this.values = this.field.values ? JSON.parse(this.field.values) : {};
         const sliderValue = 100*(this.field['default'] ? parseFloat(this.field['default']): 0.5);
-        this.$root.$emit(this.message,
+        this.$emit(this.message,
             this.field, parseInt(this.value || sliderValue));
         if (this.value){
             this.split = parseInt(this.value);
@@ -59,7 +59,7 @@ export default {
         updated:
                 debounce(function (e) {
                     this.split = parseInt(e.target.value);
-                    this.$root.$emit(this.message, this.field, parseInt(e.target.value));
+                    this.$emit(this.message, this.field, parseInt(e.target.value));
                 }, 500),
         mouseDown() {
             this.isDragging = true;

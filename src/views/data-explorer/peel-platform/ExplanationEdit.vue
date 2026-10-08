@@ -586,7 +586,7 @@ export default {
             for (let i = 0; i < values.length && i < this.instanceValues.length; i++) {
                 const num = parseFloat(values[i]);
                 if (!isNaN(num)) {
-                    this.$set(this.instanceValues, i, num);
+                    this.instanceValues[i] = num;
                 }
             }
         },
@@ -632,18 +632,10 @@ export default {
                 this.showAddModal = false;
                 this.instanceInput = ''
 
-                this.$bvToast.toast('Algoritmo adicionado com sucesso!', {
-                    title: 'Sucesso',
-                    variant: 'success',
-                    solid: true,
-                });
+                this.success('Algoritmo adicionado com sucesso!');
             } catch (error) {
                 console.error('Erro ao adicionar algoritmo:', error);
-                this.$bvToast.toast('Erro ao adicionar algoritmo.', {
-                    title: 'Erro',
-                    variant: 'danger',
-                    solid: true,
-                });
+                this.error(null, 'Erro ao adicionar algoritmo.');
             }
         },
         async getUnderstanding() {
@@ -664,18 +656,10 @@ export default {
         async runExplanation(id) {
             try {
                 const response = await this.makeRequest('get', `${this.peelUrl}/explanation/${id}/run`);
-                this.$bvToast.toast('Execução do algoritmo iniciada com sucesso!', {
-                    title: 'Sucesso',
-                    variant: 'success',
-                    solid: true,
-                });
+                this.success('Execução do algoritmo iniciada com sucesso!');
             } catch (error) {
                 console.error('Erro ao carregar detalhes da explicação:', error);
-                this.$bvToast.toast('Erro ao iniciar a execução do algoritmo.', {
-                    title: 'Erro',
-                    variant: 'danger',
-                    solid: true,
-                });
+                this.error(null, 'Erro ao iniciar a execução do algoritmo.');
             }
         },
 
@@ -690,11 +674,7 @@ export default {
             ).catch(error => error.response);
 
             if (!response) {
-                this.$bvToast.toast('Erro ao buscar o resultado da explicação.', {
-                    title: 'Erro',
-                    variant: 'danger',
-                    solid: true,
-                });
+                this.error(null, 'Erro ao buscar o resultado da explicação.');
                 return;
             }
 
@@ -702,36 +682,20 @@ export default {
                 if (resultType === "image") {
                     const textData = await response.data.text();
                     if (textData.includes("TASK NOT PROCESSED")) {
-                        this.$bvToast.toast('Execute a explicação primeiro.', {
-                            title: 'Aviso',
-                            variant: 'warning',
-                            solid: true,
-                        });
+                        this.warning('Execute a explicação primeiro.');
                         return;
                     }
                 } else if (response.data?.status === "TASK NOT PROCESSED") {
-                    this.$bvToast.toast('Execute a explicação primeiro.', {
-                        title: 'Aviso',
-                        variant: 'warning',
-                        solid: true,
-                    });
+                    this.warning('Execute a explicação primeiro.');
                     return;
                 }
 
-                this.$bvToast.toast('Explicação não encontrada', {
-                    title: 'Erro 404',
-                    variant: 'danger',
-                    solid: true,
-                });
+                this.error(null, 'Explicação não encontrada');
                 return;
             }
 
             if (response.data?.status === "PROCESSING") {
-                this.$bvToast.toast('O resultado ainda está sendo processado.', {
-                    title: 'Processando',
-                    variant: 'info',
-                    solid: true,
-                });
+                this.info('O resultado ainda está sendo processado.');
                 return;
             }
 
@@ -742,11 +706,7 @@ export default {
                     this.jsonResult = null;
                     this.showImageModal = true;
                 } else {
-                    this.$bvToast.toast('O resultado ainda está sendo processado.', {
-                        title: 'Processando',
-                        variant: 'info',
-                        solid: true,
-                    });
+                    this.info('O resultado ainda está sendo processado.');
                 }
                 return;
             }
@@ -778,19 +738,11 @@ export default {
         copyJson(json) {
             navigator.clipboard.writeText(json)
                 .then(() => {
-                    this.$bvToast.toast('JSON copiado com sucesso!', {
-                        title: 'Sucesso',
-                        variant: 'success',
-                        solid: true,
-                    });
+                    this.success('JSON copiado com sucesso!');
                 })
                 .catch((err) => {
                     console.error('Erro ao copiar JSON:', err);
-                    this.$bvToast.toast('Erro ao copiar JSON.', {
-                        title: 'Erro',
-                        variant: 'danger',
-                        solid: true,
-                    });
+                    this.error(null, 'Erro ao copiar JSON.');
                 });
         },
         downloadImage(imageUrl) {
@@ -802,18 +754,10 @@ export default {
                 link.click();
                 document.body.removeChild(link);
 
-                this.$bvToast.toast('Imagem baixada com sucesso!', {
-                    title: 'Sucesso',
-                    variant: 'success',
-                    solid: true,
-                });
+                this.success('Imagem baixada com sucesso!');
             } catch (error) {
                 console.error('Erro ao baixar a imagem:', error);
-                this.$bvToast.toast('Erro ao baixar a imagem.', {
-                    title: 'Erro',
-                    variant: 'danger',
-                    solid: true,
-                });
+                this.error(null, 'Erro ao baixar a imagem.');
             }
         },
     }

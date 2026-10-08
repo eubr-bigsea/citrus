@@ -4,10 +4,10 @@
             <div class="title col-md">
                 <h1>{{$t('titles.dataSource', 1)}} {{dataSource?.name}}</h1>
             </div>
-            <b-button :disabled="loading" variant="success" class="btn btn-primary" @click="$bvModal.show('modal')">
+            <b-button :disabled="loading" variant="success" class="btn btn-primary" @click="$refs.analysisModal.show()">
                 <font-awesome-icon icon="fa fa-plus" /> {{$t('actions.addItem')}}
             </b-button>
-            <modal :attributes="attributes" @cards="addCard" />
+            <modal ref="analysisModal" :attributes="attributes" @cards="addCard" />
         </div>
 
         <div class="row">

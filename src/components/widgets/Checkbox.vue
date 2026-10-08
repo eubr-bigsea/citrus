@@ -11,7 +11,7 @@
                  :data-name="field.name">
                 <b-form-checkbox v-if="visualStyle === 'explorer'"
                                  switch
-                                 :checked="checked"
+                                 :model-value="checked"
                                  @input="changed">
                     {{field.label
                         || field.name}}

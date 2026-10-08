@@ -25,7 +25,7 @@ export default {
     mixins: [Widget],
     mounted() {
         const value = (this.field['default'] ? this.field['default']: null);
-        this.$root.$emit(this.message,
+        this.$emit(this.message,
             this.field, this.value || value);
     },
     methods: {

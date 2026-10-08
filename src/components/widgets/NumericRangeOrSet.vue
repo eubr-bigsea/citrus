@@ -28,7 +28,7 @@
                        :step="inputType.step" class="form-control form-control-sm w-25"
                        placeholder="Valor" @keypress="limitLength">
 
-                <div v-else-if="mode === 'range'" class="border py-2 border-radius">
+                <div v-else-if="mode === 'range'" class="range-box py-2 rounded">
                     <div class="container">
                         <div class="d-inline-flex align-items-center">
                             <label :for="`min-${randomId}`">Min:</label>
@@ -288,12 +288,12 @@ input.small-text {
     max-width: 80px;
 }
 
-select.input.small-text {
-    max-width: 120px;
+select.small-text {
+    max-width: 130px;
 }
 
-.border-radius {
-    border-radius: 5px;
+.range-box {
+    background-color: #f8f9fa;
 }
 
 .tag-remove {

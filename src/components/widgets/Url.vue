@@ -22,11 +22,11 @@ export default {
     mixins: [Widget],
     mounted() {
         const value = (this.field['default'] ? this.field['default']: null);
-        this.$root.$emit(this.message,
+        this.$emit(this.message,
             this.field, this.value || value);
     },
     methods: {
-        updated: debounce(function (e) { this.$root.$emit(this.message, this.field, e.target.value); }, 500)
+        updated: debounce(function (e) { this.$emit(this.message, this.field, e.target.value); }, 500)
     },
 };
 </script>

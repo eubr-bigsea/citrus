@@ -100,7 +100,7 @@ const edit = (item) => {
 }
 
 .model-builder-sidebar :deep(.nav-item.active a) {
-    border-left: 5px solid green;
+    border-left: 5px solid var(--primary-color);
     padding-left: 5px !important;
 }
 

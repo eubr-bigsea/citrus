@@ -54,18 +54,18 @@
                     <!--
                     <div v-else class="text-bold-normal">
                         <label>{{$t('common.filter')}}:</label>
-                        <b-skeleton type="input" width="65%" />
+                        <b-placeholder animation="wave" width="65%" style="height: 38px" />
 
                         <label>{{$t('common.filter')}}:</label>
-                        <b-skeleton type="input" width="85%" height="100px" />
+                        <b-placeholder animation="wave" width="85%" style="height: 100px" />
                         <br>
-                        <b-skeleton type="avatar" width="30px" height="30px" />
-                        <b-skeleton type="avatar" width="30px" height="30px" />
-                        <b-skeleton type="avatar" width="30px" height="30px" />
+                        <b-placeholder animation="wave" class="rounded-circle" style="width: 30px; height: 30px" />
+                        <b-placeholder animation="wave" class="rounded-circle" style="width: 30px; height: 30px" />
+                        <b-placeholder animation="wave" class="rounded-circle" style="width: 30px; height: 30px" />
                         <br>
-                        <b-skeleton animation="wave" width="85%" height="60px" />
-                        <b-skeleton animation="wave" width="55%" height="30px" />
-                        <b-skeleton animation="wave" width="70%" height="60px" />
+                        <b-placeholder animation="wave" width="85%" style="height: 60px" />
+                        <b-placeholder animation="wave" width="55%" style="height: 30px" />
+                        <b-placeholder animation="wave" width="70%" style="height: 60px" />
                     </div>
                 -->
                     <div class="buttons mt-5 pt-2 text-center border-top">

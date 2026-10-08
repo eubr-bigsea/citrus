@@ -27,7 +27,7 @@
                     <font-awesome-icon icon="fa fa-chart-line" class="text-success" /> {{ $t('titles.dashboard', 2) }}
                 </b-nav-item>
 
-                <b-nav-item-dropdown v-if="hasAnyPermission(PIPELINE) || isAdmin" right data-test="pipelines-menu">
+                <b-nav-item-dropdown v-if="hasAnyPermission(PIPELINE) || isAdmin" end data-test="pipelines-menu">
                     <template #button-content>
                         <font-awesome-icon icon="fa fa-circle-nodes" class="text-success" />
                         {{ $t('titles.pipeline', 2) }}
@@ -42,7 +42,7 @@
             </b-navbar-nav>
 
             <b-navbar-nav class="pt-1">
-                <b-nav-item-dropdown v-if="isAdmin" data-test="admin-menu" right>
+                <b-nav-item-dropdown v-if="isAdmin" data-test="admin-menu" end>
                     <template #button-content>
                         <font-awesome-icon icon="fa fa-lock" class="text-success" />
                         {{ $t('titles.administration', 2) }}
@@ -104,7 +104,7 @@
                 </b-nav-item-dropdown>
             </b-navbar-nav>
             <b-navbar-nav class="ms-auto mt-2">
-                <b-nav-item-dropdown ref="dropdown" right>
+                <b-nav-item-dropdown ref="dropdown" end>
                     <template #button-content>
                         <font-awesome-icon icon="fa fa-user" class="text-success" />
                         {{ user.name ? user.name.split(' ')[0] : '' }}
@@ -135,7 +135,7 @@
                         </p>
                     </b-dropdown-form>
                 </b-nav-item-dropdown>
-                <b-nav-item-dropdown right ref="dropdown" @show="loadNotifications" no-caret>
+                <b-nav-item-dropdown end ref="dropdown" @show="loadNotifications" no-caret>
                     <template #button-content>
                         <font-awesome-icon icon="fa fa-bell" />
                         <span class="badge badge-pill" v-if="unreadNotifications > 0"
@@ -153,7 +153,7 @@
                         </div>
                     </b-dropdown-item>
                     <b-dropdown-item
-                        @click.native.stop="$route.name === 'notifications' ? $router.go() : $router.push({ name: 'notifications' })">
+                        @click.stop="$route.name === 'notifications' ? $router.go() : $router.push({ name: 'notifications' })">
                         {{ $t('titles.allNotifications') }}
                         <font-awesome-icon icon="fa fa-angle-right" />
                     </b-dropdown-item>

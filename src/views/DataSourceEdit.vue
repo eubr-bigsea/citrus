@@ -53,7 +53,7 @@
                                                         <label>{{ $t('common.tags') }}:</label>
                                                         <v-select v-model="customTags" multiple :close-on-select="false"
                                                             style="width: 100%" :taggable="true" class="custom">
-                                                            <span slot="no-options" />
+                                                            <template #no-options><span /></template>
                                                         </v-select>
                                                     </div>
                                                     <div v-if="usesCommand"
@@ -79,8 +79,7 @@
                                                                 <v-select v-model="dataSource.attribute_delimiter"
                                                                     style="width: 100%" :options="delimiters"
                                                                     :taggable="true">
-                                                                    <span
-                                                                        slot="no-options">{{ $t('messages.noMatching') }}.</span>
+                                                                    <template #no-options>{{ $t('messages.noMatching') }}.</template>
                                                                 </v-select>
                                                             </div>
                                                             <div class="col-md-3">
@@ -88,8 +87,7 @@
                                                                 <v-select v-model="dataSource.record_delimiter"
                                                                     style="width: 100%" :options="delimiters"
                                                                     :taggable="true">
-                                                                    <span
-                                                                        slot="no-options">{{ $t('messages.noMatching') }}.</span>
+                                                                    <template #no-options>{{ $t('messages.noMatching') }}.</template>
                                                                 </v-select>
                                                             </div>
                                                             <div class="col-md-3">
@@ -97,8 +95,7 @@
                                                                 <v-select v-model="dataSource.text_delimiter"
                                                                     style="width: 100%" :options="textDelimiters"
                                                                     :taggable="true">
-                                                                    <span
-                                                                        slot="no-options">{{ $t('messages.noMatching') }}.</span>
+                                                                    <template #no-options>{{ $t('messages.noMatching') }}.</template>
                                                                 </v-select>
                                                             </div>
                                                             <div class="col-md-3">
@@ -106,8 +103,7 @@
                                                                 <v-select v-model="dataSource.encoding"
                                                                     style="width: 100%" :options="encodings"
                                                                     :taggable="true">
-                                                                    <span
-                                                                        slot="no-options">{{ $t('messages.noMatching') }}.</span>
+                                                                    <template #no-options>{{ $t('messages.noMatching') }}.</template>
                                                                 </v-select>
                                                             </div>
                                                         </div>
@@ -162,7 +158,7 @@
                                                     <v-select v-model="customTreatAsMissing" multiple
                                                         :close-on-select="false" style="width: 100%" :taggable="true"
                                                         class="custom">
-                                                        <span slot="no-options">{{ $t('messages.noMatching') }}.</span>
+                                                        <template #no-options>{{ $t('messages.noMatching') }}.</template>
                                                     </v-select>
                                                 </div>
                                             </div>
@@ -496,11 +492,13 @@
                             <textarea v-if="currentAttribute.attribute_privacy"
                                 v-model="currentAttribute.attribute_privacy.hierarchy" class="form-control" type="text"
                                 rows="5" />
-                            <div slot="modal-footer" class="w-100">
+                            <template #modal-footer>
+<div class="w-100">
                                 <button class="float-end me-2 btn-primary" @click="okPrivacy">
                                     {{ $t('actions.close') }}
                                 </button>
                             </div>
+</template>
                         </b-modal>
                     </div>
                 </div>

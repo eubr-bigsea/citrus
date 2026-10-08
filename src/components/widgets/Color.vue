@@ -7,7 +7,7 @@
                  :style="{ background: opt.background }" :title="opt.background" @click="doUpdate(opt)" />
         </div>
         <div v-else>
-            <b-form-input type="color" class="w-10" :value="value" @input="doUpdate" />
+            <b-form-input type="color" class="w-10" :model-value="value" @update:model-value="doUpdate" />
         </div>
     </div>
 </template>

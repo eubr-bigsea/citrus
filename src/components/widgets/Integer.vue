@@ -29,12 +29,12 @@ export default {
     mixins: [Widget],
     mounted() {
         const value = (this.field['default'] ? parseInt(this.field['default']) : null);
-        this.$root.$emit(this.message,
+        this.$emit(this.message,
             this.field, this.value || value);
     },
     methods: {
         updated: debounce(function (e) {
-            //this.$root.$emit(this.message, this.field, e.target.value);
+            //this.$emit(this.message, this.field, e.target.value);
             this.triggerUpdateEvent(this.message, this.field, e.target.value);
         } , 500)
     },

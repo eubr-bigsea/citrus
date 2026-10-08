@@ -2,16 +2,16 @@
     <div>
         <LabelComponent :field="field" :value="value" />
         <div>
-            <v-select v-if="type !== 'tag' && type !== 'single-tag'" v-model:value="values" :options="suggestions"
-                      :multiple="true || (!params || params.multiple)" :on-change="updated" label="value" :taggable="false"
-                      :close-on-select="false">
+            <v-select v-if="type !== 'tag' && type !== 'single-tag'" v-model="values" :options="suggestions"
+                      :multiple="true || (!params || params.multiple)" label="value" :taggable="false"
+                      :close-on-select="false" @update:model-value="updated">
                 <template #no-options>
                     &nbsp;
                 </template>
             </v-select>
             <v-select v-else v-model="values" :multiple="type !== 'single-tag'" :options="suggestions"
-                      :on-change="updated"
-                      label="value" :taggable="true" :close-on-select="type === 'single-tag'" @input="updated">
+                      label="value" :taggable="true" :close-on-select="type === 'single-tag'"
+                      @update:model-value="updated">
                 <template #no-options>
                     &nbsp;
                 </template>
@@ -58,7 +58,7 @@ export default {
     },
     methods: {
         updated(val) {
-            //this.$root.$emit(this.message, this.field, val);
+            //this.$emit(this.message, this.field, val);
             this.triggerUpdateEvent(this.message, this.field, val);
         }
     },

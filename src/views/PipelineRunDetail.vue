@@ -94,7 +94,7 @@
                         <button id="popover-trigger" class="btn btn-sm text-info">
                             <font-awesome-icon icon="info-circle" />
                         </button>
-                        <b-popover target="popover-trigger" triggers="hover">
+                        <b-popover target="popover-trigger">
                             Selecione uma das etapas abaixo para mostrar seus detalhes da execução.
                         </b-popover>
                         <table class="table text-center table-striped table-sm">

@@ -27,7 +27,7 @@
 
             <div class="accordion options-font mt-2" role="tablist">
                 <b-card no-body class="mb-0">
-                    <b-card-header header-tag="header" role="button" v-b-toggle.accordion-2 data-test="card-1">
+                    <b-card-header tag="header" role="button" v-b-toggle.accordion-2 data-test="card-1">
                         Legenda, temas e cores
                     </b-card-header>
                     <b-collapse id="accordion-2" visible accordion="my-accordion" role="tabpanel">
@@ -108,7 +108,7 @@
                                     label="name" value="name" :append-to-body="true" data-test="size_attribute" />
                             </template>
                             <!--
-                                        <b-dropdown dropdown size="sm" ref="axis" class="mt-2 me-1 w-75" variant="light xsmall-dd-title" :boundary="'window'">
+                                        <b-dropdown size="sm" ref="axis" class="mt-2 me-1 w-75" variant="light xsmall-dd-title" :boundary="'window'">
                                             <template #button-content>
                                                 {{ editableVisualization.color_attribute.value === '*' ? 'COUNT' : editableVisualization.color_aggregation.value.toUpperCase() }}
                                                 {{ editableVisualization.color_aggregation.value !== '' ? `(${editableVisualization.color_attribute.value})` : editableVisualization.color_attribute.value }}
@@ -160,7 +160,7 @@
                     </b-collapse>
                 </b-card>
                 <b-card no-body class="mb-0 ">
-                    <b-card-header header-tag="header" class="options-font rounded-0" role="button" v-b-toggle.accordion-1
+                    <b-card-header tag="header" class="options-font rounded-0" role="button" v-b-toggle.accordion-1
                         data-test="card-2">
                         Aparência
                     </b-card-header>
@@ -453,7 +453,7 @@
                     </b-collapse>
                 </b-card>
                 <b-card no-body class="mb-0">
-                    <b-card-header header-tag="header" role="button" v-b-toggle.accordion-3 data-test="card-3">
+                    <b-card-header tag="header" role="button" v-b-toggle.accordion-3 data-test="card-3">
                         Tamanho e
                         margens
                     </b-card-header>
@@ -519,7 +519,7 @@
                     </b-collapse>
                 </b-card>
                 <b-card no-body class="mb-0">
-                    <b-card-header header-tag="header" role="button" v-b-toggle.accordion-4 data-test="card-4">
+                    <b-card-header tag="header" role="button" v-b-toggle.accordion-4 data-test="card-4">
                         Filtrar
                         dados
                     </b-card-header>
@@ -535,7 +535,7 @@
                     </b-collapse>
                 </b-card>
                 <b-card v-if="!mapFamily" no-body class="mb-0">
-                    <b-card-header header-tag="header" role="button" v-b-toggle.accordion-5 data-test="card-5">
+                    <b-card-header tag="header" role="button" v-b-toggle.accordion-5 data-test="card-5">
                         Subgráficos
                     </b-card-header>
                     <b-collapse id="accordion-5" accordion="my-accordion" role="tabpanel">
@@ -559,8 +559,8 @@
                     </b-collapse>
                 </b-card>
                 <b-card v-if="!pieFamily && !mapFamily" no-body class="mb-0">
-                    <b-card-header header-tag="header" role="tab">
-                        <b-button v-b-toggle.accordion-6 block variant="light" size="sm" data-test="card-6">
+                    <b-card-header tag="header" role="tab">
+                        <b-button v-b-toggle.accordion-6 class="w-100" variant="light" size="sm" data-test="card-6">
                             Animação
                         </b-button>
                     </b-card-header>
@@ -579,7 +579,7 @@
                                             <b-form-input maxlength="50" v-model="editableVisualization.title.value" class="form-control-sm"/>
                                         </b-form-group>
 
-                                        <b-dropdown size="sm" dropright ref="axis" class="mt-2 me-1" variant="light small-dd-title">
+                                        <b-dropdown size="sm" dropend ref="axis" class="mt-2 me-1" variant="light small-dd-title">
                                             <template #button-content>
                                                 Margens
                                             </template>
@@ -651,7 +651,7 @@ const props = defineProps({
     modelValue: { type: Object, required: false, default: null },
     chartType: { type: String, required: false, default: null }
 });
-const emit = defineEmits(['input', 'update-chart']);
+const emit = defineEmits(['input', 'update:modelValue', 'update-chart']);
 
 const chartTypes = ChartTypes.types;
 /* Data fields */
@@ -689,6 +689,7 @@ watch(
         if (value) {
             if (toEmit.value) {
                 emit('input', value.value);
+                emit('update:modelValue', value.value);
             }
             if (!value.color_scale) {
                 value.color_scale = { value: null };

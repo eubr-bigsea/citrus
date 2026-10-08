@@ -40,7 +40,7 @@ export default {
             const values = JSON.parse(this.field.values);
             this.useDatetimeLocal = values['use-datetime-local'] === true;
         }
-        this.$root.$emit(this.message,
+        this.$emit(this.message,
             this.field, this.value || value);
         let d = null;
         if (this.value !== '') {

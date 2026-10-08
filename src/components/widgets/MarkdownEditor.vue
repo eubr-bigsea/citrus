@@ -64,7 +64,7 @@ export default {
             this.$refs.modal.show();
         },
         okClicked() {
-            this.$root.$emit(this.message, this.field, this.code);
+            this.$emit(this.message, this.field, this.code);
             this.$refs.modal.hide();
         },
         cancelClicked() {
