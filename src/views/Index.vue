@@ -3,7 +3,6 @@
 </template>
 <script>
 import axios from 'axios';
-import { UserManager, WebStorageStateStore } from 'oidc-client-ts';
 let thornUrl = import.meta.env.VITE_THORN_URL;
 export default {
     name: 'IndexView',
@@ -12,14 +11,7 @@ export default {
         const self = this;
         if (q?.code) {
             this.query = q;
-            const mgr = new UserManager({
-                response_mode: 'query',
-                userStore: new WebStorageStateStore()
-            });
-            mgr.readSigninResponseState().then(({state, response}) => {
-                console.debug(state);
-            });
-            mgr.signinRedirectCallback().then(async function (user) { // eslint-disable-line no-unused-vars
+            this.$openIdService.handleLoginRedirect().then(async function (user) { // eslint-disable-line no-unused-vars
                 await self.getThornProfile();
                 self.$router.push({ name: 'home' });
             }).catch(function (err) {
