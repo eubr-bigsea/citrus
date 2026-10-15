@@ -381,7 +381,7 @@
                                                         <tbody>
                                                             <tr v-for="p in dataSource.permissions" :key="p.id">
                                                                 <td style="width:80px" class="text-center">
-                                                                    <div class="badge badge-secondary mt-2 pt-1 pb-1 pe-2 ps-2"
+                                                                    <div class="badge bg-secondary mt-2 pt-1 pb-1 pe-2 ps-2"
                                                                         :title="$t('permissions.' + p.permission)">
                                                                         {{ $t('permissions.'
                                                                             + p.permission).toUpperCase() }}

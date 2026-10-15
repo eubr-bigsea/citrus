@@ -28,7 +28,7 @@
 
                         <template #tags="props">
                             <div v-show="props.row.tags.length && props.row.tags[0]">
-                                <span v-for="t in props.row.tags" :key="t" class="badge badge-pill bg-primary">
+                                <span v-for="t in props.row.tags" :key="t" class="badge rounded-pill bg-primary">
                                     {{ t }}
                                 </span>
                             </div>

@@ -15,7 +15,7 @@
                                                     name="notificationList">
                                         <template #type="props">
                                             <span class="badge"
-                                                  :class="{ 'badge-success': props.row.type === 'INFO', 'badge-warning': props.row.type === 'WARNING', 'bg-danger': props.row.type === 'ERROR' }">
+                                                  :class="{ 'bg-success': props.row.type === 'INFO', 'bg-warning': props.row.type === 'WARNING', 'bg-danger': props.row.type === 'ERROR' }">
                                                 &nbsp;{{$t('titles.' + props.row.type.toLowerCase()).toUpperCase()}}
                                             </span>
                                         </template>

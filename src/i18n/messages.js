@@ -928,7 +928,8 @@ export default {
             },
             schedule: {
                 addContextData: 'Adicionar',
-                contextData: 'Dados de contexto',
+                addContextVariable: 'Adicionar variável de contexto',
+                contextData: 'Variáveis de contexto',
                 contextName: 'nome',
                 contextValue: 'valor',
                 noContextData: 'Nenhum dado de contexto adicionado.',
@@ -1898,7 +1899,8 @@ export default {
             },
             schedule: {
                 addContextData: 'Add',
-                contextData: 'Context data',
+                addContextVariable: 'Add context variable',
+                contextData: 'Context variables',
                 contextName: 'name',
                 contextValue: 'value',
                 noContextData: 'No context data added.',

@@ -104,7 +104,7 @@
                 </b-nav-item-dropdown>
             </b-navbar-nav>
             <b-navbar-nav class="ms-auto mt-2">
-                <b-nav-item-dropdown ref="dropdown" end>
+                <b-nav-item-dropdown end>
                     <template #button-content>
                         <font-awesome-icon icon="fa fa-user" class="text-success" />
                         {{ user.name ? user.name.split(' ')[0] : '' }}
@@ -120,7 +120,7 @@
                         <div class="text-center">
                             <strong>{{ $t('titles.role', 2) }}</strong><br>
                             <div class="mt-2">
-                                <span v-for="role in userRoles" :key="role.id" class="badge badge-info me-1 p-1">
+                                <span v-for="role in userRoles" :key="role.id" class="badge bg-secondary me-1 p-1">
                                     {{ role.label }}
                                 </span>
                             </div>
@@ -135,11 +135,11 @@
                         </p>
                     </b-dropdown-form>
                 </b-nav-item-dropdown>
-                <b-nav-item-dropdown end ref="dropdown" @show="loadNotifications" no-caret>
+                <b-nav-item-dropdown end @show="loadNotifications" no-caret>
                     <template #button-content>
                         <font-awesome-icon icon="fa fa-bell" />
-                        <span class="badge badge-pill" v-if="unreadNotifications > 0"
-                            :class="unreadNotifications > 0 ? 'badge-danger' : 'badge-success'">
+                        <span class="badge rounded-pill" v-if="unreadNotifications > 0"
+                            :class="unreadNotifications > 0 ? 'bg-danger' : 'bg-success'">
                             {{ unreadNotifications > 99 ? '99+' : unreadNotifications }}
                         </span>
                     </template>
@@ -277,7 +277,6 @@ export default {
             }
         },
         profile() {
-            this.$refs.dropdown.hide(true);
             this.$router.push({ name: 'profile' });
         },
         loadNotifications() {

@@ -28,7 +28,7 @@
                      class="ps-2 mt-2 w-75 float-start">
                     <div v-for="(tag, i) in tags"
                          :key="i"
-                         class="badge text-secondary badge-light2 border me-1">
+                         class="badge text-secondary bg-light border me-1">
                         {{tag}} <a href="#"
                                    class="text-danger"
                                    @click.prevent="removeTag(tag)">&times;</a>

@@ -11,7 +11,7 @@
         </div>
         <div class="card">
             <div class="card-body">
-                <v-server-table :options="options" :columns="columns" name="users">
+                <v-server-table :options="options" :columns="columns" name="users" ref="userList">
                     <template #id="props">
                         <router-link :to="{ name: 'AdministrationEditUser', params: { id: props.row.id } }">
                             {{props.row.id}}

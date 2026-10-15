@@ -89,9 +89,9 @@
                                         </router-link>
                                         <button v-if="!props.row.context_data?.length" type="button"
                                                 class="btn btn-link btn-sm context-var-add"
-                                                :title="$t('pipeline.schedule.addContextData')"
+                                                :title="$t('pipeline.schedule.addContextVariable')"
                                                 @click.stop="openContextEditor(props.row)">
-                                            <font-awesome-icon icon="plus" />
+                                            <font-awesome-icon icon="plus" /> {{$t('pipeline.schedule.addContextData')}}
                                         </button>
                                     </template>
                                     <template #rowDetails="props">
@@ -99,9 +99,9 @@
                                             <div class="context-vars-header">
                                                 <small class="text-muted">{{$t('pipeline.list.contextVariables')}}</small>
                                                 <button type="button" class="btn btn-link btn-sm context-var-add"
-                                                        :title="$t('pipeline.schedule.addContextData')"
+                                                        :title="$t('pipeline.schedule.addContextVariable')"
                                                         @click.stop="openContextEditor(props.row)">
-                                                    <font-awesome-icon icon="plus" />
+                                                    <font-awesome-icon icon="plus" /> {{$t('pipeline.schedule.addContextData')}}
                                                 </button>
                                             </div>
                                             <div class="context-vars-list d-flex flex-wrap gap-1">
@@ -520,6 +520,7 @@ export default {
                         run.context_data = (run.context_data || [])
                             .filter(context => context.name !== variable.name);
                         this.success(this.$t('messages.successDeletion', { what: variable.name }));
+                        this.$refs.runsList.refresh();
                     } catch (e) {
                         this.error(e);
                     }
