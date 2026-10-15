@@ -20,7 +20,7 @@
                                             </span>
                                         </template>
                                         <template #text="props">
-                                            <span :class="{ 'font-weight-bold': props.row.status === 'UNREAD' }"
+                                            <span :class="{ 'fw-bold': props.row.status === 'UNREAD' }"
                                                   v-html="props.row.text" />
                                         </template>
                                         <template #created="props">

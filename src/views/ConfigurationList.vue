@@ -25,19 +25,19 @@
                     </div>
                     <div class="col-md-12">
                         <template v-if="currentRow.editor === 'TEXTAREA'">
-                            <textarea v-model="editableValue" class="form-control text-monospace" rows="20" />
+                            <textarea v-model="editableValue" class="form-control font-monospace" rows="20" />
                         </template>
                         <template v-if="currentRow.editor === 'TEXT' || currentRow.editor === 'URL'">
-                            <input v-model="editableValue" type="text" class="form-control text-monospace">
+                            <input v-model="editableValue" type="text" class="form-control font-monospace">
                         </template>
                         <template v-if="currentRow.editor === 'EMAIL'">
-                            <input v-model="editableValue" type="email" class="form-control text-monospace">
+                            <input v-model="editableValue" type="email" class="form-control font-monospace">
                         </template>
                         <template v-if="currentRow.editor === 'PASSWORD'">
-                            <input v-model="editableValue" type="password" class="form-control text-monospace">
+                            <input v-model="editableValue" type="password" class="form-control font-monospace">
                         </template>
                         <template v-if="currentRow.editor === 'INTEGER'">
-                            <input v-model="editableValue" type="number" class="form-control text-monospace">
+                            <input v-model="editableValue" type="number" class="form-control font-monospace">
                         </template>
                     </div>
                 </div>

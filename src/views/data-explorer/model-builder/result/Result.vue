@@ -45,7 +45,7 @@
                     <b-card v-if="selectedJob" variant="primary">
                         <template #header>
                             <b>{{$t('titles.job')}} #{{selectedJob.id}}</b>
-                            <span class="pull-right float-end">
+                            <span class="float-end float-end">
                                 <small>Iniciada em {{$filters.formatJsonDate(selectedJob.started)}}</small>
                                 <small v-if="selectedJob.finished"> / Terminada em {{$filters.formatJsonDate(selectedJob.finished)}}</small>
                             </span>

@@ -17,11 +17,11 @@
                                     <form>
                                         <div class="row">
                                             <div class="col-md-6">
-                                                <label class="font-weight-bold">{{$t('common.name')}}:</label>
+                                                <label class="fw-bold">{{$t('common.name')}}:</label>
                                                 <input v-model="cluster.name" type="text" class="form-control">
                                             </div>
                                             <div class="col-md-3">
-                                                <label class="font-weight-bold">{{$t('common.type')}}:</label>
+                                                <label class="fw-bold">{{$t('common.type')}}:</label>
                                                 <select v-model="cluster.type" class="form-select">
                                                     <option v-for="typ in types" :key="typ" :value="typ">
                                                         {{typ}}
@@ -29,21 +29,21 @@
                                                 </select>
                                             </div>
                                             <div class="col-md-3">
-                                                <label class="font-weight-bold">{{$t('cluster.address')}}:</label>
+                                                <label class="fw-bold">{{$t('cluster.address')}}:</label>
                                                 <input v-model="cluster.address" class="form-control">
                                             </div>
                                             <div class="col-md-3">
-                                                <label class="font-weight-bold">{{$t('cluster.executors')}}:</label>
+                                                <label class="fw-bold">{{$t('cluster.executors')}}:</label>
                                                 <input v-model="cluster.executors" type="number"
                                                        class="form-control w-25">
                                             </div>
                                             <div class="col-md-3">
-                                                <label class="font-weight-bold">{{$t('cluster.executorCores')}}:</label>
+                                                <label class="fw-bold">{{$t('cluster.executorCores')}}:</label>
                                                 <input v-model="cluster.executor_cores" type="number"
                                                        class="form-control w-25">
                                             </div>
                                             <div class="col-md-3">
-                                                <label class="font-weight-bold">{{$t('cluster.executorMemory')}}:</label>
+                                                <label class="fw-bold">{{$t('cluster.executorMemory')}}:</label>
                                                 <input v-model="cluster.executor_memory" class="form-control w-25">
                                             </div>
                                             <div class="col-md-3 mt-3 mb-3 mt-3">

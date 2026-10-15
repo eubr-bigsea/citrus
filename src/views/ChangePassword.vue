@@ -24,7 +24,7 @@
                             </div>
                         </div>
                         <form v-if="tokenOk==='OK'" @submit.prevent="changePassword">
-                            <div class="form-group">
+                            <div class="mb-3">
                                 <label for="password">{{$t('common.password')}}</label>
                                 <div style="position:relative">
                                     <input v-model="password" :type="showingPassword ? 'text' : 'password'"
@@ -36,7 +36,7 @@
                                 </div>
                             </div>
 
-                            <div class="form-group">
+                            <div class="mb-3">
                                 <label for="password-confirmation">{{$t('common.confirmPassword')}}</label>
                                 <div style="position:relative">
                                     <input v-model="passwordConfirmation" :type="showingPassword ? 'text' : 'password'"
@@ -45,7 +45,7 @@
                                 </div>
                             </div>
 
-                            <div class="form-group no-margin text-center">
+                            <div class="no-margin text-center">
                                 <button type="submit" class="btn btn-primary col-md-4">
                                     {{$t('common.ok')}}
                                 </button>

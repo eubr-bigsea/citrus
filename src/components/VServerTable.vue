@@ -6,7 +6,7 @@
                 <form class="mb-4" @submit.prevent="$event.preventDefault()">
                     <div class="row">
                         <div class="col-5">
-                            <label for="filter font-weight-bold">Filtro</label>
+                            <label for="filter" class="fw-bold">Filtro</label>
                             <input :value="query" type="text" placeholder="Busca" name="filter"
                                    autocomplete="off"
                                    class="form-control form-control-sm" maxlength="50" @input="search($event)">
@@ -15,7 +15,7 @@
                             <slot name="afterFilter" />
                         </div>
                         <div class="col-1 text-end">
-                            <span v-if="perPageValues && perPageValues.length" class="form-group form-inline float-end">
+                            <span v-if="perPageValues && perPageValues.length" class="form-inline float-end">
                                 <label for="limit">Limite</label>
                                 <select v-model="perPage" name="limit" class="form-select form-select-sm">
                                     <option v-for="value in perPageValues" :key="value" :value="value">{{value}}</option>

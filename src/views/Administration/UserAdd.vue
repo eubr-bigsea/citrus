@@ -8,7 +8,7 @@
                     </div>
                     <div class="card-body">
                         <form @submit.prevent="save">
-                            <div class="form-group row">
+                            <div class="mb-3 row">
                                 <label class="col-sm-3 col-form-label">
                                     {{$t('common.firstName')}}
                                 </label>
@@ -21,7 +21,7 @@
                                            maxlength="50">
                                 </div>
                             </div>
-                            <div class="form-group row">
+                            <div class="mb-3 row">
                                 <label class="col-sm-3 col-form-label">
                                     {{$t('common.lastName')}}
                                 </label>
@@ -33,7 +33,7 @@
                                            maxlength="50">
                                 </div>
                             </div>
-                            <div class="form-group row">
+                            <div class="mb-3 row">
                                 <label for="inputEmail3"
                                        class="col-sm-3 col-form-label">
                                     {{$t('common.email')}}
@@ -46,7 +46,7 @@
                                            maxlength="50">
                                 </div>
                             </div>
-                            <div class="form-group row">
+                            <div class="mb-3 row">
                                 <label for="inputEmail3"
                                        class="col-sm-3 col-form-label">
                                     {{$t('common.language')}}
@@ -63,7 +63,7 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="form-group row">
+                            <div class="mb-3 row">
                                 <label for="password"
                                        class="col-sm-3 col-form-label">
                                     {{$t('common.password')}}
@@ -76,7 +76,7 @@
                                            maxlength="50">
                                 </div>
                             </div>
-                            <div class="form-group row border-top clearfix pt-3">
+                            <div class="mb-3 row border-top clearfix pt-3">
                                 <div class="col-sm-12 text-center">
                                     <button type="submit"
                                             class="btn btn-primary me-2 pe-5 ps-5">

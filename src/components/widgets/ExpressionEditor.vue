@@ -105,7 +105,7 @@
                         </table>
                     </form>
                     <div v-else class="border pt-5 pb-5 ps-3">
-                        <div class="label label-info">
+                        <div class="badge bg-info">
                             {{$t('property.noExpressions')}}
                         </div>
                     </div>

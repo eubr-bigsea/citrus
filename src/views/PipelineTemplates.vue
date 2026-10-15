@@ -37,7 +37,7 @@
                                     {{$t('pipeline.noStepsTemplate')}}
                                 </div>
                                 <div v-for="(step, index) in props.row.steps" :key="step.name" class="templatePage-popover">
-                                    <span class="font-weight-bold">#{{index + 1}} -</span> {{step.name}}
+                                    <span class="fw-bold">#{{index + 1}} -</span> {{step.name}}
                                 </div>
                             </b-popover>
                         </template>

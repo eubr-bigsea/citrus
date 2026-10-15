@@ -12,19 +12,19 @@
                             <b-card>
                                 <div class="row">
                                     <div class="col-md-3">
-                                        <label class="font-weight-bold">{{$t('common.name')}}:</label>
+                                        <label class="fw-bold">{{$t('common.name')}}:</label>
                                         <input v-model="model.name" type="text" class="form-control">
                                     </div>
                                     <div class="col-md-3">
-                                        <label class="font-weight-bold">{{$t('common.class')}}:</label>
+                                        <label class="fw-bold">{{$t('common.class')}}:</label>
                                         <input v-model="model.class_name" disabled class="form-control">
                                     </div>
                                     <div class="col-md-2">
-                                        <label class="font-weight-bold">{{$t('common.created')}}:</label>
+                                        <label class="fw-bold">{{$t('common.created')}}:</label>
                                         <input v-model="model.created" disabled class="form-control">
                                     </div>
                                     <div class="col-md-2">
-                                        <label class="font-weight-bold">{{$t('common.type')}}:</label>
+                                        <label class="fw-bold">{{$t('common.type')}}:</label>
                                         <select v-model="model.type" class="form-select">
                                             <option v-for="fmt in types" :key="fmt" :value="fmt">
                                                 {{$t('model.type_' + fmt)}}
@@ -32,14 +32,14 @@
                                         </select>
                                     </div>
                                     <div class="col-md-2">
-                                        <label class="font-weight-bold">{{$t('model.storage')}}:</label>
+                                        <label class="fw-bold">{{$t('model.storage')}}:</label>
                                         <input :value="model.storage.name + ' (' + model.storage.type + ')'" disabled
                                                class="form-control">
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-md-6">
-                                        <label class="font-weight-bold">{{$t('common.path')}}:</label>
+                                        <label class="fw-bold">{{$t('common.path')}}:</label>
                                         <input v-model="model.path" disabled class="form-control">
                                     </div>
                                 </div>

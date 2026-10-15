@@ -8,28 +8,28 @@
                     </div>
                     <div class="card-body">
                         <form @submit.prevent="save">
-                            <div class="form-group row">
+                            <div class="mb-3 row">
                                 <label class="col-sm-3 col-form-label">{{$t('common.firstName')}}:</label>
                                 <div class="col-sm-9">
                                     <input v-model="user.first_name" type="text" class="form-control" required
                                            autofocus>
                                 </div>
                             </div>
-                            <div class="form-group row">
+                            <div class="mb-3 row">
                                 <label class="col-sm-3 col-form-label">{{$t('common.lastName')}}:</label>
                                 <div class="col-sm-9">
                                     <input v-model="user.last_name" type="text" class="form-control" required>
                                 </div>
                             </div>
 
-                            <div class="form-group row">
+                            <div class="mb-3 row">
                                 <label for="inputEmail3" class="col-sm-3 col-form-label">{{$t('common.email')}}:</label>
                                 <div class="col-sm-9">
                                     <input v-model="user.email" type="email" class="form-control" required
                                            autocomplete="email">
                                 </div>
                             </div>
-                            <div class="form-group row">
+                            <div class="mb-3 row">
                                 <label for="inputEmail3" class="col-sm-3 col-form-label">{{$t('common.language')}}:</label>
                                 <div class="col-sm-9">
                                     <select v-model="user.locale" class="form-select">
@@ -42,14 +42,14 @@
                                     </select>
                                 </div>
                             </div>
-                            <div v-if="isPasswordChangeable" class="form-group row">
+                            <div v-if="isPasswordChangeable" class="mb-3 row">
                                 <label for="inputPassword3" class="col-sm-3 col-form-label">{{$t('common.current_password')}}:</label>
                                 <div class="col-sm-9">
                                     <input v-model="user.current_password" type="password" class="form-control" required
                                            autocomplete="current-password">
                                 </div>
                             </div>
-                            <div class="form-group row">
+                            <div class="mb-3 row">
                                 <div v-if="isPasswordChangeable" class="col-md-12">
                                     <b-link v-b-toggle.changePassword class="float-end">
                                         {{$t('profile.alsoChangePassword')}}
@@ -57,7 +57,7 @@
                                 </div>
                                 <div class="col-md-12">
                                     <b-collapse id="changePassword">
-                                        <div class="form-group row">
+                                        <div class="mb-3 row">
                                             <label for="inputPassword3" class="col-sm-3 col-form-label">{{$t('common.new_password')}}:</label>
                                             <div class="col-sm-9">
                                                 <div class="col-sm-9">
@@ -66,7 +66,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="form-group row">
+                                        <div class="mb-3 row">
                                             <label for="inputPassword3" class="col-sm-3 col-form-label">{{$t('common.new_password_confirmation')}}:</label>
                                             <div class="col-sm-9">
                                                 <div class="col-sm-9">
@@ -78,7 +78,7 @@
                                     </b-collapse>
                                 </div>
                             </div>
-                            <div class="form-group row border-top clearfix pt-3">
+                            <div class="mb-3 row border-top clearfix pt-3">
                                 <div class="col-sm-12 text-center">
                                     <button type="submit" class="btn btn-primary me-2 pe-5 ps-5">
                                         {{$t('common.ok')}}

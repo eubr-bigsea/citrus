@@ -12,13 +12,13 @@
                 </div>
                 <div class="row">
                     <div class="col-md-4">
-                        <label class="font-weight-bold">{{$t('common.name')}}:</label>
+                        <label class="fw-bold">{{$t('common.name')}}:</label>
                         <br>
                         <input v-model="codeName" type="text" class="form-control"
                                required maxlength="100">
                     </div>
                     <div class="col-md-6">
-                        <label for="enabled" class="font-weight-bold">{{$t('common.status')}}:</label>
+                        <label for="enabled" class="fw-bold">{{$t('common.status')}}:</label>
                         <b-form-checkbox id="enabled" v-model="codeStatus">
                             {{$t('common.enabled')}}
                         </b-form-checkbox>
@@ -27,7 +27,7 @@
 
                 <div class="row mt-2">
                     <div class="col-md-6">
-                        <label class="font-weight-bold">{{$t('common.description')}}:</label>
+                        <label class="fw-bold">{{$t('common.description')}}:</label>
                         <br>
                         <textarea id="" v-model="codeDescription" name="" class="form-control" 
                                   rows="3" />

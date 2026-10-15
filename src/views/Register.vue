@@ -14,11 +14,11 @@
                         <div class="clearfix" />
                         <form @submit.prevent="register">
                             <div class="row clear">
-                                <div class="form-group col-md-4">
+                                <div class="mb-3 col-md-4">
                                     <label for="firstName">{{$t('common.firstName')}}:</label>
                                     <input v-model="firstName" required class="form-control" autofocus="true">
                                 </div>
-                                <div class="form-group col-md-8">
+                                <div class="mb-3 col-md-8">
                                     <label for="lastName">{{$t('common.lastName')}}:</label>
                                     <input v-model="lastName" required class="form-control" autofocus="true">
                                 </div>
@@ -26,20 +26,20 @@
                                     <label for="email">{{$t('common.email')}}:</label>
                                     <input v-model="email" required type="email" class="form-control">
                                 </div>
-                                <div class="form-group col-md-6">
+                                <div class="mb-3 col-md-6">
                                     <label for="password">{{$t('common.password')}}:</label>
                                     <div style="position:relative">
                                         <input v-model="password" type="password" class="form-control" required
                                                minlength="5">
                                     </div>
                                 </div>
-                                <div class="form-group col-md-6">
+                                <div class="mb-3 col-md-6">
                                     <label for="confirmPassword">{{$t('common.confirmPassword')}}:</label>
                                     <div style="position:relative">
                                         <input v-model="confirmPassword" type="password" class="form-control" required>
                                     </div>
                                 </div>
-                                <div class="form-group col-md-12">
+                                <div class="mb-3 col-md-12">
                                     <label for="confirmPassword">{{$t('common.description')}}:</label>
                                     <div style="position:relative">
                                         <textarea v-model="notes" class="form-control" rows="2" />
@@ -47,7 +47,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="form-group no-margin text-center">
+                            <div class="no-margin text-center">
                                 <label>
                                     <b-form-checkbox v-model="accepted">
                                         <i18n path="messages.acceptTerms" tag="span">
@@ -56,7 +56,7 @@
                                     </b-form-checkbox>
                                 </label>
                             </div>
-                            <div class="form-group no-margin text-center">
+                            <div class="no-margin text-center">
                                 <button type="submit" class="btn btn-primary col-md-4" :disabled="!accepted">
                                     {{$t('titles.register')}}
                                 </button>

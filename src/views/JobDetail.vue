@@ -21,7 +21,7 @@
                                 {{$t('titles.workflow', 1)}} {{job.workflow.id}}
                             </router-link>
                             <button v-if="job.status === 'RUNNING' || job.status === 'PENDING' || job.status === 'WAITING'"
-                                    class="btn btn-sm btn-outline-danger me-1 pull-right" :title="$t('actions.stop')"
+                                    class="btn btn-sm btn-outline-danger me-1 float-end" :title="$t('actions.stop')"
                                     @click="stop(job.id)">
                                 <font-awesome-icon icon="stop" /> {{$t('actions.stop')}}
                             </button>

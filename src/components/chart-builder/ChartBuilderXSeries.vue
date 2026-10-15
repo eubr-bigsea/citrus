@@ -5,7 +5,7 @@
         <template #item="{ element, index }">
             <div :key="index" class="drag-handle">
                 <dropdown-button :id="`x-series-${index}`" ref="setXDimensionDDRef" size="sm small-dd-title"
-                                 class="mt-2 me-1 pull-right" :variant="element.attribute ? 'outline-secondary' : 'outline-danger'"
+                                 class="mt-2 me-1 float-end" :variant="element.attribute ? 'outline-secondary' : 'outline-danger'"
                                  :keep-open="true">
                     <template #button-content>
                         {{getDisplayXDimensionLabel(element, 'Selecione...', 'grupos', 'tamanho',

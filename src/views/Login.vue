@@ -12,14 +12,14 @@
                     </div>
                     <div class="card-body">
                         <form @submit.prevent="login">
-                            <div class="form-group">
+                            <div class="mb-3">
                                 <label for="email">{{$t('common.email')}} / {{$t('common.user.login')}}:</label>
                                 <input v-model="email" required type="text" class="form-control"
                                        placeholder="Name" autofocus autocomplete="username" name="username" 
                                        data-test="email">
                             </div>
 
-                            <div class="form-group">
+                            <div class="mb-3">
                                 <label for="password">
                                     {{$t('common.password')}}:
                                     <router-link class="float-end" :to="{name: 'reset_password'}">
@@ -35,7 +35,7 @@
                                 </div>
                             </div>
 
-                            <div class="form-group">
+                            <div class="mb-3">
                                 <label>
                                     <b-form-checkbox v-model="rememberPassword">
                                         {{$t('common.rememberMe')}}
@@ -43,7 +43,7 @@
                                 </label>
                             </div>
 
-                            <div class="form-group no-margin text-center">
+                            <div class="no-margin text-center">
                                 <button type="submit" class="btn btn-primary col-md-4" name="login" data-test="login">
                                     {{$t('common.login')}}
                                 </button>

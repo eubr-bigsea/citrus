@@ -41,7 +41,7 @@
                         {{$filters.formatJsonDate(props.row.updated)}}
                     </template>
                     <template #afterFilter>
-                        <div class="form-group float-start ms-3">
+                        <div class="mb-3 float-start ms-3">
                             <label>{{$t('common.platform')}}</label>
                             <select v-model="platform" class="form-select form-select-sm" @change="handleSelectPlatform">
                                 <option />
@@ -50,7 +50,7 @@
                                 </option>
                             </select>
                         </div>
-                        <div class="form-group float-start ms-3 mt-4">
+                        <div class="float-start ms-3 mt-4">
                             <button type="button" class="btn btn-sm btn-light btn-outline-secondary ms-2"
                                     @click="clearFilters">
                                 {{$t('actions.clearFilters')}}

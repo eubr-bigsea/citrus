@@ -13,7 +13,7 @@
                             <div class="card">
                                 <div class="card-body">
                                     <form @submit.prevent="save">
-                                        <div class="form-group row">
+                                        <div class="mb-3 row">
                                             <div class="col-sm-2">
                                                 <label class="col-form-label">
                                                     {{$t('common.firstName')}}:
@@ -60,7 +60,7 @@
                                                        autocomplete="off">
                                             </div>
                                         </div>
-                                        <div class="form-group row">
+                                        <div class="mb-3 row">
                                             <div class="col-sm-3">
                                                 <label for="inputEmail3"
                                                        class=" col-form-label">
@@ -129,7 +129,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="form-group row">
+                                        <div class="mb-3 row">
                                             <div class="col-sm-6">
                                                 <label class="col-form-label">
                                                     {{$t('common.user.notes', 2)}}:

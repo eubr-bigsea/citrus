@@ -14,12 +14,12 @@
                                     <div v-if="platform.id" class="col-md-12 col-xg-12 mx-auto">
                                         <div class="row">
                                             <div class="col-md-6">
-                                                <label class="font-weight-bold">{{$t('common.name')}}:</label>
+                                                <label class="fw-bold">{{$t('common.name')}}:</label>
                                                 <br>
                                                 {{platform.name}}
                                             </div>
                                             <div class="col-md-3">
-                                                <label class="font-weight-bold">{{$t('common.slug')}}:</label>
+                                                <label class="fw-bold">{{$t('common.slug')}}:</label>
                                                 <br>{{platform.slug}}
                                             </div>
                                             <div class="col-md-3">
@@ -28,7 +28,7 @@
                                                 </b-form-checkbox>
                                             </div>
                                             <div class="col-md-12 mt-4">
-                                                <label class="font-weight-bold">{{$t('common.description')}}:</label>
+                                                <label class="fw-bold">{{$t('common.description')}}:</label>
                                                 <br>{{platform.description}}
                                             </div>
                                             <template v-if="platform.plugin">
@@ -37,7 +37,7 @@
                                                     {{$t('message.platformIsPluginExplanation')}}
                                                 </div>
                                                 <div class="col-md-12">
-                                                    <label class="font-weight-bold">{{$t('common.url')}}:</label>
+                                                    <label class="fw-bold">{{$t('common.url')}}:</label>
                                                     <br>{{platform.description}}
                                                 </div>
                                             </template>
@@ -124,7 +124,7 @@
                                         </div>
                                         <div class="oplist">
                                             <table class="table table-sm table-smallest table-bordered table-stripped">
-                                                <thead class="thead-light">
+                                                <thead class="table-light">
                                                     <tr>
                                                         <th class="text-center" style="width: 80px">
                                                             {{$t('common.enabled',

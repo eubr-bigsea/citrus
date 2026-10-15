@@ -89,7 +89,7 @@
                         <font-awesome-icon icon="fa fa-flask fa-3x" />
                     </h4>
                     <h4>Execução da trilha "{{workflow.name}}"</h4>
-                    <p class="font-italic">
+                    <p class="fst-italic">
                         {{workflow.description}}
                     </p>
                     <p>
@@ -102,7 +102,7 @@
                         <font-awesome-icon icon="fa fa-flask fa-3x" />
                     </h4>
                     <h4>Execução da trilha "{{workflow.name}}"</h4>
-                    <p class="font-italic">
+                    <p class="fst-italic">
                         {{workflow.description}}
                     </p>
                     <p>

@@ -147,7 +147,7 @@
                         style="width: 400px">
                         <div class="notification border-bottom pb-2">
                             <div><font-awesome-icon v-bind="getIcon(notification)" /></div>
-                            <div :class="{ 'font-weight-bold': notification.status === 'UNREAD' }"
+                            <div :class="{ 'fw-bold': notification.status === 'UNREAD' }"
                                 v-html="notification.text.substring(0, Math.min(notification.text.length, 200)) + (notification.text.length > 200 ? '&hellip;' : '')">
                             </div>
                         </div>

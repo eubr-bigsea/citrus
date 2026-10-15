@@ -2,7 +2,7 @@
     <div class="editPage-agendador">
         <div class="editPage-agendador-body">
             <div class="editPage-agendador-box">
-                <p class="font-weight-bold">
+                <p class="fw-bold">
                     {{ $t('pipeline.edit.scheduler.chooseSchedulerFrequency') }}
                 </p>
                 <b-form-select v-model="schedulerData.selectedFreqOpt" class="mb-2" :options="selectFreqOpt"
@@ -10,7 +10,7 @@
             </div>
             <div v-if="schedulerData.selectedFreqOpt === 'once'">
                 <div class="editPage-agendador-box radios">
-                    <p class="font-weight-bold">
+                    <p class="fw-bold">
                         {{ $t('titles.start') }}:
                     </p>
                     <input id="iniciar-data" v-model="schedulerData.startDate" class="editPage-input" type="date" :min="minDate">
@@ -20,14 +20,14 @@
 
             <div v-if="schedulerData.selectedFreqOpt === 'daily'">
                 <div class="editPage-agendador-box radios">
-                    <p class="font-weight-bold">
+                    <p class="fw-bold">
                         {{ $t('titles.start') }}:
                     </p>
                     <input id="iniciar-data" v-model="schedulerData.startDate" class="editPage-input" type="date" :min="minDate">
                     <input id="iniciar-hora" v-model="schedulerData.startTime" class="editPage-input" type="time">
                 </div>
                 <div class="editPage-agendador-box dias">
-                    <p class="font-weight-bold">
+                    <p class="fw-bold">
                         {{ $t('pipeline.edit.scheduler.repetitionInterval') }} ({{ $t('common.periods.day',
                             2).toLowerCase() }}):
                     </p>
@@ -38,14 +38,14 @@
 
             <div v-if="schedulerData.selectedFreqOpt === 'weekly'">
                 <div class="editPage-agendador-box radios">
-                    <p class="font-weight-bold">
+                    <p class="fw-bold">
                         {{ $t('titles.start') }}:
                     </p>
                     <input id="iniciar-data" v-model="schedulerData.startDate" class="editPage-input" type="date" :min="minDate">
                     <input id="iniciar-hora" v-model="schedulerData.startTime" class="editPage-input" type="time">
                 </div>
                 <div class="editPage-agendador-box dias">
-                    <p class="font-weight-bold">
+                    <p class="fw-bold">
                         {{ $t('pipeline.edit.scheduler.repetitionInterval') }} ({{ $t('common.periods.week',
                             2).toLowerCase() }}):
                     </p>
@@ -54,7 +54,7 @@
                 </div>
                 <b-form-group>
                     <div class="editPage-chackbox-div diasSemana">
-                        <p class="font-weight-bold mb-2">
+                        <p class="fw-bold mb-2">
                             {{ $t('pipeline.edit.scheduler.selectWeekDays') }}:
                         </p>
                         <b-form-checkbox v-for="day in weekDays" :key="day.value" v-model="schedulerData.selectedWeekDays"
@@ -67,7 +67,7 @@
 
             <div v-if="schedulerData.selectedFreqOpt === 'monthly'">
                 <div class="editPage-agendador-box radios">
-                    <p class="font-weight-bold">
+                    <p class="fw-bold">
                         {{ $t('titles.day') }}:
                     </p>
                     <select class="form-select form-select-sm" v-model="schedulerData.startDay">
@@ -82,7 +82,7 @@
                 </div>
                 <div class="row">
                     <div class="col-12">
-                        <p class="font-weight-bold mb-2">
+                        <p class="fw-bold mb-2">
                             {{ $t('pipeline.edit.scheduler.selectMonths') }}:
                         </p>
                         <b-form-checkbox v-model="schedulerData.selectAllMonths" class="mb-2" @change="toggleAllMonths">

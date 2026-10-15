@@ -115,7 +115,7 @@
                                         <transition-group name="slide" tag="tbody">
                                             <tr v-for="(v, row) in numericStats" :key="row">
                                                 <td v-for="(attr, col) in stats.message.table.columns" :key="col"
-                                                    :class="{ 'font-weight-bold': col === 0 }">
+                                                    :class="{ 'fw-bold': col === 0 }">
                                                     {{stats.message.table.columns[col].values[row] || '-'}}
                                                 </td>
                                             </tr>
@@ -234,8 +234,8 @@
                             </b-tab>
                             <b-tab v-if="selected?.field?.type === 'Text'" title="Agrupar/mesclar" class="pt-4"
                                    :title-link-class="'small-nav-link'">
-                                <form action="" class="form-inline">
-                                    <div class="form-group mb-2">
+                                <form action="" class="d-flex flex-wrap align-items-center">
+                                    <div class="mb-2">
                                         <label for="similarity">Similaridade:</label> &nbsp;
                                         <select v-model.number="similarity" name="similarity"
                                                 class="form-select-sm ms-3 me-3">
@@ -250,7 +250,7 @@
                                             </option>
                                         </select>
                                     </div>
-                                    <div class="form-group mb-2">
+                                    <div class="mb-2">
                                         <button class="btn btn-secondary btn-sm" @click.prevent="handleComputeCluster">
                                             Computar grupos
                                         </button>

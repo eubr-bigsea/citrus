@@ -1157,3 +1157,13 @@ Vue-Toastification__toast {
 .modal-xxl {
   --bs-modal-width: 1250px;
 }
+
+.card-deck {
+  display: flex;
+  flex-flow: row wrap;
+  gap: 1rem;
+
+  > .card {
+    flex: 1 0 0;
+  }
+}

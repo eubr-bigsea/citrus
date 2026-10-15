@@ -63,14 +63,14 @@
                                     </small>
                                 </div>
                                 <div class="col-md-8 text-start">
-                                    <b-form-radio v-model="method" name="method" class="font-weight-bold" value="fast">
+                                    <b-form-radio v-model="method" name="method" class="fw-bold" value="fast">
                                         Protótipo rápido
                                     </b-form-radio>
                                     <div class="description">
                                         Obtenha alguns modelos genéricos rapidamente. Útil para testes.
                                     </div>
 
-                                    <b-form-radio v-model="method" name="method" class="font-weight-bold"
+                                    <b-form-radio v-model="method" name="method" class="fw-bold"
                                                   value="performance">
                                         Desempenho
                                     </b-form-radio>
@@ -79,7 +79,7 @@
                                         pois pode demorar mais.
                                     </div>
 
-                                    <b-form-radio v-model="method" name="method" class="font-weight-bold"
+                                    <b-form-radio v-model="method" name="method" class="fw-bold"
                                                   value="interpretable">
                                         Crie modelos interpretáveis
                                     </b-form-radio>
@@ -106,7 +106,7 @@
                                     </small>
                                 </div>
                                 <div class="col-md-8 pt-5 text-start">
-                                    <b-form-radio v-model="method" name="method" class="font-weight-bold" value="custom">
+                                    <b-form-radio v-model="method" name="method" class="fw-bold" value="custom">
                                         Escolha os
                                         algoritmos
                                     </b-form-radio>
@@ -114,7 +114,7 @@
                                         Escolha algoritmos, hiperparâmetros, amostra e validação cruzada.
                                     </div>
                                     <!--
-                                    <b-form-radio name="method" class="font-weight-bold" v-model="method"
+                                    <b-form-radio name="method" class="fw-bold" v-model="method"
                                         value="use-workflow">Use um fluxo de
                                         trabalho
                                     </b-form-radio>
@@ -122,7 +122,7 @@
                                         Use um fluxo de trabalho existente, mas parametrize sua execução.
                                     </div>
 
-                                    <b-form-radio name="method" class="font-weight-bold" v-model="method"
+                                    <b-form-radio name="method" class="fw-bold" v-model="method"
                                         value="use-previous">
                                         Use uma execução
                                         anterior
@@ -131,7 +131,7 @@
                                         EM ANÁLISE
                                     </div>
 
-                                    <b-form-radio name="method" class="font-weight-bold" v-model="method" value="code">
+                                    <b-form-radio name="method" class="fw-bold" v-model="method" value="code">
                                         Crie seu próprio avaliador
                                     </b-form-radio>
                                     <div class="description">
@@ -159,14 +159,14 @@
                                     </small>
                                 </div>
                                 <div class="col-md-8 text-start">
-                                    <b-form-radio v-model="method" name="method" class="font-weight-bold" value="fast">
+                                    <b-form-radio v-model="method" name="method" class="fw-bold" value="fast">
                                         Protótipo rápido
                                     </b-form-radio>
                                     <div class="description">
                                         Criar um modelo usando o algoritmo K-Means e parametros automáticos.
                                     </div>
                                     <!--
-                                    <b-form-radio name="method" class="font-weight-bold" v-model="method"
+                                    <b-form-radio name="method" class="fw-bold" v-model="method"
                                         value="performance">Detecção de anomalia</b-form-radio>
                                     <div class="description">
                                         Usar o Isolation Forest???
@@ -191,7 +191,7 @@
                                     </small>
                                 </div>
                                 <div class="col-md-8 text-start">
-                                    <b-form-radio v-model="method" name="method" class="font-weight-bold" value="custom">
+                                    <b-form-radio v-model="method" name="method" class="fw-bold" value="custom">
                                         Escolha os
                                         algoritmos
                                     </b-form-radio>
@@ -199,7 +199,7 @@
                                         Escolha algoritmos, hiperparâmetros, amostra e validação cruzada.
                                     </div>
                                     <!--
-                                    <b-form-radio name="method" class="font-weight-bold" v-model="method"
+                                    <b-form-radio name="method" class="fw-bold" v-model="method"
                                         value="use-workflow">Use um fluxo de
                                         trabalho
                                     </b-form-radio>
@@ -207,7 +207,7 @@
                                         Use um fluxo de trabalho existente, mas parametrize sua execução.
                                     </div>
 
-                                    <b-form-radio name="method" class="font-weight-bold" v-model="method"
+                                    <b-form-radio name="method" class="fw-bold" v-model="method"
                                         value="use-previous">
                                         Use uma execução
                                         anterior
@@ -216,7 +216,7 @@
                                         EM ANÁLISE
                                     </div>
 
-                                    <b-form-radio name="method" class="font-weight-bold" v-model="method" value="code">
+                                    <b-form-radio name="method" class="fw-bold" v-model="method" value="code">
                                         Crie seu próprio avaliador
                                     </b-form-radio>
                                     <div class="description">

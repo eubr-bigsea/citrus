@@ -17,17 +17,17 @@
                                     <form>
                                         <div class="row">
                                             <div class="col-4">
-                                                <label class="font-weight-bold">{{$t('common.name')}}:</label>
+                                                <label class="fw-bold">{{$t('common.name')}}:</label>
                                                 <input v-model="deployment.name" v-focus type="text"
                                                        class="form-control" maxlength="100" required>
                                             </div>
                                             <div class="col-1">
-                                                <label class="font-weight-bold">{{$t('deployment.replica',2)}}:</label>
+                                                <label class="fw-bold">{{$t('deployment.replica',2)}}:</label>
                                                 <input v-model="deployment.replicas" type="number" class="form-control"
                                                        max="4" min="1" step="1">
                                             </div>
                                             <div class="col-3">
-                                                <label class="font-weight-bold">{{$t('deployment.model')}}:</label>
+                                                <label class="fw-bold">{{$t('deployment.model')}}:</label>
                                                 <v-select v-model="deployment.model_id" :options="models"
                                                           :taggable="false" label="name" :reduce="(opt) => opt.id"
                                                           :close-on-select="true" :filterable="false" @search="fetchModels">
@@ -37,7 +37,7 @@
                                                 </v-select>
                                             </div>
                                             <div class="col-4">
-                                                <label class="font-weight-bold">{{$t('deployment.target')}}:</label>
+                                                <label class="fw-bold">{{$t('deployment.target')}}:</label>
                                                 <v-select v-model="deployment.target" :options="targets" label="name">
                                                     <template #option="{ description, name, target_type }">
                                                         {{name}}<br>
@@ -48,7 +48,7 @@
                                         </div>
                                         <div class="row mt-3">
                                             <div class="col-4">
-                                                <label class="font-weight-bold">{{$t('deployment.image')}}:</label>
+                                                <label class="fw-bold">{{$t('deployment.image')}}:</label>
                                                 <v-select v-model="deployment.image" :options="images"
                                                           label="description">
                                                     <template #option="{ description, name, tag }">

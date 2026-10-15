@@ -36,12 +36,12 @@
                     <b-card class="editPage-infos">
 
                         <div class="mt-2 mb-4">
-                            <label for="identifier" class="font-weight-bold">{{$t('common.identifier')}}:</label>
+                            <label for="identifier" class="fw-bold">{{$t('common.identifier')}}:</label>
                             <input type="text" id="identifier" class="form-control form-control-sm"
                                 v-model="pipeline.identifier" @input="isDirty = true" />
                         </div>
                         <div class="d-flex flex-row">
-                            <div class="font-weight-bold me-2">
+                            <div class="fw-bold me-2">
                                 <div>{{$t('common.created')}}:</div>
                                 <div>{{$t('common.updated')}}:</div>
                             </div>
@@ -51,7 +51,7 @@
                             </div>
                         </div>
                         <div class="mt-4">
-                            <span class="font-weight-bold">{{$t('common.description')}}:</span>
+                            <span class="fw-bold">{{$t('common.description')}}:</span>
                             <textarea v-model="pipeline.description" @input="isDirty = true" rows="4"
                                 class="form-control form-control-sm" maxlength="200" />
                         </div>
@@ -63,13 +63,13 @@
                         </div>
                         <div class="mt-4" v-if="pipeline.periodicity">
                             <div>
-                                <label class="font-weight-bold">{{$t('pipeline.edit.executionPeriodicity')}}:</label>
+                                <label class="fw-bold">{{$t('pipeline.edit.executionPeriodicity')}}:</label>
                                 <b-form-select v-model="pipeline.periodicity" class="mt-0" size="sm"
                                     @input="isDirty = true" :options="periodicityOptions" />
                             </div>
                             <div class="mt-2">
                                 <div>
-                                    <label class="font-weight-bold me-2">
+                                    <label class="fw-bold me-2">
                                         {{$t('pipeline.edit.periodicityStart')}}:
                                     </label>
                                     <input id="iniciar-data" v-model.number="pipeline.periodicity_start"
@@ -77,7 +77,7 @@
                                         min="1">
                                 </div>
                                 <div class="mt-2">
-                                    <label class="font-weight-bold me-2">
+                                    <label class="fw-bold me-2">
                                         {{$t('pipeline.edit.periodicityIntervalOptional')}}:
                                     </label>
                                     <input v-model.number="pipeline.periodicity_interval"

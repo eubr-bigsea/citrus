@@ -4,7 +4,7 @@
                item-key="id" @start="drag = true" @end="drag = false" @change="handleChange">
         <template #item="{ element, index }">
             <div :key="index" class="drag-handle" :data-test="`y-series-${index}`">
-                <dropdown-button size="sm" class="mt-2 me-1 pull-right"
+                <dropdown-button size="sm" class="mt-2 me-1 float-end"
                                  :variant="'outline-secondary small-dd-title ' + (element.enabled ? '' : 'text-decoration-line-through')" :keep-open="true">
                     <template #button-content>
                         {{element.aggregation.toUpperCase()}}

@@ -11,14 +11,14 @@
                         <div class="float-end navbar-brand logo" />
 
                         <form v-if="!showSuccess" @submit.prevent="resetPassword">
-                            <div class="form-group">
+                            <div class="mb-3">
                                 <label for="email">{{$t('common.email')}}</label>
                                 <input v-model="email" required type="email" class="form-control"
                                        placeholder="Email"
                                        autofocus>
                             </div>
 
-                            <div class="form-group no-margin text-center">
+                            <div class="no-margin text-center">
                                 <button type="submit" class="btn btn-primary col-md-4">
                                     {{$t('common.resetPassword')}}
                                 </button>

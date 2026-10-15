@@ -27,7 +27,7 @@
         <div class="row">
             <div class="col-2">
                 <div class="border p-3">
-                    <label class="font-weight-bold">
+                    <label class="fw-bold">
                         {{ $t('common.period') }}:
                     </label>
                     <span>
@@ -35,7 +35,7 @@
                         {{ $filters.formatJsonDate(pipelineRun.finish, 'dd/MM/yyyy') }}
                     </span>
                     <br>
-                    <label class="font-weight-bold">
+                    <label class="fw-bold">
                         {{ $t('common.updated') }}:
                     </label>
                     <span>
@@ -154,7 +154,7 @@
                     <b-card-body class="scroll-area execution-report">
                         <div v-for="(job, index) in orderedJobs" :key="index" class="mb-3 border-left border-info ps-2">
                             <div v-b-toggle="`collapse-${index.toString()}`" class="d-flex">
-                                <div class="text-start font-weight-bold">
+                                <div class="text-start fw-bold">
                                     Tentativa #{{ orderedJobs.length - index }}
                                 </div>
                                 <div class="flex-grow-1 d-flex justify-content-end" role="button">
@@ -190,7 +190,7 @@
                                         class="border-bottom mb-3 ps-4 job-step">
                                         <div class="flex-grow-1 d-flex justify-content-start">
                                             <h6>
-                                                Tarefa #{{ counter_step + 1 }}: <span class="font-weight-normal">{{
+                                                Tarefa #{{ counter_step + 1 }}: <span class="fw-normal">{{
                                                     step.operation.name }}</span>
                                             </h6>
                                             <!--

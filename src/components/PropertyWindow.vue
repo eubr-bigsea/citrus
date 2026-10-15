@@ -68,7 +68,7 @@
                 <b-modal ref="publishingModal" size="xl" :title="$t('titles.publication')" :ok-only="true">
                     <div class="mt-2 p-2 border">
                         <table class="table table-sm table-bordered">
-                            <thead class="thead-light">
+                            <thead class="table-light">
                                 <tr>
                                     <th class="text-center" style="width: 1%" />
                                     <th class="text-center" style="width: 14%">

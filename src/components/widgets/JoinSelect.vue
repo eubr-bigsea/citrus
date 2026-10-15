@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div class="text-center font-weight-bold">
+        <div class="text-center fw-bold">
             {{label}}
         </div>
         <div>

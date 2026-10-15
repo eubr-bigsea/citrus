@@ -15,18 +15,18 @@
                 </div>
                 <div class="row">
                     <div class="col-md-6">
-                        <label class="font-weight-bold">{{$t('platform.gitUrl')}}:</label>
+                        <label class="fw-bold">{{$t('platform.gitUrl')}}:</label>
                         <input v-model="url" type="text" class="form-control"
                                placeholder="https://github.com/dccspeed/demo-plugin">
                     </div>
                 </div>
                 <div class="row border-bottom pb-3 mt-3">
                     <div class="col-md-4">
-                        <label class="font-weight-bold">{{$t('common.userLogin')}}:</label>
+                        <label class="fw-bold">{{$t('common.userLogin')}}:</label>
                         <input v-model="login" type="text" class="form-control">
                     </div>
                     <div class="col-md-2">
-                        <label class="font-weight-bold">{{$t('common.password')}}:</label>
+                        <label class="fw-bold">{{$t('common.password')}}:</label>
                         <input v-model="password" type="password" class="form-control">
                     </div>
                     <div class="col-md-2">

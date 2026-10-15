@@ -15,7 +15,7 @@
                         </div>
                         <div class="row">
                             <div class="col-md-4">
-                                <label class="font-weight-bold">{{$t('common.name')}}:</label>
+                                <label class="fw-bold">{{$t('common.name')}}:</label>
                                 <input v-model="storage.name"
                                        type="text"
                                        class="form-control"
@@ -23,7 +23,7 @@
                                        maxlength="100">
                             </div>
                             <div class="col-md-2">
-                                <label class="font-weight-bold">{{$t('common.type')}}:</label>
+                                <label class="fw-bold">{{$t('common.type')}}:</label>
                                 <select v-model="storage.type"
                                         class="form-select"
                                         required>
@@ -40,13 +40,13 @@
                                 </b-form-checkbox>
                             </div>
                             <div class="col-md-12">
-                                <label class="font-weight-bold">{{$t('storage.address1')}}:</label>
+                                <label class="fw-bold">{{$t('storage.address1')}}:</label>
                                 <textarea v-model="storage.url"
                                           class="form-control"
                                           required />
                             </div>
                             <div class="col-md-12">
-                                <label class="font-weight-bold">{{$t('storage.address2')}}:</label>
+                                <label class="fw-bold">{{$t('storage.address2')}}:</label>
                                 <textarea v-model="storage.client_url"
                                           class="form-control" />
                             </div>

@@ -179,13 +179,13 @@
                      hide-footer>
                 <div class="row">
                     <div class="col-md-9">
-                        <label class="font-weight-bold">{{$t('common.name')}}*:</label>
+                        <label class="fw-bold">{{$t('common.name')}}*:</label>
                         <input v-model="dataSource.name" type="text"
                                class="form-control">
                     </div>
 
                     <div class="col-md-3">
-                        <label class="font-weight-bold">{{$t('common.format')}}*:</label>
+                        <label class="fw-bold">{{$t('common.format')}}*:</label>
                         <select v-model="dataSource.format" class="form-select">
                             <option v-for="fmt in formats" :key="fmt" :value="fmt">
                                 {{fmt}}
@@ -194,7 +194,7 @@
                     </div>
 
                     <div class="col-md-12" style="margin-top: 2%;">
-                        <label class="font-weight-bold">{{$t('dataSource.fileUrl')}}*:</label>
+                        <label class="fw-bold">{{$t('dataSource.fileUrl')}}*:</label>
                         <textarea ref="filepathTextArea" v-model="dataSource.url" class="form-control" />
                     </div>
 

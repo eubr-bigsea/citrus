@@ -18,17 +18,17 @@
                                         <fieldset>
                                             <div class="row">
                                                 <div class="col-md-2">
-                                                    <label class="font-weight-bold">{{$t('common.name')}}:</label>
+                                                    <label class="fw-bold">{{$t('common.name')}}:</label>
                                                     <input v-model="role.name" type="text" maxlength="50" required
                                                            class="form-control">
                                                 </div>
                                                 <div class="col-md-3">
-                                                    <label class="font-weight-bold">{{$t('common.title')}}:</label>
+                                                    <label class="fw-bold">{{$t('common.title')}}:</label>
                                                     <input v-model="role.label" type="text" maxlength="50" required
                                                            class="form-control">
                                                 </div>
                                                 <div class="col-md-5">
-                                                    <label class="font-weight-bold">{{$t('common.description')}}:</label>
+                                                    <label class="fw-bold">{{$t('common.description')}}:</label>
                                                     <input v-model="role.description" type="text" maxlength="100"
                                                            class="form-control" required>
                                                 </div>

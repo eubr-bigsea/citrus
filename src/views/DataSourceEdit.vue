@@ -18,13 +18,13 @@
                                             <div class="col-md-9">
                                                 <div class="row">
                                                     <div class="col-md-6">
-                                                        <label class="font-weight-bold">{{ $t('common.name') }}:</label>
+                                                        <label class="fw-bold">{{ $t('common.name') }}:</label>
                                                         <input v-model="dataSource.name" type="text"
                                                             class="form-control">
                                                     </div>
                                                     <div class="col-md-3">
                                                         <label
-                                                            class="font-weight-bold">{{ $t('common.format') }}:</label>
+                                                            class="fw-bold">{{ $t('common.format') }}:</label>
                                                         <select v-model="dataSource.format" class="form-select">
                                                             <option v-for="fmt in formats" :key="fmt" :value="fmt">
                                                                 {{ fmt }}
@@ -33,7 +33,7 @@
                                                     </div>
                                                     <div class="col-md-3">
                                                         <label
-                                                            class="font-weight-bold">{{ $t('dataSource.storage') }}:</label>
+                                                            class="fw-bold">{{ $t('dataSource.storage') }}:</label>
                                                         <input
                                                             :value="dataSource.storage.name + ' (' + dataSource.storage.type + ')'"
                                                             disabled class="form-control">

@@ -11,7 +11,7 @@
                                         {{$t('model.whatTypeOfModelToAdd')}}
                                     </h4>
                                     <div>
-                                        <label class="font-weight-bold">{{$t('common.type')}}:</label>
+                                        <label class="fw-bold">{{$t('common.type')}}:</label>
                                         <select v-model="model.type" class="form-select" required>
                                             <option />
                                             <option v-for="fmt in types" :key="fmt" :value="fmt">
