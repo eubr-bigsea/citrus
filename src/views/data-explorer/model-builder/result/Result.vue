@@ -101,7 +101,7 @@
                             </div>
                             -->
                         </div>
-                        <div v-for="(results, key) in selectedGroupedResults" v-if="results[1][0].type !== 'OTHER'"
+                        <div v-for="(results, key) in selectedGroupedResults" v-show="results[1][0].type !== 'OTHER'"
                              :key="key" class="row">
                             <div v-if="results && results.length > 0" class="col-12">
                                 <h6 class="result">
@@ -154,7 +154,7 @@
                                             <b-link :id="`popover-${counter}`" href="#" size="sm" variant="info">
                                                 <font-awesome-icon icon="info-circle"/>
                                             </b-link>
-                                            <b-popover :target="`popover-${counter}`" variant="" triggers="focus">
+                                            <b-popover :target="`popover-${counter}`" variant="" click>
                                             -->
                                                 <b>Importância dos atributos</b>
                                                 <div v-for="fi, inx in result.content.feature_importance" :key="inx">

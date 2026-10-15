@@ -58,7 +58,6 @@ export default {
         },
         okClicked() {
             if (this.workflow.name && this.workflow.name.trim()) {
-                this.$root.$emit('onupdate-workflow-properties');
                 this.$refs.modal.hide();
             } else {
                 this.warning(this.$t('titles.validationErrors', 2));

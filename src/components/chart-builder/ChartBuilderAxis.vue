@@ -717,13 +717,13 @@ const colorAttribute = defineModel('colorAttribute');
 const sizeAttribute = defineModel('sizeAttribute');
 const textAttribute = defineModel('textAttribute');
 
-const emit = defineEmits(['input']);
+const emit = defineEmits(['input', 'update:modelValue']);
 const editableVisualization = ref(null);
 
 const props = defineProps({
     workflow: { type: Object, required: true },
     attributes: { type: Array, required: true },
-    value: {
+    modelValue: {
         type: Object, required: true,
         default: () => { }
     },
@@ -824,7 +824,7 @@ const defaultValues = Object.fromEntries(
         'locations', 'geo_json_url', 'feature_id_key'
     ].map((attr) => [attr, { value: null }]));
 
-editableVisualization.value = JSON.parse(JSON.stringify({ ...defaultValues, ...props.value }));
+editableVisualization.value = JSON.parse(JSON.stringify({ ...defaultValues, ...props.modelValue }));
 
 const handleAddY = () => editableVisualization.value.y.value.push(new YDimension({}));
 const handleAddX = () => editableVisualization.value.x.value.push(new XDimension({}));
@@ -868,12 +868,13 @@ watch(
     (value) => {
         if (toEmit.value) {
             emit('input', value.value);
+            emit('update:modelValue', value.value);
         }
         toEmit.value = true;
     }, { deep: true });
 
 watch(
-    () => props.value,
+    () => props.modelValue,
     (value) => {
         const tests = ['x_axis', 'y_axis', 'x', 'y'];
         tests.forEach(t => {
@@ -884,7 +885,7 @@ watch(
 
         editableVisualization.value = JSON.parse(JSON.stringify({
             ...defaultValues,
-            ...props.value
+            ...props.modelValue
         }));
         toEmit.value = false;
     }, { deep: true, immediate: true });

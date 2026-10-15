@@ -162,7 +162,7 @@
                                                         $t(`status.${step.status}`) }}
                                                     </div>
                                                 </div>
-                                                <b-tooltip :target="'tooltip-target-' + step.id" triggers="hover"
+                                                <b-tooltip :target="'tooltip-target-' + step.id"
                                                     custom-class="tooltip-large">
                                                     <div>
                                                         <strong>{{$t('common.updated')}}:</strong> {{ $filters.formatJsonDate(step.updated, 'dd/MM/yyyy HH:mm:SS') }} <br>

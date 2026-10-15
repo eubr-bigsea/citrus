@@ -35,9 +35,9 @@ import axios from 'axios';
 const thornUrl = import.meta.env.VITE_THORN_URL;
 
 const props = defineProps({
-    value: { type: String, required: true }
+    modelValue: { type: String, required: true }
 });
-const emit = defineEmits(['input']);
+const emit = defineEmits(['input', 'update:modelValue']);
 const modal = ref();
 
 const show = async () => {
@@ -46,6 +46,7 @@ const show = async () => {
 };
 const confirm = (newValue) => {
     emit('input', newValue);
+    emit('update:modelValue', newValue);
     modal.value.hide();
 };
 defineExpose({ show });

@@ -350,7 +350,7 @@ export default {
         },
         okClicked() {
             if (this.validate()) {
-                this.$root.$emit(this.message, this.field,
+                this.$emit(this.message, this.field,
                     this.valueList);
                 this.$refs.modal.hide();
                 this.valueList.forEach(v => v.key = v.key || Math.random().toString(36).substring(2));

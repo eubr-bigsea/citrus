@@ -29,7 +29,7 @@
                             <div :id="`trigger-${props.row.id}`" class="ms-1 btn btn-sm btn-secondary">
                                 <font-awesome-icon icon="info-circle" />
                             </div>
-                            <b-popover :target="`trigger-${props.row.id}`" triggers="hover" data-test="templatePipelineStepsInfo">
+                            <b-popover :target="`trigger-${props.row.id}`" data-test="templatePipelineStepsInfo">
                                 <template #title>
                                     {{$t('titles.step', 2)}}
                                 </template>

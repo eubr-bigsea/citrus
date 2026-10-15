@@ -99,7 +99,7 @@
                                     <button id="popover-trigger" class="editPage-tab-button">
                                         <font-awesome-icon icon="info-circle" />
                                     </button>
-                                    <b-popover target="popover-trigger" triggers="hover">
+                                    <b-popover target="popover-trigger">
                                         {{$t('pipeline.template.holdAndDragSteps')}}
                                     </b-popover>
                                     <div class="editPage-etapas-header-column">

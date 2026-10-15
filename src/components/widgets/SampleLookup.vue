@@ -63,7 +63,7 @@ export default {
     methods: {
         updated(val) {
             console.debug('Valor', val, this.field);
-            this.$root.$emit(this.message, this.field, val);
+            this.$emit(this.message, this.field, val);
         },
         _loadLookup() {
             const self = this;

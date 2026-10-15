@@ -92,7 +92,7 @@
                 <b-tabs ref="formTabs" v-model="selectedTab" nav-class="custom-tab" @input="updateSelectedTab">
                     <b-tab v-for="form of workflow.platform.forms" :title-item-class="'tab-order-' + form.order"
                         :key="form.id" :active="form.order === minFormOrder">
-                        <template slot="title">
+                        <template #title>
                             <font-awesome-icon icon="fa fa-cogs" /> {{form.name}}
                         </template>
                         <div class="card mt-1" style="min-height: 90vh">

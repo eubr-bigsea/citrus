@@ -384,6 +384,12 @@ openIdService.loadConfig(store).then(() => {
                     'dd/MM/yyyy HH:mm:ss');
             }
         },
+        elapsedSeconds(d1, d2) {
+            return (differenceInSeconds(parseISO(d1), parseISO(d2)) + '').padStart(2, '0');
+        },
+        elapsedMinutes(d1, d2) {
+            return (differenceInMinutes(parseISO(d1), parseISO(d2)) + '').padStart(2, '0');
+        },
         timeFromNow(v, l) {
             return formatDistanceStrict(parseISO(v + '.000Z'), new Date(),
                 { addSuffix: true, locale: locales[l] });

@@ -2,18 +2,19 @@
     <div>
         <h5 class="pb-3 mb-3 border-bottom d-flex justify-content-between align-items-end">
             <span>Algoritmos</span>
-            <small class="fw-normal" :class="totalCombinations > 100 ? 'text-danger' : 'text-muted'"
-                   title="Total de modelos que serão treinados com os algoritmos habilitados">
-                {{totalCombinations}} {{totalCombinations === 1 ? 'modelo' : 'modelos'}} no total
-            </small>
+            <span class="model-count badge rounded-pill fw-normal"
+                  :class="totalCombinations > 100 ? 'text-bg-danger' : 'bg-body-secondary text-body-secondary'"
+                  title="Total de modelos que serão treinados com os algoritmos habilitados">
+                {{totalCombinations}} {{totalCombinations === 1 ? 'modelo' : 'modelos'}}
+            </span>
         </h5>
         <div class="row">
-            <div class="col-md-3 border-start border-end">
+            <div class="col-md-3 algorithm-list p-2 rounded">
                 <small class="text-muted">Habilite os algoritmos que deseja treinar e comparar.</small>
 
-                <b-list-group class="mb-3 border-bottom">
-                    <b-list-group-item v-for="task in algorithms" :key="task.id" class="p-0 ps-2"
-                                       :class="{ 'bg-light': selectedAlgorithm === task }">
+                <b-list-group flush class="mb-3">
+                    <b-list-group-item v-for="task in algorithms" :key="task.id" class="p-0 ps-2 border-0 bg-transparent"
+                                       :class="{ 'algorithm-selected': selectedAlgorithm === task }">
                         <div class="d-flex w-100 p-1 align-items-center">
                             <b-form-checkbox v-model="task.enabled" switch
                                              :aria-label="`Habilitar ${task.operation?.name || task.name}`" />
@@ -29,7 +30,7 @@
                     </b-list-group-item>
                 </b-list-group>
             </div>
-            <div class="col-md-9 p-3 algorithm scroll-area">
+            <div class="col-md-9 p-3">
                 <div v-if="!selectedAlgorithm?.operation" class="text-center text-secondary mt-5 pt-5">
                     <h4>Selecione um algoritmo à esquerda para editar seus parâmetros.</h4>
                 </div>
@@ -40,7 +41,7 @@
                         Habilite-o no seletor à esquerda para editá-los.
                     </p>
                 </div>
-                <div v-else>
+                <div v-else class="algorithm d-flex flex-column">
                     <small class="text-muted">
                         Informe os parâmetros para a execução do algoritmo. Nenhum parâmetro é obrigatório.
                     </small>
@@ -102,9 +103,32 @@ const handleSelectTask = (task) => {
 };
 </script>
 <style scoped>
+/* Only this panel scrolls: the same budget the other steps of the screen
+   use, so the page itself does not get a second scrollbar. */
+/* A count, not a heading: it should not inherit the h5 size. */
+.model-count {
+    font-size: .75rem;
+}
+
+/* Height budget of the step. Only the field list inside the panel scrolls,
+   so the hint and the algorithm name stay in place. */
 .algorithm {
-    height: 75vh;
-    overflow: auto;
+    max-height: calc(100vh - 320px);
+}
+
+/* Separated from the parameter panel by background, not by a border. */
+.algorithm-list {
+    background-color: #f8f9fa;
+}
+
+/* The list is tinted, so the selected row stands out by going back to white. */
+.algorithm-selected {
+    background-color: #fff;
+    border-radius: 4px;
+}
+
+.algorithm-selected .algorithm-name {
+    font-weight: 600;
 }
 
 /* Selecting an algorithm is a real button so it is reachable by keyboard,
@@ -118,7 +142,7 @@ const handleSelectTask = (task) => {
 }
 
 .algorithm-name:focus-visible {
-    outline: 2px solid #86b7fe;
+    outline: 2px solid var(--primary-color);
     outline-offset: 2px;
 }
 </style>

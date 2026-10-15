@@ -1,41 +1,44 @@
 <template>
     <section :key="counter">
-        <h6 class="mb-3 border-bottom d-flex justify-content-between align-items-end">
+        <h6 class="mb-3 d-flex justify-content-between align-items-end">
             <span>{{name}}</span>
-            <small class="fw-normal" :class="combinations > 100 ? 'text-danger' : 'text-muted'"
-                   title="Número de modelos que serão treinados com as combinações de parâmetros informadas">
+            <span class="model-count badge rounded-pill fw-normal"
+                  :class="combinations > 100 ? 'text-bg-danger' : 'bg-body-secondary text-body-secondary'"
+                  title="Número de modelos que serão treinados com as combinações de parâmetros informadas">
                 {{combinations}} {{combinations === 1 ? 'combinação' : 'combinações'}}
-            </small>
+            </span>
         </h6>
-        <template v-for="opForm in operation.forms" :key="opForm.id">
-            <div v-for="field in opForm.fields" :key="field.name" class="mb-2 property clearfix" :data-name="field.name">
-                <!--
-                {{ field.name }} {{ field.enable_conditions }} {{ getWidget(field) }}
-                (({{ field.suggested_widget }}))
-                -->
-                <keep-alive>
-                    <div v-if="['checkboxes-component', 'checkbox-component', 'dropdown-component'].includes(getWidget(field))">
-                        <checkboxes-component :field="field" :value="getFieldValue(field.name, true)"
-                                              :language="locale" :type="field.suggested_widget" :small="true"
-                                              :read-only="!field.editable" context="context" @update="handleUpdateField"
-                                              @xinput="handleUpdateField" @update-form-field="handleUpdateField" />
-                    </div>
-                    <component :is="getWidget(field)"
-                               v-else-if="getWidget(field) !== 'attribute-selector-component' " visual-style="explorer" :field="field"
-                               :value="getFieldValue(field.name, false)" :language="locale"
-                               :type="field.suggested_widget" :small="true" :read-only="!field.editable" context="context"
-                               :show-quantity="gridStrategy === 'grid'" @update="handleUpdateField" @input="handleUpdateField"
-                               @update-form-field="handleUpdateField" />
-                    <div v-else class="text-muted small"
-                         :title="`Widget nao suportado: ${field.suggested_widget} (campo ${field.name})`">
-                        Este parâmetro não pode ser editado por aqui.
-                    </div>
-                </keep-alive>
-            </div>
-        </template>
-        <button type="button" class="btn btn-sm btn-outline-secondary mt-2" @click.prevent="handleCleanAll">
-            Limpar parâmetros
-        </button>
+        <div class="fields">
+            <template v-for="opForm in operation.forms" :key="opForm.id">
+                <div v-for="field in opForm.fields" :key="field.name" class="mb-3 property clearfix" :data-name="field.name">
+                    <!--
+                    {{ field.name }} {{ field.enable_conditions }} {{ getWidget(field) }}
+                    (({{ field.suggested_widget }}))
+                    -->
+                    <keep-alive>
+                        <div v-if="['checkboxes-component', 'checkbox-component', 'dropdown-component'].includes(getWidget(field))">
+                            <checkboxes-component :field="field" :value="getFieldValue(field.name, true)"
+                                                  :language="locale" :type="field.suggested_widget" :small="true"
+                                                  :read-only="!field.editable" context="context" @update="handleUpdateField"
+                                                  @xinput="handleUpdateField" @update-form-field="handleUpdateField" />
+                        </div>
+                        <component :is="getWidget(field)"
+                                   v-else-if="getWidget(field) !== 'attribute-selector-component' " visual-style="explorer" :field="field"
+                                   :value="getFieldValue(field.name, false)" :language="locale"
+                                   :type="field.suggested_widget" :small="true" :read-only="!field.editable" context="context"
+                                   :show-quantity="gridStrategy === 'grid'" @update="handleUpdateField" @input="handleUpdateField"
+                                   @update-form-field="handleUpdateField" />
+                        <div v-else class="text-muted small"
+                             :title="`Widget nao suportado: ${field.suggested_widget} (campo ${field.name})`">
+                            Este parâmetro não pode ser editado por aqui.
+                        </div>
+                    </keep-alive>
+                </div>
+            </template>
+            <button type="button" class="btn btn-sm btn-outline-secondary mt-2" @click.prevent="handleCleanAll">
+                Limpar parâmetros
+            </button>
+        </div>
     </section>
 </template>
 <script setup>
@@ -152,8 +155,20 @@ const handleUpdateField = (field, value, label) => {
 
 </script>
 <style scoped>
-.algorithm {
-    height: 75vh;
-    overflow: auto;
+/* A count, not a heading: it should not inherit the h6 size. */
+.model-count {
+    font-size: .75rem;
+}
+
+/* The heading stays put; the parameters scroll under it. */
+section {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+.fields {
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 </style>

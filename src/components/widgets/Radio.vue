@@ -48,13 +48,13 @@ export default {
         }
     },
     mounted() {
-        this.$root.$emit(this.message,
+        this.$emit(this.message,
             this.field, this.value || this.field['default']);
     },
     methods: {
         updated(value) {
             this.selected = value.key;
-            this.$root.$emit(this.message, this.field, value.key, value.value);
+            this.$emit(this.message, this.field, value.key, value.value);
         }
     },
     ready: function () {

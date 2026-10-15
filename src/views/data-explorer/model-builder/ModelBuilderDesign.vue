@@ -1,5 +1,5 @@
 <template>
-    <div style="overflow-x: hidden;">
+    <div class="model-builder" style="overflow-x: hidden;">
         <div>
             <div class="d-flex justify-content-between align-items-center border-bottom">
                 <div class="title">
@@ -41,7 +41,7 @@
                 <b-tabs v-if="loaded" class="p-2 custom-tab bg-white">
                     <b-tab title="Parâmetros" class="m-1 parameters">
                         <div class="row size-full">
-                            <div class="col-md-3 col-lg-2 border-right">
+                            <div class="col-md-3 col-lg-2">
                                 <div class="explorer-nav p-1">
                                     <ModelBuilderSideBar :selected="selected" :supervised="supervised"
                                         :pending="pendingBySection" @edit="edit" />
@@ -621,7 +621,7 @@ export default {
 }
 
 .experiment-name:focus {
-    border-color: #86b7fe;
+    border-color: var(--primary-color);
     outline: 0;
     background: #fff;
 }
@@ -659,7 +659,7 @@ form {
 }
 
 .active-item {
-    background-color: #e7f3ff
+    background-color: #eef4e8
 }
 
 .size-full>div {
@@ -668,5 +668,48 @@ form {
 
 .expand {
     display: table;
+}
+
+/* Accent colors of this screen follow the theme green instead of Bootstrap's
+   blue. Scoped to the model builder, so the rest of the app is untouched. */
+.model-builder :deep(.btn-primary) {
+    --bs-btn-bg: var(--primary-color);
+    --bs-btn-border-color: var(--primary-color);
+    --bs-btn-hover-bg: #45752a;
+    --bs-btn-hover-border-color: #45752a;
+    --bs-btn-active-bg: #45752a;
+    --bs-btn-active-border-color: #45752a;
+    --bs-btn-disabled-bg: var(--primary-color);
+    --bs-btn-disabled-border-color: var(--primary-color);
+}
+
+.model-builder :deep(.custom-tab .nav-tabs > li > a.active) {
+    border-bottom-color: var(--primary-color) !important;
+    color: var(--primary-color) !important;
+}
+
+.model-builder :deep(.form-check-input:checked) {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.model-builder :deep(.form-check-input:focus),
+.model-builder :deep(.btn-primary:focus-visible) {
+    border-color: var(--secondary-color);
+    box-shadow: 0 0 0 .25rem rgba(86, 143, 50, .25);
+}
+
+/* A select is as wide as its options, not as wide as the panel.
+   .v-select is the vue-select based widget, which is a div, not a <select>. */
+.model-builder :deep(.form-select),
+.model-builder :deep(.v-select) {
+    max-width: 22rem;
+}
+
+.model-builder :deep(.btn-check:focus-visible + .btn),
+.model-builder :deep(.form-control:focus),
+.model-builder :deep(.form-select:focus) {
+    border-color: var(--secondary-color);
+    box-shadow: 0 0 0 .2rem rgba(86, 143, 50, .2);
 }
 </style>

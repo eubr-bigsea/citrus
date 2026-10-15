@@ -207,7 +207,7 @@
                         </select>
                     </div>
                     <div class="footer" style="margin: 10pt auto auto auto;display: flex">
-                        <b-button class="btn" style="margin: 5pt" block @click="$bvModal.hide('bv-modal')">
+                        <b-button class="btn w-100" style="margin: 5pt" @click="$refs.modal.hide()">
                             Fechar
                         </b-button>
                         <button class="btn btn-success" style="margin: 5pt" @click="handleSave">

@@ -31,7 +31,7 @@ export default {
         onchange: {type: Function, default: () => null},
         readOnly: {type: Boolean, default: () => false},
     },
-    emits: ['input'],
+    emits: ['input', 'update:modelValue'],
     data() {
         return {
             value: null
@@ -40,6 +40,7 @@ export default {
     watch: {
         value(val) {
             this.$emit('input', val);
+            this.$emit('update:modelValue', val);
         },
         checked(val) {
             this.value = val;
@@ -50,6 +51,7 @@ export default {
     },
     mounted() {
         this.$emit('input', this.value);
+        this.$emit('update:modelValue', this.value);
     },
     methods: {
         changed() {

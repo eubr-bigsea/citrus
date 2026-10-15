@@ -38,7 +38,7 @@ export default {
     },
     methods: {
         updated(val) {
-            this.$root.$emit(this.message, this.field, val);
+            this.$emit(this.message, this.field, val);
         }
     },
 };

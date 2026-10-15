@@ -18,7 +18,7 @@
                         </div>
                         <div class="col-md-12">
                             <label>{{$t('common.description', 1)}}:</label>
-                            <b-form-textarea v-model="workflowCopy.description" :rows="3" :max-rows="6" class="form-control-sm" />
+                            <b-form-textarea v-model="workflowCopy.description" :rows="3" class="form-control-sm" />
                         </div>
                     </div>
                 </div>
@@ -100,7 +100,6 @@ export default {
     methods: {
         okClicked() {
             if (this.workflow.name && this.workflow.name.trim()) {
-                this.$root.$emit('onupdate-workflow-properties');
                 this.$emit('update-value', this.workflowCopy);
                 this.$refs.modal.hide();
             } else {
