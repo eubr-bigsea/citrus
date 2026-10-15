@@ -1,7 +1,7 @@
 <template>
     <div class="w-100">
         <div v-if="task.operation.slug === 'execute-sql'" class="float-start mt-1">
-            <button class="btn btn-sm btn-outline-secondary" :title="$t('actions.save')" @click="handleShowModal">
+            <button class="btn btn-sm btn-outline-secondary" :title="$t('actions.save')" :aria-label="task.forms.save.value === 1 ? 'Editar opções para salvar' : 'Habilitar salvamento de dados'" @click="handleShowModal">
                 <font-awesome-icon icon="fa fa-save" :class="task.forms.save.value === 1 ? 'text-success': 'text-secondary'" />
                 <span v-if="task.forms.save.value == 1"> Editar opções para salvar...</span>
                 <span v-else> Habilitar salvar dados...</span>
@@ -9,7 +9,7 @@
         </div>
         <div v-if="task.operation.slug === 'execute-sql'" class="float-start ms-4 mt-1">
             <select class="form-select form-select-sm" @change="emit('on-toggle-use-hwc', task, useHWCVal)"
-                v-model="useHWCVal">
+                v-model="useHWCVal" aria-label="Método de execução SQL">
                 <optgroup label="Spark">
                     <option value="spark">Usar o Spark SQLContext</option>
                 </optgroup>
@@ -23,15 +23,15 @@
 
         <b-button-group class="float-end mt-1">
             <button v-if="showMoveDown" class="btn btn-sm btn-outline-secondary" :title="$t('actions.moveDown')"
-                @click="emit('on-move', task.id, 'down')"><font-awesome-icon icon="fa fa-caret-down" /></button>
+                :aria-label="$t('actions.moveDown')" @click="emit('on-move', task.id, 'down')"><font-awesome-icon icon="fa fa-caret-down" /></button>
             <button v-if="showMoveUp" class="btn btn-sm btn-outline-secondary" :title="$t('actions.moveUp')"
-                @click="emit('on-move', task.id, 'up')"><font-awesome-icon icon="fa fa-caret-up" /></button>
+                :aria-label="$t('actions.moveUp')" @click="emit('on-move', task.id, 'up')"><font-awesome-icon icon="fa fa-caret-up" /></button>
             <button class="btn btn-sm btn-outline-secondary" :title="$t('actions.delete')"
-                @click="emit('on-remove', task.id)"><font-awesome-icon icon="fa fa-times" /></button>
-            <button class="btn btn-sm btn-outline-secondary" :title="$t('actions.indent')" @click="emit('on-indent', task.id)">
+                :aria-label="$t('actions.delete')" @click="emit('on-remove', task.id)"><font-awesome-icon icon="fa fa-times" /></button>
+            <button class="btn btn-sm btn-outline-secondary" :title="$t('actions.indent')" :aria-label="$t('actions.indent')" @click="emit('on-indent', task.id)">
                 <font-awesome-icon icon="fa fa-indent" />
             </button>
-            <b-dropdown variant="outline-primary" end size="sm" no-caret  :title="$t('actions.add')">
+            <b-dropdown variant="outline-primary" end size="sm" no-caret  :title="$t('actions.add')" :aria-label="$t('actions.add')">
                 <template #button-content>
                     <font-awesome-icon icon="fa fa-plus" />
                 </template>
@@ -39,14 +39,14 @@
                 <b-dropdown-item @click="emit('on-add', task.id, 'python')">Python</b-dropdown-item>
                 <b-dropdown-item @click="emit('on-add', task.id, 'script')">Script externo</b-dropdown-item>
             </b-dropdown>
-            <b-dropdown variant="outline-success" end size="sm" no-caret  :title="$t('actions.execute')">
+            <b-dropdown variant="outline-success" end size="sm" no-caret  :title="$t('actions.execute')" :aria-label="$t('actions.execute')">
                 <template #button-content>
                     <font-awesome-icon icon="fa fa-play" />
                 </template>
                 <b-dropdown-item @click="emit('on-execute', task.id, true)">Até esta célula (usando dados do cache)</b-dropdown-item>
                 <b-dropdown-item @click="emit('on-execute', task.id, false)">Até esta célula (sem uso de dados do cache)</b-dropdown-item>
             </b-dropdown>
-            <button class="btn btn-sm btn-outline-secondary" title="Fechar" @click="emit('on-toggle', task.id)">
+            <button class="btn btn-sm btn-outline-secondary" :title="opened ? 'Fechar célula' : 'Expandir célula'" :aria-label="opened ? 'Fechar célula' : 'Expandir célula'" @click="emit('on-toggle', task.id)">
                 <font-awesome-icon :icon="opened ? 'fa fa-compress' : 'fa fa-expand'" />
             </button>
         </b-button-group>

@@ -41,8 +41,8 @@ class AuthService {
         let merged = {...settings, ...resp['data']['data']};
 
         this.settings = merged;
-        merged.redirect_uri = window.location.origin;
-        merged.post_logout_redirect_uri = `${window.location.origin}/logout`;
+        merged.redirect_uri ??= window.location.origin;
+        merged.post_logout_redirect_uri ??= `${window.location.origin}/logout`;
         //console.debug('Redirecting', merged.redirect_uri)
         //merged.scope = 'profile, email'
         /*
@@ -84,27 +84,13 @@ class AuthService {
     }
 
     logout() {
-
-
-        this.userManager.getUser().then(async user => {
-            const signoutUrl = await this.userManager.createSignoutRequest(
-                {id_token_hint: user.id_token});
-
+        // Clear app state first: signoutRedirect navigates away and nothing after it is guaranteed to run.
+        // It sends id_token_hint and post_logout_redirect_uri on its own and removes the OIDC user.
+        const cleared = this.vueStore ? this.vueStore.dispatch('logout') : Promise.resolve();
+        return cleared.then(() => this.userManager.signoutRedirect()).catch(error => {
+            console.log(error);
             this.userManager.removeUser();
-            this.vueStore && this.vueStore.dispatch('logout');
-            window.location.replace(signoutUrl.url);
-            return ;
-            this.userManager.signoutRedirect({extraQueryParams: {
-                client_id: this.settings.client_id
-            }})
-                .then(() => {
-                    console.log('User logged out');
-                    this.vueStore && this.vueStore.dispatch('logout');
-                }).catch(error => {
-                    console.log(error);
-                    this.userManager.removeUser();
-                    this.vueStore && this.vueStore.dispatch('logout');
-                });
+            window.location.replace('/');
         });
     }
 

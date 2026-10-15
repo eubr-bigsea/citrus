@@ -1,8 +1,19 @@
 <template>
     <main role="main">
-        <div class="d-flex justify-content-between align-items-center pb-2 mb-2 border-bottom">
-            <h1>{{ $t('titles.sqlWorkflow') }}</h1>
-            <div class="mt-2">
+        <div class="workflow-header pb-2 mb-2 border-bottom">
+            <div class="workflow-heading">
+                <h1>{{ $t('titles.sqlWorkflow') }}</h1>
+                <div class="workflow-name">
+                    <input v-model="workflowObj.name" type="text" class="form-control form-control-sm"
+                        :placeholder="$t('common.name')" maxlength="100"
+                        @input="isDirty = true"
+                        title="Apelido usado quando referenciar esta fonte de dados no comando SQL"
+                        :aria-label="$t('common.name')">
+                    <span v-if="isDirty" class="unsaved-indicator" role="status">Alterações não salvas</span>
+                </div>
+            </div>
+            <div class="workflow-actions">
+                <div class="workflow-actions-group" aria-label="Ações do fluxo">
                 <router-link v-if="workflowObj.pipeline"
                     :to="{ name: 'pipelineEdit', params: { id: workflowObj.pipeline.id } }"
                     class="btn btn-outline-secondary btn-sm me-1" :title="workflowObj.pipeline.name" tag="button">
@@ -23,6 +34,8 @@
                         workflowObj.variables?.length }})</span>
                 </b-button>
 
+                </div>
+                <div class="workflow-actions-group" aria-label="Execução">
                 <b-button variant="primary" size="sm" class="pu me-1" @click="saveWorkflow" data-test="save">
                     <font-awesome-icon icon="fa fa-save" />
                     {{ $t('actions.save') }}
@@ -33,10 +46,11 @@
                 <b-button v-if="sample" variant="info" size="sm" class="ms-2 pu" @click="showSample" data-test="sample">
                     <font-awesome-icon icon="fa fa-eye" /> Ver dados
                 </b-button>
-                <b-button variant="danger" size="sm" class="ms-2 pu" @click="stop" data-test="restart"
-                    title="Para os recursos alocados e reinicia os executores">
-                    <font-awesome-icon icon="fa fa-skull" /> {{ $t('actions.stop') }}
+                <b-button v-if="['RUNNING', 'PENDING', 'WAITING'].includes(jobStatus.status)" variant="outline-danger" size="sm" class="ms-2 pu" @click="stop" data-test="restart"
+                    title="Para os recursos alocados e reinicia os executores" aria-label="Parar execução">
+                    <font-awesome-icon icon="fa fa-stop" /> {{ $t('actions.stop') }}
                 </b-button>
+                </div>
             </div>
         </div>
         <div class="layout-container xsource-code-pro-font" id="workflow-design" ref="workflowDesign">
@@ -44,11 +58,6 @@
                 <div>
                     <form class="clearfix">
                         <div data-test="basic-options-section">
-                            <label>{{ $t('common.name') }}:</label>
-                            <input v-model="workflowObj.name" type="text" class="form-control form-control-sm"
-                                :placeholder="$t('common.name')" maxlength="100"
-                                title="Apelido usado quando referenciar esta fonte de dados no comando SQL">
-
                             <b-form-checkbox v-if="workflowObj" v-model="workflowObj.forms.$meta.value.use_hwc"
                                 class="mt-3 " value="true" unchecked-value="false" style="zoom:.9">
                                 Usar o Hive Warehouse Connector (HWC)
@@ -130,11 +139,14 @@
                         </div>
                     </form>
                 </div>
-                <div class="mt-4">
-                    <span class="px-3 lemonade-job" :class="jobStatus.status.toLowerCase()">{{ jobStatus.status
-                    }}</span>
-                    {{ jobStatus.message }}
-                    <a v-if="jobStatus.exception_stack" href="javascript:void(0)" @click="exceptionDialog.showModal()">Ver detalhes</a>
+                <div class="job-status" v-if="jobStatus.status || jobStatus.message">
+                    <span class="job-status-badge" :class="`status-${(jobStatus.status || 'unknown').toLowerCase()}`" role="status">
+                        <font-awesome-icon :icon="jobStatus.status === 'RUNNING' ? 'fa fa-sync' : jobStatus.status === 'COMPLETED' ? 'fa fa-check-circle' : jobStatus.status === 'ERROR' ? 'fa fa-circle-exclamation' : 'fa fa-circle-info'" :spin="jobStatus.status === 'RUNNING'" />
+                        {{ jobStatus.status || 'Status' }}
+                    </span>
+                    <span class="job-status-message">{{ jobStatus.message }}</span>
+                    <button v-if="jobStatus.exception_stack" type="button" class="btn btn-link btn-sm p-0"
+                        @click="exceptionDialog.showModal()">Ver detalhes do erro</button>
                     <dialog ref="exceptionDialog" class="exception-dialog">
                         <h5>Detalhes do erro</h5>
                         <pre class="exception">{{ jobStatus.exception_stack }}</pre>
@@ -144,7 +156,7 @@
             </div>
             <div class="layout-center pt-2">
                 <div class="d-flex justify-content-end align-items-center py-1">
-                    <h4 class="m-0 me-auto">Comandos ({{ workflowObj.cells?.length }})</h4>
+                    <h4 class="m-0 me-auto">Comandos <span class="command-count">{{ workflowObj.cells?.length }}</span></h4>
                     <div>
                         <button type="button" @click="toggleExpand" class="btn btn-sm" :class="{'btn-info': expandedArea, 'btn-light': !expandedArea}">
                             <span v-if="expandedArea">
@@ -156,8 +168,8 @@
                         </button>
                     </div>
 
-                    <div><button type="button" @click="toggleExpandAll" class="btn btn-secondary btn-sm mx-2">Expandir células <font-awesome-icon icon="fa fa-expand"/></button></div>
-                    <div><button type="button" @click="handleCollapseAll" class="btn btn-secondary btn-sm">Fechar céluas <font-awesome-icon icon="fa fa-compress"/></button></div>
+                    <div><button type="button" @click="toggleExpandAll" class="btn btn-outline-secondary btn-sm mx-2" aria-label="Expandir todas as células">Expandir células <font-awesome-icon icon="fa fa-expand"/></button></div>
+                    <div><button type="button" @click="handleCollapseAll" class="btn btn-outline-secondary btn-sm" aria-label="Recolher todas as células">Recolher células <font-awesome-icon icon="fa fa-compress"/></button></div>
                 </div>
 
                 <div v-if="workflowObj.cells?.length === 0">
@@ -174,7 +186,7 @@
                 </div>
                 <div class="scroll-area commands pb-5 mb-4">
                     <transition-group name="fade" @after-enter="handleCodeAppear">
-                        <div v-for="cell, i in workflowObj.cells" class="border border mb-2 editors" :key="cell.id"
+                        <div v-for="cell, i in workflowObj.cells" class="border mb-2 editors" :key="cell.id"
                             :class="{ 'disabled-cell': !cell.enabled }" >
                             <div class="row" v-if="cell.operation.slug === 'execute-sql'" :data-cell="cell.id">
                                 <div class="col-12">
@@ -191,25 +203,25 @@
                                 </div>
                                 <div class="col-4"
                                     title="Apelido usado quando referenciar esta fonte de dados no comando SQL">
-                                    <span class="form-text">{{ $t('common.aliasSql') }} (use no SQL):</span>
+                                    <label class="form-text" :for="`cell-alias-${cell.id}`">{{ $t('common.aliasSql') }} (use no SQL):</label>
                                     <input class="form-control form-control-sm mb-1" maxlength="50"
-                                        v-model="cell.name" />
+                                        :id="`cell-alias-${cell.id}`" v-model="cell.name" @input="isDirty = true" />
                                 </div>
 
                                 <div class="col-4">
-                                    <span class="form-text">{{ $t('titles.comment') }}:</span> <input
+                                    <label class="form-text" :for="`cell-comment-${cell.id}`">{{ $t('titles.comment') }}:</label> <input
                                         class="form-control form-control-sm mb-1" maxlength="100"
-                                        v-model="cell.forms.comment.value" />
+                                        :id="`cell-comment-${cell.id}`" v-model="cell.forms.comment.value" @input="isDirty = true" />
                                 </div>
                                 <div class="col-2 mt-4">
-                                    <b-form-checkbox v-model="cell.enabled" :value="true" :unchecked-value="false">
+                                    <b-form-checkbox v-model="cell.enabled" :value="true" :unchecked-value="false" @change="isDirty = true">
                                         {{ $t('common.enabled') }}
                                     </b-form-checkbox>
                                 </div>
                                 <div class="col-2">
-                                    <span class="form-text">Tipo:</span>
+                                    <label class="form-text" :for="`cell-type-${cell.id}`">Tipo:</label>
                                     <input type="text" readonly :value="cell.operation.slug.substring(8)"
-                                        class="form-control form-control-sm w-24" />
+                                        :id="`cell-type-${cell.id}`" class="form-control form-control-sm w-24" />
                                 </div>
                             </div>
                             <div class="row" v-else-if="cell.operation.slug === 'execute-script'">
@@ -225,19 +237,19 @@
                                     </div>
                                 </div>
                                 <div class="col-8">
-                                    <span class="form-text">{{ $t('titles.comment') }}:</span> <input
+                                    <label class="form-text" :for="`cell-comment-${cell.id}`">{{ $t('titles.comment') }}:</label> <input
                                         class="form-control form-control-sm mb-1" maxlength="100"
-                                        v-model="cell.forms.comment.value" />
+                                        :id="`cell-comment-${cell.id}`" v-model="cell.forms.comment.value" @input="isDirty = true" />
                                 </div>
                                 <div class="col-2 mt-4">
-                                    <b-form-checkbox v-model="cell.enabled" :value="true" :unchecked-value="false">
+                                    <b-form-checkbox v-model="cell.enabled" :value="true" :unchecked-value="false" @change="isDirty = true">
                                         {{ $t('common.enabled') }}
                                     </b-form-checkbox>
                                 </div>
                                 <div class="col-2">
-                                    <span class="form-text">Tipo:</span>
+                                    <label class="form-text" :for="`cell-type-${cell.id}`">Tipo:</label>
                                     <input type="text" readonly :value="cell.operation.slug.substring(8)"
-                                    class="form-control form-control-sm w-24" />
+                                    :id="`cell-type-${cell.id}`" class="form-control form-control-sm w-24" />
                                 </div>
 
                             </div>
@@ -256,10 +268,10 @@
                                 <div class="col-8">
                                     <span class="form-text">{{ $t('titles.comment') }}:</span> <input
                                         class="form-control form-control-sm mb-1" maxlength="100"
-                                        v-model="cell.forms.comment.value" />
+                                        v-model="cell.forms.comment.value" @input="isDirty = true" />
                                 </div>
                                 <div class="col-2 mt-4">
-                                    <b-form-checkbox v-model="cell.enabled" :value="true" :unchecked-value="false">
+                                    <b-form-checkbox v-model="cell.enabled" :value="true" :unchecked-value="false" @change="isDirty = true">
                                         {{ $t('common.enabled') }}
                                     </b-form-checkbox>
                                 </div>
@@ -274,7 +286,7 @@
                                     <div class="editor border p-2" style="overflow:hidden" :style="{display: cell.forms?.opened?.value ? '': 'none'}">
                                         <template v-if="cell.operation.slug === 'execute-sql'">
                                             <sql-editor :query="cell.forms.query.value"
-                                                @update="(v) => cell.forms.query.value = v" ref="codeEditor"
+                                                @update="(v) => { cell.forms.query.value = v; isDirty = true }" ref="codeEditor"
                                                 :tables="dataSources" :functions="functions" :data-task="cell.id"
                                                 :format="{ language: 'spark', tabWidth: 2, keywordCase: 'upper', linesBetweenQueries: 2 }" />
                                         </template>
@@ -284,7 +296,7 @@
                                                 v-model="cell.forms.script.value" maxlength="400" />
                                         </template>
                                         <python-editor v-else-if="cell.operation.slug === 'execute-python'" :query="cell.forms.code.value"
-                                            @update="(v) => cell.forms.code.value = v" ref="codeEditor"
+                                            @update="(v) => { cell.forms.code.value = v; isDirty = true }" ref="codeEditor"
                                             :tables="dataSources" :functions="functions" :data-task="cell.id"
                                             :format="{ language: 'spark', tabWidth: 2, keywordCase: 'upper', linesBetweenQueries: 2 }" />
                                         </div>
@@ -692,6 +704,7 @@ const executeWorkflow = async (taskId, cached) => {
 };
 
 const stop = async () => {
+    if (!confirm(t('messages.doYouWantToStop'))) return;
     try {
         const resp = await axios.post(`${standUrl}/jobs/${job.value.id}/stop?executor=true`)
         loadingData.value = false;
@@ -989,14 +1002,108 @@ table.dataframe {
 <style scoped lang="scss">
 .layout-container {
     display: flex;
+    align-items: stretch;
     gap: 10px;
-    /*height: 85vh;*/
+    font-size: .8em;
+}
+
+.workflow-header,
+.workflow-heading,
+.workflow-actions,
+.workflow-actions-group,
+.workflow-name,
+.job-status {
+    display: flex;
+    align-items: center;
+}
+
+.workflow-header {
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.workflow-heading {
+    min-width: 220px;
+    gap: .75rem;
+}
+
+.workflow-heading h1 {
+    margin: 0;
+    white-space: nowrap;
+}
+
+.workflow-name {
+    gap: .5rem;
+    flex-wrap: wrap;
+}
+
+.workflow-name input {
+    min-width: 180px;
+    max-width: 300px;
+}
+
+.unsaved-indicator {
+    color: #805b00;
+    font-size: .85rem;
+    white-space: nowrap;
+}
+
+.workflow-actions {
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: .4rem;
+}
+
+.workflow-actions-group {
+    flex-wrap: wrap;
+    gap: .25rem;
+}
+
+.job-status {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: .35rem;
+    margin-top: 1rem;
+    padding: .65rem;
+    border: 1px solid #dfdfdf;
+    border-radius: 4px;
+    background: #fff;
+}
+
+.job-status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+    font-weight: 600;
+}
+
+.status-running { color: #0759a5; }
+.status-completed { color: #176b36; }
+.status-error { color: #a4262c; }
+.status-pending,
+.status-waiting { color: #805b00; }
+.status-cancelado { color: #595959; }
+.status-unknown { color: #595959; }
+
+.job-status-message {
+    overflow-wrap: anywhere;
+}
+
+.command-count {
+    display: inline-flex;
+    min-width: 1.5rem;
+    height: 1.5rem;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: #e9ecef;
     font-size: .8em;
 }
 
 .layout,
 .layout-help {
-    flex: 0 0 300px;
+    flex: 0 1 300px;
+    min-width: 240px;
     background-color: #fcfcfc;
     padding: 15px;
     border: 1px solid #dfdfdf;
@@ -1015,6 +1122,7 @@ table.dataframe {
     align-self: auto;
     order: 0;
     padding: 10px;
+    min-width: 0;
 }
 
 .commands {
@@ -1046,6 +1154,11 @@ table.dataframe {
 .editors {
     background-color: #fff;
     padding: 6px 10px;
+}
+
+.editors.disabled-cell {
+    border-left: 4px solid #8a8f98 !important;
+    opacity: .8;
 }
 
 .editors .editor {
@@ -1101,5 +1214,66 @@ table.dataframe {
     width: 100%;
     max-width: 100%;
     overflow-x: auto;
+}
+
+@media (max-width: 1100px) {
+    .workflow-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .workflow-actions {
+        justify-content: flex-start;
+    }
+
+    .layout-container {
+        flex-wrap: wrap;
+    }
+
+    .layout,
+    .layout-help {
+        flex: 1 1 260px;
+        min-width: min(260px, 100%);
+    }
+
+    .layout-center {
+        flex: 1 1 100%;
+        order: -1;
+    }
+
+    .commands {
+        max-height: 70vh;
+    }
+}
+
+@media (max-width: 600px) {
+    .workflow-heading {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .workflow-actions-group {
+        width: 100%;
+    }
+
+    .workflow-actions-group > * {
+        margin-left: 0 !important;
+    }
+
+    .layout,
+    .layout-help {
+        flex-basis: 100%;
+        min-width: 0;
+    }
+
+    .layout-center > .d-flex {
+        align-items: flex-start !important;
+        flex-wrap: wrap;
+        gap: .4rem;
+    }
+
+    .layout-center > .d-flex > h4 {
+        flex-basis: 100%;
+    }
 }
 </style>
