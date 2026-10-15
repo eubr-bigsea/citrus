@@ -294,6 +294,11 @@ openIdService.loadConfig(store).then(() => {
                     //store.setters.isLoggedIn = isLoggedIn;
                     console.debug('Using OpenID. Status: ', isLoggedIn);
                     if (!isLoggedIn) {
+                        // No stored OIDC user: drop stale auth state before a fresh login.
+                        store.dispatch('logout');
+                        delete axios.defaults.headers.common['Authorization'];
+                        delete axios.defaults.headers.common['X-THORN-ID'];
+                        delete axios.defaults.headers.common['X-User-Id'];
                         openIdService.login();
                     } else {
                         next();
@@ -466,16 +471,17 @@ openIdService.loadConfig(store).then(() => {
         if (requestCounter === 0) {
             //newVue.$Progress.start();
         }
+        // With OpenID enabled, the OIDC access token wins over a stale localStorage token.
+        const accessToken = openIdService.enabled ? await openIdService.getAccessToken() : null;
         const token = localStorage.getItem('token');
-        if (token) {
+        if (accessToken) {
+            config.headers['Authorization'] = accessToken;
+            delete config.headers['X-THORN-ID']; // boot-time default marks a Thorn token
+        } else if (token) {
             config.headers['Authorization'] = token;
             config.headers['X-THORN-ID'] = 'true';
         } else {
-            let accessToken = await openIdService.getAccessToken();
-            accessToken && (config.headers['Authorization'] = accessToken);
-            if (! accessToken) {
-                console.debug('No access token');
-            }
+            console.debug('No access token');
         }
         requestCounter += 1;
         return config;
@@ -487,15 +493,25 @@ openIdService.loadConfig(store).then(() => {
         }
         return response;
     }, (error) => {
-        if (error.response.status === 401) {
-            //newVue.$snotify.error(i18n.global.t('errors.accessDenied'));
-            alert(i18n.global.t('errors.accessDenied'));
+        if (error.response?.status === 401) {
             if (openIdService.enabled) {
-                openIdService.logout();
+                // Show the failure instead of logging out: logout/login redirects loop or leave a blank page.
+                if (router.currentRoute.value.name !== 'authError') {
+                    const data = error.response.data;
+                    router.push({
+                        name: 'authError',
+                        query: {
+                            status: 401,
+                            detail: data?.message || data?.error || error.config?.url
+                        }
+                    });
+                }
             } else {
+                //newVue.$snotify.error(i18n.global.t('errors.accessDenied'));
+                alert(i18n.global.t('errors.accessDenied'));
                 store.dispatch('logout');
+                router.push({ name: 'logout' });
             }
-            router.push({ name: 'logout' });
         }
         //newVue.$Progress.finish();
         throw error;

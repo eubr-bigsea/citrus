@@ -125,6 +125,16 @@ export default defineConfig({
             { find: '@', replacement: fileURLToPath(new URL('./src', import.meta.url)) },
         ],
     },
+    server: {
+        // Dev only: same-origin /api avoids CORS. Enable via .env.development.local (VITE_*_URL=/api/v1/<service>).
+        proxy: {
+            '/api': {
+                target: process.env.DEV_PROXY_TARGET || 'https://dev.lemonade.org.br',
+                changeOrigin: true,
+                secure: false,
+            },
+        },
+    },
     test: {
         globals: true,
         environment: "jsdom",

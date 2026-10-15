@@ -34,7 +34,7 @@
                 <font-awesome-icon icon="fa fa-save" /> {{$t('actions.export')}}
             </button>
             <!---
-            <b-dropdown right split variant="sm btn-outline-dark" @click.prevent.stop="exportWorkflow()">
+            <b-dropdown end split variant="sm btn-outline-dark" @click.prevent.stop="exportWorkflow()">
                 <template #button-content>
                     <font-awesome-icon icon="fa fa-download" /> {{ $t('actions.export') }}
                 </template>

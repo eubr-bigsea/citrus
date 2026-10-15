@@ -31,7 +31,7 @@
             <button class="btn btn-sm btn-outline-secondary" :title="$t('actions.indent')" :aria-label="$t('actions.indent')" @click="emit('on-indent', task.id)">
                 <font-awesome-icon icon="fa fa-indent" />
             </button>
-            <b-dropdown variant="outline-primary" right size="sm" no-caret  :title="$t('actions.add')" :aria-label="$t('actions.add')">
+            <b-dropdown variant="outline-primary" end size="sm" no-caret  :title="$t('actions.add')" :aria-label="$t('actions.add')">
                 <template #button-content>
                     <font-awesome-icon icon="fa fa-plus" />
                 </template>
@@ -39,7 +39,7 @@
                 <b-dropdown-item @click="emit('on-add', task.id, 'python')">Python</b-dropdown-item>
                 <b-dropdown-item @click="emit('on-add', task.id, 'script')">Script externo</b-dropdown-item>
             </b-dropdown>
-            <b-dropdown variant="outline-success" right size="sm" no-caret  :title="$t('actions.execute')" :aria-label="$t('actions.execute')">
+            <b-dropdown variant="outline-success" end size="sm" no-caret  :title="$t('actions.execute')" :aria-label="$t('actions.execute')">
                 <template #button-content>
                     <font-awesome-icon icon="fa fa-play" />
                 </template>

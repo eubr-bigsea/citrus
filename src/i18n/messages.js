@@ -481,6 +481,11 @@ export default {
         errors: {
             acceptTerms: 'Você deve concordar com os termos de uso',
             accessDenied: 'Acesso negado. Redirecionando para a página de login.',
+            oidcTokenTitle: 'Falha ao obter o token de acesso',
+            oidcTokenMessage: 'O login foi aceito pelo provedor de identidade, mas o servidor recusou a emissão do token. Verifique a configuração do cliente OpenID no servidor.',
+            oidcRetry: 'Tentar novamente',
+            authErrorTitle: 'Acesso não autorizado pelo servidor',
+            authErrorMessage: 'O servidor recusou suas credenciais (401). Tente entrar novamente; se persistir, verifique a configuração de autenticação no servidor.',
             badGateway: 'Há um problema na comunicação com o servidor. Por favor, tente mais tarde.',
             disconnected:
                 'Você não está conectado. Por favor, verifique se você tem acesso à Internet.',
@@ -1469,6 +1474,11 @@ export default {
         errors: {
             acceptTerms: 'You must accept the terms of service',
             accessDenied: 'Access denied. Redirecting to login page.',
+            oidcTokenTitle: 'Failed to obtain the access token',
+            oidcTokenMessage: 'Login was accepted by the identity provider, but the server refused to issue the token. Check the OpenID client configuration on the server.',
+            oidcRetry: 'Try again',
+            authErrorTitle: 'Access not authorized by the server',
+            authErrorMessage: 'The server refused your credentials (401). Try signing in again; if it persists, check the authentication setup on the server.',
             badGateway: 'There is a problem connecting to the server. Please, try again later.',
             disconnected:
                 'You are disconnected. Please check if you have access to the Internet.',

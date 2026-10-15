@@ -20,6 +20,7 @@ import Unauthorized from '@/views/Unauthorized.vue'
 const ChangePassword = () => import('./views/ChangePassword.vue');
 const Login = () => import('./views/Login.vue');
 const Logout = () => import('./views/Logout.vue');
+const AuthError = () => import('./views/AuthError.vue');
 const Disconnected = () => import('./views/Disconnected.vue');
 const Register = () => import('./views/Register.vue');
 const ResetPassword = () => import('./views/ResetPassword.vue');
@@ -659,6 +660,14 @@ let router = createRouter({
             path: '/logout',
             name: 'logout',
             component: Logout
+        },
+        {
+            path: '/auth-error',
+            name: 'authError',
+            component: AuthError,
+            meta: {
+                requiresAuth: false
+            }
         },
         {
             path: '/disconnected',
