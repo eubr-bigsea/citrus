@@ -7,21 +7,19 @@
             {{$t('pipeline.schedule.scheduleInstructions')}}
         </p>
         <div class="row">
-            <div class="col-6">
-                <select v-model.number="month" class="form-select form-select-sm">
-                    <option />
-                    <option v-for="m, i in getMonthNames" :key="m" :value="i + 1">
-                        {{m}}
-                    </option>
-                </select>
+            <div class="col-4">
+                <label>{{$t('pipeline.schedule.startDate')}}</label>
+                <input v-model="start" type="date" class="form-control form-control-sm" :max="end || undefined">
             </div>
-            <div class="col-3">
-                <select v-model.number="year" class="form-select form-select-sm">
-                    <option />
-                    <option v-for="y in getYears" :key="y" :value="y">
-                        {{y}}
-                    </option>
-                </select>
+            <div class="col-4">
+                <label>{{$t('pipeline.schedule.endDate')}}</label>
+                <input v-model="end" type="date" class="form-control form-control-sm" :min="start || undefined">
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col-12">
+                <label>{{$t('titles.comment')}}</label>
+                <textarea v-model="comment" class="form-control form-control-sm" rows="2" maxlength="200" />
             </div>
         </div>
         <div class="row mt-3">
@@ -54,37 +52,13 @@
 
 <script setup>
 import { ref, computed } from 'vue';
-import { pt } from 'date-fns/locale';
-import { format } from 'date-fns';
 
-const month = ref(null);
-const year = ref(null);
+const start = ref(null);
+const end = ref(null);
+const comment = ref('');
 const name = ref(null);
 const id = ref(null);
 const scheduleModal = ref(null);
-
-const getMonthNames = computed(() => {
-    const monthNames = [];
-    for (let i = 0; i < 12; i++) {
-        const date = new Date(2021, i, 1); // Using any year, 2021 here
-        const monthName = format(date, 'MMMM', { locale: pt });
-        monthNames.push(monthName);
-    }
-    return monthNames;
-});
-
-const getYears = computed(() => {
-    const years = [];
-    let currentYear = new Date().getYear();
-    let maxYears = 5;
-    years.push(currentYear + 1901); // First year in JS is 1900! Add next year
-    do {
-        years.push(currentYear + 1900);
-        currentYear--;
-        maxYears--;
-    } while (maxYears > 0);
-    return years;
-});
 
 const show = (modalId, modalName) => {
 
@@ -93,20 +67,22 @@ const show = (modalId, modalName) => {
     scheduleModal.value.show();
 };
 const testFormOk = computed(() => {
-    return (!month.value || !year.value || contextData.value.some(data => !data.name || !data.value))
+    return (!start.value || !end.value || start.value > end.value
+        || contextData.value.some(data => !data.name || !data.value))
 });
 const emit = defineEmits(['on-schedule-pipeline']);
 const confirm = () => {
     emit('on-schedule-pipeline', id.value,
-        // In JS, months start from 0 !!!
-        new Date(year.value, month.value - 1, 1),
-        new Date(year.value, month.value, 0),
-        contextData.value
+        new Date(`${start.value}T00:00:00`),
+        new Date(`${end.value}T00:00:00`),
+        contextData.value,
+        comment.value || null
     );
 };
 
 const handleCancel = () => {
     contextData.value = [];
+    comment.value = '';
     scheduleModal.value.hide();
 };
 const contextData = ref([]);

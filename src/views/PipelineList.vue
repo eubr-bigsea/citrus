@@ -42,7 +42,7 @@
                         <div>
                             <button class="btn btn-sm btn-success me-1"
                                     @click="openScheduleModal(props.row.id, props.row.name)">
-                                Agendar
+                                {{$t('pipeline.schedule.createRun')}}
                                 <font-awesome-icon icon="calendar-alt" />
                             </button>
                             <button class="btn btn-sm btn-danger" :title="$t('actions.delete')"
@@ -131,11 +131,10 @@ export default {
         openScheduleModal(id, name) {
             this.$refs.scheduleModal.show(id, name);
         },
-        async schedulePipeline(id, start, finish, context) {
-            //console.debug(JSON.stringify({id, start, end}));
+        async schedulePipeline(id, start, finish, context, comment) {
             try {
                 const resp = await axios.post(`${standUrl}/pipeline-runs/create`,
-                    { id, start, finish, context });
+                    { id, start, finish, context, comment });
                 this.success(
                     `Agendamento de pipeline criado com sucesso, com id=${resp.data.id}`);
             }catch(e) {

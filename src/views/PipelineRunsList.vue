@@ -614,6 +614,8 @@ export default {
     padding: 0.1rem 0.6rem;
     font-size: 0.75rem;
     max-width: 100%;
+    min-width: 0;
+    overflow: hidden;
     white-space: nowrap;
 }
 
@@ -646,6 +648,7 @@ export default {
 }
 
 .context-var-value {
+    flex: 1 1 auto;
     min-width: 0;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -653,6 +656,7 @@ export default {
 }
 
 .context-var-actions {
+    flex: none;
     display: inline-flex;
     white-space: nowrap;
 }

@@ -406,10 +406,16 @@ h2.title {
   &.canceled,
   &.interrupted,
   &.waiting,
+  &.pending,
   &.error {
     color: white;
     font-size: 0.7em;
     padding: 4px;
+  }
+
+  &.pending {
+    background-color: #ffa136;
+    color: black;
   }
 
   &.completed {

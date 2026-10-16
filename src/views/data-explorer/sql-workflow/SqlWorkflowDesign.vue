@@ -286,7 +286,7 @@
                                     <div class="editor border p-2" style="overflow:hidden" :style="{display: cell.forms?.opened?.value ? '': 'none'}">
                                         <template v-if="cell.operation.slug === 'execute-sql'">
                                             <sql-editor :query="cell.forms.query.value"
-                                                @update="(v) => { cell.forms.query.value = v; isDirty = true }" ref="codeEditor"
+                                                @update="(v) => { if (v !== cell.forms.query.value) { cell.forms.query.value = v; isDirty = true } }" ref="codeEditor"
                                                 :tables="dataSources" :functions="functions" :data-task="cell.id"
                                                 :format="{ language: 'spark', tabWidth: 2, keywordCase: 'upper', linesBetweenQueries: 2 }" />
                                         </template>
@@ -296,7 +296,7 @@
                                                 v-model="cell.forms.script.value" maxlength="400" />
                                         </template>
                                         <python-editor v-else-if="cell.operation.slug === 'execute-python'" :query="cell.forms.code.value"
-                                            @update="(v) => { cell.forms.code.value = v; isDirty = true }" ref="codeEditor"
+                                            @update="(v) => { if (v !== cell.forms.code.value) { cell.forms.code.value = v; isDirty = true } }" ref="codeEditor"
                                             :tables="dataSources" :functions="functions" :data-task="cell.id"
                                             :format="{ language: 'spark', tabWidth: 2, keywordCase: 'upper', linesBetweenQueries: 2 }" />
                                         </div>
@@ -344,13 +344,13 @@
                         </div>
                     </transition-group>
                     <div v-if="workflowObj.cells?.length > 0" class="text-center mt-2">
-                        <b-dropdown variant="outline-primary" size="sm" no-caret :title="$t('actions.add')">
+                        <b-dropdown variant="outline-primary" size="sm" no-caret strategy="fixed" :title="$t('actions.add')">
                             <template #button-content>
                                 <font-awesome-icon icon="fa fa-plus" /> {{ $t('actions.add') }}
                             </template>
-                            <b-dropdown-item href="#" @click="handleAdd(null, 'sql', '\n')">SQL</b-dropdown-item>
-                            <b-dropdown-item href="#" @click="handleAdd(null, 'python', '\n')">Python</b-dropdown-item>
-                            <b-dropdown-item href="#" @click="handleAdd(null, 'script', '\n')">Script externo</b-dropdown-item>
+                            <b-dropdown-item href="#" @click.prevent="handleAdd(null, 'sql', '\n')">SQL</b-dropdown-item>
+                            <b-dropdown-item href="#" @click.prevent="handleAdd(null, 'python', '\n')">Python</b-dropdown-item>
+                            <b-dropdown-item href="#" @click.prevent="handleAdd(null, 'script', '\n')">Script externo</b-dropdown-item>
                         </b-dropdown>
                     </div>
                 </div>
@@ -376,6 +376,7 @@
 
 <script setup>
 import { onBeforeMount, ref, nextTick, onUnmounted, onMounted } from "vue";
+import { onBeforeRouteLeave } from 'vue-router';
 
 import { useWebSocket } from '@/composables/websocket.js';
 import { debounce } from "@/util.js";
@@ -485,13 +486,12 @@ window.onbeforeunload = function () {
         return confirmMsg;
     }
 }
-router.beforeEach(function (to, from, next) {
-    if (!isDirty.value || (confirm(confirmMsg))) {
+onBeforeRouteLeave(() => {
+    if (!isDirty.value || confirm(confirmMsg)) {
         isDirty.value = false;
-        next();
-    } else {
-        next(false);
+        return true;
     }
+    return false;
 });
 
 // Elements refs
@@ -553,6 +553,7 @@ onBeforeMount(async () => {
     await load();
 });
 onUnmounted(() => {
+    window.onbeforeunload = null;
     disconnectWebSocket();
 });
 onMounted(() => {
@@ -777,6 +778,7 @@ const handleRemoveSql = (taskId) => {
 }
 const handleMove = (taskId, direction) => {
     workflowObj.value.moveTask(taskId, direction);
+    isDirty.value = true;
 }
 
 /* Data source related */
