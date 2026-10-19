@@ -55,6 +55,7 @@
                 <div>
                     <form class="clearfix">
                         <div data-test="basic-options-section">
+                            <h6 class="side-title mt-3 mb-0">Configuração de execução</h6>
                             <b-form-checkbox v-if="workflowObj" v-model="workflowObj.forms.$meta.value.use_hwc"
                                 class="mt-3 " value="true" unchecked-value="false" style="zoom:.9">
                                 Usar o Hive Warehouse Connector (HWC)
@@ -76,7 +77,8 @@
                             <div v-if="addingDataSource" class="mt-2">
                                 <label>Escolha uma fonte de dados</label>
                                 <vue-select :filterable="false" :options="dataSourceList" :reduce="(opt) => opt.id"
-                                    label="name" @search="loadDataSourceList" @input="handleAddDataSource">
+                                    label="name" @search="loadDataSourceList"
+                                    @update:model-value="(id) => id && handleAddDataSource(id)">
                                     <template #no-options="{ }">
                                         <small>Digite parte do nome pesquisar ...</small>
                                     </template>
@@ -96,19 +98,24 @@
                                         @click.prevent="addingDataSource = false"> {{ $t('actions.cancel') }}</button>
                                 </div>
                             </div>
-                            <ul class="list-group list-group-flush data-sources mt-2 scroll-area">
-                                <li v-for="dataSource in workflowObj.dataSources" class="list-group-item p-2 pb-1 pt-1">
-                                    <div class="mb-2 truncate" :title="dataSource.forms.data_source.labelValue">
-                                        {{ dataSource.forms.data_source.labelValue }}
-                                    </div>
-                                    <small>Apelido:</small>
-                                    <input type="text" class="form-control form-control-sm w-75 float-end mb-1"
-                                        v-model="dataSource.name" maxlength="50" @change="handleChangeAlias" />
-                                    <div class="float-start">
+                            <ul class="list-unstyled data-sources mt-2 mb-0 scroll-area">
+                                <li v-for="dataSource in workflowObj.dataSources" :key="dataSource.id"
+                                    class="data-source-card">
+                                    <div class="d-flex align-items-center">
+                                        <div class="truncate flex-grow-1" :title="dataSource.forms.data_source.labelValue">
+                                            {{ dataSource.forms.data_source.labelValue }}
+                                        </div>
                                         <button class="btn btn-sm text-danger" :title="$t('actions.delete')"
+                                            :aria-label="$t('actions.delete')"
                                             @click.prevent="handleRemoveDataSource(dataSource.id)"><font-awesome-icon
                                                 icon="fa fa-times" /></button>
-                                        <button :title="$t('common.preview')" class="btn btn-sm"
+                                    </div>
+                                    <label class="form-text mb-0" :for="`ds-alias-${dataSource.id}`">Apelido:</label>
+                                    <input type="text" class="form-control form-control-sm mb-2"
+                                        :id="`ds-alias-${dataSource.id}`"
+                                        v-model="dataSource.name" maxlength="50" @change="handleChangeAlias" />
+                                    <div class="ds-actions d-flex flex-wrap gap-1">
+                                        <button :title="$t('common.preview')" class="btn btn-sm btn-light"
                                             @click.prevent="handlePreview(dataSource.forms.data_source.value)">
                                             <font-awesome-icon icon="fa-eye" />
                                         </button>
@@ -116,19 +123,14 @@
                                             @click.prevent="handleAddSqlFromDataSource('select', dataSource.forms.data_source.value)">
                                             SELECT
                                         </button>
-                                        <button title="Criar INSERT para fonte de dados"
-                                            class="btn btn-sm btn-light ms-1"
+                                        <button title="Criar INSERT para fonte de dados" class="btn btn-sm btn-light"
                                             @click.prevent="handleAddSqlFromDataSource('insert', dataSource.forms.data_source.value)">
                                             INSERT
                                         </button>
-
-                                        <button title="Criar STAGE para fonte de dados"
-                                            class="btn btn-sm btn-light ms-1"
+                                        <button title="Criar STAGE para fonte de dados" class="btn btn-sm btn-light"
                                             @click.prevent="handleAddSqlFromDataSource('stage', dataSource.forms.data_source.value)">
-                                            CRIAR STAGE
+                                            STAGE
                                         </button>
-
-
                                     </div>
                                 </li>
                             </ul>
@@ -185,8 +187,7 @@
                 <div class="scroll-area commands pb-5 mb-4">
                     <transition-group name="fade" @after-enter="handleCodeAppear">
                         <div v-for="cell, i in workflowObj.cells" class="editors" :key="cell.id" :data-type="cell.operation.slug"
-                            :class="{ 'disabled-cell': !cell.enabled }" :data-cell-container="cell.id"
-                            @keydown.capture="handleCellKeydown($event, cell, i)">
+                            :class="{ 'disabled-cell': !cell.enabled }" :data-cell-container="cell.id">
                             <div class="row" v-if="cell.operation.slug === 'execute-sql'" :data-cell="cell.id">
                                 <div class="col-12">
                                     <div class="button-toolbar">
@@ -200,27 +201,24 @@
                                             @on-toggle-use-hwc="handleToggleHWC" @on-toggle="handleToggle(cell)" />
                                     </div>
                                 </div>
-                                <div class="col-4"
-                                    title="Apelido usado quando referenciar esta fonte de dados no comando SQL">
-                                    <label class="form-text" :for="`cell-alias-${cell.id}`">{{ $t('common.aliasSql') }} (use no SQL):</label>
-                                    <input class="form-control form-control-sm mb-1" maxlength="50"
-                                        :id="`cell-alias-${cell.id}`" v-model="cell.name" @input="isDirty = true" />
-                                </div>
-
-                                <div class="col-4">
-                                    <label class="form-text" :for="`cell-comment-${cell.id}`">{{ $t('titles.comment') }}:</label> <input
-                                        class="form-control form-control-sm mb-1" maxlength="100"
-                                        :id="`cell-comment-${cell.id}`" v-model="cell.forms.comment.value" @input="isDirty = true" />
-                                </div>
-                                <div class="col-2 mt-4">
-                                    <b-form-checkbox v-model="cell.enabled" :value="true" :unchecked-value="false" @change="isDirty = true">
+                                <div class="col-12">
+                                    <div class="cell-header">
+                                    <span class="cell-type-badge">{{ cell.operation.slug.substring(8) }}</span>
+                                    <div class="cell-header-alias"
+                                        title="Apelido usado quando referenciar esta fonte de dados no comando SQL">
+                                        <label class="form-text" :for="`cell-alias-${cell.id}`">{{ $t('common.aliasSql') }} (use no SQL):</label>
+                                        <input class="form-control form-control-sm" maxlength="50"
+                                            :id="`cell-alias-${cell.id}`" v-model="cell.name" @input="isDirty = true" />
+                                    </div>
+                                    <div class="cell-header-comment">
+                                        <label class="form-text" :for="`cell-comment-${cell.id}`">{{ $t('titles.comment') }}:</label>
+                                        <input class="form-control form-control-sm" maxlength="100"
+                                            :id="`cell-comment-${cell.id}`" v-model="cell.forms.comment.value" @input="isDirty = true" />
+                                    </div>
+                                    <b-form-checkbox class="cell-header-enabled" v-model="cell.enabled" :value="true" :unchecked-value="false" @change="isDirty = true">
                                         {{ $t('common.enabled') }}
                                     </b-form-checkbox>
-                                </div>
-                                <div class="col-2">
-                                    <label class="form-text" :for="`cell-type-${cell.id}`">Tipo:</label>
-                                    <input type="text" readonly :value="cell.operation.slug.substring(8)"
-                                        :id="`cell-type-${cell.id}`" class="form-control form-control-sm w-24" />
+                                    </div>
                                 </div>
                             </div>
                             <div class="row" v-else-if="cell.operation.slug === 'execute-script'">
@@ -235,20 +233,18 @@
                                             @on-toggle-use-hwc="handleToggleHWC" @on-toggle="handleToggle(cell)" />
                                     </div>
                                 </div>
-                                <div class="col-8">
-                                    <label class="form-text" :for="`cell-comment-${cell.id}`">{{ $t('titles.comment') }}:</label> <input
-                                        class="form-control form-control-sm mb-1" maxlength="100"
-                                        :id="`cell-comment-${cell.id}`" v-model="cell.forms.comment.value" @input="isDirty = true" />
-                                </div>
-                                <div class="col-2 mt-4">
-                                    <b-form-checkbox v-model="cell.enabled" :value="true" :unchecked-value="false" @change="isDirty = true">
+                                <div class="col-12">
+                                    <div class="cell-header">
+                                    <span class="cell-type-badge">{{ cell.operation.slug.substring(8) }}</span>
+                                    <div class="cell-header-comment">
+                                        <label class="form-text" :for="`cell-comment-${cell.id}`">{{ $t('titles.comment') }}:</label>
+                                        <input class="form-control form-control-sm" maxlength="100"
+                                            :id="`cell-comment-${cell.id}`" v-model="cell.forms.comment.value" @input="isDirty = true" />
+                                    </div>
+                                    <b-form-checkbox class="cell-header-enabled" v-model="cell.enabled" :value="true" :unchecked-value="false" @change="isDirty = true">
                                         {{ $t('common.enabled') }}
                                     </b-form-checkbox>
-                                </div>
-                                <div class="col-2">
-                                    <label class="form-text" :for="`cell-type-${cell.id}`">Tipo:</label>
-                                    <input type="text" readonly :value="cell.operation.slug.substring(8)"
-                                    :id="`cell-type-${cell.id}`" class="form-control form-control-sm w-24" />
+                                    </div>
                                 </div>
 
                             </div>
@@ -264,20 +260,18 @@
                                             @on-toggle-use-hwc="handleToggleHWC" @on-toggle="handleToggle(cell)" />
                                     </div>
                                 </div>
-                                <div class="col-8">
-                                    <label class="form-text" :for="`cell-comment-${cell.id}`">{{ $t('titles.comment') }}:</label> <input
-                                        class="form-control form-control-sm mb-1" maxlength="100"
-                                        :id="`cell-comment-${cell.id}`" v-model="cell.forms.comment.value" @input="isDirty = true" />
-                                </div>
-                                <div class="col-2 mt-4">
-                                    <b-form-checkbox v-model="cell.enabled" :value="true" :unchecked-value="false" @change="isDirty = true">
+                                <div class="col-12">
+                                    <div class="cell-header">
+                                    <span class="cell-type-badge">{{ cell.operation.slug.substring(8) }}</span>
+                                    <div class="cell-header-comment">
+                                        <label class="form-text" :for="`cell-comment-${cell.id}`">{{ $t('titles.comment') }}:</label>
+                                        <input class="form-control form-control-sm" maxlength="100"
+                                            :id="`cell-comment-${cell.id}`" v-model="cell.forms.comment.value" @input="isDirty = true" />
+                                    </div>
+                                    <b-form-checkbox class="cell-header-enabled" v-model="cell.enabled" :value="true" :unchecked-value="false" @change="isDirty = true">
                                         {{ $t('common.enabled') }}
                                     </b-form-checkbox>
-                                </div>
-                                <div class="col-2">
-                                    <label class="form-text" :for="`cell-type-${cell.id}`">Tipo:</label>
-                                    <input type="text" readonly :value="cell.operation.slug.substring(8)"
-                                        :id="`cell-type-${cell.id}`" class="form-control form-control-sm w-24" />
+                                    </div>
                                 </div>
                             </div>
                             <div class="row">
@@ -299,11 +293,11 @@
                                             :tables="dataSources" :functions="functions" :data-task="cell.id"
                                             :format="{ language: 'spark', tabWidth: 2, keywordCase: 'upper', linesBetweenQueries: 2 }" />
                                         </div>
-                                        <div class="text-center p-2 bg-white" v-if="!cell.forms?.opened.value">
-                                            <button class="btn btn-sm " @click="handleToggle(cell)" title="Expandir">
-                                                Expandir <font-awesome-icon icon="fa fa-expand"/>
-                                            </button>
-                                        </div>
+                                        <button v-if="!cell.forms?.opened.value" type="button" class="cell-preview"
+                                            @click="handleToggle(cell)" title="Expandir">
+                                            <span class="cell-preview-code">{{ getPreview(cell) || '(vazio)' }}</span>
+                                            <font-awesome-icon icon="fa fa-expand" />
+                                        </button>
                                 </div>
                             </div>
                             <div v-if="cell?.forms?.save?.value === 1" class="col-12 mt-1">
@@ -946,17 +940,9 @@ const handleIndent = (taskId) => {
         currentEditor.indent();
     }
 }
-const handleCellKeydown = (e, cell, i) => {
-    if (!(e.ctrlKey || e.metaKey || e.shiftKey) || e.key !== 'Enter') return;
-    e.preventDefault();
-    e.stopPropagation(); // CodeMirror would insert a blank line
-    executeWorkflow(cell.id, true);
-    if (e.shiftKey) {
-        const next = workflowObj.value.cells[i + 1];
-        if (next) {
-            nextTick(() => document.querySelector(`[data-cell-container="${next.id}"] .cm-content`)?.focus());
-        }
-    }
+const getPreview = (cell) => {
+    const code = cell.forms.query?.value ?? cell.forms.code?.value ?? cell.forms.script?.value ?? '';
+    return code.split('\n').map(l => l.trim()).find(l => l) || '';
 };
 const handleGlobalKeydown = (e) => {
     if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') {
@@ -1167,8 +1153,84 @@ table.dataframe {
     padding-bottom: 5px;
 }
 
+.side-title {
+    font-weight: 600;
+}
+
+.cell-header {
+    display: flex;
+    align-items: flex-end;
+    gap: .75rem;
+    margin-bottom: .25rem;
+}
+
+.cell-header-alias {
+    flex: 0 0 25%;
+}
+
+.cell-header-comment {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.cell-header-enabled {
+    flex: none;
+    margin-bottom: .25rem;
+}
+
+.cell-type-badge {
+    flex: none;
+    margin-bottom: .3rem;
+    padding: .15rem .5rem;
+    font-size: .7rem;
+    font-weight: 600;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    color: #fff;
+    background: var(--cell-color);
+}
+
+.editors[data-type="execute-python"] .cell-type-badge {
+    color: #212529;
+}
+
+.cell-preview {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    width: 100%;
+    padding: .4rem .5rem;
+    border: 0;
+    background: #f8f9fa;
+    color: #6c757d;
+    text-align: left;
+}
+
+.cell-preview-code {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    font-family: monospace;
+}
+
+.ds-actions .btn {
+    font-size: .7rem;
+    padding: .1rem .4rem;
+    line-height: 1.3;
+}
+
+.data-source-card {
+    background: #fff;
+    border: 1px solid #dee2e6;
+    border-left: 4px solid var(--secondary-color);
+    padding: .5rem .75rem;
+    margin-bottom: .75rem;
+}
+
 .truncate {
-    width: 220px;
+    min-width: 0;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -1178,13 +1240,14 @@ table.dataframe {
 .editors {
     background-color: #fff;
     padding: 6px 10px;
-    border-right: 2px solid #dee2e6;
-    border-left: 4px solid var(--primary-color);
+    --cell-color: var(--primary-color);
+    border-right: 2px solid var(--cell-color);
+    border-left: 4px solid var(--cell-color);
     margin-bottom: 1.5rem;
 }
 
-.editors[data-type="execute-python"] { border-left-color: var(--secondary-color); }
-.editors[data-type="execute-script"] { border-left-color: #e0b92e; }
+.editors[data-type="execute-python"] { --cell-color: #e0b92e; }
+.editors[data-type="execute-script"] { --cell-color: #d9822b; }
 
 
 .editors.disabled-cell {
