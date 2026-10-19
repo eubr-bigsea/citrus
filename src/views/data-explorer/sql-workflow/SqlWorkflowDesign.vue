@@ -55,20 +55,20 @@
                 <div>
                     <form class="clearfix">
                         <div data-test="basic-options-section">
-                            <h6 class="side-title mt-3 mb-0">Configuração de execução</h6>
-                            <b-form-checkbox v-if="workflowObj" v-model="workflowObj.forms.$meta.value.use_hwc"
-                                class="mt-3 " value="true" unchecked-value="false" style="zoom:.9">
-                                Usar o Hive Warehouse Connector (HWC)
-                            </b-form-checkbox>
-                            <label class="mt-3">{{ $t('titles.cluster') }}: </label>
-                            <v-select v-model="workflowObj.preferred_cluster_id" :options="clusters" label="name"
-                                ref="clusterRef" :reduce="(opt) => opt.id" :taggable="false" :close-on-select="true"
-                                :filterable="false">
-                                <template #option="{ description, name }">
-                                    {{ name }}<br>
-                                    <small><em>{{ description }}</em></small>
-                                </template>
-                            </v-select>
+                            <label class="mt-3" for="cluster-select">{{ $t('titles.cluster') }}: </label>
+                            <select id="cluster-select" ref="clusterRef" v-model="clusterId"
+                                class="form-select form-select-sm" :class="{ 'is-invalid': clusterInvalid }"
+                                @change="clusterInvalid = false">
+                                <option :value="null" disabled>Selecione um cluster</option>
+                                <option v-for="c in clusters" :key="c.id" :value="c.id" :title="c.description">{{ c.name }}</option>
+                            </select>
+                            <small v-if="selectedCluster?.description" class="text-muted d-block mt-1">{{ selectedCluster.description }}</small>
+                            <div v-if="workflowObj" class="switch-aligned mt-3" title="Usar o Hive Warehouse Connector (HWC)">
+                                <b-form-checkbox v-model="workflowObj.forms.$meta.value.use_hwc"
+                                    value="true" unchecked-value="false" switch>
+                                    Usar o Hive Warehouse Connector
+                                </b-form-checkbox>
+                            </div>
                             <label for="" class="mt-3 d-block">{{ $t('titles.dataSource', 2) }}
                                 ({{ workflowObj.dataSources?.length }}):</label>
                             <button class="btn btn-sm btn-secondary mt-2" :title="$t('actions.add')"
@@ -206,169 +206,12 @@
                 </div>
                 <div class="scroll-area commands pb-5 mb-4">
                     <transition-group name="fade" @after-enter="handleCodeAppear">
-                        <div v-for="cell, i in workflowObj.cells" class="editors" :key="cell.id" :data-type="cell.operation.slug"
-                            :class="{ 'disabled-cell': !cell.enabled }" :data-cell-container="cell.id">
-                            <div class="row" v-if="cell.operation.slug === 'execute-sql'" :data-cell="cell.id">
-                                <div class="col-12">
-                                    <div class="button-toolbar">
-                                        <sql-editor-toolbar ref="toolbar" :task="cell" :show-move-up="i > 0"
-                                            :data-task="cell.id" :show-move-down="i < workflowObj.cells.length - 1"
-                                            :useHWC="cell.forms.useHWC.value" @on-move="handleMove"
-                                            :opened="cell.forms?.opened.value"
-                                            @on-remove="handleRemoveSql" @on-add="handleAdd"
-                                            @on-indent="handleIndent(cell.id)"
-                                            @on-execute="(taskId, value) => executeWorkflow(cell.id, value)"
-                                            @on-toggle-use-hwc="handleToggleHWC" @on-toggle="handleToggle(cell)" />
-                                    </div>
-                                </div>
-                                <div class="col-12">
-                                    <div class="cell-header">
-                                    <span class="cell-badge" :title="`Célula ${i + 1} de ${workflowObj.cells.length}`">
-                                        <span class="cell-badge-num">{{ i + 1 }}/{{ workflowObj.cells.length }}</span>
-                                        <span class="cell-type-badge">{{ cell.operation.slug.substring(8) }}</span>
-                                    </span>
-                                    <div class="cell-header-alias"
-                                        title="Apelido usado quando referenciar esta fonte de dados no comando SQL">
-                                        <label class="form-text" :for="`cell-alias-${cell.id}`">{{ $t('common.aliasSql') }} (use no SQL):</label>
-                                        <input class="form-control form-control-sm" maxlength="50"
-                                            :id="`cell-alias-${cell.id}`" v-model="cell.name" @input="isDirty = true" />
-                                    </div>
-                                    <div class="cell-header-comment">
-                                        <label class="form-text" :for="`cell-comment-${cell.id}`">{{ $t('titles.comment') }}:</label>
-                                        <input class="form-control form-control-sm" maxlength="100"
-                                            :id="`cell-comment-${cell.id}`" v-model="cell.forms.comment.value" @input="isDirty = true" />
-                                    </div>
-                                    <b-form-checkbox class="cell-header-enabled" v-model="cell.enabled" :value="true" :unchecked-value="false" @change="isDirty = true">
-                                        {{ $t('common.enabled') }}
-                                    </b-form-checkbox>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row" v-else-if="cell.operation.slug === 'execute-script'">
-                                <div class="col-12">
-                                    <div class="button-toolbb">
-                                        <sql-editor-toolbar ref="toolbar" :task="cell" :show-move-up="i > 0"
-                                            :data-task="cell.id" :show-move-down="i < workflowObj.cells.length - 1"
-                                            :opened="cell.forms?.opened.value"
-                                            @on-move="handleMove" @on-remove="handleRemoveSql" @on-add="handleAdd"
-                                            @on-indent="handleIndent(cell.id)"
-                                            @on-execute="(taskId, value) => executeWorkflow(cell.id, value)"
-                                            @on-toggle-use-hwc="handleToggleHWC" @on-toggle="handleToggle(cell)" />
-                                    </div>
-                                </div>
-                                <div class="col-12">
-                                    <div class="cell-header">
-                                    <span class="cell-badge" :title="`Célula ${i + 1} de ${workflowObj.cells.length}`">
-                                        <span class="cell-badge-num">{{ i + 1 }}/{{ workflowObj.cells.length }}</span>
-                                        <span class="cell-type-badge">{{ cell.operation.slug.substring(8) }}</span>
-                                    </span>
-                                    <div class="cell-header-comment">
-                                        <label class="form-text" :for="`cell-comment-${cell.id}`">{{ $t('titles.comment') }}:</label>
-                                        <input class="form-control form-control-sm" maxlength="100"
-                                            :id="`cell-comment-${cell.id}`" v-model="cell.forms.comment.value" @input="isDirty = true" />
-                                    </div>
-                                    <b-form-checkbox class="cell-header-enabled" v-model="cell.enabled" :value="true" :unchecked-value="false" @change="isDirty = true">
-                                        {{ $t('common.enabled') }}
-                                    </b-form-checkbox>
-                                    </div>
-                                </div>
-
-                            </div>
-                            <div class="row" v-else-if="cell.operation.slug === 'execute-python'">
-                                <div class="col-12">
-                                    <div class="button-toolbar">
-                                        <sql-editor-toolbar ref="toolbar" :task="cell" :show-move-up="i > 0"
-                                            :data-task="cell.id" :show-move-down="i < workflowObj.cells.length - 1"
-                                            :opened="cell.forms?.opened.value"
-                                            @on-move="handleMove" @on-remove="handleRemoveSql" @on-add="handleAdd"
-                                            @on-indent="handleIndent(cell.id)"
-                                            @on-execute="(taskId, value) => executeWorkflow(cell.id, value)"
-                                            @on-toggle-use-hwc="handleToggleHWC" @on-toggle="handleToggle(cell)" />
-                                    </div>
-                                </div>
-                                <div class="col-12">
-                                    <div class="cell-header">
-                                    <span class="cell-badge" :title="`Célula ${i + 1} de ${workflowObj.cells.length}`">
-                                        <span class="cell-badge-num">{{ i + 1 }}/{{ workflowObj.cells.length }}</span>
-                                        <span class="cell-type-badge">{{ cell.operation.slug.substring(8) }}</span>
-                                    </span>
-                                    <div class="cell-header-comment">
-                                        <label class="form-text" :for="`cell-comment-${cell.id}`">{{ $t('titles.comment') }}:</label>
-                                        <input class="form-control form-control-sm" maxlength="100"
-                                            :id="`cell-comment-${cell.id}`" v-model="cell.forms.comment.value" @input="isDirty = true" />
-                                    </div>
-                                    <b-form-checkbox class="cell-header-enabled" v-model="cell.enabled" :value="true" :unchecked-value="false" @change="isDirty = true">
-                                        {{ $t('common.enabled') }}
-                                    </b-form-checkbox>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-12">
-                                    <div class="editor p-2" style="overflow:hidden" :style="{display: cell.forms?.opened?.value ? '': 'none'}">
-                                        <template v-if="cell.operation.slug === 'execute-sql'">
-                                            <sql-editor :query="cell.forms.query.value"
-                                                @update="(v) => { if (v !== cell.forms.query.value) { cell.forms.query.value = v; isDirty = true } }" ref="codeEditor"
-                                                :tables="dataSources" :functions="functions" :data-task="cell.id"
-                                                :format="{ language: 'spark', tabWidth: 2, keywordCase: 'upper', linesBetweenQueries: 2 }" />
-                                        </template>
-                                        <template v-else-if="cell.operation.slug === 'execute-script'">
-                                            <label>Caminho completo para o arquivo (visível no servidor)</label>
-                                            <input class="form-control form-control-sm" type="text"
-                                                v-model="cell.forms.script.value" maxlength="400" />
-                                        </template>
-                                        <python-editor v-else-if="cell.operation.slug === 'execute-python'" :query="cell.forms.code.value"
-                                            @update="(v) => { if (v !== cell.forms.code.value) { cell.forms.code.value = v; isDirty = true } }" ref="codeEditor"
-                                            :tables="dataSources" :functions="functions" :data-task="cell.id"
-                                            :format="{ language: 'spark', tabWidth: 2, keywordCase: 'upper', linesBetweenQueries: 2 }" />
-                                        </div>
-                                        <button v-if="!cell.forms?.opened.value" type="button" class="cell-preview"
-                                            @click="handleToggle(cell)" title="Expandir">
-                                            <span class="cell-preview-code">{{ getPreview(cell) || '(vazio)' }}</span>
-                                            <font-awesome-icon icon="fa fa-expand" />
-                                        </button>
-                                </div>
-                            </div>
-                            <div v-if="cell?.forms?.save?.value === 1" class="col-12 mt-1">
-                                <strong>Salvar habilitado. Pseudocódigo a ser executado:</strong>
-                                <div class="my-1">
-                                    <code class="text-start"
-                                        style="white-space: pre-wrap">{{ getSaveCommand(cell) }}</code>
-                                </div>
-                                Modo de sobrescrita: {{ cell.forms.mode.value }}
-                            </div>
-                            <div class="row" v-if="cell.status && cell.status != ''">
-                                <div class="col-12 cell-status-bar">
-                                    <!--
-                                        <font-awesome-icon v-if="taskStatuses[cell.id] === 'RUNNING'" icon="fas fa-sync" class="text-primary fa-spin" spin />
-                                        <font-awesome-icon v-if="taskStatuses[cell.id] === 'COMPLETED'" icon="fa-check-circle" class="text-success " />
-                                        <font-awesome-icon v-if="taskStatuses[cell.id] === 'ERROR'" icon="fa-stop" class="text-danger" />
-                                        -->
-                                    <div v-if="cell.status === 'ERROR'" class="alert alert-danger py-1 px-2 mb-0" role="alert">
-                                        <font-awesome-icon icon="fa fa-circle-exclamation" /> {{ cell.message }}
-                                        <span v-if="cell.duration" class="text-muted"> · {{ cell.duration }}</span>
-                                    </div>
-                                    <span v-else>
-                                        {{ cell.message }}
-                                        <font-awesome-icon icon="fa" :icon="getCellIcon(cell)"
-                                            :class="getCellClass(cell)" :spin="cell.status === 'RUNNING'" />
-                                        <span v-if="cell.duration" class="text-muted"> · {{ cell.duration }}</span>
-                                    </span>
-                                </div>
-                                <div v-if="cell.userMessages && cell.userMessages != ''" class="col-12">
-                                    <div class=" ms-4 mt-3 notifications px-4 py-2">
-                                        <div v-for="msg in cell.userMessages" class="mt-2 pt-2 border-top">
-                                            <div v-if="msg.type.toUpperCase() === 'HTML'">
-                                                <span v-html="msg.message" />
-                                            </div>
-                                            <div v-else>
-                                                {{ msg.message }}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        <sql-cell v-for="cell, i in workflowObj.cells" :key="cell.id" ref="cellRefs"
+                            :cell="cell" :index="i" :total="workflowObj.cells.length"
+                            :data-sources="dataSources" :functions="functions"
+                            @move="handleMove" @remove="handleRemoveSql" @add="handleAdd"
+                            @execute="executeWorkflow" @toggle-use-hwc="handleToggleHWC"
+                            @toggle="handleToggle" @dirty="isDirty = true" />
                     </transition-group>
                     <div v-if="workflowObj.cells?.length > 0" class="text-center mt-2">
                         <b-dropdown variant="outline-primary" size="sm" no-caret strategy="fixed" :title="$t('actions.add')">
@@ -408,7 +251,7 @@
 </template>
 
 <script setup>
-import { onBeforeMount, ref, nextTick, onUnmounted, onMounted } from "vue";
+import { onBeforeMount, ref, computed, nextTick, onUnmounted, onMounted } from "vue";
 import { onBeforeRouteLeave } from 'vue-router';
 
 import { useWebSocket } from '@/composables/websocket.js';
@@ -418,10 +261,8 @@ import ModalPreviewDataSource from '@/views/modal/ModalPreviewDataSource.vue';
 import axios from 'axios';
 import VueSelect from 'vue-select';
 import InputHeader from '@/components/InputHeader.vue';
-import SqlEditor from './SqlEditor.vue';
-import PythonEditor from './PythonEditor.vue';
+import SqlCell from './SqlCell.vue';
 import SqlEditorHelp from './SqlEditorHelp.vue';
-import SqlEditorToolbar from './SqlEditorToolbar.vue';
 import SqlSample from './SqlSample.vue';
 import ModalWorkflowVariables from "@/views/modal/ModalWorkflowVariables.vue";
 import SqlEditorUseCodeLibrary from './SqlEditorUseCodeLibrary.vue';
@@ -462,6 +303,13 @@ const jobStatus = ref({ status: '' });
 const loaded = ref(false);
 const loadingData = ref(false);
 const clusterRef = ref(null);
+const clusterInvalid = ref(false);
+// null (not undefined) so the disabled placeholder option is shown when no cluster is set
+const clusterId = computed({
+    get: () => workflowObj.value.preferred_cluster_id ?? null,
+    set: (v) => { workflowObj.value.preferred_cluster_id = v; },
+});
+const selectedCluster = computed(() => clusters.value.find(c => c.id === workflowObj.value.preferred_cluster_id));
 const exceptionDialog = ref(null);
 const expandedArea = ref(false);
 
@@ -531,7 +379,7 @@ onBeforeRouteLeave(() => {
 
 // Elements refs
 const cluster = ref(null);
-const codeEditor = ref();
+const cellRefs = ref([]);
 const previewWindow = ref();
 const workflowDesign = ref();
 
@@ -680,7 +528,8 @@ const executeWorkflow = async (taskId, cached) => {
 
     if (!workflowObj.value.preferred_cluster_id) {
         error('Por favor, selecione um cluster para execução.');
-        clusterRef.value.open = true;
+        clusterInvalid.value = true;
+        clusterRef.value.focus();
         return;
     }
     workflowObj.value.tasks.forEach(t => {
@@ -815,11 +664,9 @@ const handleAdd = (taskId, type, command) => {
     } else {
         workflowObj.value.addPythonTask(taskId, command);
     }
-    if (codeEditor.value) {
-        nextTick(() => {
-            codeEditor.value.slice(-1)[0].focus()
-        });
-    }
+    nextTick(() => {
+        cellRefs.value.filter(c => c.hasEditor).slice(-1)[0]?.focus();
+    });
     isDirty.value = true;
 }
 const handleRemoveSql = (taskId) => {
@@ -992,20 +839,6 @@ const handleCollapseAll = () => {
         task.forms.opened.value = false;
     })
 }
-const toolbar = ref();
-
-const handleIndent = (taskId) => {
-    const currentToolbar = toolbar.value.find(el => el.$el.dataset.task === taskId);
-    const currentEditor = codeEditor.value.find(el => el.$el.dataset.task === taskId);
-    if (currentToolbar && currentEditor) {
-        currentToolbar.showStatus('código formatado');
-        currentEditor.indent();
-    }
-}
-const getPreview = (cell) => {
-    const code = cell.forms.query?.value ?? cell.forms.code?.value ?? cell.forms.script?.value ?? '';
-    return code.split('\n').map(l => l.trim()).find(l => l) || '';
-};
 const handleGlobalKeydown = (e) => {
     if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') {
         e.preventDefault();
@@ -1016,50 +849,6 @@ const handleCodeAppear = (el, done) => {
     el.scrollIntoView({ behavior: "smooth" });
 
 }
-const getCellIcon = (cell) => {
-    switch (cell.status) {
-        case 'RUNNING':
-            return 'fa-sync';
-        case 'COMPLETED':
-            return 'fa-check-circle';
-        case 'ERROR':
-            return 'fa-stop';
-        default:
-            return 'fa-question';
-    }
-};
-const getCellClass = (cell) => {
-    switch (cell.status) {
-        case 'RUNNING':
-            return 'text-primary';
-        case 'COMPLETED':
-            return 'text-success';
-        case 'ERROR':
-            return 'text-danger';
-    }
-};
-const indentString = (str, count, indent = " ") =>
-    str.replace(/^/gm, indent.repeat(count));
-const getSaveCommand = (cell) => {
-    const result = [];
-    const insert = `INSERT ${cell.forms.mode.value === 'overwrite' ? 'OVERWRITE' : 'INTO'} "${cell.forms.new_name.value}"`;
-    const select = `${indentString(cell.forms?.query?.value?.trim(), 4)}`;
-    if (cell.forms.mode.value === 'error' || cell.forms.mode.value === 'ignore') {
-        result.push(`IF EXISTS TABLE "${cell.forms.new_name.value}"`);
-        if (cell.forms.mode.value === 'error') {
-            result.push('    ERROR');
-        } else {
-            result.push('    -- IGNORE');
-        }
-        result.push('ELSE');
-        result.push(`   ${insert}`);
-        result.push(`   ${select}`);
-    } else {
-        result.push(`${insert}`);
-        result.push(`   ${select}`);
-    }
-    return result.join('\n');
-};
 const showUseCodeLibrary = ref(false);
 const modalUseCodeLibrary = ref();
 const handleShowModalCodeLibrary = () => {
@@ -1208,19 +997,25 @@ table.dataframe {
     overflow-y: auto;
 }
 
-.button-toolbar {
-    background-color: #fff;
+.switch-aligned {
+    font-size: .9rem;
+}
+
+.switch-aligned :deep(.form-check) {
     display: flex;
-    justify-content: end;
-    padding-bottom: 5px;
+    align-items: center;
+    gap: .5rem;
+    margin: 0;
+    padding-left: 0;
 }
 
-.side-title {
-    font-weight: 600;
+.switch-aligned :deep(.form-check-input) {
+    float: none;
+    margin: 0;
 }
 
-.editors[data-type="execute-script"] .editor {
-    min-height: 0;
+.switch-aligned :deep(.form-check-label) {
+    margin: 0;
 }
 
 .empty-state {
@@ -1234,75 +1029,6 @@ table.dataframe {
     flex-direction: column;
     align-items: center;
     gap: .25rem;
-}
-
-.cell-header {
-    display: flex;
-    align-items: flex-end;
-    gap: .75rem;
-    margin-bottom: .25rem;
-}
-
-.cell-header-alias {
-    flex: 0 0 25%;
-}
-
-.cell-header-comment {
-    flex: 1 1 auto;
-    min-width: 0;
-}
-
-.cell-header-enabled {
-    flex: none;
-    margin-bottom: .25rem;
-}
-
-.cell-badge {
-    display: inline-flex;
-    flex: none;
-    margin-bottom: .3rem;
-    font-size: .7rem;
-    font-weight: 600;
-    letter-spacing: .05em;
-}
-
-.cell-badge-num {
-    padding: .15rem .5rem;
-    background: #e9ecef;
-    color: #495057;
-    font-variant-numeric: tabular-nums;
-}
-
-.cell-type-badge {
-    padding: .15rem .5rem;
-    text-transform: uppercase;
-    color: #fff;
-    background: var(--cell-color);
-}
-
-.editors[data-type="execute-python"] .cell-type-badge {
-    color: #212529;
-}
-
-.cell-preview {
-    display: flex;
-    align-items: center;
-    gap: .5rem;
-    width: 100%;
-    padding: .4rem .5rem;
-    border: 0;
-    background: #f8f9fa;
-    color: #6c757d;
-    text-align: left;
-}
-
-.cell-preview-code {
-    flex: 1 1 auto;
-    min-width: 0;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    font-family: monospace;
 }
 
 .help-toggle {
@@ -1353,30 +1079,6 @@ table.dataframe {
     font-size: .9em;
 }
 
-.editors {
-    background-color: #fff;
-    padding: 6px 10px;
-    --cell-color: var(--primary-color);
-    border-right: 2px solid var(--cell-color);
-    border-left: 4px solid var(--cell-color);
-    margin-bottom: 1.5rem;
-}
-
-.editors[data-type="execute-python"] { --cell-color: #e0b92e; }
-.editors[data-type="execute-script"] { --cell-color: #d9822b; }
-
-
-.editors.disabled-cell {
-    border-left: 4px solid #8a8f98 !important;
-    opacity: .8;
-}
-
-.editors .editor {
-    background: #f8f9fa;
-    width: 100%;
-    min-height: 200px;
-    overflow-x: hidden;
-}
 
 .bottom-fixed-component {
     position: fixed;
@@ -1401,29 +1103,6 @@ table.dataframe {
 
 .exception-dialog .exception {
     white-space: pre-wrap;
-}
-
-.cell-status-bar {
-    padding: 4px 0 0 40px;
-    line-height: 15px;
-    margin-top: 2px;
-    min-height: 16px;
-    font-size: 9pt;
-}
-
-.notifications {
-    font-size: .9em;
-    background-color: #fafafa;
-    width: 100%;
-    overflow-x: auto;
-}
-
-.editor {
-    display: block;
-    position: relative;
-    width: 100%;
-    max-width: 100%;
-    overflow-x: auto;
 }
 
 @media (max-width: 1100px) {
