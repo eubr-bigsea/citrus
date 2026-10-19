@@ -2,15 +2,11 @@
     <main role="main">
         <div class="workflow-header pb-2 mb-2 border-bottom">
             <div class="workflow-heading">
-                <h1>{{ $t('titles.sqlWorkflow') }}</h1>
-                <div class="workflow-name">
-                    <input v-model="workflowObj.name" type="text" class="form-control form-control-sm"
-                        :placeholder="$t('common.name')" maxlength="100"
-                        @input="isDirty = true"
-                        title="Apelido usado quando referenciar esta fonte de dados no comando SQL"
-                        :aria-label="$t('common.name')">
-                    <span v-if="isDirty" class="unsaved-indicator" role="status">Alterações não salvas</span>
-                </div>
+                <h6 class="header-pretitle">
+                    {{ $t('titles.sqlWorkflow') }} #{{ workflowObj.id }}
+                    <span v-if="isDirty" class="unsaved-indicator ms-2" role="status">Alterações não salvas</span>
+                </h6>
+                <input-header v-model="workflowObj.name" @input="isDirty = true" />
             </div>
             <div class="workflow-actions">
                 <div class="workflow-actions-group" aria-label="Ações do fluxo">
@@ -23,20 +19,21 @@
                 <b-button variant="outline-secondary" size="sm" title="Usar biblioteca"
                     @click="handleShowModalCodeLibrary" class="me-1">
                     <font-awesome-icon icon="fa fa-file-code" />
-                    Bibliotecas de código <span v-if="workflowObj.forms.code_libraries?.value.length >= 0"> ({{
+                    Bibliotecas de código <span v-if="workflowObj.forms.code_libraries?.value?.length > 0"> ({{
                         workflowObj.forms.code_libraries.value.length }})</span>
                 </b-button>
 
                 <b-button variant="outline-dark" size="sm" :title="$t('actions.showVariables')"
                     @click.prevent="$refs.variablesModal.show()" class="me-1">
                     <font-awesome-icon icon="fa fa-dollar-sign" /> Variáveis
-                    <span v-if="workflowObj.variables?.length >= 0"> ({{
+                    <span v-if="workflowObj.variables?.length > 0"> ({{
                         workflowObj.variables?.length }})</span>
                 </b-button>
 
                 </div>
                 <div class="workflow-actions-group" aria-label="Execução">
-                <b-button variant="primary" size="sm" class="pu me-1" @click="saveWorkflow" data-test="save">
+                <b-button :variant="isDirty ? 'primary' : 'outline-primary'" size="sm" class="pu me-1" @click="saveWorkflow" data-test="save"
+                    title="Salvar (Ctrl+S)">
                     <font-awesome-icon icon="fa fa-save" />
                     {{ $t('actions.save') }}
                 </b-button>
@@ -71,9 +68,9 @@
                                     <small><em>{{ description }}</em></small>
                                 </template>
                             </v-select>
-                            <label for="" class="mt-3">{{ $t('titles.dataSource', 2) }}
-                                ({{ workflowObj.dataSources?.length }}):</label> &nbsp;
-                            <button class="btn btn-sm btn-secondary mt-2 float-end" :title="$t('actions.add')"
+                            <label for="" class="mt-3 d-block">{{ $t('titles.dataSource', 2) }}
+                                ({{ workflowObj.dataSources?.length }}):</label>
+                            <button class="btn btn-sm btn-secondary mt-2" :title="$t('actions.add')"
                                 @click.prevent="handleAddDataSource" :disabled="addingDataSource">
                                 <font-awesome-icon icon="fa fa-plus" /> {{ $t('titles.dataSource', 1) }}</button>
                             <div v-if="addingDataSource" class="mt-2">
@@ -99,7 +96,7 @@
                                         @click.prevent="addingDataSource = false"> {{ $t('actions.cancel') }}</button>
                                 </div>
                             </div>
-                            <ul class="list-group data-sources mt-2 scroll-area">
+                            <ul class="list-group list-group-flush data-sources mt-2 scroll-area">
                                 <li v-for="dataSource in workflowObj.dataSources" class="list-group-item p-2 pb-1 pt-1">
                                     <div class="mb-2 truncate" :title="dataSource.forms.data_source.labelValue">
                                         {{ dataSource.forms.data_source.labelValue }}
@@ -125,7 +122,7 @@
                                             INSERT
                                         </button>
 
-                                        <button title="Criar INSERT para fonte de dados"
+                                        <button title="Criar STAGE para fonte de dados"
                                             class="btn btn-sm btn-light ms-1"
                                             @click.prevent="handleAddSqlFromDataSource('stage', dataSource.forms.data_source.value)">
                                             CRIAR STAGE
@@ -138,20 +135,6 @@
 
                         </div>
                     </form>
-                </div>
-                <div class="job-status" v-if="jobStatus.status || jobStatus.message">
-                    <span class="job-status-badge" :class="`status-${(jobStatus.status || 'unknown').toLowerCase()}`" role="status">
-                        <font-awesome-icon :icon="jobStatus.status === 'RUNNING' ? 'fa fa-sync' : jobStatus.status === 'COMPLETED' ? 'fa fa-check-circle' : jobStatus.status === 'ERROR' ? 'fa fa-circle-exclamation' : 'fa fa-circle-info'" :spin="jobStatus.status === 'RUNNING'" />
-                        {{ jobStatus.status || 'Status' }}
-                    </span>
-                    <span class="job-status-message">{{ jobStatus.message }}</span>
-                    <button v-if="jobStatus.exception_stack" type="button" class="btn btn-link btn-sm p-0"
-                        @click="exceptionDialog.showModal()">Ver detalhes do erro</button>
-                    <dialog ref="exceptionDialog" class="exception-dialog">
-                        <h5>Detalhes do erro</h5>
-                        <pre class="exception">{{ jobStatus.exception_stack }}</pre>
-                        <button class="btn btn-sm btn-secondary" @click="exceptionDialog.close()">Fechar</button>
-                    </dialog>
                 </div>
             </div>
             <div class="layout-center pt-2">
@@ -172,6 +155,21 @@
                     <div><button type="button" @click="handleCollapseAll" class="btn btn-outline-secondary btn-sm" aria-label="Recolher todas as células">Recolher células <font-awesome-icon icon="fa fa-compress"/></button></div>
                 </div>
 
+        <div class="job-status" v-if="jobStatus.status || jobStatus.message">
+            <span class="job-status-badge" :class="`status-${(jobStatus.status || 'unknown').toLowerCase()}`" role="status">
+                <font-awesome-icon :icon="jobStatus.status === 'RUNNING' ? 'fa fa-sync' : jobStatus.status === 'COMPLETED' ? 'fa fa-check-circle' : jobStatus.status === 'ERROR' ? 'fa fa-circle-exclamation' : 'fa fa-circle-info'" :spin="jobStatus.status === 'RUNNING'" />
+                {{ jobStatus.status || 'Status' }}
+            </span>
+            <span class="job-status-message">{{ jobStatus.message }}</span>
+            <button v-if="jobStatus.exception_stack" type="button" class="btn btn-link btn-sm p-0"
+                @click="exceptionDialog.showModal()">Ver detalhes do erro</button>
+            <dialog ref="exceptionDialog" class="exception-dialog">
+                <h5>Detalhes do erro</h5>
+                <pre class="exception">{{ jobStatus.exception_stack }}</pre>
+                <button class="btn btn-sm btn-secondary" @click="exceptionDialog.close()">Fechar</button>
+            </dialog>
+        </div>
+
                 <div v-if="workflowObj.cells?.length === 0">
                     <button type="button" @click="handleAdd(null, 'sql', '\n')" class="btn btn-secondary btn-sm">
                         <font-awesome-icon icon="fa fa-plus" /> {{ $t('actions.add') }} SQL</button>
@@ -186,8 +184,9 @@
                 </div>
                 <div class="scroll-area commands pb-5 mb-4">
                     <transition-group name="fade" @after-enter="handleCodeAppear">
-                        <div v-for="cell, i in workflowObj.cells" class="border mb-2 editors" :key="cell.id"
-                            :class="{ 'disabled-cell': !cell.enabled }" >
+                        <div v-for="cell, i in workflowObj.cells" class="editors" :key="cell.id" :data-type="cell.operation.slug"
+                            :class="{ 'disabled-cell': !cell.enabled }" :data-cell-container="cell.id"
+                            @keydown.capture="handleCellKeydown($event, cell, i)">
                             <div class="row" v-if="cell.operation.slug === 'execute-sql'" :data-cell="cell.id">
                                 <div class="col-12">
                                     <div class="button-toolbar">
@@ -266,9 +265,9 @@
                                     </div>
                                 </div>
                                 <div class="col-8">
-                                    <span class="form-text">{{ $t('titles.comment') }}:</span> <input
+                                    <label class="form-text" :for="`cell-comment-${cell.id}`">{{ $t('titles.comment') }}:</label> <input
                                         class="form-control form-control-sm mb-1" maxlength="100"
-                                        v-model="cell.forms.comment.value" @input="isDirty = true" />
+                                        :id="`cell-comment-${cell.id}`" v-model="cell.forms.comment.value" @input="isDirty = true" />
                                 </div>
                                 <div class="col-2 mt-4">
                                     <b-form-checkbox v-model="cell.enabled" :value="true" :unchecked-value="false" @change="isDirty = true">
@@ -276,14 +275,14 @@
                                     </b-form-checkbox>
                                 </div>
                                 <div class="col-2">
-                                    <span class="form-text">Tipo:</span>
+                                    <label class="form-text" :for="`cell-type-${cell.id}`">Tipo:</label>
                                     <input type="text" readonly :value="cell.operation.slug.substring(8)"
-                                        class="form-control form-control-sm w-24" />
+                                        :id="`cell-type-${cell.id}`" class="form-control form-control-sm w-24" />
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-12">
-                                    <div class="editor border p-2" style="overflow:hidden" :style="{display: cell.forms?.opened?.value ? '': 'none'}">
+                                    <div class="editor p-2" style="overflow:hidden" :style="{display: cell.forms?.opened?.value ? '': 'none'}">
                                         <template v-if="cell.operation.slug === 'execute-sql'">
                                             <sql-editor :query="cell.forms.query.value"
                                                 @update="(v) => { if (v !== cell.forms.query.value) { cell.forms.query.value = v; isDirty = true } }" ref="codeEditor"
@@ -322,14 +321,19 @@
                                         <font-awesome-icon v-if="taskStatuses[cell.id] === 'COMPLETED'" icon="fa-check-circle" class="text-success " />
                                         <font-awesome-icon v-if="taskStatuses[cell.id] === 'ERROR'" icon="fa-stop" class="text-danger" />
                                         -->
-                                    <span>
+                                    <div v-if="cell.status === 'ERROR'" class="alert alert-danger py-1 px-2 mb-0" role="alert">
+                                        <font-awesome-icon icon="fa fa-circle-exclamation" /> {{ cell.message }}
+                                        <span v-if="cell.duration" class="text-muted"> · {{ cell.duration }}</span>
+                                    </div>
+                                    <span v-else>
                                         {{ cell.message }}
                                         <font-awesome-icon icon="fa" :icon="getCellIcon(cell)"
-                                            :class="getCellClass(cell)" />
+                                            :class="getCellClass(cell)" :spin="cell.status === 'RUNNING'" />
+                                        <span v-if="cell.duration" class="text-muted"> · {{ cell.duration }}</span>
                                     </span>
                                 </div>
                                 <div v-if="cell.userMessages && cell.userMessages != ''" class="col-12">
-                                    <div class=" ms-4 mt-3 border-top notifications px-4 py-2">
+                                    <div class=" ms-4 mt-3 notifications px-4 py-2">
                                         <div v-for="msg in cell.userMessages" class="mt-2 pt-2 border-top">
                                             <div v-if="msg.type.toUpperCase() === 'HTML'">
                                                 <span v-html="msg.message" />
@@ -384,6 +388,7 @@ import { useI18n } from 'vue-i18n';
 import ModalPreviewDataSource from '@/views/modal/ModalPreviewDataSource.vue';
 import axios from 'axios';
 import VueSelect from 'vue-select';
+import InputHeader from '@/components/InputHeader.vue';
 import SqlEditor from './SqlEditor.vue';
 import PythonEditor from './PythonEditor.vue';
 import SqlEditorHelp from './SqlEditorHelp.vue';
@@ -520,8 +525,19 @@ const configureWebSocket = async () => {
             } else {
                 const cell = workflowObj.value.cellMap.get(msg.id);
                 if (cell) {
+                    if (msg.status === 'RUNNING' && cell.status !== 'RUNNING') {
+                        cell.startedAt = Date.now();
+                        cell.duration = null;
+                    } else if (cell.startedAt && ['COMPLETED', 'ERROR'].includes(msg.status)) {
+                        cell.duration = `${((Date.now() - cell.startedAt) / 1000).toFixed(1)} s`;
+                        cell.startedAt = null;
+                    }
                     cell.status = msg.status;
                     cell.message = msg.message;
+                    if (msg.status === 'ERROR' && !workflowObj.value.cells.some(c => c.status === 'ERROR' && c !== cell)) {
+                        nextTick(() => document.querySelector(`[data-cell-container="${cell.id}"]`)
+                            ?.scrollIntoView({ behavior: 'smooth', block: 'center' }));
+                    }
                 }
             }
         },
@@ -553,10 +569,12 @@ onBeforeMount(async () => {
     await load();
 });
 onUnmounted(() => {
+    window.removeEventListener('keydown', handleGlobalKeydown);
     window.onbeforeunload = null;
     disconnectWebSocket();
 });
 onMounted(() => {
+    window.addEventListener('keydown', handleGlobalKeydown);
     job.value = { id: 800_000 + parseInt(internalWorkflowId.value) };
     configureWebSocket();
 });
@@ -640,7 +658,7 @@ const executeWorkflow = async (taskId, cached) => {
         t.userMessages = [];
     });
     if (isDirty.value) {
-        saveWorkflow();
+        await saveWorkflow();
     }
     loadingData.value = true;
 
@@ -655,9 +673,11 @@ const executeWorkflow = async (taskId, cached) => {
         delete task.step;
         delete task.status;
         delete task.userMessages;
+        delete task.startedAt;
+        delete task.duration;
     });
     delete cloned._tasksLookup;
-    cloned.cells = cloned.cells.sort(c => c.display_order);
+    cloned.cells = cloned.cells.sort((a, b) => a.display_order - b.display_order);
     cloned.tasks = [...cloned.dataSources, ...cloned.cells];
 
     const partial = !!taskId;
@@ -710,7 +730,7 @@ const stop = async () => {
         const resp = await axios.post(`${standUrl}/jobs/${job.value.id}/stop?executor=true`)
         loadingData.value = false;
         jobStatus.value = { status: 'Cancelado' };
-        success(i18n.$t('messages.successStop', { what: i18n.$t('titles.job') }));
+        success(t('messages.successStop', { what: t('titles.job') }));
     } catch (e) {
         error(e, null, null, 10000, false);
     }
@@ -727,6 +747,8 @@ const saveWorkflow = async () => {
         delete task.version;
         delete task.step;
         delete task.status;
+        delete task.startedAt;
+        delete task.duration;
     });
     delete cloned._tasksLookup;
     cloned.tasks = [...cloned.dataSources, ...cloned.cells];
@@ -882,6 +904,7 @@ const handleChangeAlias = () => {
 }
 const handleToggleHWC = (task, value) => {
     task.forms.useHWC.value = value
+    isDirty.value = true;
 }
 const handleToggle = (task) => {
     task.forms.opened.value = !task.forms?.opened?.value
@@ -923,6 +946,24 @@ const handleIndent = (taskId) => {
         currentEditor.indent();
     }
 }
+const handleCellKeydown = (e, cell, i) => {
+    if (!(e.ctrlKey || e.metaKey || e.shiftKey) || e.key !== 'Enter') return;
+    e.preventDefault();
+    e.stopPropagation(); // CodeMirror would insert a blank line
+    executeWorkflow(cell.id, true);
+    if (e.shiftKey) {
+        const next = workflowObj.value.cells[i + 1];
+        if (next) {
+            nextTick(() => document.querySelector(`[data-cell-container="${next.id}"] .cm-content`)?.focus());
+        }
+    }
+};
+const handleGlobalKeydown = (e) => {
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') {
+        e.preventDefault();
+        saveWorkflow();
+    }
+};
 const handleCodeAppear = (el, done) => {
     el.scrollIntoView({ behavior: "smooth" });
 
@@ -1013,7 +1054,6 @@ table.dataframe {
 .workflow-heading,
 .workflow-actions,
 .workflow-actions-group,
-.workflow-name,
 .job-status {
     display: flex;
     align-items: center;
@@ -1026,22 +1066,8 @@ table.dataframe {
 
 .workflow-heading {
     min-width: 220px;
-    gap: .75rem;
-}
-
-.workflow-heading h1 {
-    margin: 0;
-    white-space: nowrap;
-}
-
-.workflow-name {
-    gap: .5rem;
-    flex-wrap: wrap;
-}
-
-.workflow-name input {
-    min-width: 180px;
-    max-width: 300px;
+    flex-direction: column;
+    align-items: flex-start;
 }
 
 .unsaved-indicator {
@@ -1065,11 +1091,9 @@ table.dataframe {
     align-items: flex-start;
     flex-direction: column;
     gap: .35rem;
-    margin-top: 1rem;
+    margin-bottom: .5rem;
     padding: .65rem;
-    border: 1px solid #dfdfdf;
-    border-radius: 4px;
-    background: #fff;
+    background: #f1f3f5;
 }
 
 .job-status-badge {
@@ -1106,17 +1130,13 @@ table.dataframe {
 .layout-help {
     flex: 0 1 300px;
     min-width: 240px;
-    background-color: #fcfcfc;
+    background-color: #f8f9fa;
     padding: 15px;
-    border: 1px solid #dfdfdf;
-    border-radius: 2px;
     margin-top: 10px;
 }
 
 .layout-center {
     margin-top: 10px;
-    border: 1px solid #dfdfdf;
-    border-radius: 2px;
     display: block;
     flex-grow: 1;
     flex-shrink: 1;
@@ -1156,7 +1176,14 @@ table.dataframe {
 .editors {
     background-color: #fff;
     padding: 6px 10px;
+    border-right: 2px solid #dee2e6;
+    border-left: 4px solid var(--primary-color);
+    margin-bottom: 1.5rem;
 }
+
+.editors[data-type="execute-python"] { border-left-color: var(--secondary-color); }
+.editors[data-type="execute-script"] { border-left-color: #e0b92e; }
+
 
 .editors.disabled-cell {
     border-left: 4px solid #8a8f98 !important;
@@ -1164,7 +1191,7 @@ table.dataframe {
 }
 
 .editors .editor {
-    background: white;
+    background: #f8f9fa;
     width: 100%;
     min-height: 200px;
     overflow-x: hidden;
