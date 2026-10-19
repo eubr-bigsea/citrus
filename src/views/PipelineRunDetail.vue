@@ -50,42 +50,32 @@
                         </button>
                     </div>
                     <div v-if="showVariables" class="context-data">
-                        <table class="table table-sm table-smallest mb-0">
-                            <thead>
-                                <tr>
-                                    <th>{{$t('pipeline.schedule.contextName')}}</th>
-                                    <th>{{$t('pipeline.schedule.contextValue')}}</th>
-                                    <th class="text-end">{{$t('common.action', 2)}}</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr v-for="vr in pipelineRun.context_data || []" :key="vr.name">
-                                    <td class="variable-name">{{vr.name}}</td>
-                                    <td class="variable-value">{{vr.value}}</td>
-                                    <td class="text-end variable-actions">
-                                        <button class="btn btn-sm btn-light" :title="$t('actions.edit')"
-                                            @click="openVariableEditor(vr)">
-                                            <font-awesome-icon icon="pen" />
-                                        </button>
-                                        <button class="btn btn-sm btn-light text-danger" :title="$t('actions.delete')"
-                                            @click="removeVariable(vr)">
-                                            <font-awesome-icon icon="trash" />
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr v-if="!pipelineRun.context_data?.length">
-                                    <td colspan="3" class="text-muted text-center">
-                                        {{$t('pipeline.schedule.noContextData')}}
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+                        <div v-for="vr in pipelineRun.context_data || []" :key="vr.name" class="variable-card">
+                            <div class="variable-card-header">
+                                <span class="variable-name">{{vr.name}}</span>
+                                <span class="variable-actions">
+                                    <button class="btn btn-sm btn-light" :title="$t('actions.edit')"
+                                        @click="openVariableEditor(vr)">
+                                        <font-awesome-icon icon="pen" />
+                                    </button>
+                                    <button class="btn btn-sm btn-light text-danger" :title="$t('actions.delete')"
+                                        @click="removeVariable(vr)">
+                                        <font-awesome-icon icon="trash" />
+                                    </button>
+                                </span>
+                            </div>
+                            <div class="variable-value" :class="{ expanded: expandedVariables.has(vr.name) }"
+                                @click="toggleVariable(vr.name)">{{vr.value}}</div>
+                        </div>
+                        <div v-if="!pipelineRun.context_data?.length" class="text-muted text-center">
+                            {{$t('pipeline.schedule.noContextData')}}
+                        </div>
                     </div>
                 </div>
                 <div class="border p-2 mt-2">
                     <h6>{{$t('titles.notification', 2)}}</h6>
                     <pipeline-run-notifications ref="notificationsRef"
-                        :height="showVariables ? '45.5vh' : '63.3vh'" />
+                        :height="showVariables ? '37.5vh' : '63.3vh'" />
                 </div>
             </div>
             <div class="col-5">
@@ -340,6 +330,11 @@ const variableName = ref('');
 const variableValue = ref('');
 const variableSaving = ref(false);
 const visibleLogJobs = ref(new Set());
+const expandedVariables = ref(new Set());
+const toggleVariable = (name) => {
+    const expanded = expandedVariables.value;
+    expanded.has(name) ? expanded.delete(name) : expanded.add(name);
+};
 
 const hasJobLogs = (job) => Boolean(
     job.exception_stack || job.steps?.some(step => step.logs?.length)
@@ -493,7 +488,8 @@ const showVariables = ref(true)
 }
 
 .context-data {
-    height: 16vh;
+    height: 24vh;
+    font-size: 0.8rem;
     overflow-y: auto
 }
 
@@ -505,14 +501,43 @@ const showVariables = ref(true)
     margin-bottom: 0.5rem;
 }
 
-.variable-name,
-.variable-value {
-    max-width: 10rem;
+.variable-card {
+    padding: 0.35rem 0;
+    border-bottom: 1px solid var(--bs-border-color);
+}
+
+.variable-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+}
+
+.variable-name {
+    min-width: 0;
+    font-weight: 600;
     overflow-wrap: anywhere;
 }
 
 .variable-actions {
+    flex-shrink: 0;
     white-space: nowrap;
+}
+
+.variable-value {
+    font-family: monospace;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    cursor: pointer;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    overflow: hidden;
+
+    &.expanded {
+        display: block;
+    }
 }
 
 .variable-dialog {
