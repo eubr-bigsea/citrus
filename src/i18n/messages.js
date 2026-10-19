@@ -551,6 +551,10 @@ export default {
             confirmRemoveIt: 'Tem certeza que você quer excluir {what}?',
             exportWorkflow: 'Fluxo de trabalho exportado usando a versão atual.',
             successDeletion: '{what} foi removido(a) com sucesso',
+            doYouWantToDeleteM: 'Tem certeza que você quer excluir este {what}?',
+            doYouWantToDeleteF: 'Tem certeza que você quer excluir esta {what}?',
+            successDeletionM: 'O {what} foi removido com sucesso',
+            successDeletionF: 'A {what} foi removida com sucesso',
             successStop: 'Execução parada com sucesso',
             successImport: 'Fluxo de trabalho foi importado com o id={what}.',
             resetPasswordInstructions: 'Um e-mail foi enviado para seu endereço. Siga as instruções para redefinir sua senha.' +
@@ -1520,6 +1524,10 @@ export default {
             confirmRemove: 'Are you sure you want to remove this record?',
             confirmRemoveIt: 'Are you sure you want to remove {what}?',
             successDeletion: '{what} was successfuly removed',
+            doYouWantToDeleteM: 'Are you sure you want to delete this {what}?',
+            doYouWantToDeleteF: 'Are you sure you want to delete this {what}?',
+            successDeletionM: 'The {what} was successfully removed',
+            successDeletionF: 'The {what} was successfully removed',
             successStop: 'Execution successfully stopped',
             successImport: 'Workflow was imported as id={what}.',
             registeredWithSuccess:

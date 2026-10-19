@@ -143,18 +143,23 @@
                 <div class="d-flex justify-content-end align-items-center py-1">
                     <h4 class="m-0 me-auto">Comandos <span class="command-count">{{ workflowObj.cells?.length }}</span></h4>
                     <div>
-                        <button type="button" @click="toggleExpand" class="btn btn-sm" :class="{'btn-info': expandedArea, 'btn-light': !expandedArea}">
-                            <span v-if="expandedArea">
-                                Restaurar área central <font-awesome-icon icon="fa fa-minimize"/>
-                            </span>
-                            <span v-else>
-                                Maximizar área central <font-awesome-icon icon="fa fa-maximize"/>
-                            </span>
+                        <button type="button" @click="toggleExpand" class="btn btn-sm"
+                            :class="{'btn-info': expandedArea, 'btn-outline-secondary': !expandedArea}"
+                            :title="expandedArea ? 'Mostrar os painéis laterais' : 'Esconder os painéis laterais'">
+                            <font-awesome-icon :icon="expandedArea ? 'fa fa-minimize' : 'fa fa-maximize'"/> Modo foco
                         </button>
                     </div>
 
-                    <div><button type="button" @click="toggleExpandAll" class="btn btn-outline-secondary btn-sm mx-2" aria-label="Expandir todas as células">Expandir células <font-awesome-icon icon="fa fa-expand"/></button></div>
-                    <div><button type="button" @click="handleCollapseAll" class="btn btn-outline-secondary btn-sm" aria-label="Recolher todas as células">Recolher células <font-awesome-icon icon="fa fa-compress"/></button></div>
+                    <div class="btn-group btn-group-sm ms-2" role="group" aria-label="Células">
+                        <button type="button" @click="toggleExpandAll" class="btn btn-outline-secondary"
+                            title="Expandir todas as células" aria-label="Expandir todas as células">
+                            <font-awesome-icon icon="fa fa-expand"/> Expandir tudo
+                        </button>
+                        <button type="button" @click="handleCollapseAll" class="btn btn-outline-secondary"
+                            title="Recolher todas as células" aria-label="Recolher todas as células">
+                            <font-awesome-icon icon="fa fa-compress"/> Recolher tudo
+                        </button>
+                    </div>
                 </div>
 
         <div class="job-status" v-if="jobStatus.status || jobStatus.message">
@@ -172,17 +177,32 @@
             </dialog>
         </div>
 
-                <div v-if="workflowObj.cells?.length === 0">
-                    <button type="button" @click="handleAdd(null, 'sql', '\n')" class="btn btn-secondary btn-sm">
-                        <font-awesome-icon icon="fa fa-plus" /> {{ $t('actions.add') }} SQL</button>
-                    <button type="button" @click="handleAdd(null, 'python', '\n')" class="btn btn-secondary btn-sm ms-3">
-                        <font-awesome-icon icon="fa fa-plus" /> {{ $t('actions.add') }} Python</button>
-                    <button type="button" @click="handleAdd(null, 'script', '\n')" class="btn btn-secondary btn-sm ms-3">
-                        <font-awesome-icon icon="fa fa-plus" /> {{ $t('actions.add') }} Script Externo</button>
-                    <blockquote class="blockquote">
-                        <p class="mb-0">Nenhum comando ainda.</p>
-                        Escolha uma das opções acima para iniciar.
-                    </blockquote>
+                <div v-if="workflowObj.cells?.length === 0" class="empty-state">
+                    <h5 class="mb-1">Nenhum comando ainda</h5>
+                    <p class="text-muted">Adicione o primeiro comando para começar.</p>
+                    <div class="d-flex justify-content-center flex-wrap gap-3">
+                        <div class="empty-option">
+                            <button type="button" @click="handleAdd(null, 'sql', '\n')" class="btn btn-outline-secondary btn-sm">
+                                <font-awesome-icon icon="fa fa-plus" /> SQL</button>
+                            <small class="text-muted">Consulta Spark SQL</small>
+                        </div>
+                        <div class="empty-option">
+                            <button type="button" @click="handleAdd(null, 'python', '\n')" class="btn btn-outline-secondary btn-sm">
+                                <font-awesome-icon icon="fa fa-plus" /> Python</button>
+                            <small class="text-muted">Código PySpark</small>
+                        </div>
+                        <div class="empty-option">
+                            <button type="button" @click="handleAdd(null, 'script', '\n')" class="btn btn-outline-secondary btn-sm">
+                                <font-awesome-icon icon="fa fa-plus" /> Script externo</button>
+                            <small class="text-muted">Arquivo no servidor</small>
+                        </div>
+                    </div>
+                    <p class="text-muted mt-3 mb-0">
+                        <template v-if="workflowObj.dataSources?.length > 0">
+                            Dica: use SELECT, INSERT ou STAGE nas fontes de dados ao lado para gerar o primeiro comando.
+                        </template>
+                        <template v-else>Dica: comece adicionando uma fonte de dados no painel lateral.</template>
+                    </p>
                 </div>
                 <div class="scroll-area commands pb-5 mb-4">
                     <transition-group name="fade" @after-enter="handleCodeAppear">
@@ -203,7 +223,10 @@
                                 </div>
                                 <div class="col-12">
                                     <div class="cell-header">
-                                    <span class="cell-type-badge">{{ cell.operation.slug.substring(8) }}</span>
+                                    <span class="cell-badge" :title="`Célula ${i + 1} de ${workflowObj.cells.length}`">
+                                        <span class="cell-badge-num">{{ i + 1 }}/{{ workflowObj.cells.length }}</span>
+                                        <span class="cell-type-badge">{{ cell.operation.slug.substring(8) }}</span>
+                                    </span>
                                     <div class="cell-header-alias"
                                         title="Apelido usado quando referenciar esta fonte de dados no comando SQL">
                                         <label class="form-text" :for="`cell-alias-${cell.id}`">{{ $t('common.aliasSql') }} (use no SQL):</label>
@@ -235,7 +258,10 @@
                                 </div>
                                 <div class="col-12">
                                     <div class="cell-header">
-                                    <span class="cell-type-badge">{{ cell.operation.slug.substring(8) }}</span>
+                                    <span class="cell-badge" :title="`Célula ${i + 1} de ${workflowObj.cells.length}`">
+                                        <span class="cell-badge-num">{{ i + 1 }}/{{ workflowObj.cells.length }}</span>
+                                        <span class="cell-type-badge">{{ cell.operation.slug.substring(8) }}</span>
+                                    </span>
                                     <div class="cell-header-comment">
                                         <label class="form-text" :for="`cell-comment-${cell.id}`">{{ $t('titles.comment') }}:</label>
                                         <input class="form-control form-control-sm" maxlength="100"
@@ -262,7 +288,10 @@
                                 </div>
                                 <div class="col-12">
                                     <div class="cell-header">
-                                    <span class="cell-type-badge">{{ cell.operation.slug.substring(8) }}</span>
+                                    <span class="cell-badge" :title="`Célula ${i + 1} de ${workflowObj.cells.length}`">
+                                        <span class="cell-badge-num">{{ i + 1 }}/{{ workflowObj.cells.length }}</span>
+                                        <span class="cell-type-badge">{{ cell.operation.slug.substring(8) }}</span>
+                                    </span>
                                     <div class="cell-header-comment">
                                         <label class="form-text" :for="`cell-comment-${cell.id}`">{{ $t('titles.comment') }}:</label>
                                         <input class="form-control form-control-sm" maxlength="100"
@@ -353,10 +382,16 @@
                     </div>
                 </div>
             </div>
-            <div class="layout-help">
-                <h4>{{ $t('common.help') }}</h4>
-                <sql-editor-help :data-sources="dataSources" :functions="sparkFunctions"
-                    :custom-functions="customFunctions" />
+            <div class="layout-help" :class="{ collapsed: helpCollapsed }">
+                <button type="button" class="help-toggle" :aria-expanded="!helpCollapsed" aria-controls="help-content"
+                    :title="helpCollapsed ? 'Mostrar ajuda' : 'Recolher ajuda'" @click="toggleHelp">
+                    <font-awesome-icon :icon="helpCollapsed ? 'fa fa-chevron-left' : 'fa fa-chevron-right'" />
+                    <h4 class="m-0">{{ $t('common.help') }}</h4>
+                </button>
+                <div id="help-content" v-show="!helpCollapsed">
+                    <sql-editor-help :data-sources="dataSources" :functions="sparkFunctions"
+                        :custom-functions="customFunctions" />
+                </div>
             </div>
             <div v-show="loadingData" class="preview-loading">
                 <font-awesome-icon icon="lemon" spin class="text-success" />
@@ -404,7 +439,8 @@ const route = vm.proxy.$route;
 
 const {t} = useI18n()
 
-const { success, error } = useNotifier(vm.proxy);
+const { success, error, confirmDelete, successDeleted } = useNotifier(vm.proxy);
+const CELL = { name: 'célula', gender: 'f' };
 
 const operationsMap = ref(new Map());
 /**/
@@ -787,14 +823,23 @@ const handleAdd = (taskId, type, command) => {
     isDirty.value = true;
 }
 const handleRemoveSql = (taskId) => {
-    if (confirm(t('messages.doYouWantToDelete'))) {
+    confirmDelete(CELL, () => {
         workflowObj.value.removeTask(taskId);
         isDirty.value = true;
-    }
+        successDeleted(CELL);
+    });
 }
-const handleMove = (taskId, direction) => {
+const handleMove = async (taskId, direction) => {
+    const cellTop = () => document.querySelector(`[data-cell-container="${taskId}"]`)?.getBoundingClientRect().top;
+    const before = cellTop();
     workflowObj.value.moveTask(taskId, direction);
     isDirty.value = true;
+    await nextTick();
+    const after = cellTop();
+    // keep the moved cell (and the button under the mouse) at the same screen position
+    if (before !== undefined && after !== undefined) {
+        document.querySelector('.commands').scrollTop += after - before;
+    }
 }
 
 /* Data source related */
@@ -903,6 +948,23 @@ const handleToggleHWC = (task, value) => {
 const handleToggle = (task) => {
     task.forms.opened.value = !task.forms?.opened?.value
 }
+const HELP_KEY = 'sqlWorkflow.helpCollapsed';
+const readHelpCollapsed = () => {
+    try {
+        return localStorage.getItem(HELP_KEY) !== '0'; // collapsed unless the user expanded it
+    } catch (e) {
+        return true;
+    }
+};
+const helpCollapsed = ref(readHelpCollapsed());
+const toggleHelp = () => {
+    helpCollapsed.value = !helpCollapsed.value;
+    try {
+        localStorage.setItem(HELP_KEY, helpCollapsed.value ? '1' : '0');
+    } catch (e) {
+        // storage unavailable: preference lasts only for this session
+    }
+};
 const toggleExpand = () => {
     const leftChild = workflowDesign.value.children[0];
     const midChild = workflowDesign.value.children[1];
@@ -1157,6 +1219,23 @@ table.dataframe {
     font-weight: 600;
 }
 
+.editors[data-type="execute-script"] .editor {
+    min-height: 0;
+}
+
+.empty-state {
+    padding: 2rem 1rem;
+    border: 1px dashed #ced4da;
+    text-align: center;
+}
+
+.empty-option {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: .25rem;
+}
+
 .cell-header {
     display: flex;
     align-items: flex-end;
@@ -1178,13 +1257,24 @@ table.dataframe {
     margin-bottom: .25rem;
 }
 
-.cell-type-badge {
+.cell-badge {
+    display: inline-flex;
     flex: none;
     margin-bottom: .3rem;
-    padding: .15rem .5rem;
     font-size: .7rem;
     font-weight: 600;
     letter-spacing: .05em;
+}
+
+.cell-badge-num {
+    padding: .15rem .5rem;
+    background: #e9ecef;
+    color: #495057;
+    font-variant-numeric: tabular-nums;
+}
+
+.cell-type-badge {
+    padding: .15rem .5rem;
     text-transform: uppercase;
     color: #fff;
     background: var(--cell-color);
@@ -1213,6 +1303,32 @@ table.dataframe {
     white-space: nowrap;
     text-overflow: ellipsis;
     font-family: monospace;
+}
+
+.help-toggle {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    width: 100%;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    text-align: left;
+}
+
+.layout-help.collapsed {
+    flex: 0 0 40px;
+    min-width: 40px;
+    padding: 15px 5px;
+}
+
+.layout-help.collapsed .help-toggle {
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+.layout-help.collapsed .help-toggle h4 {
+    writing-mode: vertical-rl;
 }
 
 .ds-actions .btn {
@@ -1337,6 +1453,20 @@ table.dataframe {
 
     .commands {
         max-height: 70vh;
+    }
+
+    .layout-help.collapsed {
+        flex: 1 1 100%;
+        min-width: 0;
+        padding: 5px 15px;
+    }
+
+    .layout-help.collapsed .help-toggle {
+        flex-direction: row;
+    }
+
+    .layout-help.collapsed .help-toggle h4 {
+        writing-mode: horizontal-tb;
     }
 }
 

@@ -101,5 +101,14 @@ export default (vm) => {
                 'fa-circle-xmark');
         }
     };
-    return { confirm, error, warning, info, html, success };
+    // what: { name, gender }, gender 'f' or 'm' (needed for article/participle agreement in pt)
+    const genderKey = (what) => (what.gender === 'f' ? 'F' : 'M');
+    const confirmDelete = (what, callback) => {
+        confirm(t('actions.delete'),
+            t(`messages.doYouWantToDelete${genderKey(what)}`, { what: what.name }), callback);
+    };
+    const successDeleted = (what) => {
+        success(t(`messages.successDeletion${genderKey(what)}`, { what: what.name }));
+    };
+    return { confirm, confirmDelete, successDeleted, error, warning, info, html, success };
 };
