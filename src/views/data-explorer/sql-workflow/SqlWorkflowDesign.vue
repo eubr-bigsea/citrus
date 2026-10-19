@@ -1071,8 +1071,10 @@ table.dataframe {
 }
 
 .unsaved-indicator {
-    color: #805b00;
-    font-size: .85rem;
+    color: #b45309;
+    font: inherit;
+    letter-spacing: inherit;
+    text-transform: inherit;
     white-space: nowrap;
 }
 
