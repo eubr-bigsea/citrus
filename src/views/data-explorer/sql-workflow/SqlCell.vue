@@ -53,7 +53,7 @@
                     <template v-else-if="cell.operation.slug === 'execute-script'">
                         <label>Caminho completo para o arquivo (visível no servidor)</label>
                         <input class="form-control form-control-sm" type="text"
-                            v-model="cell.forms.script.value" maxlength="400" />
+                            v-model="cell.forms.script.value" maxlength="400" @input="emit('dirty')" />
                     </template>
                     <python-editor v-else-if="cell.operation.slug === 'execute-python'" :query="cell.forms.code.value"
                         @update="(v) => { if (v !== cell.forms.code.value) { cell.forms.code.value = v; emit('dirty') } }" ref="editorRef"
@@ -106,7 +106,7 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 import SqlEditor from './SqlEditor.vue';
 import PythonEditor from './PythonEditor.vue';
 import SqlEditorToolbar from './SqlEditorToolbar.vue';
@@ -119,6 +119,13 @@ const props = defineProps({
     functions: { type: Array, default: () => [] },
 });
 const emit = defineEmits(['move', 'remove', 'add', 'execute', 'toggle-use-hwc', 'toggle', 'dirty']);
+
+// the save-as modal edits these fields directly on the cell
+watch(() => {
+    const f = props.cell.forms;
+    return [f.save?.value, f.new_name?.value, f.storage?.value, f.path?.value,
+        f.description?.value, f.tags?.value, f.mode?.value];
+}, () => emit('dirty'), { deep: true });
 
 const toolbarRef = ref();
 const editorRef = ref();

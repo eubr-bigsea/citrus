@@ -58,14 +58,14 @@
                             <label class="mt-3" for="cluster-select">{{ $t('titles.cluster') }}: </label>
                             <select id="cluster-select" ref="clusterRef" v-model="clusterId"
                                 class="form-select form-select-sm" :class="{ 'is-invalid': clusterInvalid }"
-                                @change="clusterInvalid = false">
+                                @change="clusterInvalid = false; isDirty = true">
                                 <option :value="null" disabled>Selecione um cluster</option>
                                 <option v-for="c in clusters" :key="c.id" :value="c.id" :title="c.description">{{ c.name }}</option>
                             </select>
                             <small v-if="selectedCluster?.description" class="text-muted d-block mt-1">{{ selectedCluster.description }}</small>
                             <div v-if="workflowObj" class="switch-aligned mt-3" title="Usar o Hive Warehouse Connector (HWC)">
                                 <b-form-checkbox v-model="workflowObj.forms.$meta.value.use_hwc"
-                                    value="true" unchecked-value="false" switch>
+                                    value="true" unchecked-value="false" switch @change="isDirty = true">
                                     Usar o Hive Warehouse Connector
                                 </b-form-checkbox>
                             </div>
@@ -251,7 +251,7 @@
 </template>
 
 <script setup>
-import { onBeforeMount, ref, computed, nextTick, onUnmounted, onMounted } from "vue";
+import { onBeforeMount, ref, computed, watch, nextTick, onUnmounted, onMounted } from "vue";
 import { onBeforeRouteLeave } from 'vue-router';
 
 import { useWebSocket } from '@/composables/websocket.js';
@@ -315,6 +315,10 @@ const expandedArea = ref(false);
 
 const targetPlatform = ref(4);
 const workflowObj = ref({ variables: [], forms: { $meta: { value: { target: '', taskType: '' } } } });
+
+// the code library modal edits forms.code_libraries directly; skip the first value (load)
+watch(() => loaded.value ? JSON.stringify(workflowObj.value.forms?.code_libraries?.value ?? null) : undefined,
+    (_, old) => { if (old !== undefined) isDirty.value = true; });
 
 const sparkFunctions = [
     'abs', 'add_months', 'approx_count_distinct', 'approx_percentile', 'bround',
@@ -720,8 +724,8 @@ const handleRemoveDataSource = (taskId) => {
     if (confirm(t('messages.doYouWantToDelete'))) {
         workflowObj.value.removeTask(taskId);
         dataSources.value = dataSources.value.filter(ds => ds.id !== taskId);
+        isDirty.value = true;
     }
-    isDirty.value = true;
 }
 const handlePreview = (dataSourceId) => {
     previewWindow.value.show(dataSourceId);
