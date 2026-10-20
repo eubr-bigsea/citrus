@@ -148,7 +148,8 @@
             </div>
             <div class="layout-center pt-2">
                 <div class="d-flex justify-content-end align-items-center py-1">
-                    <h4 class="m-0 me-auto">Células <span class="command-count">{{ workflowObj.cells?.length }}</span></h4>
+                    <h4 class="m-0">Células <span class="command-count">{{ workflowObj.cells?.length }}</span></h4>
+                    <cell-map class="me-auto ms-3" :cells="workflowObj.cells || []" :active-id="activeCellId" @select="scrollToCell" />
                     <div>
                         <button type="button" @click="toggleExpand" class="btn btn-sm"
                             :class="{'btn-info': expandedArea, 'btn-outline-secondary': !expandedArea}"
@@ -184,8 +185,6 @@
             </dialog>
         </div>
 
-                <cell-map :cells="workflowObj.cells || []" :active-id="activeCellId" @select="scrollToCell" />
-
                 <div v-if="workflowObj.cells?.length === 0" class="empty-state">
                     <h5 class="mb-1">Nenhuma célula ainda</h5>
                     <p class="text-muted">Adicione a primeira célula para começar.</p>
@@ -197,14 +196,15 @@
                         <template v-else>Dica: comece adicionando uma fonte de dados no painel lateral.</template>
                     </p>
                 </div>
-                <div class="scroll-area commands pb-5" @scroll.passive="updateActiveCell">
+                <div class="scroll-area commands pb-5" @scroll.passive="updateActiveCell" @wheel.passive="pinnedCellId = null" @touchmove.passive="pinnedCellId = null">
                     <transition-group name="fade" @after-enter="handleCodeAppear">
                         <sql-cell v-for="cell, i in workflowObj.cells" :key="cell.id" ref="cellRefs"
                             :cell="cell" :index="i" :total="workflowObj.cells.length"
                             :data-sources="dataSources" :functions="functions"
                             @move="handleMove" @remove="handleRemoveSql" @add="handleAdd"
                             @execute="executeWorkflow" @toggle-use-hwc="handleToggleHWC"
-                            @toggle="handleToggle" @dirty="isDirty = true" />
+                            @toggle="handleToggle" @dirty="isDirty = true"
+                            @click="setActiveCell(cell.id)" @focusin="setActiveCell(cell.id)" />
                     </transition-group>
                     <div v-if="workflowObj.cells?.length > 0" class="text-center mt-2">
                         <add-cell-buttons @add="(type) => handleAdd(null, type, '\n')" />
@@ -294,17 +294,32 @@ const running = computed(() => ['RUNNING', 'PENDING', 'WAITING'].includes(jobSta
 const clusterRef = ref(null);
 const clusterInvalid = ref(false);
 const activeCellId = ref(null);
+// cell chosen by clicking the map; kept active while visible, since the last cells cannot reach the top of the list
+let pinnedCellId = null;
 const updateActiveCell = () => {
     const box = document.querySelector('.commands');
     if (!box) return;
-    const top = box.getBoundingClientRect().top;
+    const { top, bottom } = box.getBoundingClientRect();
+    if (pinnedCellId) {
+        const rect = box.querySelector(`[data-cell-container="${pinnedCellId}"]`)?.getBoundingClientRect();
+        if (rect && rect.top < bottom && rect.bottom > top) {
+            activeCellId.value = pinnedCellId;
+            return;
+        }
+        pinnedCellId = null;
+    }
     const el = [...box.querySelectorAll('[data-cell-container]')]
         .find(c => c.getBoundingClientRect().bottom > top + 8);
     activeCellId.value = el?.dataset.cellContainer ?? null;
 };
+const setActiveCell = (id) => {
+    pinnedCellId = id;
+    activeCellId.value = id;
+};
 const scrollToCell = (id) => {
     const el = document.querySelector(`[data-cell-container="${id}"]`);
     if (!el) return;
+    setActiveCell(id);
     el.scrollIntoView({ behavior: 'smooth', block: 'start' });
     el.classList.add('cell-flash');
     setTimeout(() => el.classList.remove('cell-flash'), 1200);
@@ -693,6 +708,7 @@ const showSample = () => {
 
 /**Events */
 const handleAdd = (taskId, type, command) => {
+    const knownIds = new Set((workflowObj.value.cells || []).map(c => c.id));
     if (type === 'sql' || type === undefined) {
         workflowObj.value.addSqlTask(taskId, command || '\n');
     } else if (type === 'script') {
@@ -701,7 +717,10 @@ const handleAdd = (taskId, type, command) => {
         workflowObj.value.addPythonTask(taskId, command);
     }
     nextTick(() => {
-        cellRefs.value.filter(c => c.hasEditor).slice(-1)[0]?.focus();
+        const added = workflowObj.value.cells.find(c => !knownIds.has(c.id));
+        if (!added) return;
+        setActiveCell(added.id);
+        cellRefs.value.find(c => c.$el.dataset.cellContainer === added.id)?.focus();
     });
     isDirty.value = true;
 }
@@ -1000,9 +1019,9 @@ table.dataframe {
     display: inline-flex;
     min-width: 1.5rem;
     height: 1.5rem;
+    padding: 0 .4rem;
     align-items: center;
     justify-content: center;
-    border-radius: 50%;
     background: #e9ecef;
     font-size: .8em;
 }

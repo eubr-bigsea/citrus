@@ -24,7 +24,8 @@ const label = (cell, i) => `${i + 1} · ${cell.operation.slug.substring(8).toUpp
 
 <style scoped>
 .cell-map {
-    flex: none;
+    flex: 0 1 auto;
+    min-width: 0;
     display: flex;
     flex-wrap: wrap;
     gap: 6px;

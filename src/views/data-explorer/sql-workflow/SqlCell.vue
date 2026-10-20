@@ -14,18 +14,21 @@
                         @on-indent="indent"
                         @on-execute="(id, cached) => emit('execute', id, cached)"
                         @on-toggle-use-hwc="(task, value) => emit('toggle-use-hwc', task, value)"
-                        @on-toggle="emit('toggle', cell)" />
+                        @on-toggle="emit('toggle', cell)">
+                        <template #end>
+                            <span v-if="!cell.enabled" class="cell-disabled-tag">Desabilitada</span>
+                            <span class="cell-badge" :title="`Célula ${index + 1} de ${total}`">
+                                <span class="cell-badge-num">{{ index + 1 }}/{{ total }}</span>
+                                <span class="cell-type-badge">
+                                    <font-awesome-icon :icon="typeIcon" class="me-1" />{{ cell.operation.slug.substring(8) }}
+                                </span>
+                            </span>
+                        </template>
+                    </sql-editor-toolbar>
                 </div>
             </div>
             <div class="col-12">
                 <div class="cell-header">
-                    <span class="cell-badge" :title="`Célula ${index + 1} de ${total}`">
-                        <span class="cell-badge-num">{{ index + 1 }}/{{ total }}</span>
-                        <span class="cell-type-badge">
-                            <font-awesome-icon :icon="typeIcon" class="me-1" />{{ cell.operation.slug.substring(8) }}
-                        </span>
-                    </span>
-                    <span v-if="!cell.enabled" class="cell-disabled-tag">Desabilitada</span>
                     <div v-if="isSql" class="cell-header-alias"
                         title="Nome usado para referenciar o resultado desta célula nos comandos SQL seguintes">
                         <label class="form-text" :for="`cell-alias-${cell.id}`">Nome no SQL:</label>
@@ -55,7 +58,7 @@
                         :format="{ language: 'spark', tabWidth: 2, keywordCase: 'upper', linesBetweenQueries: 2 }" />
                     <template v-else-if="cell.operation.slug === 'execute-script'">
                         <label>Caminho completo para o arquivo (visível no servidor)</label>
-                        <input class="form-control form-control-sm" type="text"
+                        <input ref="scriptRef" class="form-control form-control-sm" type="text"
                             v-model="cell.forms.script.value" maxlength="400" @input="emit('dirty')" />
                     </template>
                     <python-editor v-else-if="cell.operation.slug === 'execute-python'" :query="cell.forms.code.value"
@@ -134,7 +137,7 @@ watch(() => {
 const toolbarRef = ref();
 const editorRef = ref();
 const isSql = computed(() => props.cell.operation.slug === 'execute-sql');
-const hasEditor = computed(() => !!editorRef.value);
+const scriptRef = ref();
 const typeIcon = computed(() => CELL_TYPE_ICONS[props.cell.operation.slug]);
 
 const indent = () => {
@@ -143,7 +146,7 @@ const indent = () => {
         editorRef.value.indent();
     }
 };
-const focus = () => editorRef.value?.focus();
+const focus = () => (editorRef.value ?? scriptRef.value)?.focus();
 
 const getPreview = (cell) => {
     const code = cell.forms.query?.value ?? cell.forms.code?.value ?? cell.forms.script?.value ?? '';
@@ -197,7 +200,7 @@ const getSaveCommand = (cell) => {
     return result.join('\n');
 };
 
-defineExpose({ indent, focus, hasEditor });
+defineExpose({ indent, focus });
 </script>
 
 <style scoped>
@@ -254,7 +257,6 @@ defineExpose({ indent, focus, hasEditor });
 .cell-badge {
     display: inline-flex;
     flex: none;
-    margin-bottom: .3rem;
     font-size: .7rem;
     font-weight: 600;
     letter-spacing: .05em;
@@ -269,7 +271,6 @@ defineExpose({ indent, focus, hasEditor });
 
 .cell-disabled-tag {
     flex: none;
-    margin-bottom: .3rem;
     padding: .15rem .5rem;
     border: 1px dashed #6c757d;
     font-size: .7rem;
