@@ -76,10 +76,6 @@ export default class DataTableBuilder {
         this.options.perPageValues = v;
         return this;
     }
-    onRowClick(fn) {
-        this.options.onRowClick = fn;
-        return this;
-    }
     rowDetails(fn) {
         this.options.rowDetails = fn;
         return this;

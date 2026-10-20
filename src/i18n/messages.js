@@ -936,6 +936,8 @@ export default {
                 generalInfo: 'Informações Gerais',
                 goToWorkflow: 'Ir para o fluxo de trabalho',
                 goToWorkflowQuestion: 'Deseja ir para o fluxo de trabalho #{id}?',
+                expandSteps: 'Expandir etapas',
+                collapseSteps: 'Recolher etapas',
                 presets: {
                     title: 'Filtros rápidos',
                     problems7d: 'Problemas da última semana',
@@ -1931,6 +1933,8 @@ export default {
                 generalInfo: 'General information',
                 goToWorkflow: 'Go to workflow',
                 goToWorkflowQuestion: 'Do you want to go to workflow #{id}?',
+                expandSteps: 'Expand steps',
+                collapseSteps: 'Collapse steps',
                 presets: {
                     title: 'Quick filters',
                     problems7d: 'Problems in the last week',

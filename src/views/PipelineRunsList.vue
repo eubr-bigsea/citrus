@@ -160,19 +160,17 @@
                                         </div>
                                     </template>
                                     <template #steps="props">
-                                        <div class="d-flex flex-wrap gap-1 pb-2">
-                                            <template v-for="step in props.row.steps" :key="step.id">
+                                        <div class="d-flex flex-wrap align-items-center gap-1 pb-2">
+                                            <template v-for="(step, i) in props.row.steps" :key="step.id">
                                                 <a :id="`step-${step.id}`" href="#" role="button"
-                                                   class="arrow-step d-flex flex-column align-items-center justify-content-center text-center mb-1"
+                                                   :class="stepClasses(props.row.steps, i, isCompact(props.row))"
                                                    :style="{ '--status-color': statusOf(step.status).color }"
                                                    :aria-label="`${step.name}: ${$t(`status.${step.status}`)}`"
                                                    @click.prevent="confirmGoToWorkflow(step)">
-                                                    <span class="step-name text-uppercase fw-bold text-truncate">{{step.name}}</span>
-                                                    <span class="step-status">
-                                                        <font-awesome-icon :icon="`fa ${statusOf(step.status).icon}`"
-                                                                           :spin="statusOf(step.status).spin" />
-                                                        {{$t(`status.${step.status}`)}}
-                                                    </span>
+                                                    <font-awesome-icon class="step-icon" :icon="`fa ${statusOf(step.status).icon}`"
+                                                                       :spin="statusOf(step.status).spin" />
+                                                    <span v-if="!isCompact(props.row)"
+                                                          class="step-name text-uppercase fw-bold text-truncate">{{step.name}}</span>
                                                 </a>
                                                 <b-popover :target="`step-${step.id}`" placement="top" noninteractive>
                                                     <template #title>
@@ -194,6 +192,20 @@
                                                     </div>
                                                 </b-popover>
                                             </template>
+                                            <button v-if="props.row.steps.length > COMPACT_STEPS" type="button"
+                                                    class="btn btn-link btn-sm text-muted ms-1 p-0"
+                                                    :aria-expanded="!isCompact(props.row)"
+                                                    :title="isCompact(props.row) ? $t('pipeline.list.expandSteps') : $t('pipeline.list.collapseSteps')"
+                                                    @click.stop="toggleSteps(props.row)">
+                                                <template v-if="isCompact(props.row)">
+                                                    {{completedSteps(props.row.steps)}}/{{props.row.steps.length}}
+                                                    <font-awesome-icon icon="fa fa-chevron-down" />
+                                                </template>
+                                                <template v-else>
+                                                    {{$t('pipeline.list.collapseSteps')}}
+                                                    <font-awesome-icon icon="fa fa-chevron-up" />
+                                                </template>
+                                            </button>
                                         </div>
                                     </template>
                                     <template #status="props">
@@ -310,6 +322,11 @@ import DataTableBuilder from '@/data-table-builder.js';
 import { RUN_STATUS, statusOf } from '@/views/pipeline/run-status.js';
 import { RUN_PRESETS, presetFilters } from '@/views/pipeline/run-presets.js';
 
+// Above this many steps the chain of arrows becomes a compact row of segments.
+const COMPACT_STEPS = 8;
+const MUTED_STEP_STATUSES = ['COMPLETED', 'PENDING'];
+const BROKEN_STEP_STATUSES = ['ERROR', 'INTERRUPTED', 'CANCELED'];
+
 const standUrl = import.meta.env.VITE_STAND_URL;
 const standNamespace = import.meta.env.VITE_STAND_NAMESPACE;
 const standSocketIoPath = import.meta.env.VITE_STAND_SOCKET_IO_PATH;
@@ -326,6 +343,8 @@ export default {
         return {
             statuses: Object.keys(RUN_STATUS),
             presets: RUN_PRESETS,
+            COMPACT_STEPS,
+            expandedRuns: {},
             live: false,
             filters: { // binding
                 status: '',
@@ -379,7 +398,6 @@ export default {
                 .requestFunction(this.load)
                 .orderBy('updated', false)
                 .zebra()
-                .onRowClick(this.openRun)
                 .build()
         };
     },
@@ -403,6 +421,9 @@ export default {
         }
     },
     watch: {
+        'filters.limit'(value) {
+            this.options.perPage = Number(value);
+        },
         '$route'() {
             disconnectWebSocket();
         }
@@ -447,10 +468,37 @@ export default {
             Object.assign(this.filters, { name: null }, presetFilters(preset));
             this.search();
         },
+        isCompact(run) {
+            return run.steps.length > COMPACT_STEPS && !this.expandedRuns[run.id];
+        },
+        toggleSteps(run) {
+            this.expandedRuns[run.id] = !this.expandedRuns[run.id];
+        },
+        stepClasses(steps, index, compact) {
+            const step = steps[index];
+            const brokenAt = steps.findIndex(st => BROKEN_STEP_STATUSES.includes(st.status));
+            return [
+                compact ? 'step-segment' : 'arrow-step',
+                {
+                    muted: MUTED_STEP_STATUSES.includes(step.status),
+                    // steps after a failed one will not run
+                    stopped: brokenAt !== -1 && index > brokenAt && step.status === 'PENDING',
+                },
+            ];
+        },
+        completedSteps(steps) {
+            return steps.filter(st => st.status === 'COMPLETED').length;
+        },
         confirmGoToWorkflow(step) {
+            let question = this.$t('pipeline.list.goToWorkflowQuestion', { id: step.workflow_id });
+            // no hover on touch devices, so the confirmation carries the details of the popover
+            if (window.matchMedia?.('(hover: none)').matches) {
+                const updated = this.$filters.formatJsonDate(step.updated, 'dd/MM/yyyy HH:mm:ss');
+                question = `${this.$t(`status.${step.status}`)} (${updated}) - ${question}`;
+            }
             this.confirm(
                 step.name,
-                this.$t('pipeline.list.goToWorkflowQuestion', { id: step.workflow_id }),
+                question,
                 () => this.$router.push({ name: 'sql-workflow', params: { id: step.workflow_id } })
             );
         },
@@ -461,10 +509,6 @@ export default {
         removeFilter(key) {
             this.filters[key] = key === 'status' ? '' : null;
             this.search();
-        },
-        openRun(row, event) {
-            if (event.target.closest('a, button, input, select, textarea')) return;
-            this.$router.push({ name: 'pipelineRunDetail', params: { id: row.id } });
         },
         async search() {
             const query = {};
@@ -586,7 +630,9 @@ export default {
             localStorage.setItem('pipeline_run:list:filters', JSON.stringify(this.filters));
             data.sort = data.orderBy;
             data.asc = data.ascending === 1 ? 'true' : 'false';
-            data.size = this.filters.limit;
+            // the table owns the page size, so pager and request always agree
+            this.filters.limit = data.limit;
+            data.size = data.limit;
             data.name = this.filters.name;
             data.status = this.filters.status;
             data.pipelines = this.filters.pipeline;
@@ -779,26 +825,20 @@ export default {
 
 .arrow-step {
     position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
     background: var(--status-color, #6c757d);
     color: white !important;
-    padding: 1px 14px 1px 14px;
+    padding: 1px 14px;
     margin-right: 1px;
     clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 50%, calc(100% - 8px) 100%, 0 100%, 8px 50%);
-    min-width: 120px;
-    max-width: 200px;
-    min-height: 38px;
+    min-width: 90px;
+    max-width: 180px;
+    min-height: 32px;
     cursor: pointer;
     text-decoration: none !important;
-}
-
-.arrow-step:hover,
-.arrow-step:focus-visible {
-    filter: brightness(0.8);
-    outline: none;
-}
-
-.arrow-step:focus-visible .step-name {
-    text-decoration: underline;
 }
 
 .arrow-step:first-child {
@@ -815,8 +855,50 @@ export default {
     max-width: 100%;
 }
 
-.arrow-step .step-status {
-    font-size: 0.7rem;
+.step-segment {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+    background: var(--status-color, #6c757d);
+    color: white !important;
+    font-size: 0.65rem;
+    cursor: pointer;
+}
+
+/* completed and pending steps stay quiet so failures and running steps stand out */
+.arrow-step.muted,
+.step-segment.muted {
+    background: #e9ecef;
+    color: #343a40 !important;
+}
+
+.arrow-step.muted .step-icon,
+.step-segment.muted .step-icon {
+    color: var(--status-color);
+}
+
+.arrow-step.stopped,
+.step-segment.stopped {
+    opacity: 0.45;
+}
+
+.arrow-step:hover,
+.arrow-step:focus-visible,
+.step-segment:hover,
+.step-segment:focus-visible {
+    filter: brightness(0.8);
+    outline: none;
+}
+
+.arrow-step:focus-visible .step-name {
+    text-decoration: underline;
+}
+
+.step-segment:focus-visible {
+    outline: 2px solid #212529;
 }
 
 .run-status {

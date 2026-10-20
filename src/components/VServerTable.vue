@@ -50,8 +50,7 @@
                     </thead>
                     <tbody v-if="tableData.length !== 0">
                         <template v-for="(row, rowIndex) in tableData" :key="rowIndex">
-                            <tr :class="{ 'row-clickable': options.onRowClick, 'has-details': options.rowDetails && options.rowDetails(row), 'row-alt': rowIndex % 2 }"
-                                @click="options.onRowClick && options.onRowClick(row, $event)">
+                            <tr :class="{ 'has-details': options.rowDetails && options.rowDetails(row), 'row-alt': rowIndex % 2 }">
                                 <td v-for="colName in columns" :key="colName"
                                     :class="getColumnClass(options.columnsClasses, colName)">
                                     <slot :name="colName" :row="row">
@@ -111,7 +110,7 @@ const paginationEnabled = computed(() => {
 const tableData = shallowRef([]);
 const tableCount = ref(0);
 const currentPage = ref(1);
-const perPage = ref(10);
+const perPage = ref(Number(props.options.perPage) || 10);
 const sortableColumns = ref(props.options.sortable || []);
 const sortDirection = ref(props.options.orderBy?.ascending === false ? 'desc' : 'asc');
 const sortColumn = ref(props.options.orderBy?.column || props.columns[0]);
@@ -274,6 +273,13 @@ const setLoading = (v) => loading.value = v;
 
 watch(currentPage, populateTable);
 watch(perPage, populateTable);
+// lets the page change the page size (e.g. its own limit select)
+watch(() => props.options.perPage, (value) => {
+    if (Number(value) && Number(value) !== perPage.value) {
+        currentPage.value = 1;
+        perPage.value = Number(value);
+    }
+});
 
 defineExpose({
     setFilter, getData, setCustomQuery, refresh, setCurrentPage, setFirstLoad, setLoading
@@ -307,10 +313,6 @@ div.table-area {
 
 .has-details > td {
     border-bottom-width: 0;
-}
-
-.row-clickable {
-    cursor: pointer;
 }
 
 .sortable {
