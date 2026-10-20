@@ -41,7 +41,8 @@
                     <thead>
                         <tr>
                             <th v-for="(heading, index) in columns" :key="index" class="header"
-                                :class="{ [sortIcon.is]: sortableColumns.includes(heading), 'can-be-sorted': sortableColumns.includes(heading) }"
+                                :class="getSortClass(heading)"
+                                :aria-sort="getAriaSort(heading)"
                                 @click="handleSort(heading, $event)">
                                 {{getTableHeader(heading)}}
                             </th>
@@ -111,8 +112,8 @@ const tableCount = ref(0);
 const currentPage = ref(1);
 const perPage = ref(10);
 const sortableColumns = ref(props.options.sortable || []);
-const sortDirection = ref('asc');
-const sortColumn = ref(props.columns[0]);
+const sortDirection = ref(props.options.orderBy?.ascending === false ? 'desc' : 'asc');
+const sortColumn = ref(props.options.orderBy?.column || props.columns[0]);
 const table = ref();
 const tableCustomQueries = ref();
 
@@ -206,26 +207,36 @@ const getColumnClass = (columnClasses, columnName) => {
     }
 };
 
-const handleSort = (column, event) => {
+const getSortClass = (column) => {
+    if (!sortableColumns.value.includes(column)) {
+        return {};
+    }
+    const active = sortColumn.value === column;
+    return {
+        'can-be-sorted': true,
+        [sortIcon.value.is]: !active,
+        [sortIcon.value.up]: active && sortDirection.value === 'desc',
+        [sortIcon.value.down]: active && sortDirection.value === 'asc',
+    };
+};
+const getAriaSort = (column) => {
+    if (!sortableColumns.value.includes(column)) {
+        return undefined;
+    }
+    if (sortColumn.value !== column) {
+        return 'none';
+    }
+    return sortDirection.value === 'asc' ? 'ascending' : 'descending';
+};
+const handleSort = (column) => {
     if (sortableColumns.value.includes(column)) {
         if (sortColumn.value !== column) {
             sortColumn.value = column;
-            table.value.querySelectorAll('th.can-be-sorted').forEach((el) => {
-                el.classList.remove('sort-up', 'sort-down');
-                el.classList.add('sort-is');
-            });
+            sortDirection.value = 'asc';
         } else {
             sortDirection.value = sortDirection.value === 'asc' ? 'desc' : 'asc';
         }
         populateTable();
-        if (sortDirection.value === 'desc') {
-            event.currentTarget.classList.add('sort-up');
-            event.currentTarget.classList.remove('sort-down');
-        } else {
-            event.currentTarget.classList.add('sort-down');
-            event.currentTarget.classList.remove('sort-up');
-        }
-        event.currentTarget.classList.remove('sort-is');
     }
 };
 const load = () => {
