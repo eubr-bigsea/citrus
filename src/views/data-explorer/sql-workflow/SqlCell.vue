@@ -25,6 +25,7 @@
                             <font-awesome-icon :icon="typeIcon" class="me-1" />{{ cell.operation.slug.substring(8) }}
                         </span>
                     </span>
+                    <span v-if="!cell.enabled" class="cell-disabled-tag">Desabilitada</span>
                     <div v-if="isSql" class="cell-header-alias"
                         title="Nome usado para referenciar o resultado desta célula nos comandos SQL seguintes">
                         <label class="form-text" :for="`cell-alias-${cell.id}`">Nome no SQL:</label>
@@ -112,6 +113,7 @@ import { computed, ref, watch } from 'vue';
 import SqlEditor from './SqlEditor.vue';
 import PythonEditor from './PythonEditor.vue';
 import SqlEditorToolbar from './SqlEditorToolbar.vue';
+import { CELL_TYPE_ICONS, getCellStatusLabel } from './cellStatus.js';
 
 const props = defineProps({
     cell: { type: Object, required: true },
@@ -133,8 +135,7 @@ const toolbarRef = ref();
 const editorRef = ref();
 const isSql = computed(() => props.cell.operation.slug === 'execute-sql');
 const hasEditor = computed(() => !!editorRef.value);
-const TYPE_ICONS = { 'execute-sql': 'fa fa-database', 'execute-python': 'fa fa-code', 'execute-script': 'fa fa-file-code' };
-const typeIcon = computed(() => TYPE_ICONS[props.cell.operation.slug]);
+const typeIcon = computed(() => CELL_TYPE_ICONS[props.cell.operation.slug]);
 
 const indent = () => {
     if (toolbarRef.value && editorRef.value) {
@@ -173,11 +174,6 @@ const getCellClass = (cell) => {
             return 'text-danger';
     }
 };
-const CELL_STATUS_LABELS = {
-    RUNNING: 'Executando', COMPLETED: 'Concluído', ERROR: 'Erro',
-    PENDING: 'Pendente', WAITING: 'Aguardando',
-};
-const getCellStatusLabel = (cell) => CELL_STATUS_LABELS[cell.status] || cell.status;
 const indentString = (str, count, indent = " ") =>
     str.replace(/^/gm, indent.repeat(count));
 const getSaveCommand = (cell) => {
@@ -269,6 +265,22 @@ defineExpose({ indent, focus, hasEditor });
     background: #e9ecef;
     color: #495057;
     font-variant-numeric: tabular-nums;
+}
+
+.cell-disabled-tag {
+    flex: none;
+    margin-bottom: .3rem;
+    padding: .15rem .5rem;
+    border: 1px dashed #6c757d;
+    font-size: .7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    color: #6c757d;
+}
+
+.editors.disabled-cell .cell-type-badge {
+    text-decoration: line-through;
 }
 
 .cell-type-badge {

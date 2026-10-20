@@ -120,22 +120,23 @@
                                     <input type="text" class="form-control form-control-sm mb-2"
                                         :id="`ds-alias-${dataSource.id}`"
                                         v-model="dataSource.name" maxlength="50" @change="handleChangeAlias" />
-                                    <div class="ds-actions d-flex flex-wrap gap-1">
+                                    <div class="ds-actions d-flex flex-wrap align-items-center gap-1">
                                         <button :title="$t('common.preview')" class="btn btn-sm btn-light"
                                             @click.prevent="handlePreview(dataSource.forms.data_source.value)">
                                             <font-awesome-icon icon="fa-eye" />
                                         </button>
+                                        <span class="text-muted ms-1">Gerar célula:</span>
                                         <button title="Criar SELECT para fonte de dados" class="btn btn-sm btn-light"
                                             @click.prevent="handleAddSqlFromDataSource('select', dataSource.forms.data_source.value)">
-                                            SELECT
+                                            <font-awesome-icon icon="fa fa-plus" /> SELECT
                                         </button>
                                         <button title="Criar INSERT para fonte de dados" class="btn btn-sm btn-light"
                                             @click.prevent="handleAddSqlFromDataSource('insert', dataSource.forms.data_source.value)">
-                                            INSERT
+                                            <font-awesome-icon icon="fa fa-plus" /> INSERT
                                         </button>
                                         <button title="Criar STAGE para fonte de dados" class="btn btn-sm btn-light"
                                             @click.prevent="handleAddSqlFromDataSource('stage', dataSource.forms.data_source.value)">
-                                            STAGE
+                                            <font-awesome-icon icon="fa fa-plus" /> STAGE
                                         </button>
                                     </div>
                                 </li>
@@ -183,6 +184,8 @@
             </dialog>
         </div>
 
+                <cell-map :cells="workflowObj.cells || []" :active-id="activeCellId" @select="scrollToCell" />
+
                 <div v-if="workflowObj.cells?.length === 0" class="empty-state">
                     <h5 class="mb-1">Nenhuma célula ainda</h5>
                     <p class="text-muted">Adicione a primeira célula para começar.</p>
@@ -194,7 +197,7 @@
                         <template v-else>Dica: comece adicionando uma fonte de dados no painel lateral.</template>
                     </p>
                 </div>
-                <div class="scroll-area commands pb-5">
+                <div class="scroll-area commands pb-5" @scroll.passive="updateActiveCell">
                     <transition-group name="fade" @after-enter="handleCodeAppear">
                         <sql-cell v-for="cell, i in workflowObj.cells" :key="cell.id" ref="cellRefs"
                             :cell="cell" :index="i" :total="workflowObj.cells.length"
@@ -246,6 +249,7 @@ import VueSelect from 'vue-select';
 import InputHeader from '@/components/InputHeader.vue';
 import SqlCell from './SqlCell.vue';
 import AddCellButtons from './AddCellButtons.vue';
+import CellMap from './CellMap.vue';
 import SqlEditorHelp from './SqlEditorHelp.vue';
 import SqlSample from './SqlSample.vue';
 import ModalWorkflowVariables from "@/views/modal/ModalWorkflowVariables.vue";
@@ -289,6 +293,22 @@ const loadingData = ref(false);
 const running = computed(() => ['RUNNING', 'PENDING', 'WAITING'].includes(jobStatus.value?.status));
 const clusterRef = ref(null);
 const clusterInvalid = ref(false);
+const activeCellId = ref(null);
+const updateActiveCell = () => {
+    const box = document.querySelector('.commands');
+    if (!box) return;
+    const top = box.getBoundingClientRect().top;
+    const el = [...box.querySelectorAll('[data-cell-container]')]
+        .find(c => c.getBoundingClientRect().bottom > top + 8);
+    activeCellId.value = el?.dataset.cellContainer ?? null;
+};
+const scrollToCell = (id) => {
+    const el = document.querySelector(`[data-cell-container="${id}"]`);
+    if (!el) return;
+    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    el.classList.add('cell-flash');
+    setTimeout(() => el.classList.remove('cell-flash'), 1200);
+};
 // null (not undefined) so the disabled placeholder option is shown when no cluster is set
 const clusterId = computed({
     get: () => workflowObj.value.preferred_cluster_id ?? null,
@@ -304,6 +324,7 @@ const workflowObj = ref({ variables: [], forms: { $meta: { value: { target: '', 
 // the code library modal edits forms.code_libraries directly; skip the first value (load)
 watch(() => loaded.value ? JSON.stringify(workflowObj.value.forms?.code_libraries?.value ?? null) : undefined,
     (_, old) => { if (old !== undefined) isDirty.value = true; });
+watch(() => workflowObj.value.cells?.map(c => c.id).join(','), () => nextTick(updateActiveCell), { flush: 'post' });
 
 const sparkFunctions = [
     'abs', 'add_months', 'approx_count_distinct', 'approx_percentile', 'bround',
@@ -1035,6 +1056,15 @@ table.dataframe {
 
 .switch-aligned :deep(.form-check-label) {
     margin: 0;
+}
+
+.layout-center > :not(.commands) {
+    flex: none;
+}
+
+.cell-flash {
+    outline: 2px solid var(--cell-color);
+    outline-offset: 2px;
 }
 
 .btn-save {
