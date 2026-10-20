@@ -61,10 +61,10 @@
                     </div>
                 </form>
 
-                <div v-if="loading" class="text-muted small mb-2" role="status">
+                <div v-if="loading && totalRecords !== null" class="text-muted small mb-2" role="status">
                     <font-awesome-icon icon="spinner" pulse /> {{$t('common.loading')}}
                 </div>
-                <v-server-table v-show="totalRecords > 0" ref="workflowList" :aria-busy="loading" :class="{ 'is-loading': loading }"
+                <v-server-table v-show="totalRecords === null || totalRecords > 0" ref="workflowList" :aria-busy="loading" :class="{ 'is-loading': loading && totalRecords !== null }"
                                 :columns="columns" :options="options"
                                 name="workflowListDataExperiments">
                     <template #type="props">
@@ -81,6 +81,12 @@
                                      :to="{ name: types[props.row.type].designRoute, params: { id: props.row.id } }">
                             {{props.row.name}}
                         </router-link>
+                    </template>
+                    <template #actions="props">
+                        <button type="button" class="btn btn-sm btn-danger" :title="$t('actions.delete')"
+                                :aria-label="$t('actions.delete')" @click="remove(props.row)">
+                            <font-awesome-icon icon="trash" />
+                        </button>
                     </template>
                     <template #updated="props">
                         {{$filters.formatJsonDate(props.row.updated)}}
@@ -125,11 +131,13 @@ export default {
             searchFilter: null,
             typeFilter: null,
             columns: [
+                'id',
                 'name',
                 'user',
                 'type',
                 'updated',
                 'version',
+                'actions',
             ],
             options: {
                 hidePerPageSelect: true,
@@ -140,22 +148,18 @@ export default {
 
                 dateColumns: ['updated'],
                 headings: {
+                    id: 'ID',
                     name: this.$t('common.name'),
                     user: this.$t('common.user.name'),
                     type: this.$t('common.type'),
                     updated: this.$t('common.updated'),
                     version: this.$t('common.version'),
+                    actions: this.$t('common.action', 2),
                 },
                 orderBy: { column: 'updated', ascending: false },
-                sortable: ['name', 'updated'],
+                sortable: ['id', 'name', 'updated'],
                 //filterable: ['name', 'id'],
                 filterable: false,
-                sortIcon: {
-                    base: 'fa fas',
-                    is: 'fa-sort ml-10',
-                    up: 'fa-sort-amount-up',
-                    down: 'fa-sort-amount-down'
-                },
                 preserveState: true,
                 saveState: true,
                 filterByColumn: false,
@@ -223,6 +227,19 @@ export default {
         },
         create(t) {
             this.$router.push({ name: t.route, query: t.query });
+        },
+        remove(row) {
+            const what = this.$t('dataExplorer.experimentsPage.what');
+            this.confirm(
+                this.$t('actions.delete'),
+                this.$t('messages.doYouWantToDeleteM', { what: `${what} "${row.name}"` }),
+                () => axios.delete(`${tahitiUrl}/workflows/${row.id}`)
+                    .then(() => {
+                        this.success(this.$t('messages.successDeletionM', { what }));
+                        this.$refs.workflowList.refresh();
+                    })
+                    .catch(e => this.error(e))
+            );
         },
         clearFilters() {
             this.typeFilter = '';

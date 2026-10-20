@@ -326,6 +326,7 @@ export default {
                 SQL: 'Fluxo com SQL',
             },
             experimentsPage: {
+                what: 'experimento',
                 whatToDo: 'O que você quer fazer?',
                 createNew: 'Criar novo',
                 yourExperiments: 'Seus experimentos',
