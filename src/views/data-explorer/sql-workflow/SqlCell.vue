@@ -21,11 +21,13 @@
                 <div class="cell-header">
                     <span class="cell-badge" :title="`Célula ${index + 1} de ${total}`">
                         <span class="cell-badge-num">{{ index + 1 }}/{{ total }}</span>
-                        <span class="cell-type-badge">{{ cell.operation.slug.substring(8) }}</span>
+                        <span class="cell-type-badge">
+                            <font-awesome-icon :icon="typeIcon" class="me-1" />{{ cell.operation.slug.substring(8) }}
+                        </span>
                     </span>
                     <div v-if="isSql" class="cell-header-alias"
-                        title="Apelido usado quando referenciar esta fonte de dados no comando SQL">
-                        <label class="form-text" :for="`cell-alias-${cell.id}`">{{ $t('common.aliasSql') }} (use no SQL):</label>
+                        title="Nome usado para referenciar o resultado desta célula nos comandos SQL seguintes">
+                        <label class="form-text" :for="`cell-alias-${cell.id}`">Nome no SQL:</label>
                         <input class="form-control form-control-sm" maxlength="50"
                             :id="`cell-alias-${cell.id}`" v-model="cell.name" @input="emit('dirty')" />
                     </div>
@@ -131,6 +133,8 @@ const toolbarRef = ref();
 const editorRef = ref();
 const isSql = computed(() => props.cell.operation.slug === 'execute-sql');
 const hasEditor = computed(() => !!editorRef.value);
+const TYPE_ICONS = { 'execute-sql': 'fa fa-database', 'execute-python': 'fa fa-code', 'execute-script': 'fa fa-file-code' };
+const typeIcon = computed(() => TYPE_ICONS[props.cell.operation.slug]);
 
 const indent = () => {
     if (toolbarRef.value && editorRef.value) {
@@ -274,10 +278,6 @@ defineExpose({ indent, focus, hasEditor });
     background: var(--cell-color);
 }
 
-.editors[data-type="execute-python"] .cell-type-badge {
-    color: #212529;
-}
-
 .cell-preview {
     display: flex;
     align-items: center;
@@ -302,15 +302,15 @@ defineExpose({ indent, focus, hasEditor });
 .editors {
     background-color: #fff;
     padding: 6px 10px;
-    --cell-color: var(--primary-color);
+    --cell-color: var(--cell-sql);
     border-right: 2px solid var(--cell-color);
     border-left: 4px solid var(--cell-color);
     margin-bottom: 1.5rem;
 }
 
-.editors[data-type="execute-python"] { --cell-color: #e0b92e; }
+.editors[data-type="execute-python"] { --cell-color: var(--cell-python); }
 
-.editors[data-type="execute-script"] { --cell-color: #d9822b; }
+.editors[data-type="execute-script"] { --cell-color: var(--cell-script); }
 
 .editors.disabled-cell {
     border-left: 4px solid #8a8f98 !important;

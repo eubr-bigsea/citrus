@@ -2,7 +2,7 @@
     <div class="w-100">
         <div v-if="task.operation.slug === 'execute-sql'" class="float-start mt-1">
             <button class="btn btn-sm btn-outline-secondary" :title="$t('actions.save')" :aria-label="task.forms.save.value === 1 ? 'Editar opções para salvar' : 'Habilitar salvamento de dados'" @click="handleShowModal">
-                <font-awesome-icon icon="fa fa-save" :class="task.forms.save.value === 1 ? 'text-success': 'text-secondary'" />
+                <font-awesome-icon icon="fa fa-file-export" :class="task.forms.save.value === 1 ? 'text-success': 'text-secondary'" />
                 <span v-if="task.forms.save.value == 1"> Editar opções para salvar...</span>
                 <span v-else> Habilitar salvar dados...</span>
             </button>
@@ -26,10 +26,10 @@
                 :aria-label="$t('actions.moveDown')" @click="emit('on-move', task.id, 'down')"><font-awesome-icon icon="fa fa-caret-down" /></button>
             <button v-if="showMoveUp" class="btn btn-sm btn-outline-secondary" :title="$t('actions.moveUp')"
                 :aria-label="$t('actions.moveUp')" @click="emit('on-move', task.id, 'up')"><font-awesome-icon icon="fa fa-caret-up" /></button>
-            <button class="btn btn-sm btn-outline-secondary" :title="$t('actions.delete')"
-                :aria-label="$t('actions.delete')" @click="emit('on-remove', task.id)"><font-awesome-icon icon="fa fa-times" /></button>
+            <button class="btn btn-sm btn-outline-secondary btn-delete" :title="$t('actions.delete')"
+                :aria-label="$t('actions.delete')" @click="emit('on-remove', task.id)"><font-awesome-icon icon="fa fa-trash" /></button>
             <button class="btn btn-sm btn-outline-secondary" :title="$t('actions.indent')" :aria-label="$t('actions.indent')" @click="emit('on-indent', task.id)">
-                <font-awesome-icon icon="fa fa-indent" />
+                <font-awesome-icon icon="fa fa-magic" />
             </button>
             <b-dropdown variant="outline-primary" end size="sm" no-caret  :title="$t('actions.add')" :aria-label="$t('actions.add')">
                 <template #button-content>
@@ -90,4 +90,10 @@ const showStatus = (state) => {
 }
 defineExpose({ showStatus })
 </script>
-<style scoped></style>
+<style scoped>
+.btn-delete:hover {
+    color: #dc3545;
+    border-color: #dc3545;
+    background: transparent;
+}
+</style>

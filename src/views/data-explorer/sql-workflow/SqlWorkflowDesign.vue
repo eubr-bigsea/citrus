@@ -32,18 +32,24 @@
 
                 </div>
                 <div class="workflow-actions-group" aria-label="Execução">
-                <b-button :variant="isDirty ? 'primary' : 'outline-primary'" size="sm" class="pu me-1" @click="saveWorkflow" data-test="save"
-                    title="Salvar (Ctrl+S)">
+                <b-button variant="outline-secondary" size="sm" class="pu me-1 btn-save" :class="{ 'btn-save-dirty': isDirty }"
+                    @click="saveWorkflow" data-test="save" title="Salvar (Ctrl+S)">
                     <font-awesome-icon icon="fa fa-save" />
                     {{ $t('actions.save') }}
                 </b-button>
-                <b-button variant="success" size="sm" class="pu" @click="executeWorkflow" data-test="execute">
-                    <font-awesome-icon icon="fa fa-play" /> {{ $t('actions.execute') }}
+                <b-button variant="success" size="sm" class="pu" :disabled="running || loadingData"
+                    @click="executeWorkflow" data-test="execute">
+                    <template v-if="running">
+                        <font-awesome-icon icon="fa fa-spinner" spin /> Executando…
+                    </template>
+                    <template v-else>
+                        <font-awesome-icon icon="fa fa-play" /> {{ $t('actions.execute') }}
+                    </template>
                 </b-button>
                 <b-button v-if="sample" variant="info" size="sm" class="ms-2 pu" @click="showSample" data-test="sample">
-                    <font-awesome-icon icon="fa fa-eye" /> Ver dados
+                    <font-awesome-icon icon="fa fa-table" /> Ver dados
                 </b-button>
-                <b-button v-if="['RUNNING', 'PENDING', 'WAITING'].includes(jobStatus.status)" variant="outline-danger" size="sm" class="ms-2 pu" @click="stop" data-test="restart"
+                <b-button variant="outline-danger" size="sm" class="ms-2 pu" :disabled="!running" @click="stop" data-test="restart"
                     title="Para os recursos alocados e reinicia os executores" aria-label="Parar execução">
                     <font-awesome-icon icon="fa fa-stop" /> {{ $t('actions.stop') }}
                 </b-button>
@@ -108,9 +114,9 @@
                                         <button class="btn btn-sm text-danger" :title="$t('actions.delete')"
                                             :aria-label="$t('actions.delete')"
                                             @click.prevent="handleRemoveDataSource(dataSource.id)"><font-awesome-icon
-                                                icon="fa fa-times" /></button>
+                                                icon="fa fa-trash" /></button>
                                     </div>
-                                    <label class="form-text mb-0" :for="`ds-alias-${dataSource.id}`">Apelido:</label>
+                                    <label class="form-text mb-0" :for="`ds-alias-${dataSource.id}`">Nome no SQL:</label>
                                     <input type="text" class="form-control form-control-sm mb-2"
                                         :id="`ds-alias-${dataSource.id}`"
                                         v-model="dataSource.name" maxlength="50" @change="handleChangeAlias" />
@@ -141,7 +147,7 @@
             </div>
             <div class="layout-center pt-2">
                 <div class="d-flex justify-content-end align-items-center py-1">
-                    <h4 class="m-0 me-auto">Comandos <span class="command-count">{{ workflowObj.cells?.length }}</span></h4>
+                    <h4 class="m-0 me-auto">Células <span class="command-count">{{ workflowObj.cells?.length }}</span></h4>
                     <div>
                         <button type="button" @click="toggleExpand" class="btn btn-sm"
                             :class="{'btn-info': expandedArea, 'btn-outline-secondary': !expandedArea}"
@@ -153,11 +159,11 @@
                     <div class="btn-group btn-group-sm ms-2" role="group" aria-label="Células">
                         <button type="button" @click="toggleExpandAll" class="btn btn-outline-secondary"
                             title="Expandir todas as células" aria-label="Expandir todas as células">
-                            <font-awesome-icon icon="fa fa-expand"/> Expandir tudo
+                            <font-awesome-icon icon="fa fa-angles-down"/> Expandir tudo
                         </button>
                         <button type="button" @click="handleCollapseAll" class="btn btn-outline-secondary"
                             title="Recolher todas as células" aria-label="Recolher todas as células">
-                            <font-awesome-icon icon="fa fa-compress"/> Recolher tudo
+                            <font-awesome-icon icon="fa fa-angles-up"/> Recolher tudo
                         </button>
                     </div>
                 </div>
@@ -178,12 +184,12 @@
         </div>
 
                 <div v-if="workflowObj.cells?.length === 0" class="empty-state">
-                    <h5 class="mb-1">Nenhum comando ainda</h5>
-                    <p class="text-muted">Adicione o primeiro comando para começar.</p>
+                    <h5 class="mb-1">Nenhuma célula ainda</h5>
+                    <p class="text-muted">Adicione a primeira célula para começar.</p>
                     <add-cell-buttons captions @add="(type) => handleAdd(null, type, '\n')" />
                     <p class="text-muted mt-3 mb-0">
                         <template v-if="workflowObj.dataSources?.length > 0">
-                            Dica: use SELECT, INSERT ou STAGE nas fontes de dados ao lado para gerar o primeiro comando.
+                            Dica: use SELECT, INSERT ou STAGE nas fontes de dados ao lado para gerar a primeira célula.
                         </template>
                         <template v-else>Dica: comece adicionando uma fonte de dados no painel lateral.</template>
                     </p>
@@ -280,6 +286,7 @@ const job = ref(null);
 const jobStatus = ref({ status: '' });
 const loaded = ref(false);
 const loadingData = ref(false);
+const running = computed(() => ['RUNNING', 'PENDING', 'WAITING'].includes(jobStatus.value?.status));
 const clusterRef = ref(null);
 const clusterInvalid = ref(false);
 // null (not undefined) so the disabled placeholder option is shown when no cluster is set
@@ -1028,6 +1035,18 @@ table.dataframe {
 
 .switch-aligned :deep(.form-check-label) {
     margin: 0;
+}
+
+.btn-save {
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.btn-save-dirty,
+.btn-save-dirty:hover {
+    color: #fff;
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
 }
 
 .empty-state {

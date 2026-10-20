@@ -38,10 +38,10 @@ const options = [
     gap: .25rem;
 }
 
-/* same colors as the cell borders (SqlCell.vue) */
+/* colors shared with the cells: --cell-* in main.scss */
 .add-cell-btn {
-    --c: var(--primary-color);
-    --c-text: var(--primary-color);
+    --c: var(--cell-sql);
+    --c-text: var(--cell-sql);
     --c-hover-text: #fff;
     border: 1px solid var(--c);
     background: transparent;
@@ -49,14 +49,13 @@ const options = [
 }
 
 .add-cell-btn[data-type="python"] {
-    --c: #e0b92e;
-    --c-text: #8a6d0b;
-    --c-hover-text: #212529;
+    --c: var(--cell-python);
+    --c-text: var(--cell-python);
 }
 
 .add-cell-btn[data-type="script"] {
-    --c: #d9822b;
-    --c-text: #b4631a;
+    --c: var(--cell-script);
+    --c-text: var(--cell-script);
 }
 
 .add-cell-btn:hover,
