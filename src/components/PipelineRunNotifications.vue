@@ -3,17 +3,22 @@
         <template v-if="notifications.length">
             <div v-for="notification,i in notifications" :key="i">
                 {{$filters.formatJsonDate(notification.date.substring(0, 19) , 'dd/MM/yyyy HH:mm:ss')}} #{{notification.id}}:
-                Etapa/passo {{notification.order}}:
-                {{$t(`status.${notification.status}`)}}
+                {{$t('pipeline.list.stepNumber', { n: notification.order })}}:
+                <span class="notification-status" :style="{ color: statusOf(notification.status).color }">
+                    <font-awesome-icon :icon="`fa ${statusOf(notification.status).icon}`"
+                                       :spin="statusOf(notification.status).spin" />
+                    {{$t(`status.${notification.status}`)}}
+                </span>
             </div>
         </template>
         <template v-else>
-            Sem notificações recentes
+            {{$t('pipeline.list.noNotifications')}}
         </template>
     </div>
 </template>
 <script setup>
 import { ref } from 'vue';
+import { statusOf } from '@/views/pipeline/run-status.js';
 
 const props = defineProps({
     height: {

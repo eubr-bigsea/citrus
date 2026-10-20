@@ -50,7 +50,8 @@
                     </thead>
                     <tbody v-if="tableData.length !== 0">
                         <template v-for="(row, rowIndex) in tableData" :key="rowIndex">
-                            <tr>
+                            <tr :class="{ 'row-clickable': options.onRowClick }"
+                                @click="options.onRowClick && options.onRowClick(row, $event)">
                                 <td v-for="colName in columns" :key="colName"
                                     :class="getColumnClass(options.columnsClasses, colName)">
                                     <slot :name="colName" :row="row">
@@ -293,6 +294,10 @@ div.table-area {
 }
 
 /* Add your component-specific styles here */
+.row-clickable {
+    cursor: pointer;
+}
+
 .sortable {
     cursor: pointer;
 }

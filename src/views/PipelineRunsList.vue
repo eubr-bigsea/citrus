@@ -20,57 +20,61 @@
                     <div class="runsList-container custom-table">
                         <div class="row">
                             <div class="col-12">
-                                <form class="row g-2 list-filter">
-                                    <div class="col-3 mb-2">
-                                        <label for="search">{{$t('pipeline.list.searchByIdOrName')}}:</label>
-                                        <input v-model="filters.name" type="text" class="form-control form-control-sm"
-                                               :placeholder="$t('common.name')">
+                                <form class="row g-2 list-filter" @submit.prevent="search">
+                                    <div class="col-12 col-md-4 col-xl-3 mb-2">
+                                        <label for="run-filter-name">{{$t('pipeline.list.searchByIdOrName')}}:</label>
+                                        <input id="run-filter-name" v-model="filters.name" type="text"
+                                               class="form-control form-control-sm" :placeholder="$t('common.name')">
                                     </div>
-                                    <div class="col-2 mb-2">
-                                        <label for="range">{{$t('pipeline.list.periodStart')}}: </label>
-                                        <input v-model="filters.start" type="date"
+                                    <div class="col-6 col-md-4 col-xl-2 mb-2">
+                                        <label for="run-filter-start">{{$t('pipeline.list.periodStart')}}: </label>
+                                        <input id="run-filter-start" v-model="filters.start" type="date"
                                                class="form-control form-control-sm">
                                     </div>
-
-                                    <div class="col-2 mb-2">
-                                        <label for="range">{{$t('pipeline.list.periodFinish')}}: </label>
-                                        <input v-model="filters.end" type="date" class="form-control form-control-sm">
+                                    <div class="col-6 col-md-4 col-xl-2 mb-2">
+                                        <label for="run-filter-end">{{$t('pipeline.list.periodFinish')}}: </label>
+                                        <input id="run-filter-end" v-model="filters.end" type="date"
+                                               class="form-control form-control-sm">
                                     </div>
-
-                                    <div class="col-2 mb-2">
-                                        <label for="status">{{$t('common.status')}}: </label>
-                                        <select v-model="filters.status" class="form-select form-select-sm"
-                                                name="status">
-                                            <option selected value="" />
+                                    <div class="col-6 col-md-4 col-xl-3 mb-2">
+                                        <label for="run-filter-status">{{$t('common.status')}}: </label>
+                                        <select id="run-filter-status" v-model="filters.status"
+                                                class="form-select form-select-sm">
+                                            <option value="">
+                                                {{$t('pipeline.list.allStatuses')}}
+                                            </option>
                                             <option v-for="status in statuses" :key="status" :value="status">
                                                 {{$t(`status.${status}`)}}
                                             </option>
                                         </select>
                                     </div>
-                                    <div class="col-1 mb-2">
-                                        <label for="limit">{{$t('common.limit')}}: </label>
-                                        <select v-model="filters.limit" class="form-select form-select-sm"
-                                                name="limit">
-                                            <option selected value="10">
-                                                10
-                                            </option>
-                                            <option selected value="25">
-                                                25
-                                            </option>
-                                            <option selected value="50">
-                                                50
-                                            </option>
-                                            <option selected value="100">
-                                                100
+                                    <div class="col-6 col-md-4 col-xl-2 mb-2">
+                                        <label for="run-filter-limit">{{$t('common.limit')}}: </label>
+                                        <select id="run-filter-limit" v-model="filters.limit"
+                                                class="form-select form-select-sm">
+                                            <option v-for="n in [10, 25, 50, 100]" :key="n" :value="n">
+                                                {{n}}
                                             </option>
                                         </select>
                                     </div>
-                                    <div class="col-12 mt-2">
-                                        <button ref="searchBtn" class="btn btn-secondary btn-sm mb-2 btn-spinner"
-                                                @click.prevent="search">
+                                    <div class="col-12 d-flex flex-wrap align-items-center gap-2 mb-2">
+                                        <button ref="searchBtn" type="submit" class="btn btn-secondary btn-sm btn-spinner">
                                             <font-awesome-icon icon="fa fa-search default-icon" /> {{$t('actions.search')}}
                                             <font-awesome-icon icon="spinner" pulse class="icon" />
                                         </button>
+                                        <button type="button" class="btn btn-link btn-sm" @click="clearFilters">
+                                            {{$t('actions.clearFilters')}}
+                                        </button>
+                                        <span v-for="chip in activeFilters" :key="chip.key" class="filter-chip">
+                                            {{chip.label}}: <strong>{{chip.value}}</strong>
+                                            <button type="button" class="btn-close btn-close-sm"
+                                                    :aria-label="$t('actions.clearFilters') + ': ' + chip.label"
+                                                    @click="removeFilter(chip.key)" />
+                                        </span>
+                                        <span class="live-indicator ms-auto" :class="{ off: !live }" role="status">
+                                            <font-awesome-icon icon="fa fa-circle" />
+                                            {{live ? $t('pipeline.list.live') : $t('pipeline.list.reconnecting')}}
+                                        </span>
                                     </div>
                                 </form>
                                 <v-server-table id="runsList" ref="runsList" :columns="columns"
@@ -81,18 +85,10 @@
                                         </router-link>
                                     </template>
                                     <template #pipeline_name="props">
-                                        <router-link
-                                            :to="{ name: 'pipelineEdit', params: { id: props.row.pipeline_id } }">
-                                            <font-awesome-icon icon="fa fa-circle-nodes" class="text-success" /> {{
-                                                props.row.pipeline_id }} -
-                                            {{ props.row.pipeline_name }}
+                                        <router-link :to="{ name: 'pipelineEdit', params: { id: props.row.pipeline_id } }">
+                                            <font-awesome-icon icon="fa fa-circle-nodes" class="text-muted" />
+                                            {{props.row.pipeline_id}} - {{props.row.pipeline_name}}
                                         </router-link>
-                                        <button v-if="!props.row.context_data?.length" type="button"
-                                                class="btn btn-link btn-sm context-var-add"
-                                                :title="$t('pipeline.schedule.addContextVariable')"
-                                                @click.stop="openContextEditor(props.row)">
-                                            <font-awesome-icon icon="plus" /> {{$t('pipeline.schedule.addContextData')}}
-                                        </button>
                                     </template>
                                     <template #rowDetails="props">
                                         <div class="context-vars-container" :title="$t('pipeline.list.contextVariables')">
@@ -109,7 +105,7 @@
                                                       class="context-var-chip"
                                                       :title="`${data.name}: ${data.value}`">
                                                     <span class="context-var-value">
-                                                        <strong>{{ data.name }}</strong>: {{ data.value }}
+                                                        <strong>{{data.name}}</strong>: {{data.value}}
                                                     </span>
                                                     <span class="context-var-actions">
                                                         <button type="button" class="btn btn-link btn-sm"
@@ -127,20 +123,18 @@
                                             </div>
                                         </div>
                                     </template>
-                                    <template #period="props">
-                                       {{ $filters.formatJsonDate(props.row.start) }} {{$t('common.until')}} {{ $filters.formatJsonDate(props.row.finish) }}
+                                    <template #start="props">
+                                        {{$filters.formatJsonDate(props.row.start)}}
                                     </template>
-                                    <template #updated="props" class="text-center">
-
-                                        <font-awesome-icon icon="fa fa-calendar-alt"
-                                            :title="$filters.formatJsonDate(props.row.updated, 'dd/MM/yyyy HH:mm:SS')"
-                                            class="text-info" />
-                                        {{ $filters.formatJsonDate(props.row.updated, 'dd/MM/yyyy HH:mm:SS') }}
-
+                                    <template #duration="props">
+                                        {{formatDuration(props.row.start, props.row.finish)}}
+                                    </template>
+                                    <template #updated="props">
+                                        {{$filters.formatJsonDate(props.row.updated, 'dd/MM/yyyy HH:mm:ss')}}
                                     </template>
                                     <template #comment="props">
                                         <div class="comment-cell" :title="props.row.comment || ''">
-                                            <span class="comment-text">{{ commentPreview(props.row.comment) }}</span>
+                                            <span class="comment-text">{{commentPreview(props.row.comment)}}</span>
                                             <button type="button" class="btn btn-link btn-sm comment-edit"
                                                     :aria-label="$t('actions.edit') + ' ' + $t('titles.comment')"
                                                     :title="$t('actions.edit') + ' ' + $t('titles.comment')"
@@ -149,90 +143,52 @@
                                             </button>
                                         </div>
                                     </template>
-                                    <template #statusStatus="props">
-                                        <!-- Arrow Steps -->
-                                        <div class="d-flex flex-wrap gap-2 pb-2">
-                                            <div v-for="step in props.row.steps" :key="step.id" class="arrow-step d-flex flex-column align-items-center
-                                                justify-content-center text-center mb-1 text-truncate"
-                                                :class="step.status.toLowerCase()" :id="'tooltip-target-' + step.id">
-                                                <div>
-                                                    <div class="fw-bold text-uppercase" style="font-size: 0.65rem;">{{
-                                                        step.name }}</div>
-                                                    <div style="font-size: 0.55rem; opacity: 0.9;">{{
-                                                        $t(`status.${step.status}`) }}
-                                                    </div>
-                                                </div>
-                                                <b-tooltip :target="'tooltip-target-' + step.id"
-                                                    custom-class="tooltip-large">
-                                                    <div>
-                                                        <strong>{{$t('common.updated')}}:</strong> {{ $filters.formatJsonDate(step.updated, 'dd/MM/yyyy HH:mm:SS') }} <br>
-                                                        <router-link
-                                                            :to="{ name: 'sql-workflow', params: { id: step.workflow_id } }">
-                                                            {{$t('pipeline.list.goToWorkflow')}} #{{ step.workflow_id }}
-                                                        </router-link>
-                                                    </div>
-                                                </b-tooltip>
-                                            </div>
-                                            <!--
-                                            <div
-                                            class="arrow-step completed d-flex flex-column align-items-center justify-content-center text-center">
-                                            <small class="fw-bold text-uppercase" style="font-size: 0.65rem;">Etapa
-                                                    1</small>
-                                                <small style="font-size: 0.55rem; opacity: 0.9;">Iniciação</small>
-                                            </div>
-                                            <div
-                                                class="arrow-step completed d-flex flex-column align-items-center justify-content-center text-center">
-                                                <small class="fw-bold text-uppercase" style="font-size: 0.65rem;">Etapa
-                                                    2</small>
-                                                <small style="font-size: 0.55rem; opacity: 0.9;">Planejamento</small>
-                                            </div>
-
-                                            <div
-                                                class="arrow-step in-progress d-flex flex-column align-items-center justify-content-center text-center">
-                                                <small class="fw-bold text-uppercase" style="font-size: 0.65rem;">Etapa
-                                                    3</small>
-                                                <small style="font-size: 0.55rem; opacity: 0.9;">Execução</small>
-                                            </div>
-
-                                            <div
-                                            class="arrow-step pending d-flex flex-column align-items-center justify-content-center text-center">
-                                            <small class="fw-bold text-uppercase" style="font-size: 0.65rem;">Etapa
-                                                4</small>
-                                                <small style="font-size: 0.55rem; opacity: 0.9;">Monitoramento</small>
-                                            </div>
-
-                                            <div
-                                                class="arrow-step pending d-flex flex-column align-items-center justify-content-center text-center">
-                                                <small class="fw-bold text-uppercase" style="font-size: 0.65rem;">Etapa
-                                                    5</small>
-                                                <small style="font-size: 0.55rem; opacity: 0.9;">Encerramento</small>
-                                            </div>
-                                        -->
-
+                                    <template #steps="props">
+                                        <div class="d-flex flex-wrap gap-1 pb-2">
+                                            <router-link v-for="step in props.row.steps" :key="step.id"
+                                                         :to="{ name: 'sql-workflow', params: { id: step.workflow_id } }"
+                                                         class="arrow-step d-flex flex-column align-items-center justify-content-center text-center mb-1"
+                                                         :style="{ '--status-color': statusOf(step.status).color }"
+                                                         :title="`${step.name} - ${$t(`status.${step.status}`)} (${$filters.formatJsonDate(step.updated, 'dd/MM/yyyy HH:mm:ss')})`">
+                                                <span class="step-name text-uppercase fw-bold text-truncate">{{step.name}}</span>
+                                                <span class="step-status">
+                                                    <font-awesome-icon :icon="`fa ${statusOf(step.status).icon}`"
+                                                                       :spin="statusOf(step.status).spin" />
+                                                    {{$t(`status.${step.status}`)}}
+                                                </span>
+                                            </router-link>
                                         </div>
                                     </template>
                                     <template #status="props">
-                                        <div class="lemonade-job" :class="props.row.status.toLowerCase()">
-                                            {{$t(`status.${props.row.status}`).toUpperCase()}}
-                                        </div>
-                                    </template>
-                                    <template #context="props">
-                                        <a v-if="props.row.context_data" :href="`/pipeline-runs/${props.row.id}/context`" target="_blank">
-                                            <font-awesome-icon icon="fa fa-gear" class="text-info" size="2x"/>
-                                        </a>
+                                        <span class="run-status" :style="{ '--status-color': statusOf(props.row.status).color }">
+                                            <font-awesome-icon :icon="`fa ${statusOf(props.row.status).icon}`"
+                                                               :spin="statusOf(props.row.status).spin" />
+                                            {{$t(`status.${props.row.status}`)}}
+                                        </span>
                                     </template>
                                     <template #actions="props">
-                                        <button class="btn btn-sm btn-danger" @click="remove(props.row.id)">
+                                        <button v-if="!props.row.context_data?.length" type="button"
+                                                class="btn btn-sm btn-link text-secondary"
+                                                :title="$t('pipeline.list.addContext')"
+                                                :aria-label="$t('pipeline.list.addContext')"
+                                                @click.stop="openContextEditor(props.row)">
+                                            <font-awesome-icon icon="plus" />
+                                        </button>
+                                        <button type="button" class="btn btn-sm btn-link text-secondary row-delete"
+                                                :title="$t('actions.delete')" :aria-label="$t('actions.delete')"
+                                                @click.stop="remove(props.row.id)">
                                             <font-awesome-icon icon="trash" />
                                         </button>
                                     </template>
                                 </v-server-table>
                             </div>
                         </div>
-                        <div class="col-12 border-left">
-                            <h6>{{$t('titles.notification', 2)}}</h6>
+                        <details open class="col-12 border-left mt-3">
+                            <summary class="h6">
+                                {{$t('titles.notification', 2)}}
+                            </summary>
                             <pipeline-run-notifications ref="notificationsList" />
-                        </div>
+                        </details>
                     </div>
                 </div>
             </div>
@@ -251,7 +207,9 @@
                     <label for="pipeline-run-comment" class="form-label">{{$t('titles.comment')}}</label>
                     <textarea id="pipeline-run-comment" v-model="commentDraft" class="form-control"
                               rows="6" maxlength="200" autofocus />
-                    <div class="form-text text-end">{{commentDraft.length}}/200</div>
+                    <div class="form-text text-end">
+                        {{commentDraft.length}}/200
+                    </div>
                 </div>
                 <div class="d-flex justify-content-end gap-2">
                     <button type="button" class="btn btn-secondary" :disabled="commentSaving"
@@ -268,7 +226,9 @@
         <dialog ref="contextDialog" class="context-dialog" @cancel.prevent="closeContextEditor">
             <form method="dialog" @submit.prevent="saveContextVariable">
                 <div class="context-dialog-header">
-                    <h2 class="h5 mb-0">{{$t('pipeline.schedule.contextData')}}</h2>
+                    <h2 class="h5 mb-0">
+                        {{$t('pipeline.schedule.contextData')}}
+                    </h2>
                     <button type="button" class="btn-close" :aria-label="$t('actions.cancel')"
                             @click="closeContextEditor" />
                 </div>
@@ -277,7 +237,7 @@
                         {{$t('pipeline.schedule.contextName')}}
                     </label>
                     <input id="pipeline-run-context-name" v-model="contextName" class="form-control"
-                           maxlength="200" required :readonly="Boolean(editingContextVariable)" />
+                           maxlength="200" required :readonly="Boolean(editingContextVariable)">
                 </div>
                 <div class="mb-3">
                     <label for="pipeline-run-context-value" class="form-label">
@@ -285,7 +245,9 @@
                     </label>
                     <textarea id="pipeline-run-context-value" v-model="contextValue" class="form-control"
                               rows="5" maxlength="4000" required />
-                    <div class="form-text text-end">{{contextValue.length}}/4000</div>
+                    <div class="form-text text-end">
+                        {{contextValue.length}}/4000
+                    </div>
                 </div>
                 <div class="d-flex justify-content-end gap-2">
                     <button type="button" class="btn btn-secondary" :disabled="contextSaving"
@@ -308,6 +270,7 @@ import { useWebSocket } from '@/composables/websocket.js';
 import PipelineRunNotifications from '@/components/PipelineRunNotifications.vue';
 import Notifier from '@/mixins/Notifier.js';
 import DataTableBuilder from '@/data-table-builder.js';
+import { RUN_STATUS, statusOf, formatDuration } from '@/views/pipeline/run-status.js';
 
 const standUrl = import.meta.env.VITE_STAND_URL;
 const standNamespace = import.meta.env.VITE_STAND_NAMESPACE;
@@ -323,10 +286,10 @@ export default {
     mixins: [Notifier],
     data() {
         return {
-            statuses: ['COMPLETED', 'CANCELED', 'ERROR', 'INTERRUPTED', 'PENDING',
-                'RUNNING', 'WAITING', 'WAITING_INTERVENTION'],
+            statuses: Object.keys(RUN_STATUS),
+            live: false,
             filters: { // binding
-                status: null,
+                status: '',
                 name: null,
                 pipeline: null,
                 start: null,
@@ -347,15 +310,13 @@ export default {
             ...new DataTableBuilder(this.$t)
                 .columns(
                     'id',
-                    //'pipeline_id',
                     'pipeline_name',
                     'status',
-                    'period',
+                    'start',
+                    'duration',
                     'updated',
-                    //'last_executed_step',
                     'comment',
-                    //'context',
-                    'statusStatus',
+                    'steps',
                     'actions',
                 )
                 .skin('table-sm table table-hover')
@@ -367,19 +328,37 @@ export default {
                 .headings({
                     id: 'ID',
                     pipeline_name: this.$t('titles.pipeline'),
-                    period: this.$t('common.period'),
+                    start: this.$t('pipeline.list.started'),
+                    duration: this.$t('pipeline.list.duration'),
                     updated: this.$t('common.updated'),
                     status: this.$t('common.status'),
-                    statusStatus: this.$t('common.status'),
+                    steps: this.$t('pipeline.list.steps'),
                     actions: this.$t('titles.action', 2),
                     comment: this.$t('titles.comment', 2),
                 })
-                .sortable('id', 'pipeline_id', 'pipeline_name', 'period', 'updated')
+                .sortable('id', 'pipeline_name', 'start', 'updated')
                 .filterable()
                 .rowDetails(row => Boolean(row.context_data?.length))
                 .requestFunction(this.load)
+                .onRowClick(this.openRun)
                 .build()
         };
+    },
+    computed: {
+        activeFilters() {
+            const f = this.filters;
+            return [
+                f.name && { key: 'name', label: this.$t('common.name'), value: f.name },
+                f.status && { key: 'status', label: this.$t('common.status'), value: this.$t(`status.${f.status}`) },
+                f.start && { key: 'start', label: this.$t('pipeline.list.periodStart'), value: f.start },
+                f.end && { key: 'end', label: this.$t('pipeline.list.periodFinish'), value: f.end },
+            ].filter(Boolean);
+        }
+    },
+    watch: {
+        '$route'() {
+            disconnectWebSocket();
+        }
     },
     mounted() {
         if (this.$route.params.from === 'PipelineEdit') this.fromPipelineEdit = true;
@@ -387,7 +366,11 @@ export default {
 
         const eventHandlers = {
             'connect': () => {
+                this.live = true;
                 joinRoom('pipeline_runs', true);
+            },
+            'disconnect': () => {
+                this.live = false;
             },
             'update pipeline run': (msg) => {
                 if (!msg.pipeline_run) {
@@ -408,12 +391,21 @@ export default {
     unmounted() {
         disconnectWebSocket();
     },
-    watch: {
-        '$route'() {
-            disconnectWebSocket();
-        }
-    },
     methods: {
+        statusOf,
+        formatDuration,
+        clearFilters() {
+            Object.assign(this.filters, { status: '', name: null, start: null, end: null });
+            this.search();
+        },
+        removeFilter(key) {
+            this.filters[key] = key === 'status' ? '' : null;
+            this.search();
+        },
+        openRun(row, event) {
+            if (event.target.closest('a, button, input, select, textarea')) return;
+            this.$router.push({ name: 'pipelineRunDetail', params: { id: row.id } });
+        },
         async search() {
             const query = {};
             this.$router.replace({ query }).catch(() => { });
@@ -528,7 +520,7 @@ export default {
             );
         },
         detail(step) {
-            console.debug(step)
+            console.debug(step);
         },
         async load(data) {
             localStorage.setItem('pipeline_run:list:filters', JSON.stringify(this.filters));
@@ -721,46 +713,84 @@ export default {
 
 .arrow-step {
     position: relative;
-    background: #6c757d;
-    color: white;
-    padding: 1px 10px 1px 10px;
+    background: var(--status-color, #6c757d);
+    color: white !important;
+    padding: 1px 14px 1px 14px;
     margin-right: 1px;
     clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 50%, calc(100% - 8px) 100%, 0 100%, 8px 50%);
     min-width: 120px;
-    min-height: 35px;
+    max-width: 200px;
+    min-height: 38px;
     cursor: pointer;
+    text-decoration: none !important;
+}
+
+.arrow-step:hover,
+.arrow-step:focus-visible {
+    filter: brightness(1.15);
+    outline: none;
 }
 
 .arrow-step:first-child {
     clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 50%, calc(100% - 8px) 100%, 0 100%);
-    padding-left: 10px;
 }
 
 .arrow-step:last-child {
     clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 8px 50%);
-    padding-right: 10px;
     margin-right: 0;
 }
 
-.arrow-step.completed {
-    background: linear-gradient(35deg, #28a745 0%, #40fffd 100%);
+.arrow-step .step-name {
+    font-size: 0.75rem;
+    max-width: 100%;
 }
 
-.arrow-step.in-progress {
-    background: linear-gradient(35deg, #ffc107 0%, #ffb300 100%);
+.arrow-step .step-status {
+    font-size: 0.7rem;
 }
 
-.arrow-step.pending {
-    background: linear-gradient(35deg, #6c757d 0%, #5a6268 100%);
-}
-
-.arrow-step.running {
-    background: linear-gradient(35deg, #5555ff 20%, #aa00ff 100%);
-}
-
-.arrow-step.error {
-    background: linear-gradient(35deg, #aa2222 20%, #ff4444 100%);
+.run-status {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-size: 0.8rem;
     color: white;
+    white-space: nowrap;
+    background: var(--status-color);
+}
+
+.filter-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.1rem 0.6rem;
+    border-radius: 1rem;
+    font-size: 0.8rem;
+    background: #e9ecef;
+    color: #495057;
+}
+
+.btn-close-sm {
+    font-size: 0.6rem;
+}
+
+.live-indicator {
+    font-size: 0.8rem;
+    color: #1f7a3d;
+}
+
+.live-indicator.off {
+    color: #5f6b76;
+}
+
+.row-delete {
+    opacity: 0.45;
+}
+
+tr:hover .row-delete,
+.row-delete:focus-visible {
+    opacity: 1;
+    color: #b02a37 !important;
 }
 
 .tooltip-large .tooltip-inner {
