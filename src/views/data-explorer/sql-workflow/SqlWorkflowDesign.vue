@@ -270,6 +270,7 @@ const {t} = useI18n()
 
 const { success, error, confirmDelete, successDeleted } = useNotifier(vm.proxy);
 const CELL = { name: 'célula', gender: 'f' };
+const DATA_SOURCE = { name: 'fonte de dados', gender: 'f' };
 
 const operationsMap = ref(new Map());
 /**/
@@ -778,11 +779,12 @@ const handleAddDataSource = async (dataSourceId) => {
     addingDataSource.value = !addingDataSource.value;
 }
 const handleRemoveDataSource = (taskId) => {
-    if (confirm(t('messages.doYouWantToDelete'))) {
+    confirmDelete(DATA_SOURCE, () => {
         workflowObj.value.removeTask(taskId);
         dataSources.value = dataSources.value.filter(ds => ds.id !== taskId);
         isDirty.value = true;
-    }
+        successDeleted(DATA_SOURCE);
+    });
 }
 const handlePreview = (dataSourceId) => {
     previewWindow.value.show(dataSourceId);
