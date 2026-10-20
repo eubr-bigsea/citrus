@@ -32,6 +32,14 @@ export default class DataTableBuilder {
         this._columns = names;
         return this;
     }
+    zebra() {
+        this.options.zebra = true;
+        return this;
+    }
+    orderBy(column, ascending = true) {
+        this.options.orderBy = { column, ascending };
+        return this;
+    }
     sortable(...names) {
         this.options.sortable = names;
         return this;

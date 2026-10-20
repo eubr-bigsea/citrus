@@ -37,7 +37,7 @@
         </table>
         <section v-show="!firstLoad">
             <div class="table-area scroll-area">
-                <table v-if="tableData?.length" ref="table" class="server-table" :class="options.skin">
+                <table v-if="tableData?.length" ref="table" class="server-table" :class="[options.skin, { zebra: options.zebra }]">
                     <thead>
                         <tr>
                             <th v-for="(heading, index) in columns" :key="index" class="header"
@@ -50,7 +50,7 @@
                     </thead>
                     <tbody v-if="tableData.length !== 0">
                         <template v-for="(row, rowIndex) in tableData" :key="rowIndex">
-                            <tr :class="{ 'row-clickable': options.onRowClick }"
+                            <tr :class="{ 'row-clickable': options.onRowClick, 'has-details': options.rowDetails && options.rowDetails(row), 'row-alt': rowIndex % 2 }"
                                 @click="options.onRowClick && options.onRowClick(row, $event)">
                                 <td v-for="colName in columns" :key="colName"
                                     :class="getColumnClass(options.columnsClasses, colName)">
@@ -61,7 +61,7 @@
                                     </slot>
                                 </td>
                             </tr>
-                            <tr v-if="options.rowDetails && options.rowDetails(row)" class="row-details">
+                            <tr v-if="options.rowDetails && options.rowDetails(row)" class="row-details" :class="{ 'row-alt': rowIndex % 2 }">
                                 <td :colspan="columns.length">
                                     <slot name="rowDetails" :row="row" />
                                 </td>
@@ -294,6 +294,18 @@ div.table-area {
 }
 
 /* Add your component-specific styles here */
+.zebra.server-table :deep(td) {
+    padding: 0.6rem 0.75rem;
+}
+
+.zebra tr.row-alt {
+    background-color: #f6f8fa;
+}
+
+.has-details > td {
+    border-bottom-width: 0;
+}
+
 .row-clickable {
     cursor: pointer;
 }

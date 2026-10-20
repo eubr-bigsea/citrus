@@ -930,6 +930,8 @@ export default {
             },
             list: {
                 contextVariables: 'Variáveis de contexto',
+                contextVariablesOf: 'Variáveis de contexto da execução #{id}',
+                openWorkflow: 'Clique para abrir o fluxo #{id}',
                 doNotUseTemplate: 'Não utilizar modelo',
                 generalInfo: 'Informações Gerais',
                 goToWorkflow: 'Ir para o fluxo de trabalho',
@@ -1923,6 +1925,8 @@ export default {
                 goToWorkflow: 'Go to workflow',
                 pipelineCreation: 'Pipeline Creation',
                 searchByIdOrName: 'Pipeline Id or Name',
+                contextVariablesOf: 'Context variables of run #{id}',
+                openWorkflow: 'Click to open workflow #{id}',
                 started: 'Start',
                 duration: 'Duration',
                 steps: 'Steps',

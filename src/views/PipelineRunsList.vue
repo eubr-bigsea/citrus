@@ -91,9 +91,12 @@
                                         </router-link>
                                     </template>
                                     <template #rowDetails="props">
-                                        <div class="context-vars-container" :title="$t('pipeline.list.contextVariables')">
+                                        <div class="context-vars-container">
                                             <div class="context-vars-header">
-                                                <small class="text-muted">{{$t('pipeline.list.contextVariables')}}</small>
+                                                <small class="text-muted">
+                                                    <span class="context-connector" aria-hidden="true">↳</span>
+                                                    {{$t('pipeline.list.contextVariablesOf', { id: props.row.id })}}
+                                                </small>
                                                 <button type="button" class="btn btn-link btn-sm context-var-add"
                                                         :title="$t('pipeline.schedule.addContextVariable')"
                                                         @click.stop="openContextEditor(props.row)">
@@ -145,18 +148,39 @@
                                     </template>
                                     <template #steps="props">
                                         <div class="d-flex flex-wrap gap-1 pb-2">
-                                            <router-link v-for="step in props.row.steps" :key="step.id"
-                                                         :to="{ name: 'sql-workflow', params: { id: step.workflow_id } }"
-                                                         class="arrow-step d-flex flex-column align-items-center justify-content-center text-center mb-1"
-                                                         :style="{ '--status-color': statusOf(step.status).color }"
-                                                         :title="`${step.name} - ${$t(`status.${step.status}`)} (${$filters.formatJsonDate(step.updated, 'dd/MM/yyyy HH:mm:ss')})`">
-                                                <span class="step-name text-uppercase fw-bold text-truncate">{{step.name}}</span>
-                                                <span class="step-status">
-                                                    <font-awesome-icon :icon="`fa ${statusOf(step.status).icon}`"
-                                                                       :spin="statusOf(step.status).spin" />
-                                                    {{$t(`status.${step.status}`)}}
-                                                </span>
-                                            </router-link>
+                                            <template v-for="step in props.row.steps" :key="step.id">
+                                                <router-link :id="`step-${step.id}`"
+                                                             :to="{ name: 'sql-workflow', params: { id: step.workflow_id } }"
+                                                             class="arrow-step d-flex flex-column align-items-center justify-content-center text-center mb-1"
+                                                             :style="{ '--status-color': statusOf(step.status).color }"
+                                                             :aria-label="`${step.name}: ${$t(`status.${step.status}`)}`">
+                                                    <span class="step-name text-uppercase fw-bold text-truncate">{{step.name}}</span>
+                                                    <span class="step-status">
+                                                        <font-awesome-icon :icon="`fa ${statusOf(step.status).icon}`"
+                                                                           :spin="statusOf(step.status).spin" />
+                                                        {{$t(`status.${step.status}`)}}
+                                                    </span>
+                                                </router-link>
+                                                <b-popover :target="`step-${step.id}`" placement="top" noninteractive>
+                                                    <template #title>
+                                                        {{step.name}}
+                                                    </template>
+                                                    <div class="step-popover">
+                                                        <div :style="{ color: statusOf(step.status).color }" class="fw-bold">
+                                                            <font-awesome-icon :icon="`fa ${statusOf(step.status).icon}`"
+                                                                               :spin="statusOf(step.status).spin" />
+                                                            {{$t(`status.${step.status}`)}}
+                                                        </div>
+                                                        <div>
+                                                            <strong>{{$t('common.updated')}}:</strong>
+                                                            {{$filters.formatJsonDate(step.updated, 'dd/MM/yyyy HH:mm:ss')}}
+                                                        </div>
+                                                        <small class="text-muted">
+                                                            {{$t('pipeline.list.openWorkflow', { id: step.workflow_id })}}
+                                                        </small>
+                                                    </div>
+                                                </b-popover>
+                                            </template>
                                         </div>
                                     </template>
                                     <template #status="props">
@@ -340,6 +364,8 @@ export default {
                 .filterable()
                 .rowDetails(row => Boolean(row.context_data?.length))
                 .requestFunction(this.load)
+                .orderBy('updated', false)
+                .zebra()
                 .onRowClick(this.openRun)
                 .build()
         };
@@ -611,6 +637,12 @@ export default {
     white-space: nowrap;
 }
 
+.context-connector {
+    font-size: 1rem;
+    margin-right: 0.25rem;
+    color: #6c757d;
+}
+
 .context-vars-container {
     max-width: 100%;
     margin-left: 1.25rem;
@@ -634,7 +666,7 @@ export default {
 }
 
 .row-details > td {
-    background-color: #f8f9fa;
+    background-color: inherit;
     border-top: 0;
     padding: 0.35rem 0.5rem 0.6rem;
 }
@@ -727,8 +759,12 @@ export default {
 
 .arrow-step:hover,
 .arrow-step:focus-visible {
-    filter: brightness(1.15);
+    filter: brightness(0.8);
     outline: none;
+}
+
+.arrow-step:focus-visible .step-name {
+    text-decoration: underline;
 }
 
 .arrow-step:first-child {
