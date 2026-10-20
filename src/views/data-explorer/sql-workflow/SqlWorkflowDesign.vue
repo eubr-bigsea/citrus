@@ -204,7 +204,7 @@
                         <template v-else>Dica: comece adicionando uma fonte de dados no painel lateral.</template>
                     </p>
                 </div>
-                <div class="scroll-area commands pb-5 mb-4">
+                <div class="scroll-area commands pb-5">
                     <transition-group name="fade" @after-enter="handleCodeAppear">
                         <sql-cell v-for="cell, i in workflowObj.cells" :key="cell.id" ref="cellRefs"
                             :cell="cell" :index="i" :total="workflowObj.cells.length"
@@ -452,11 +452,37 @@ onBeforeMount(async () => {
 });
 onUnmounted(() => {
     window.removeEventListener('keydown', handleGlobalKeydown);
+    window.removeEventListener('resize', fitHeight);
+    document.documentElement.style.overflow = '';
+    headerObserver?.disconnect();
     window.onbeforeunload = null;
     disconnectWebSocket();
 });
+// Fit the 3 columns to the viewport so each one scrolls on its own (stacked layout below 1100px keeps page scroll)
+let headerObserver = null;
+const fitHeight = () => {
+    const el = workflowDesign.value;
+    if (!el) return;
+    const wide = window.innerWidth > 1100;
+    // header stays put: the page itself must not scroll when the columns do
+    document.documentElement.style.overflow = wide ? 'hidden' : '';
+    if (!wide) {
+        el.style.height = '';
+        return;
+    }
+    const top = el.getBoundingClientRect().top + window.scrollY;
+    const footer = document.querySelector('footer')?.offsetHeight || 0;
+    el.style.height = `${Math.max(window.innerHeight - top - footer - 16, 400)}px`;
+};
 onMounted(() => {
     window.addEventListener('keydown', handleGlobalKeydown);
+    window.addEventListener('resize', fitHeight);
+    fitHeight();
+    const header = document.querySelector('.workflow-header');
+    if (header) {
+        headerObserver = new ResizeObserver(fitHeight);
+        headerObserver.observe(header);
+    }
     job.value = { id: 800_000 + parseInt(internalWorkflowId.value) };
     configureWebSocket();
 });
@@ -891,6 +917,12 @@ table.dataframe {
     font-size: .8em;
 }
 
+.layout,
+.layout-help {
+    min-height: 0;
+    overflow-y: auto;
+}
+
 .workflow-header,
 .workflow-heading,
 .workflow-actions,
@@ -980,7 +1012,9 @@ table.dataframe {
 
 .layout-center {
     margin-top: 10px;
-    display: block;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
     flex-grow: 1;
     flex-shrink: 1;
     flex-basis: auto;
@@ -991,14 +1025,10 @@ table.dataframe {
 }
 
 .commands {
-    max-height: 75vh;
+    flex: 1 1 auto;
+    min-height: 0;
     overflow-y: auto;
     overflow-x: hidden;
-}
-
-.data-sources {
-    max-height: 50vh;
-    overflow-y: auto;
 }
 
 .switch-aligned {
