@@ -20,6 +20,18 @@
                     <div class="runsList-container custom-table">
                         <div class="row">
                             <div class="col-12">
+                                <div class="d-flex flex-wrap align-items-center gap-2 mb-2" role="group"
+                                     :aria-label="$t('pipeline.list.presets.title')">
+                                    <small class="text-muted">{{$t('pipeline.list.presets.title')}}:</small>
+                                    <button v-for="preset in presets" :key="preset.key" type="button"
+                                            class="preset-chip" :class="{ active: activePreset === preset.key }"
+                                            :style="{ '--preset-color': preset.color }"
+                                            :aria-pressed="activePreset === preset.key"
+                                            @click="applyPreset(preset)">
+                                        <font-awesome-icon :icon="`fa ${preset.icon}`" />
+                                        {{$t(`pipeline.list.presets.${preset.key}`)}}
+                                    </button>
+                                </div>
                                 <form class="row g-2 list-filter" @submit.prevent="search">
                                     <div class="col-12 col-md-4 col-xl-3 mb-2">
                                         <label for="run-filter-name">{{$t('pipeline.list.searchByIdOrName')}}:</label>
@@ -42,6 +54,10 @@
                                                 class="form-select form-select-sm">
                                             <option value="">
                                                 {{$t('pipeline.list.allStatuses')}}
+                                            </option>
+                                            <option v-if="filters.status && filters.status.includes(',')"
+                                                    :value="filters.status">
+                                                {{statusLabel(filters.status)}}
                                             </option>
                                             <option v-for="status in statuses" :key="status" :value="status">
                                                 {{$t(`status.${status}`)}}
@@ -127,10 +143,7 @@
                                         </div>
                                     </template>
                                     <template #start="props">
-                                        {{$filters.formatJsonDate(props.row.start)}}
-                                    </template>
-                                    <template #duration="props">
-                                        {{formatDuration(props.row.start, props.row.finish)}}
+                                        {{$filters.formatJsonDate(props.row.start)}} {{$t('common.until')}} {{$filters.formatJsonDate(props.row.finish)}}
                                     </template>
                                     <template #updated="props">
                                         {{$filters.formatJsonDate(props.row.updated, 'dd/MM/yyyy HH:mm:ss')}}
@@ -149,18 +162,18 @@
                                     <template #steps="props">
                                         <div class="d-flex flex-wrap gap-1 pb-2">
                                             <template v-for="step in props.row.steps" :key="step.id">
-                                                <router-link :id="`step-${step.id}`"
-                                                             :to="{ name: 'sql-workflow', params: { id: step.workflow_id } }"
-                                                             class="arrow-step d-flex flex-column align-items-center justify-content-center text-center mb-1"
-                                                             :style="{ '--status-color': statusOf(step.status).color }"
-                                                             :aria-label="`${step.name}: ${$t(`status.${step.status}`)}`">
+                                                <a :id="`step-${step.id}`" href="#" role="button"
+                                                   class="arrow-step d-flex flex-column align-items-center justify-content-center text-center mb-1"
+                                                   :style="{ '--status-color': statusOf(step.status).color }"
+                                                   :aria-label="`${step.name}: ${$t(`status.${step.status}`)}`"
+                                                   @click.prevent="confirmGoToWorkflow(step)">
                                                     <span class="step-name text-uppercase fw-bold text-truncate">{{step.name}}</span>
                                                     <span class="step-status">
                                                         <font-awesome-icon :icon="`fa ${statusOf(step.status).icon}`"
                                                                            :spin="statusOf(step.status).spin" />
                                                         {{$t(`status.${step.status}`)}}
                                                     </span>
-                                                </router-link>
+                                                </a>
                                                 <b-popover :target="`step-${step.id}`" placement="top" noninteractive>
                                                     <template #title>
                                                         {{step.name}}
@@ -294,7 +307,8 @@ import { useWebSocket } from '@/composables/websocket.js';
 import PipelineRunNotifications from '@/components/PipelineRunNotifications.vue';
 import Notifier from '@/mixins/Notifier.js';
 import DataTableBuilder from '@/data-table-builder.js';
-import { RUN_STATUS, statusOf, formatDuration } from '@/views/pipeline/run-status.js';
+import { RUN_STATUS, statusOf } from '@/views/pipeline/run-status.js';
+import { RUN_PRESETS, presetFilters } from '@/views/pipeline/run-presets.js';
 
 const standUrl = import.meta.env.VITE_STAND_URL;
 const standNamespace = import.meta.env.VITE_STAND_NAMESPACE;
@@ -311,6 +325,7 @@ export default {
     data() {
         return {
             statuses: Object.keys(RUN_STATUS),
+            presets: RUN_PRESETS,
             live: false,
             filters: { // binding
                 status: '',
@@ -337,7 +352,6 @@ export default {
                     'pipeline_name',
                     'status',
                     'start',
-                    'duration',
                     'updated',
                     'comment',
                     'steps',
@@ -346,14 +360,13 @@ export default {
                 .skin('table-sm table table-hover')
                 .perPageValues([])
                 .columnClasses({
-                    last_executed_step: 'text-center',
                     status: 'text-center',
+                    updated: 'text-center',
                 })
                 .headings({
                     id: 'ID',
                     pipeline_name: this.$t('titles.pipeline'),
-                    start: this.$t('pipeline.list.started'),
-                    duration: this.$t('pipeline.list.duration'),
+                    start: this.$t('common.period'),
                     updated: this.$t('common.updated'),
                     status: this.$t('common.status'),
                     steps: this.$t('pipeline.list.steps'),
@@ -371,11 +384,19 @@ export default {
         };
     },
     computed: {
+        activePreset() {
+            const f = this.filters;
+            if (f.name) return null;
+            return this.presets.find(p => {
+                const v = presetFilters(p);
+                return (f.status || '') === v.status && (f.start || null) === v.start && (f.end || null) === v.end;
+            })?.key;
+        },
         activeFilters() {
             const f = this.filters;
             return [
                 f.name && { key: 'name', label: this.$t('common.name'), value: f.name },
-                f.status && { key: 'status', label: this.$t('common.status'), value: this.$t(`status.${f.status}`) },
+                f.status && { key: 'status', label: this.$t('common.status'), value: this.statusLabel(f.status) },
                 f.start && { key: 'start', label: this.$t('pipeline.list.periodStart'), value: f.start },
                 f.end && { key: 'end', label: this.$t('pipeline.list.periodFinish'), value: f.end },
             ].filter(Boolean);
@@ -419,7 +440,20 @@ export default {
     },
     methods: {
         statusOf,
-        formatDuration,
+        statusLabel(status) {
+            return status.split(',').map(st => this.$t(`status.${st}`)).join(', ');
+        },
+        applyPreset(preset) {
+            Object.assign(this.filters, { name: null }, presetFilters(preset));
+            this.search();
+        },
+        confirmGoToWorkflow(step) {
+            this.confirm(
+                step.name,
+                this.$t('pipeline.list.goToWorkflowQuestion', { id: step.workflow_id }),
+                () => this.$router.push({ name: 'sql-workflow', params: { id: step.workflow_id } })
+            );
+        },
         clearFilters() {
             Object.assign(this.filters, { status: '', name: null, start: null, end: null });
             this.search();
@@ -793,6 +827,21 @@ export default {
     color: white;
     white-space: nowrap;
     background: var(--status-color);
+}
+
+.preset-chip {
+    padding: 0.15rem 0.7rem;
+    border: 1px solid var(--preset-color);
+    border-radius: 1rem;
+    background: transparent;
+    color: var(--preset-color);
+    font-size: 0.8rem;
+}
+
+.preset-chip:hover,
+.preset-chip.active {
+    background: var(--preset-color);
+    color: white;
 }
 
 .filter-chip {

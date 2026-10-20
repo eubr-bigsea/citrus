@@ -41,10 +41,10 @@
                     <thead>
                         <tr>
                             <th v-for="(heading, index) in columns" :key="index" class="header"
-                                :class="getSortClass(heading)"
+                                :class="[{ 'can-be-sorted': sortableColumns.includes(heading) }, getColumnClass(options.columnsClasses, heading)]"
                                 :aria-sort="getAriaSort(heading)"
                                 @click="handleSort(heading, $event)">
-                                {{getTableHeader(heading)}}
+                                <span :class="getSortClass(heading)">{{getTableHeader(heading)}}</span>
                             </th>
                         </tr>
                     </thead>
@@ -214,7 +214,6 @@ const getSortClass = (column) => {
     }
     const active = sortColumn.value === column;
     return {
-        'can-be-sorted': true,
         [sortIcon.value.is]: !active,
         [sortIcon.value.up]: active && sortDirection.value === 'desc',
         [sortIcon.value.down]: active && sortDirection.value === 'asc',
@@ -300,6 +299,10 @@ div.table-area {
 
 .zebra tr.row-alt {
     background-color: #f6f8fa;
+}
+
+.can-be-sorted {
+    cursor: pointer;
 }
 
 .has-details > td {
