@@ -333,7 +333,7 @@ export default {
                 allTypes: 'Todos os tipos',
                 emptyCta: 'Nenhum experimento ainda. Comece criando um:',
                 desc: {
-                    DATA_EXPLORER: 'Analise e transforme dados com retorno imediato (usa amostra).',
+                    DATA_EXPLORER: 'Analise e transforme dados.',
                     SQL: 'Escreva comandos SQL para consultar ou alterar dados.',
                     MODEL_BUILDER: 'Defina tarefa, algoritmos, features e métricas.',
                     VIS_BUILDER: 'Monte gráficos e dashboards e compartilhe-os.',
