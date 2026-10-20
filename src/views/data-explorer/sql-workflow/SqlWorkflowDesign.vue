@@ -149,7 +149,7 @@
             <div class="layout-center pt-2">
                 <div class="d-flex justify-content-end align-items-center py-1">
                     <h4 class="m-0">Células <span class="command-count">{{ workflowObj.cells?.length }}</span></h4>
-                    <cell-map class="me-auto ms-3" :cells="workflowObj.cells || []" :active-id="activeCellId" @select="scrollToCell" />
+                    <cell-map class="me-auto ms-3" :cells="workflowObj.cells || []" :active-id="activeCellId" @select="scrollToCell" @move="handleMapMove" />
                     <div>
                         <button type="button" @click="toggleExpand" class="btn btn-sm"
                             :class="{'btn-info': expandedArea, 'btn-outline-secondary': !expandedArea}"
@@ -315,6 +315,12 @@ const updateActiveCell = () => {
 const setActiveCell = (id) => {
     pinnedCellId = id;
     activeCellId.value = id;
+};
+const handleMapMove = async (id, toIndex) => {
+    workflowObj.value.moveTaskToIndex(id, toIndex);
+    isDirty.value = true;
+    await nextTick();
+    scrollToCell(id);
 };
 const scrollToCell = (id) => {
     const el = document.querySelector(`[data-cell-container="${id}"]`);

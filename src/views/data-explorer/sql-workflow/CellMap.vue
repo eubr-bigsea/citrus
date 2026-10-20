@@ -1,25 +1,72 @@
 <template>
-    <div v-if="cells.length > 1" class="cell-map" role="group" aria-label="Mapa de células">
+    <div v-if="cells.length > 1" ref="root" class="cell-map" role="group" aria-label="Mapa de células">
         <button v-for="(cell, i) in cells" :key="cell.id" type="button" class="cell-map-item"
-            :class="[`status-${(cell.status || 'none').toLowerCase()}`, { 'is-disabled': !cell.enabled, 'is-active': cell.id === activeId }]"
-            :data-type="cell.operation.slug"
+            :class="{
+                'is-disabled': !cell.enabled, 'is-active': cell.id === activeId, 'is-dragging': cell.id === dragId,
+                'drop-before': dropIndex === i && dropSide === 'before', 'drop-after': dropIndex === i && dropSide === 'after',
+            }"
+            :data-type="cell.operation.slug" :data-id="cell.id" draggable="true"
             :title="label(cell, i)" :aria-label="label(cell, i)" :aria-current="cell.id === activeId ? 'true' : undefined"
-            @click="emit('select', cell.id)">
+            @click="emit('select', cell.id)"
+            @dragstart="onDragStart($event, cell)" @dragover.prevent="onDragOver($event, i)"
+            @dragleave="dropIndex = null" @drop.prevent="onDrop(i)" @dragend="reset"
+            @keydown.alt.left.prevent="moveBy(i, -1)" @keydown.alt.right.prevent="moveBy(i, 1)">
             <font-awesome-icon :icon="CELL_TYPE_ICONS[cell.operation.slug]" />
         </button>
     </div>
 </template>
 
 <script setup>
-import { CELL_TYPE_ICONS, getCellStatusLabel } from './cellStatus.js';
+import { nextTick, ref } from 'vue';
+import { CELL_TYPE_ICONS } from './cellStatus.js';
 
-defineProps({
+const props = defineProps({
     cells: { type: Array, default: () => [] },
     activeId: { type: String, default: null },
 });
-const emit = defineEmits(['select']);
+// move: the cell goes to position toIndex among the cells
+const emit = defineEmits(['select', 'move']);
 
-const label = (cell, i) => `${i + 1} · ${cell.operation.slug.substring(8).toUpperCase()} · ${getCellStatusLabel(cell)}`;
+const root = ref();
+const dragId = ref(null);
+const dropIndex = ref(null);
+const dropSide = ref('before');
+
+// the comment identifies the cell in the tooltip; the name is the fallback when there is none
+const text = (cell) => (cell.forms.comment?.value || '').trim() || cell.name || '';
+const label = (cell, i) => `${i + 1} · ${cell.operation.slug.substring(8).toUpperCase()} · ${text(cell)}`;
+
+const reset = () => {
+    dragId.value = null;
+    dropIndex.value = null;
+};
+const onDragStart = (e, cell) => {
+    dragId.value = cell.id;
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', cell.id);
+};
+const onDragOver = (e, i) => {
+    if (!dragId.value) return;
+    e.dataTransfer.dropEffect = 'move';
+    const rect = e.currentTarget.getBoundingClientRect();
+    dropIndex.value = i;
+    dropSide.value = e.clientX < rect.left + rect.width / 2 ? 'before' : 'after';
+};
+const onDrop = (i) => {
+    const from = props.cells.findIndex(c => c.id === dragId.value);
+    const position = dropSide.value === 'before' ? i : i + 1;
+    const to = position > from ? position - 1 : position;
+    if (from > -1 && to !== from) emit('move', dragId.value, to);
+    reset();
+};
+const moveBy = (i, step) => {
+    const to = i + step;
+    if (to < 0 || to >= props.cells.length) return;
+    const id = props.cells[i].id;
+    emit('move', id, to);
+    // moving the node can drop the focus
+    nextTick(() => root.value?.querySelector(`[data-id="${id}"]`)?.focus());
+};
 </script>
 
 <style scoped>
@@ -31,12 +78,11 @@ const label = (cell, i) => `${i + 1} · ${cell.operation.slug.substring(8).toUpp
     gap: 6px;
     max-height: 4.5rem;
     overflow-y: auto;
-    padding: 5px; /* room for the active outline and the status dot, which overflow is clipped otherwise */
+    padding: 5px; /* room for the active outline and the drop line, which overflow would clip */
 }
 
 .cell-map-item {
     --type: var(--cell-sql);
-    --status: transparent;
     position: relative;
     display: inline-flex;
     align-items: center;
@@ -54,25 +100,22 @@ const label = (cell, i) => `${i + 1} · ${cell.operation.slug.substring(8).toUpp
 .cell-map-item[data-type="execute-script"] { --type: var(--cell-script); }
 .cell-map-item.is-disabled { --type: #8a8f98; }
 
-/* status dot, bottom-right corner */
-.cell-map-item::after {
-    content: '';
-    position: absolute;
-    right: -4px;
-    bottom: -4px;
-    width: 9px;
-    height: 9px;
-    border: 1px solid #fff;
-    border-radius: 50%;
-    background: var(--status);
+.cell-map-item.is-dragging {
+    opacity: .4;
 }
 
-.cell-map-item.status-running { --status: #0759a5; }
-.cell-map-item.status-completed { --status: #176b36; }
-.cell-map-item.status-error { --status: #a4262c; }
-.cell-map-item.status-pending,
-.cell-map-item.status-waiting { --status: #d39e00; }
-.cell-map-item.status-none::after { display: none; }
+.cell-map-item.drop-before::before,
+.cell-map-item.drop-after::before {
+    content: '';
+    position: absolute;
+    top: -3px;
+    bottom: -3px;
+    width: 3px;
+    background: #212529;
+}
+
+.cell-map-item.drop-before::before { left: -5px; }
+.cell-map-item.drop-after::before { right: -5px; }
 
 .cell-map-item.is-active,
 .cell-map-item:focus-visible {

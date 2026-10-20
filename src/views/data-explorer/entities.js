@@ -452,6 +452,18 @@ class SqlBuilderWorkflow extends Workflow {
         this.tasks.push(task);
         this.updateLists();
     }
+    // cellIndex: final position among the cells (data sources are not counted)
+    moveTaskToIndex(taskId, cellIndex) {
+        const fromCell = this.cells.findIndex(c => c.id === taskId);
+        const target = this.cells[cellIndex];
+        if (fromCell < 0 || !target || fromCell === cellIndex) return;
+        const from = this.tasks.findIndex(t => t.id === taskId);
+        const [moved] = this.tasks.splice(from, 1);
+        const to = this.tasks.findIndex(t => t.id === target.id);
+        // moving down lands after the target, moving up lands before it
+        this.tasks.splice(fromCell < cellIndex ? to + 1 : to, 0, moved);
+        this.updateLists();
+    }
     moveTask(taskId, direction) {
         const inx = this.tasks.findIndex(t => t.id === taskId);
         if (inx > -1) {
