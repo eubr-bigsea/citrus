@@ -61,7 +61,11 @@
                     </div>
                 </form>
 
-                <v-server-table v-show="totalRecords > 0" ref="workflowList" :columns="columns" :options="options"
+                <div v-if="loading" class="text-muted small mb-2" role="status">
+                    <font-awesome-icon icon="spinner" pulse /> {{$t('common.loading')}}
+                </div>
+                <v-server-table v-show="totalRecords > 0" ref="workflowList" :aria-busy="loading" :class="{ 'is-loading': loading }"
+                                :columns="columns" :options="options"
                                 name="workflowListDataExperiments">
                     <template #type="props">
                         <span class="type-badge" :style="{ '--type-color': types[props.row.type]?.color }">
@@ -82,8 +86,21 @@
                         {{$filters.formatJsonDate(props.row.updated)}}
                     </template>
                 </v-server-table>
-                <div v-show="totalRecords === 0" class="text-muted py-3">
-                    {{$t('dataExplorer.experimentsPage.emptyCta')}}
+                <div v-if="!loading && totalRecords === 0" class="text-muted py-3">
+                    <template v-if="typeFilter || searchFilter">
+                        {{$t('common.noData')}}
+                        <button type="button" class="btn btn-link btn-sm" @click="clearFilters">
+                            {{$t('actions.clearFilters')}}
+                        </button>
+                    </template>
+                    <template v-else>
+                        <p>{{$t('dataExplorer.experimentsPage.emptyCta')}}</p>
+                        <button v-for="(t, type) in types" :key="type" type="button"
+                                class="btn btn-sm text-white me-2 mb-2" :style="{ background: t.color }"
+                                @click="create(t)">
+                            <font-awesome-icon :icon="`fa ${t.icon}`" /> {{$t(`dataExplorer.experiments.${type}`)}}
+                        </button>
+                    </template>
                 </div>
             </b-card>
         </div>
@@ -103,7 +120,8 @@ export default {
         const self = this;
         return {
             types: EXPERIMENT_TYPES,
-            totalRecords: 0,
+            totalRecords: null,
+            loading: true,
             searchFilter: null,
             typeFilter: null,
             columns: [
@@ -128,6 +146,7 @@ export default {
                     updated: this.$t('common.updated'),
                     version: this.$t('common.version'),
                 },
+                orderBy: { column: 'updated', ascending: false },
                 sortable: ['name', 'updated'],
                 //filterable: ['name', 'id'],
                 filterable: false,
@@ -142,6 +161,7 @@ export default {
                 filterByColumn: false,
 
                 requestFunction: function (data) {
+                    self.loading = true;
                     self.$refs.searchBtn.classList.remove('btn-spinner');
                     data.sort = data.orderBy;
                     data.asc = data.ascending === 1 ? 'true' : 'false';
@@ -174,7 +194,10 @@ export default {
                             function (e) {
                                 self.error(e);
                             }.bind(this)
-                        ).finally(() => self.$refs.searchBtn.classList.add('btn-spinner'));
+                        ).finally(() => {
+                            self.loading = false;
+                            self.$refs.searchBtn.classList.add('btn-spinner');
+                        });
                 },
                 texts: {
                     filter: this.$t('common.filter'),
@@ -235,6 +258,11 @@ export default {
 .type-card:focus-visible {
     box-shadow: 0 0 0 2px var(--type-color);
     outline: none;
+}
+
+.is-loading {
+    opacity: 0.5;
+    pointer-events: none;
 }
 
 .type-badge {

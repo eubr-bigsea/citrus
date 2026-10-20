@@ -330,7 +330,7 @@ export default {
                 createNew: 'Criar novo',
                 yourExperiments: 'Seus experimentos',
                 allTypes: 'Todos os tipos',
-                emptyCta: 'Nenhum experimento ainda. Escolha uma das opções acima para começar.',
+                emptyCta: 'Nenhum experimento ainda. Comece criando um:',
                 desc: {
                     DATA_EXPLORER: 'Analise e transforme dados com retorno imediato (usa amostra).',
                     SQL: 'Escreva comandos SQL para consultar ou alterar dados.',
