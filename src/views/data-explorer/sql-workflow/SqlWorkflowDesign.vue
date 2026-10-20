@@ -180,23 +180,7 @@
                 <div v-if="workflowObj.cells?.length === 0" class="empty-state">
                     <h5 class="mb-1">Nenhum comando ainda</h5>
                     <p class="text-muted">Adicione o primeiro comando para começar.</p>
-                    <div class="d-flex justify-content-center flex-wrap gap-3">
-                        <div class="empty-option">
-                            <button type="button" @click="handleAdd(null, 'sql', '\n')" class="btn btn-outline-secondary btn-sm">
-                                <font-awesome-icon icon="fa fa-plus" /> SQL</button>
-                            <small class="text-muted">Consulta Spark SQL</small>
-                        </div>
-                        <div class="empty-option">
-                            <button type="button" @click="handleAdd(null, 'python', '\n')" class="btn btn-outline-secondary btn-sm">
-                                <font-awesome-icon icon="fa fa-plus" /> Python</button>
-                            <small class="text-muted">Código PySpark</small>
-                        </div>
-                        <div class="empty-option">
-                            <button type="button" @click="handleAdd(null, 'script', '\n')" class="btn btn-outline-secondary btn-sm">
-                                <font-awesome-icon icon="fa fa-plus" /> Script externo</button>
-                            <small class="text-muted">Arquivo no servidor</small>
-                        </div>
-                    </div>
+                    <add-cell-buttons captions @add="(type) => handleAdd(null, type, '\n')" />
                     <p class="text-muted mt-3 mb-0">
                         <template v-if="workflowObj.dataSources?.length > 0">
                             Dica: use SELECT, INSERT ou STAGE nas fontes de dados ao lado para gerar o primeiro comando.
@@ -214,14 +198,7 @@
                             @toggle="handleToggle" @dirty="isDirty = true" />
                     </transition-group>
                     <div v-if="workflowObj.cells?.length > 0" class="text-center mt-2">
-                        <b-dropdown variant="outline-primary" size="sm" no-caret strategy="fixed" :title="$t('actions.add')">
-                            <template #button-content>
-                                <font-awesome-icon icon="fa fa-plus" /> {{ $t('actions.add') }}
-                            </template>
-                            <b-dropdown-item href="#" @click.prevent="handleAdd(null, 'sql', '\n')">SQL</b-dropdown-item>
-                            <b-dropdown-item href="#" @click.prevent="handleAdd(null, 'python', '\n')">Python</b-dropdown-item>
-                            <b-dropdown-item href="#" @click.prevent="handleAdd(null, 'script', '\n')">Script externo</b-dropdown-item>
-                        </b-dropdown>
+                        <add-cell-buttons @add="(type) => handleAdd(null, type, '\n')" />
                     </div>
                 </div>
             </div>
@@ -262,6 +239,7 @@ import axios from 'axios';
 import VueSelect from 'vue-select';
 import InputHeader from '@/components/InputHeader.vue';
 import SqlCell from './SqlCell.vue';
+import AddCellButtons from './AddCellButtons.vue';
 import SqlEditorHelp from './SqlEditorHelp.vue';
 import SqlSample from './SqlSample.vue';
 import ModalWorkflowVariables from "@/views/modal/ModalWorkflowVariables.vue";
@@ -1056,13 +1034,6 @@ table.dataframe {
     padding: 2rem 1rem;
     border: 1px dashed #ced4da;
     text-align: center;
-}
-
-.empty-option {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: .25rem;
 }
 
 .help-toggle {
