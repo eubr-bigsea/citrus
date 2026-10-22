@@ -54,7 +54,7 @@
                     </b-link>
                 </li>
                 <li class="list-group-item">
-                    <b-link class="me-2" :to="{ name: 'codeLibrary' }">
+                    <b-link class="me-2" :to="{ name: 'sourceCodeList' }">
                         <font-awesome-icon icon="fa fa-file-code" size="lg" />
                         Code Library
                     </b-link>

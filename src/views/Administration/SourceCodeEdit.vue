@@ -4,7 +4,7 @@
             <div class="col">
                 <div>
                     <div class="d-flex justify-content-between align-items-center">
-                        <h1>Editar Variável Global</h1>
+                        <h1>Editar Código</h1>
                     </div>
                     <hr>
                     <div class="row" v-if="sourceCode">
@@ -112,29 +112,29 @@ const { success, error } = useNotifier(vm.proxy);
 onMounted(() => {
     load();
 });
-const standUrl = import.meta.env.VITE_STAND_URL;
+const tahitiUrl = import.meta.env.VITE_TAHITI_URL;
 const props = defineProps({
     add: { type: Boolean, required: false, default: false },
 });
 const isDirty = ref(false);
-const globalVariable = ref();
+const sourceCode = ref();
 
 const load = async () => {
     if (props.add) {
-        globalVariable.value = { id: null, description: '', name: '', value: '', enabled: true };
+        sourceCode.value = { id: null, name: '', enabled: true, requirements: '', imports: '', code: '' };
     } else {
         const resp = await axios
-            .get(`${standUrl}/global-variables/${route.params.id}`);
-        globalVariable.value = resp.data.data[0];
+            .get(`${tahitiUrl}/source-codes/${route.params.id}`);
+        sourceCode.value = resp.data.data[0];
     }
 };
 const save = async (event) => {
-    let url = `${standUrl}/global-variables/${globalVariable.value.id}`;
+    let url = `${tahitiUrl}/source-codes/${sourceCode.value.id}`;
     let axiosCall = axios.patch;
 
 
     if (props.add) {
-        url = `${standUrl}/global-variables`;
+        url = `${tahitiUrl}/source-codes`;
         axiosCall = axios.post
     }
     event.target.setAttribute('disabled', 'disabled');
@@ -155,13 +155,13 @@ const save = async (event) => {
 };
 /* Prism */
 const highlighter = () => {
-    if (globalVariable.value !== '') {
-        return highlight(globalVariable.value.code, languages.py, 'py');
+    if (sourceCode.value !== '') {
+        return highlight(sourceCode.value.code, languages.py, 'py');
     }
 };
 const highlighterImport = () => {
-    if (globalVariable.value !== '') {
-        return highlight(globalVariable.value.imports || '', languages.py, 'py');
+    if (sourceCode.value !== '') {
+        return highlight(sourceCode.value.imports || '', languages.py, 'py');
     }
 };
 const focusTextarea = (event) => {
