@@ -63,6 +63,13 @@ class AuthService {
         //}
         const mgr = new UserManager(merged);
         this.userManager = mgr;
+        mgr.events.addAccessTokenExpired(() => {
+            // Renewal failed and the token expired: block the app now instead of waiting for a 401.
+            if (this.enabled) {
+                const cleared = this.vueStore ? this.vueStore.dispatch('logout') : Promise.resolve();
+                cleared.then(() => window.location.replace('/auth/login?expired=1'));
+            }
+        });
         mgr.events.addAccessTokenExpiring(function () {
             console.log("token expiring");
             // maybe do this code manually if automaticSilentRenew doesn't work for you
@@ -114,17 +121,22 @@ class AuthService {
      *
      * Returns a promise which will be resolved to true/false or be rejected with an error.
      */
-    isUserLoggedIn() {
-        return new Promise((resolve, reject) => {
-            this.userManager.getUser()
-                .then(user => {
-                    if (user === null) {
-                        resolve(false);
-                    }
-                    resolve(true);
-                })
-                .catch(error => reject(error));
-        });
+    async isUserLoggedIn() {
+        const user = await this.userManager.getUser();
+        if (user && !user.expired) {
+            return true;
+        }
+        if (user) {
+            // getUser() still returns a user whose token expired; try one silent renewal before giving up
+            try {
+                await this.userManager.signinSilent();
+                return true;
+            } catch (e) {
+                console.log('silent renew error', e.message);
+                await this.userManager.removeUser();
+            }
+        }
+        return false;
     }
 
     /**

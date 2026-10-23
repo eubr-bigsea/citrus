@@ -9,7 +9,7 @@ export default {
     },
     created: function () {
         this.$store.dispatch('logout').then(() => {
-            this.$router.push('/login');
+            this.$router.push({ name: 'login', query: { loggedOut: 1 } });
         });
     }
 };

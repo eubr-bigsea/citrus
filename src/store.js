@@ -138,6 +138,7 @@ export default createStore({
         logout(state) {
             state.status = '';
             state.token = '';
+            state.user = {};
         },
         register_error(err) {
             console.error(err);
@@ -318,10 +319,10 @@ export default createStore({
         user: state => state.user || {},
         peelUrl: state => state.peelUrl,
         isAdmin: state => state.user?.roles?.map(r => r.name).includes('admin'),
-        isManager: state => state.user.roles.map(r => r.name).includes('manager'),
-        isMonitor: state => state.user.roles.map(r => r.name).includes('monitor'),
-        hasRoles: state => state.user.roles.length > 0,
-        userPermissions: state => state.user.roles?.flatMap(r => r.permissions.map(p => p.name)) || {},
+        isManager: state => (state.user.roles || []).map(r => r.name).includes('manager'),
+        isMonitor: state => (state.user.roles || []).map(r => r.name).includes('monitor'),
+        hasRoles: state => (state.user.roles || []).length > 0,
+        userPermissions: state => state.user.roles?.flatMap(r => r.permissions.map(p => p.name)) || [],
         token: state => state.token,
         hasAnyPermission: state => permissionList => {
             const permissions = state?.user?.roles?.flatMap(r => r.permissions.map(p => p.name)) || [];
@@ -333,7 +334,7 @@ export default createStore({
             return testPermissions.some(r => permissions?.includes(r));
         },
         hasAnyRole: state => roleList => {
-            const roles = state.user.roles.map(r => r.name);
+            const roles = (state.user.roles || []).map(r => r.name);
             return roleList.some(r => roles.includes(r));
         }
     }

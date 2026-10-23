@@ -11,7 +11,10 @@
                         <div class="float-end navbar-brand logo" style="width:32px; margin:0" />
                     </div>
                     <div class="card-body">
-                        <form @submit.prevent="login">
+                        <div v-if="$route.query.expired" class="alert alert-warning" role="alert">
+                            {{$t('common.sessionExpired')}}
+                        </div>
+                        <form v-if="!openIdEnabled" @submit.prevent="login">
                             <div class="mb-3">
                                 <label for="email">{{$t('common.email')}} / {{$t('common.user.login')}}:</label>
                                 <input v-model="email" required type="text" class="form-control"
@@ -57,10 +60,10 @@
                             </div>
                         </form>
                         <div v-if="openIdEnabled">
-                            <div class="or">
-                                <h2><span>{{$t('common.or').toUpperCase()}}</span></h2>
-                            </div>
                             <div class="openid-logo" />
+                            <p v-if="!$route.query.loggedOut && !$route.query.expired" class="text-center text-muted">
+                                {{$t('common.redirectingToLogin')}}
+                            </p>
                             <button class="btn btn-outline-primary w-100" @click="useOpenId">
                                 ENTRAR USANDO OPEN
                                 ID
@@ -96,6 +99,12 @@ export default {
         },
         openIdEnabled() {
             return this.$openIdService.enabled;
+        }
+    },
+    mounted() {
+        // Only the OpenID provider is allowed when it is enabled; skip it right after an explicit logout or an expired session.
+        if (this.openIdEnabled && !this.$route.query.loggedOut && !this.$route.query.expired) {
+            this.useOpenId();
         }
     },
     methods: {

@@ -492,25 +492,58 @@ openIdService.loadConfig(store).then(() => {
         requestCounter += 1;
         return config;
     });
+    // One silent renewal shared by concurrent 401s.
+    let renewal = null;
+    const renewSession = () => {
+        renewal ??= openIdService.userManager.signinSilent().finally(() => {
+            renewal = null;
+        });
+        return renewal;
+    };
+    // Returns the retried response, or undefined when the 401 was handled by leaving the session.
+    const handleOpenIdUnauthorized = async (error) => {
+        const config = error.config;
+        const user = await openIdService.userManager.getUser();
+        if (!user || user.expired) {
+            if (config && !config._retried && (config.method || 'get').toLowerCase() === 'get') {
+                try {
+                    await renewSession();
+                    config._retried = true;
+                    return await axios(config);
+                } catch (e) {
+                    console.debug('silent renew error', e?.message);
+                }
+            }
+            await openIdService.userManager.removeUser();
+            await store.dispatch('logout');
+            router.push({ name: 'login', query: { expired: 1 } });
+            return undefined;
+        }
+        // Valid token but still rejected: show the failure instead of logging out (logout/login would loop).
+        if (router.currentRoute.value.name !== 'authError') {
+            const data = error.response.data;
+            router.push({
+                name: 'authError',
+                query: {
+                    status: 401,
+                    detail: data?.message || data?.error || error.config?.url
+                }
+            });
+        }
+        return undefined;
+    };
     axios.interceptors.response.use(response => {
         requestCounter -= 1;
         if (requestCounter === 0) {
             //newVue.$Progress.finish();
         }
         return response;
-    }, (error) => {
+    }, async (error) => {
         if (error.response?.status === 401) {
             if (openIdService.enabled) {
-                // Show the failure instead of logging out: logout/login redirects loop or leave a blank page.
-                if (router.currentRoute.value.name !== 'authError') {
-                    const data = error.response.data;
-                    router.push({
-                        name: 'authError',
-                        query: {
-                            status: 401,
-                            detail: data?.message || data?.error || error.config?.url
-                        }
-                    });
+                const retried = await handleOpenIdUnauthorized(error);
+                if (retried) {
+                    return retried;
                 }
             } else {
                 //newVue.$snotify.error(i18n.global.t('errors.accessDenied'));

@@ -1085,7 +1085,7 @@ router.beforeEach((to, from, next) => {
 
     if (to.meta.requiresAuth) {
         if (!user || permissions === null) {
-            return next("/login"); // Redirect if not logged in
+            return next({ name: 'login' }); // Redirect if not logged in
         }
         if (requiredPermissions) {
             const hasPermission = requiredPermissions.some(
