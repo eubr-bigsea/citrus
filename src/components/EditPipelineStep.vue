@@ -1,126 +1,118 @@
 <template>
-    <div class="editPage-step-config-body">
-        <div class="mt-2">
-            <div>
-                <label for="nome">{{$t('common.name')}}:</label>
-                <input id="nome" v-model="editedStep.name" class="form-control form-control-sm" type="text"
-                       :placeholder="$t('pipeline.template.stepName')" maxlength="50" @input="handleInput">
+    <div class="editPage-step-config-body step-config">
+        <div class="mb-3">
+            <label for="nome" class="form-label small fw-bold mb-1">{{$t('common.name')}}</label>
+            <input id="nome" v-model="editedStep.name" class="form-control form-control-sm" type="text"
+                   :placeholder="$t('pipeline.template.stepName')" maxlength="50" @input="handleInput">
+        </div>
+        <div class="mb-3">
+            <label for="descricao" class="form-label small fw-bold mb-1">{{$t('common.description')}}</label>
+            <textarea id="descricao" v-model="editedStep.description" class="form-control form-control-sm"
+                      rows="3" :placeholder="$t('pipeline.template.stepDescription')" maxlength="200"
+                      @input="handleInput" />
+            <div class="form-text text-end">
+                {{(editedStep.description || '').length}}/200
+            </div>
+        </div>
+
+        <div class="step-config-section">
+            <h3 class="step-config-title">
+                <font-awesome-icon icon="fa fa-flask" class="me-1" />
+                {{$t('pipeline.edit.settings.linkStepToWorkflow')}}
+            </h3>
+
+            <div v-if="editedStep.workflow !== undefined && showWorkflowOps < 0"
+                 class="d-flex align-items-center gap-2 step-workflow-row">
+                <div class="flex-grow-1 text-truncate">
+                    <div class="small text-muted">
+                        {{$t('pipeline.edit.settings.stepLinkedToWorkflow')}}
+                    </div>
+                    <strong>#{{editedStep.workflow.id}} - {{editedStep.workflow.name}}</strong>
+                </div>
+                <button type="button" class="btn btn-sm btn-outline-secondary flex-shrink-0"
+                        @click="redirectToWorkflow(editedStep)">
+                    {{$t('actions.edit')}}
+                </button>
+                <button type="button" class="btn btn-sm btn-link flex-shrink-0" @click="showWorkflowOps = 0">
+                    {{$t('actions.change')}}
+                </button>
             </div>
 
-            <div class="mt-2">
-                <label for="descricao">{{$t('common.description')}}:</label>
-                <textarea id="descricao" v-model="editedStep.description" class="form-control form-control-sm"
-                          type="text" :placeholder="$t('pipeline.template.stepDescription')" maxlength="200" @input="handleInput" />
-            </div>
-        </div>
-        <hr class="mt-4 mb-3">
-        <div v-if="editedStep.workflow !== undefined && showWorkflowOps < 0" class="d-flex flex-column">
-            <label class="editPage-label">{{$t('pipeline.edit.settings.stepLinkedToWorkflow')}}:</label>
-            <button class="btn text-center btn-outline-secondary my-2" @click="redirectToWorkflow(editedStep)">
-                <font-awesome-icon icon="fa fa-flask" class="me-1" size="lg" />
-                <span class="editPage-workflow-label">
-                    {{$t('actions.edit')}} {{editedStep.workflow.id}} - {{editedStep.workflow.name}}
-                </span>
-            </button>
-            <div>
-                <b-button class="w-25" size="sm" variant="outline-primary" @click="showWorkflowOps = 0">
-                    {{$t('actions.change')}}
-                </b-button>
-                <!--
-                    <b-button class="w-25 ms-2" @click="removeWorkflow(editStep)" size="sm" variant="outline-danger">
-                        {{ $t('actions.delete') }}
+            <div v-if="showWorkflowOps > -1">
+                <div v-if="showWorkflowOps == 0" class="d-flex flex-wrap align-items-center gap-2">
+                    <b-button variant="outline-primary" size="sm" @click="showWorkflowOps = 1">
+                        <font-awesome-icon icon="fa fa-flask" class="me-1" />
+                        {{$t('pipeline.edit.settings.existingWorkflow')}}
                     </b-button>
-                    -->
-            </div>
-        </div>
-        <div v-if="showWorkflowOps > -1">
-            <label class="editPage-label mb-2">{{$t('pipeline.edit.settings.linkStepToWorkflow')}}</label>
-            <div v-if="showWorkflowOps == 0" class="d-flex">
-                <b-button class="w-50 me-2" variant="outline-primary" size="sm" @click="showWorkflowOps = 1">
-                    <font-awesome-icon icon="fa fa-flask" class="me-2" size="xl" />
-                    {{$t('pipeline.edit.settings.existingWorkflow')}}
-                </b-button>
-                <b-button class="50 ms-2 clickable" variant="outline-success" size="sm" @click="showWorkflowOps = 2">
-                    <span class="editPage-workflow-label">
-                        <font-awesome-icon icon="fa fa-plus" class="me-2" size="xl" />
+                    <b-button variant="outline-success" size="sm" @click="showWorkflowOps = 2">
+                        <font-awesome-icon icon="fa fa-plus" class="me-1" />
                         {{$t('pipeline.edit.settings.newWorkflow')}}
-                    </span>
-                </b-button>
-                <b-button v-if="editedStep.workflow" class="ms-2" variant="outline-secondary" size="sm"
-                          @click="showWorkflowOps = -1">
-                    {{$t('actions.cancel')}}
-                </b-button>
-            </div>
-            <div v-if="showWorkflowOps == 1" class="mb-3">
-                <label>{{$t('pipeline.edit.settings.chooseExistingWorkflow')}}:</label>
-                <vue-select v-model="selectedWorkflow" :filterable="false" :options="workflowList" label="name"
-                            class="w-100" @search="loadWorkflowList" @input="handleInput">
-                    <template #no-options="{}">
-                        <small>{{$t('common.typeToSearch')}}</small>
-                    </template>
-                    <template #option="option">
-                        <div class="container">
-                            <div class="row align-items-center">
-                                <font-awesome-icon icon="fa fa-flask" />
-                                <div class="col-9">
-                                    {{pad(option.id, 4, '&nbsp;')}} - {{option.name}}
-                                </div>
-                                <div class="col-2">
-                                    {{option.type}}
-                                </div>
-                            </div>
-                        </div>
-                    </template>
-                    <template #default="option">
-                        {{pad(option.id, 4, '&nbsp;')}} - {{option.name}} - {{option.type}}
-                    </template>
-                    <template #selected-option="option">
-                        <div class="selected d-center">
-                            <font-awesome-icon icon="fa fa-flask" class="me-2" />
-                            {{pad(option.id, 4, '&nbsp;')}} - {{option.name}} | {{option.type}}
-                        </div>
-                    </template>
-                </vue-select>
-                <div>
-                    <b-button :disabled="!selectedWorkflow" class="float-end mt-3" style="right: 15px; bottom: 0;" variant="primary"
-                              size="sm"
-                              @click="editStepWorkflow">
-                        {{$t('actions.confirm')}}
                     </b-button>
-                    <b-button class="mt-3" size="sm" variant="outline-secondary" @click="showWorkflowOps = -1">
+                    <b-button v-if="editedStep.workflow" variant="link" size="sm" @click="showWorkflowOps = -1">
                         {{$t('actions.cancel')}}
                     </b-button>
                 </div>
-            </div>
-            <div v-if="showWorkflowOps == 2" class="d-flex flex-column">
-                <b-container class="editPage-workflow-box p-3">
-                    <label class="editPage-label mb-2" for="identificador">{{$t('pipeline.edit.settings.workflowCreation')}}</label>
-                    <b-row>
-                        <b-col>
-                            <label class="" for="name">{{$t('common.name')}}:</label>
+                <div v-if="showWorkflowOps == 1">
+                    <label class="form-label small mb-1">{{$t('pipeline.edit.settings.chooseExistingWorkflow')}}</label>
+                    <vue-select v-model="selectedWorkflow" :filterable="false" :options="workflowList" label="name"
+                                class="w-100" @search="loadWorkflowList" @input="handleInput">
+                        <template #no-options="{}">
+                            <small>{{$t('common.typeToSearch')}}</small>
+                        </template>
+                        <template #option="option">
+                            <div class="container">
+                                <div class="row align-items-center">
+                                    <font-awesome-icon icon="fa fa-flask" />
+                                    <div class="col-9">
+                                        {{pad(option.id, 4, '&nbsp;')}} - {{option.name}}
+                                    </div>
+                                    <div class="col-2">
+                                        {{option.type}}
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+                        <template #default="option">
+                            {{pad(option.id, 4, '&nbsp;')}} - {{option.name}} - {{option.type}}
+                        </template>
+                        <template #selected-option="option">
+                            <div class="selected d-center">
+                                <font-awesome-icon icon="fa fa-flask" class="me-2" />
+                                {{pad(option.id, 4, '&nbsp;')}} - {{option.name}} | {{option.type}}
+                            </div>
+                        </template>
+                    </vue-select>
+                    <div class="d-flex justify-content-end gap-2 mt-3">
+                        <b-button size="sm" variant="outline-secondary" @click="showWorkflowOps = -1">
+                            {{$t('actions.cancel')}}
+                        </b-button>
+                        <b-button :disabled="!selectedWorkflow" variant="primary" size="sm" @click="editStepWorkflow">
+                            {{$t('actions.confirm')}}
+                        </b-button>
+                    </div>
+                </div>
+                <div v-if="showWorkflowOps == 2">
+                    <div class="row g-2">
+                        <div class="col-8">
+                            <label for="name" class="form-label small mb-1">{{$t('common.name')}}</label>
                             <input id="name" v-model="workflowName" v-focus type="text"
-                                   class="form-control w-100 form-control-sm mb-2" maxlength="100">
-                        </b-col>
-                    </b-row>
-                    <b-row>
-                        <b-col cols="6">
-                            <label>{{$t('common.type')}}:</label>
-                            <input v-model="selectedWorkflowType" type="text" value="SQL" disabled
-                                   class="form-control ">
-                            <!-- b-form-select v-model="selectedWorkflowType" :options="workflowTypeOptions" class="w-100 mb-2" /-->
-                        </b-col>
-                        <b-col class="position-relative">
-                            <b-button class="position-absolute" style="right: 15px; bottom: 0;" variant="success"
-                                      @click="createWorkflow">
-                                {{$t('actions.confirm')}}
-                            </b-button>
-                            <b-button class="position-absolute" style="right: 120px; bottom: 0;"
-                                      @click="showWorkflowOps = 0">
-                                {{$t('actions.cancel')}}
-                            </b-button>
-                        </b-col>
-                    </b-row>
-                </b-container>
+                                   class="form-control form-control-sm" maxlength="100">
+                        </div>
+                        <div class="col-4">
+                            <label for="workflow-type" class="form-label small mb-1">{{$t('common.type')}}</label>
+                            <input id="workflow-type" v-model="selectedWorkflowType" type="text" disabled
+                                   class="form-control form-control-sm">
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-end gap-2 mt-3">
+                        <b-button size="sm" variant="outline-secondary" @click="showWorkflowOps = 0">
+                            {{$t('actions.cancel')}}
+                        </b-button>
+                        <b-button size="sm" variant="success" @click="createWorkflow">
+                            {{$t('actions.confirm')}}
+                        </b-button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -258,3 +250,27 @@ export default {
 
 
 </script>
+
+<style scoped>
+.step-config-section {
+    margin-top: 1.25rem;
+    padding-top: 1rem;
+    border-top: 1px solid #dee2e6;
+}
+
+.step-config-title {
+    margin: 0 0 0.75rem;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    color: #6c757d;
+}
+
+.step-workflow-row {
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    background: #f8f9fa;
+}
+</style>

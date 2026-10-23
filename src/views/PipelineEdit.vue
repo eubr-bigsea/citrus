@@ -1,189 +1,234 @@
 <template>
     <div>
-        <div class="d-flex justify-content-between align-items-center mb-2">
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
             <div class="mt-2">
                 <h6 class="header-pretitle">
-                    Pipeline #{{ pipeline.id }}
+                    Pipeline #{{pipeline.id}}
                 </h6>
                 <h1>
-                    <InputHeader v-model="pipeline.name" @input="isDirty = true" :maxlength="50" />
+                    <InputHeader v-model="pipeline.name" :maxlength="50" @input="isDirty = true; nameError = ''" />
                 </h1>
+                <div v-if="nameError" class="text-danger small" role="alert">
+                    {{nameError}}
+                </div>
             </div>
 
-            <div class="btn-group">
-                <router-link :to="{ name: 'pipelines' }"
-                    class="btn btn-outline-secondary d-print-none float-start btn-sm">
-                    <font-awesome-icon icon="fa-chevron-right" />
-                    {{ $t('actions.back') }}
-                </router-link>
-                <button class="btn btn-sm btn-outline-secondary float-start" @click="redirectToRuns">
-                    <font-awesome-icon icon="fa fa-history" /> {{$t('common.history')}}
-                </button>
-                <button class="btn btn-sm btn-success" :disabled="!isDirty" @click="saveChanges">
-                    <font-awesome-icon icon="fa fa-save" class="me-1" /> {{ $t('actions.save') }}
-                </button>
-
+            <div class="d-flex align-items-center gap-2">
+                <span v-if="isDirty" class="text-warning-emphasis small" role="status">
+                    <font-awesome-icon icon="fa fa-circle" /> {{$t('pipeline.edit.unsaved')}}
+                </span>
+                <div class="btn-group">
+                    <router-link :to="{ name: 'pipelines' }"
+                                 class="btn btn-outline-secondary d-print-none btn-sm">
+                        <font-awesome-icon icon="fa-chevron-left" />
+                        {{$t('actions.back')}}
+                    </router-link>
+                    <button class="btn btn-sm btn-outline-secondary" @click="redirectToRuns">
+                        <font-awesome-icon icon="fa fa-history" /> {{$t('common.history')}}
+                    </button>
+                    <button class="btn btn-sm btn-success" :disabled="!isDirty" @click="saveChanges">
+                        <font-awesome-icon icon="fa fa-save" class="me-1" /> {{$t('actions.save')}}
+                    </button>
+                </div>
             </div>
         </div>
 
-
-        <div>
-            <div class="editPage-container">
-                <div class="w-25">
-                    <h5>
-                        {{$t('common.basicInformation')}}
-                    </h5>
-                    <b-card class="editPage-infos">
-
-                        <div class="mt-2 mb-4">
-                            <label for="identifier" class="fw-bold">{{$t('common.identifier')}}:</label>
-                            <input type="text" id="identifier" class="form-control form-control-sm"
-                                v-model="pipeline.identifier" @input="isDirty = true" />
+        <div class="row g-3">
+            <div class="col-12 col-lg-4 col-xl-3">
+                <h5>
+                    {{$t('common.basicInformation')}}
+                </h5>
+                <b-card class="editPage-infos">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <b-form-checkbox v-model="pipeline.enabled" name="check-button" size="sm" switch
+                                         @change="isDirty = true">
+                            {{$t('common.enabled')}}
+                        </b-form-checkbox>
+                    </div>
+                    <div class="mb-3">
+                        <label for="identifier" class="form-label small fw-bold mb-1">{{$t('common.identifier')}}</label>
+                        <input id="identifier" v-model="pipeline.identifier" type="text"
+                               class="form-control form-control-sm" @input="isDirty = true">
+                    </div>
+                    <div class="mb-3">
+                        <label for="pipeline-description" class="form-label small fw-bold mb-1">
+                            {{$t('common.description')}}
+                        </label>
+                        <textarea id="pipeline-description" v-model="pipeline.description" rows="4"
+                                  class="form-control form-control-sm" maxlength="200" @input="isDirty = true" />
+                        <div class="form-text text-end">
+                            {{(pipeline.description || '').length}}/200
                         </div>
-                        <div class="d-flex flex-row">
-                            <div class="fw-bold me-2">
-                                <div>{{$t('common.created')}}:</div>
-                                <div>{{$t('common.updated')}}:</div>
+                    </div>
+                    <!-- Periodicity hidden for now
+                    <div class="sidebar-section">
+                        <label for="pipeline-periodicity" class="form-label small fw-bold mb-1">
+                            <font-awesome-icon icon="fa fa-clock" class="text-secondary me-1" />
+                            {{$t('pipeline.edit.executionPeriodicity')}}
+                        </label>
+                        <b-form-select id="pipeline-periodicity" v-model="pipeline.periodicity" size="sm"
+                                       :options="periodicityOptions" @change="isDirty = true" />
+                        <div v-if="pipeline.periodicity" class="row g-2 mt-1">
+                            <div class="col-6">
+                                <label for="pipeline-periodicity-start" class="form-label small mb-1">
+                                    {{$t('pipeline.edit.periodicityStart')}}
+                                </label>
+                                <input id="pipeline-periodicity-start" v-model.number="pipeline.periodicity_start"
+                                       class="form-control form-control-sm" type="number" max="31" min="1"
+                                       @input="isDirty = true">
                             </div>
-                            <div>
-                                <div>{{ $filters.formatJsonDate(pipeline.created) }}</div>
-                                <div>{{ $filters.formatJsonDate(pipeline.updated) }}</div>
-                            </div>
-                        </div>
-                        <div class="mt-4">
-                            <span class="fw-bold">{{$t('common.description')}}:</span>
-                            <textarea v-model="pipeline.description" @input="isDirty = true" rows="4"
-                                class="form-control form-control-sm" maxlength="200" />
-                        </div>
-                        <div class="mt-4">
-                            <b-form-checkbox v-model="pipeline.enabled" class="d-flex align-items-center"
-                                name="check-button" size="sm" switch @change="isDirty = true">
-                                {{$t('common.enabled')}}
-                            </b-form-checkbox>
-                        </div>
-                        <div class="mt-4" v-if="pipeline.periodicity">
-                            <div>
-                                <label class="fw-bold">{{$t('pipeline.edit.executionPeriodicity')}}:</label>
-                                <b-form-select v-model="pipeline.periodicity" class="mt-0" size="sm"
-                                    @input="isDirty = true" :options="periodicityOptions" />
-                            </div>
-                            <div class="mt-2">
-                                <div>
-                                    <label class="fw-bold me-2">
-                                        {{$t('pipeline.edit.periodicityStart')}}:
-                                    </label>
-                                    <input id="iniciar-data" v-model.number="pipeline.periodicity_start"
-                                        class="form-control me-auto form-control-sm w-75" type="number" max="31"
-                                        min="1">
-                                </div>
-                                <div class="mt-2">
-                                    <label class="fw-bold me-2">
-                                        {{$t('pipeline.edit.periodicityIntervalOptional')}}:
-                                    </label>
-                                    <input v-model.number="pipeline.periodicity_interval"
-                                        class="form-control form-control-sm me-auto w-75" type="number" min="0"
-                                        max="30">
-                                </div>
+                            <div class="col-6">
+                                <label for="pipeline-periodicity-interval" class="form-label small mb-1">
+                                    {{$t('pipeline.edit.periodicityIntervalOptional')}}
+                                </label>
+                                <input id="pipeline-periodicity-interval" v-model.number="pipeline.periodicity_interval"
+                                       class="form-control form-control-sm" type="number" min="0" max="30"
+                                       @input="isDirty = true">
                             </div>
                         </div>
-                    </b-card>
-                </div>
-                <div class="w-75">
-                    <h5>
+                    </div>
+                    -->
+                    <dl class="row small text-muted mb-0 sidebar-section">
+                        <dt class="col-5 fw-normal">
+                            {{$t('common.created')}}
+                        </dt>
+                        <dd class="col-7 mb-1">
+                            {{$filters.formatJsonDate(pipeline.created)}}
+                        </dd>
+                        <dt class="col-5 fw-normal">
+                            {{$t('common.updated')}}
+                        </dt>
+                        <dd class="col-7 mb-0">
+                            {{$filters.formatJsonDate(pipeline.updated)}}
+                        </dd>
+                    </dl>
+                </b-card>
+            </div>
+            <div class="col-12 col-lg-8 col-xl-9">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h5 class="mb-0">
                         {{$t('pipeline.step', 2)}}
+                        <span class="badge text-bg-secondary steps-count">{{orderedPipelineSteps.length}}</span>
                     </h5>
-                    <b-card class="editPage-stepsDiv scroll-area">
-                        <div class="editPage-collapse-div">
-                            <div class="editPage-left-container">
-                                <div class="editPage-etapas-header">
-                                    <button id="popover-trigger" class="editPage-tab-button">
-                                        <font-awesome-icon icon="info-circle" />
-                                    </button>
-                                    <b-popover target="popover-trigger">
-                                        {{$t('pipeline.template.holdAndDragSteps')}}
-                                    </b-popover>
-                                    <div class="editPage-etapas-header-column">
-                                        {{$t('titles.order')}}
-                                    </div>
-                                    <div class="editPage-etapas-header-column">
-                                        {{$t('common.name')}}
-                                    </div>
-                                    <div class="editPage-etapas-header-column">
-                                        {{$t('common.action', 2)}}
-                                    </div>
-                                </div>
-                                <div v-if="pipeline.steps && pipeline.steps.length === 0" class="editPage-no-steps">
-                                    {{$t('pipeline.edit.addStepsToPipeline')}}
-                                    <button class="ms-1 btn btn-sm btn-secondary" :title="$t('pipeline.edit.addStep')"
-                                        @click="openAddStepModal(0)">
-                                        <font-awesome-icon icon="plus" />
-                                    </button>
-                                </div>
-                                <draggable v-model="pipeline.steps" @end="onDragEnd">
-                                    <div v-for="(step, index) in orderedPipelineSteps" :key="step.id"
-                                        class="editPage-dragDiv"
-                                        :class="{ 'editPage-dragDiv-selected': selectedStep.id === step.id }"
-                                        @dragstart="onDragStart" @click="setSelectedStep(step, index)">
-                                        <font-awesome-icon class="editPage-dragIcon" icon="fa fa-grip-vertical" />
-                                        <div class="editPage-drag-column">
-                                            # {{ index + 1 }}
-                                        </div>
-                                        <div class="editPage-drag-column" :class="ident">
-                                            {{ step.name }}
-                                        </div>
-                                        <div class="editPage-drag-column">
-                                            <div>
-                                                <button class="ms-1 btn btn-sm btn-danger" :title="$t('pipeline.edit.deleteStep')"
-                                                    @click="deleteStep(step.id, step.name)">
-                                                    <font-awesome-icon icon="trash" />
-                                                </button>
-                                                <button class="ms-1 btn btn-sm btn-secondary" :title="$t('pipeline.edit.addStep')"
-                                                    @click="openAddStepModal(step.order)">
-                                                    <font-awesome-icon icon="plus" />
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </draggable>
-                                <ModalAddPipelineStep ref="addStepModal" :pipeline="pipeline" :step-order="stepOrder"
-                                    @onadd-step="addStep" />
-
+                    <button class="btn btn-sm btn-primary" @click="openAddStepModal(orderedPipelineSteps.length)">
+                        <font-awesome-icon icon="plus" /> {{$t('pipeline.edit.addStep')}}
+                    </button>
+                </div>
+                <b-card class="editPage-stepsDiv">
+                    <div class="row g-3">
+                        <div class="col-12 col-xl-5">
+                            <div v-if="pipeline.steps && pipeline.steps.length === 0" class="editPage-no-steps">
+                                {{$t('pipeline.edit.addStepsToPipeline')}}
                             </div>
-
-                            <div class="editPage-right-container">
-                                <div v-if="pipelineWithoutSteps" class="w-100 h-100 d-flex justify-content-center">
-                                    <b-card class="w-100 h-25 text-center p-5">
-                                        <div class="editPage-empty-step ">
-                                            {{$t('pipeline.edit.addStepsToAccess')}}
+                            <div v-else class="form-text mb-2">
+                                <font-awesome-icon icon="info-circle" /> {{$t('pipeline.template.holdAndDragSteps')}}
+                            </div>
+                            <draggable v-model="pipeline.steps" handle=".step-handle" @end="onDragEnd">
+                                <div v-for="(step, index) in orderedPipelineSteps" :key="step.id"
+                                     class="step-row" :class="{ selected: selectedStep.id === step.id }"
+                                     tabindex="0" role="button" @dragstart="onDragStart"
+                                     @click="setSelectedStep(step, index)"
+                                     @keydown.enter.self="setSelectedStep(step, index)">
+                                    <font-awesome-icon class="step-handle" icon="fa fa-grip-vertical"
+                                                       :title="$t('pipeline.edit.dragHandle')" />
+                                    <span class="step-order">{{index + 1}}</span>
+                                    <div class="step-main">
+                                        <div class="step-name text-truncate">
+                                            {{step.name}}
                                         </div>
-                                    </b-card>
+                                        <div v-if="step.workflow && step.workflow.id" class="step-workflow text-muted text-truncate">
+                                            <font-awesome-icon icon="fa fa-flask" />
+                                            {{step.workflow.type}} · #{{step.workflow.id}} {{step.workflow.name}}
+                                        </div>
+                                        <div v-else class="step-workflow text-warning-emphasis">
+                                            <font-awesome-icon icon="fa fa-exclamation-triangle" />
+                                            {{$t('pipeline.edit.noWorkflow')}}
+                                        </div>
+                                    </div>
+                                    <div class="step-actions">
+                                        <button type="button" class="btn btn-sm btn-link text-secondary"
+                                                :title="$t('pipeline.edit.insertStepAfter')"
+                                                :aria-label="$t('pipeline.edit.insertStepAfter')"
+                                                @click.stop="openAddStepModal(step.order)">
+                                            <font-awesome-icon icon="plus" />
+                                        </button>
+                                        <button type="button" class="btn btn-sm btn-link text-secondary step-delete"
+                                                :title="$t('pipeline.edit.deleteStep')"
+                                                :aria-label="$t('pipeline.edit.deleteStep')"
+                                                @click.stop="deleteStep(step.id, step.name)">
+                                            <font-awesome-icon icon="trash" />
+                                        </button>
+                                    </div>
                                 </div>
-                                <b-tabs v-if="selectedStepIndex !== null" class="w-100" justified>
+                            </draggable>
+                            <ModalAddPipelineStep ref="addStepModal" :pipeline="pipeline" :step-order="stepOrder"
+                                                  @onadd-step="addStep" />
+                        </div>
+
+                        <div class="col-12 col-xl-7">
+                            <div v-if="pipelineWithoutSteps" class="w-100 d-flex justify-content-center">
+                                <b-card class="w-100 text-center p-5">
+                                    <div class="editPage-empty-step">
+                                        {{$t('pipeline.edit.addStepsToAccess')}}
+                                    </div>
+                                </b-card>
+                            </div>
+                            <template v-if="selectedStepIndex !== null">
+                                <div class="card mb-3" :class="{ 'border-warning': !hasWorkflow(selectedStep) }">
+                                    <div class="card-body d-flex align-items-center gap-3">
+                                        <font-awesome-icon :icon="hasWorkflow(selectedStep) ? 'fa fa-flask' : 'fa fa-exclamation-triangle'"
+                                                           size="lg"
+                                                           :class="hasWorkflow(selectedStep) ? 'text-secondary' : 'text-warning-emphasis'" />
+                                        <div class="flex-grow-1 text-truncate">
+                                            <template v-if="hasWorkflow(selectedStep)">
+                                                <div class="small text-muted">
+                                                    {{$t('pipeline.edit.settings.stepLinkedToWorkflow')}}
+                                                </div>
+                                                <strong>#{{selectedStep.workflow.id}} - {{selectedStep.workflow.name}}</strong>
+                                                <span class="text-muted"> · {{selectedStep.workflow.type}}</span>
+                                            </template>
+                                            <template v-else>
+                                                <strong>{{$t('pipeline.edit.noWorkflow')}}</strong>
+                                                <div class="small text-muted">
+                                                    {{$t('pipeline.edit.noWorkflowHint')}}
+                                                </div>
+                                            </template>
+                                        </div>
+                                        <button v-if="hasWorkflow(selectedStep)" type="button"
+                                                class="btn btn-sm btn-outline-secondary flex-shrink-0"
+                                                @click="openWorkflow(selectedStep)">
+                                            {{$t('pipeline.edit.openWorkflow')}}
+                                        </button>
+                                    </div>
+                                </div>
+                                <b-tabs class="w-100" nav-class="pipeline-tabs" content-class="pipeline-tab-content">
                                     <b-tab active>
                                         <template #title>
                                             <span class="editPage-tabs-title-text">
-                                                {{$t('pipeline.edit.schedulerLabel')}}
-                                            </span>
-                                        </template>
-                                        <PipelineStepScheduler ref="stepScheduler" :selected-step="selectedStep"
-                                            :selected-step-index="selectedStepIndex" :pipeline-id="pipeline.id"
-                                            @update-step="schedulerUpdate" />
-                                    </b-tab>
-                                    <b-tab>
-                                        <template #title>
-                                            <span class="editPage-tabs-title-text">
+                                                <font-awesome-icon icon="fa fa-cog" class="me-1" />
                                                 {{$t('pipeline.edit.settingsLabel')}}
                                             </span>
                                         </template>
                                         <EditPipelineStep ref="editStepModal" :edited-step="editedStep"
-                                            :pipeline="pipeline" :selected-step-index="selectedStepIndex"
-                                            @update-step="schedulerUpdate" />
+                                                          :pipeline="pipeline" :selected-step-index="selectedStepIndex"
+                                                          @update-step="schedulerUpdate" />
+                                    </b-tab>
+                                    <b-tab>
+                                        <template #title>
+                                            <span class="editPage-tabs-title-text">
+                                                <font-awesome-icon icon="fa fa-calendar-alt" class="me-1" />
+                                                {{$t('pipeline.edit.schedulerLabel')}}
+                                            </span>
+                                        </template>
+                                        <PipelineStepScheduler ref="stepScheduler" :selected-step="selectedStep"
+                                                               :selected-step-index="selectedStepIndex" :pipeline-id="pipeline.id"
+                                                               @update-step="schedulerUpdate" />
                                     </b-tab>
                                 </b-tabs>
-                            </div>
+                            </template>
                         </div>
-                    </b-card>
-                </div>
+                    </div>
+                </b-card>
             </div>
         </div>
     </div>
@@ -195,9 +240,8 @@ import EditPipelineStep from '../components/EditPipelineStep.vue';
 import ModalAddPipelineStep from './modal/ModalAddPipelineStep.vue';
 import PipelineStepScheduler from '../components/PipelineStepScheduler.vue';
 import axios from 'axios';
-import { VueDraggableNext } from 'vue-draggable-next'
+import { VueDraggableNext } from 'vue-draggable-next';
 import InputHeader from '../components/InputHeader.vue';
-import TextAreaCustom from '../components/TextAreaCustom.vue';
 import Notifier from '../mixins/Notifier.js';
 import { reorder } from '../util.js';
 
@@ -207,7 +251,6 @@ export default {
     components: {
         draggable: VueDraggableNext,
         InputHeader,
-        TextAreaCustom,
         EditPipelineStep,
         ModalAddPipelineStep,
         PipelineStepScheduler,
@@ -215,9 +258,7 @@ export default {
     mixins: [PipelineEditMixin, Notifier],
     beforeRouteLeave(to, from, next) {
         if (this.isDirty) {
-            if (confirm(this.$t('warnings.dirtyCheck'))) {
-                next();
-            }
+            next(confirm(this.$t('warnings.dirtyCheck')) ? undefined : false);
         } else {
             next();
         }
@@ -227,16 +268,16 @@ export default {
             pipeline: {},
             pipelineWithoutSteps: false,
             isDirty: false,
-            ident: 'ident',
+            nameError: '',
             selectedStep: {},
             selectedStepIndex: null,
             editedStep: { id: null, name: '', description: '', workflow: {} },
             stepOrder: null,
             periodicityOptions: [
-                { value: null, text: 'Selecione a periodicidade' },
-                { value: 'daily', text: 'Diário' },
-                { value: 'weekly', text: 'Semanal' },
-                { value: 'monthly', text: 'Mensal' },
+                { value: null, text: this.$t('pipeline.edit.selectPeriodicity') },
+                { value: 'daily', text: this.$t('pipeline.edit.daily') },
+                { value: 'weekly', text: this.$t('pipeline.edit.weekly') },
+                { value: 'monthly', text: this.$t('pipeline.edit.monthly') },
             ]
         };
     },
@@ -278,7 +319,19 @@ export default {
             }
         },
         saveChanges() {
-            this.editPipeline('Pipeline editada com sucesso.');
+            if (!this.pipeline.name?.trim()) {
+                this.nameError = this.$t('pipeline.edit.nameRequired');
+                return;
+            }
+            this.editPipeline(this.$t('messages.savedWithSuccess', { what: this.$t('titles.pipeline', 1) }));
+        },
+        hasWorkflow(step) {
+            return Boolean(step.workflow && step.workflow.id);
+        },
+        openWorkflow(step) {
+            // leaving with unsaved changes is confirmed by beforeRouteLeave
+            const name = step.workflow.type === 'DATA_EXPLORER' ? 'data-explorer-panel' : 'sql-workflow';
+            this.$router.push({ name, params: { id: step.workflow.id } });
         },
         openAddStepModal(stepOrder) {
             this.$refs.addStepModal.show();
@@ -292,7 +345,7 @@ export default {
             this.pipeline.steps.forEach((step, index) => {
                 step.order = index + 1;
             });
-            this.editPipeline('Etapa adicionada com sucesso.');
+            this.editPipeline(this.$t('pipeline.edit.stepAdded'));
         },
         setSelectedStep(step, index) {
             this.editedStep.id = step.id;
@@ -301,10 +354,6 @@ export default {
             this.editedStep.workflow = step.workflow;
             this.selectedStep = step;
             this.selectedStepIndex = index;
-        },
-        redirectToWorkflow(step) {
-            if (step.workflow === undefined) this.warning('Etapa não associada a um workflow.');
-            else this.$router.push({ name: 'editWorkflow', params: { id: step.workflow.id, platform: 1 } });
         },
         onDragStart() {
             this.isDirty = true;
@@ -352,11 +401,11 @@ export default {
         deleteStep(stepId, stepName) {
             this.confirm(
                 this.$t('actions.delete') + " '" + stepName + "'",
-                'Tem certeza que deseja excluir esta etapa?',
+                this.$t('pipeline.edit.confirmDeleteStep'),
                 () => {
                     this.pipeline.steps = this.pipeline.steps.filter(step => step.id !== stepId);
                     this.selectedStepIndex = null;
-                    this.editPipeline('Etapa excluída com sucesso.');
+                    this.editPipeline(this.$t('pipeline.edit.stepDeleted'));
                 }
             );
         },
@@ -366,31 +415,22 @@ export default {
 </script>
 
 <style lang="scss">
-.editPage-container {
-    display: flex;
-    flex-direction: row;
-    gap: 16px;
-    width: 100%;
-}
-
-
-.editPage-collapse-div {
-    display: flex;
-    flex-direction: row;
-    gap: 20px;
+.editPage-stepsDiv {
+    border: 0;
     background-color: #f8f9f9;
-    padding-bottom: 20px;
+    border-radius: 5px;
     min-height: 500px;
 }
 
-.editPage-stepsDiv {
-    border: 0px solid #dfdfdf;
-    background-color: #f8f9f9;
-    border-radius: 0px;
-    height: 70vh;
-    overflow: auto;
-    border-bottom-left-radius: 5px;
-    border-bottom-right-radius: 5px;
+.steps-count {
+    font-size: 0.65rem;
+    vertical-align: middle;
+}
+
+.sidebar-section {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #dee2e6;
 }
 
 .editPage-infos {
@@ -414,65 +454,6 @@ export default {
     text-transform: uppercase;
 }
 
-.editPage-left-container {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-}
-
-.editPage-right-container {
-    display: flex;
-    width: 100%;
-}
-
-.editPage-tab-button {
-    background-color: #FFF;
-    border: 0px;
-    color: black;
-    position: absolute;
-    left: 10px;
-}
-
-.editPage-etapas-header {
-    display: flex;
-    position: relative;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: -2px;
-    border: 2px solid #dfdfdf;
-    padding: 3px 0px;
-    font-weight: 700;
-    background-color: #FFF;
-    height: 42px;
-    letter-spacing: 0.6px;
-    text-transform: uppercase;
-    font-size: 14px;
-}
-
-.editPage-etapas-header-column {
-    display: flex;
-    width: 33%;
-    justify-content: center;
-}
-
-.editPage-dragDiv {
-    display: flex;
-    position: relative;
-    justify-content: space-between;
-    border: 2px solid #dfdfdf;
-    padding: 15px 0px;
-    background-color: #FFF;
-
-    margin-bottom: -2px;
-    font-weight: 700;
-    border-radius: 4px;
-
-    &:hover {
-        cursor: grab;
-    }
-}
-
 .editPage-no-steps {
     display: flex;
     border: 2px solid #dfdfdf;
@@ -483,36 +464,6 @@ export default {
     align-items: center;
 }
 
-.editPage-dragDiv-selected {
-    background-color: #eeeeee;
-}
-
-.editPage-drag-column {
-    display: flex;
-    width: 33%;
-    justify-content: center;
-    align-items: center;
-
-    /* &.ident {
-        justify-content: flex-start;
-        padding-left: 6.5%;
-    } */
-}
-
-.editPage-stepButton {
-    background-color: transparent;
-    border: 0px;
-    color: #007bff;
-    font-weight: 700;
-    text-align: center;
-    /* width: calc(100% - 16px); */
-
-    &:hover {
-        color: #0056b3;
-        cursor: pointer;
-    }
-}
-
 .editPage-dragIcon {
     position: absolute;
     left: 17px;
@@ -520,6 +471,76 @@ export default {
     transform: translateY(-50%);
     color: #212529;
     width: 12px;
+}
+
+.step-row {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.6rem 0.75rem;
+    margin-bottom: 0.4rem;
+    background: #fff;
+    border: 1px solid #dfdfdf;
+    border-left: 4px solid transparent;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.step-row:hover,
+.step-row:focus-visible {
+    border-color: #adb5bd;
+    outline: none;
+}
+
+.step-row.selected {
+    background: #eef3fb;
+    border-left-color: #0d6efd;
+}
+
+.step-handle {
+    flex: none;
+    color: #6c757d;
+    cursor: grab;
+}
+
+.step-order {
+    flex: none;
+    min-width: 1.6rem;
+    padding: 0.1rem 0.4rem;
+    border-radius: 1rem;
+    background: #e9ecef;
+    color: #343a40;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-align: center;
+}
+
+.step-main {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.step-name {
+    font-weight: 700;
+}
+
+.step-workflow {
+    font-size: 0.8rem;
+}
+
+.step-actions {
+    flex: none;
+    display: flex;
+}
+
+.step-actions .step-delete {
+    opacity: 0.45;
+}
+
+.step-row:hover .step-delete,
+.step-row:focus-within .step-delete {
+    opacity: 1;
+    color: #b02a37 !important;
 }
 
 .editPage-agendador {
@@ -543,18 +564,12 @@ export default {
     border-top-right-radius: 5px;
 }
 
+/* the frame comes from .pipeline-tab-content */
 .editPage-agendador-body {
     display: flex;
     flex-direction: column;
-    padding: 20px;
-    padding-bottom: 10px;
     align-items: start;
     gap: 10px;
-    border: 1px solid #dee2e6;
-    border-top: none;
-    border-bottom-left-radius: 5px;
-    border-bottom-right-radius: 5px;
-    background-color: #FFF;
 }
 
 .editPage-agendador-box {
@@ -643,10 +658,41 @@ export default {
 }
 
 .editPage-tabs-title-text {
-    font-weight: 700;
-    letter-spacing: 0.6px;
-    text-transform: uppercase;
-    font-size: 14px;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.pipeline-tabs {
+    gap: 0.25rem;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.pipeline-tabs .nav-link {
+    padding: 0.5rem 1rem;
+    border: 0;
+    border-bottom: 3px solid transparent;
+    border-radius: 0;
+    background: transparent;
+    color: #495057;
+}
+
+.pipeline-tabs .nav-link:hover,
+.pipeline-tabs .nav-link:focus-visible {
+    border-bottom-color: #adb5bd;
+    color: #212529;
+}
+
+.pipeline-tabs .nav-link.active {
+    border-bottom-color: #0d6efd;
+    color: #0d6efd;
+}
+
+.pipeline-tab-content {
+    padding: 1rem;
+    background: #fff;
+    border: 1px solid #dee2e6;
+    border-top: 0;
+    border-radius: 0 0 5px 5px;
 }
 
 .editPage-empty-step {

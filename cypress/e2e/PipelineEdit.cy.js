@@ -134,7 +134,7 @@ describe('Pipeline Edit', () => {
     });
 
     it('Sets the step schedule (monthly)', () => {
-        cy.get('[data-test="select-frequency"]').select('monthly').should('have.value', 'monthly');
+        cy.get('[data-test="frequency-monthly"]').check({ force: true }).should('be.checked');
 
         cy.get('#iniciar-data').type('2024-02-28').should('have.value', '2024-02-28');
         cy.get('#iniciar-hora').type('10:00').should('have.value', '10:00');
@@ -155,7 +155,7 @@ describe('Pipeline Edit', () => {
     });
 
     it('Sets the step schedule (triggeredByUser)', () => {
-        cy.get('[data-test="select-frequency"]').select('user').should('have.value', 'user');
+        cy.get('[data-test="frequency-user"]').check({ force: true }).should('be.checked');
 
         cy.get('[data-test="pipeline-id"]').invoke('text').then((pipelineId) => {
             cy.intercept('PATCH', `https://dev.lemonade.org.br/api/v1/tahiti/pipelines/${pipelineId}`, {
@@ -171,7 +171,7 @@ describe('Pipeline Edit', () => {
 
     /*it('Sets the step schedule (immediately)', () => {
         cy.get('[data-test=periodicity-button]').click();
-        cy.get('[data-test="select-frequency"]').select('immediately').should('have.value', 'immediately');
+        cy.get('[data-test="frequency-immediately"]').check({ force: true }).should('be.checked');
 
         cy.get('[data-test="pipeline-id"]').invoke('text').then((pipelineId) => {
             cy.intercept('PATCH', `https://dev.lemonade.org.br/api/v1/tahiti/pipelines/${pipelineId}`, {
