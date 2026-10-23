@@ -1,3 +1,19 @@
+// Initial forms of an SQL workflow (read by the SQL editor and by the backend templates).
+const newSqlForms = () => ({ "$meta": { "value": {} }, code_libraries: { value: [] } });
+
+// Body to create an empty workflow of the given type; it must carry the platform, as the explorer does.
+const buildWorkflowPayload = (name, type) => {
+    const payload = {
+        name,
+        type,
+        platform_id: type === 'WORKFLOW' ? SPARK_PLATFORM_ID : META_PLATFORM_ID,
+    };
+    if (type === 'SQL') {
+        payload.forms = newSqlForms();
+    }
+    return payload;
+};
+
 class Constants {
     static get DATA_TYPES() {
         return [
@@ -5,6 +21,7 @@ class Constants {
     };
 }
 const META_PLATFORM_ID = 1000;
+const SPARK_PLATFORM_ID = 1;
 const MODEL_BUILDER_CATEGORY = 2113;
 const EXECUTE_PYTHON = 82;
 const EXECUTE_SQL = 93;
@@ -142,7 +159,7 @@ class Workflow {
             type: 'SQL',
             platform: new Platform({ id: META_PLATFORM_ID }),
             tasks: [dataReader],
-            forms: {"$meta": { "value": {} }, code_libraries: {value: []} }
+            forms: newSqlForms()
         });
         return workflow;
     }
@@ -857,5 +874,6 @@ export {
     Visualization,
     VisualizationBuilderWorkflow,
     YDimension, XDimension, Axis,
-    EXECUTE_SQL, DATA_READER
+    EXECUTE_SQL, DATA_READER,
+    META_PLATFORM_ID, SPARK_PLATFORM_ID, buildWorkflowPayload
 };

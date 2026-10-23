@@ -82,7 +82,7 @@
                     </b-col>
                     <b-col>
                         <label class="" for="platform">{{$t('common.platform')}}:</label>
-                        <input id="platform" v-focus value="SPARK" type="text"
+                        <input id="platform" :value="selectedWorkflowType === 'WORKFLOW' ? 'SPARK' : 'META'" type="text"
                                class="form-control w-100 form-control-sm mb-2"
                                maxlength="100" disabled>
                     </b-col>
@@ -111,6 +111,7 @@ import axios from 'axios';
 import PipelineEditMixin from '../../mixins/PipelineEditMixin.js';
 import vSelect from 'vue-select';
 import Notifier from '../../mixins/Notifier.js';
+import { buildWorkflowPayload } from '@/views/data-explorer/entities.js';
 
 let tahitiUrl = import.meta.env.VITE_TAHITI_URL;
 
@@ -157,11 +158,7 @@ export default {
             this.$emit('onadd-step', copy, this.stepOrder);
         },
         async createWorkflow() {
-            const workflow = {
-                name: this.workflowName,
-                platform_id: this.workflowPlatform,
-                type: this.selectedWorkflowType
-            };
+            const workflow = buildWorkflowPayload(this.workflowName, this.selectedWorkflowType);
 
             try {
                 const resp = await axios.post(`${tahitiUrl}/workflows`, workflow);

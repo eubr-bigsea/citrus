@@ -101,12 +101,6 @@
                             <input id="name" v-model="workflowName" v-focus type="text"
                                    class="form-control w-100 form-control-sm mb-2" maxlength="100">
                         </b-col>
-                        <input id="platform" type="hidden" value="META">
-                        <b-col class="d-none">
-                            <label class="" for="platform">{{$t('common.platform')}}:</label>
-                            <input id="platform" v-focus value="META" type="text"
-                                   class="form-control w-100 form-control-sm mb-2" maxlength="100" disabled>
-                        </b-col>
                     </b-row>
                     <b-row>
                         <b-col cols="6">
@@ -137,6 +131,7 @@ import axios from 'axios';
 import PipelineEditMixin from '../mixins/PipelineEditMixin.js';
 import vSelect from 'vue-select';
 import Notifier from '../mixins/Notifier.js';
+import { buildWorkflowPayload, META_PLATFORM_ID } from '@/views/data-explorer/entities.js';
 
 let tahitiUrl = import.meta.env.VITE_TAHITI_URL;
 
@@ -215,7 +210,7 @@ export default {
                 id: this.selectedWorkflow?.id, //may be null
                 name: this.selectedWorkflow?.name,
                 type: this.selectedWorkflow?.type,
-                platform_id: this.workflowPlatform,
+                platform_id: META_PLATFORM_ID, // the list only offers META (SQL) workflows
             };
 
             // eslint-disable-next-line vue/no-mutating-props
@@ -240,11 +235,7 @@ export default {
             }
         },
         async createWorkflow() {
-            const workflow = {
-                name: this.workflowName,
-                platform_id: this.workflowPlatform,
-                type: this.selectedWorkflowType
-            };
+            const workflow = buildWorkflowPayload(this.workflowName, this.selectedWorkflowType);
 
             try {
                 const resp = await axios.post(`${tahitiUrl}/workflows`, workflow);
