@@ -83,7 +83,7 @@
     "leaflet": "^1.9.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "rollup-plugin-visualizer": "^5.9.2",
+    "rollup-plugin-visualizer": "^7.1.1",
     "sass": "^1.68.0",
     "storybook": "^10.6.0",
     "unplugin-vue-components": "^0.26.0",
