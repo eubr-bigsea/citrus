@@ -156,7 +156,7 @@ const isDirty = computed(() => Boolean(sourceCode.value) && JSON.stringify(sourc
 const load = async () => {
     try {
         if (props.add) {
-            sourceCode.value = { id: null, name: '', enabled: true, help: '', requirements: '', imports: '', code: '' };
+            sourceCode.value = { id: null, name: '', enabled: true, suspicious: false, help: '', requirements: '', imports: '', code: '' };
         } else {
             const resp = await axios.get(`${tahitiUrl}/source-codes/${route.params.id}`);
             sourceCode.value = resp.data.data[0];
