@@ -1,0 +1,13 @@
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Silent renew</title></head>
+<body>
+<script>
+    // Same message oidc-client-ts's signinSilentCallback() posts to the parent window.
+    window.parent.postMessage(
+        { source: 'oidc-client', url: window.location.href, keepOpen: false },
+        window.location.origin
+    );
+</script>
+</body>
+</html>

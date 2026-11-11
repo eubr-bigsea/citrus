@@ -29,8 +29,7 @@ class AuthService {
             scope: 'openid',
             // Enable automatic (silent) renewal of the access token
             automaticSilentRenew: true,
-            silent_redirect_uri: 'https://localhost:8800/static/silent-renew.html',
-            accessTokenExpiringNotificationTime: 10,
+            accessTokenExpiringNotificationTime: 60,
             monitorSession: false,
         };
         this.enabled = false;
@@ -43,6 +42,8 @@ class AuthService {
         this.settings = merged;
         merged.redirect_uri ??= window.location.origin;
         merged.post_logout_redirect_uri ??= `${window.location.origin}/logout`;
+        // Accepts absolute or relative values (relative ones resolve against the current origin).
+        merged.silent_redirect_uri = new URL(merged.silent_redirect_uri ?? '/static/silent-renew.html', window.location.origin).href;
         //console.debug('Redirecting', merged.redirect_uri)
         //merged.scope = 'profile, email'
         /*
@@ -70,17 +71,9 @@ class AuthService {
                 cleared.then(() => window.location.replace('/auth/login?expired=1'));
             }
         });
-        mgr.events.addAccessTokenExpiring(function () {
-            console.log("token expiring");
-            // maybe do this code manually if automaticSilentRenew doesn't work for you
-            mgr.signinSilent().then(function(token) {
-                console.log("silent renew success", token);
-                localStorage.setItem('token', token.access_token);
-                //self.getThornProfile();
-            }).catch(function(e) {
-                console.log("silent renew error", e.message);
-            });
-        });
+        // automaticSilentRenew does the renewal; keep the legacy localStorage token in sync.
+        mgr.events.addUserLoaded(user => localStorage.setItem('token', user.access_token));
+        mgr.events.addSilentRenewError(e => console.log('silent renew error', e.message));
     }
     /**
      * Initate the login process.
