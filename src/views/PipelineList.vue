@@ -19,6 +19,23 @@
         <div class="card pipelineList-body">
             <div class="card-body pipelineList-container">
                 <v-server-table ref="pipelineList" :columns="columns" :options="options" name="pipelineList">
+                    <template #afterFilter>
+                        <div class="mb-3 float-start ms-3">
+                            <label>{{$t('common.enabled')}}</label>
+                            <select v-model="enabledFilter" class="form-select form-select-sm"
+                                    @change="handleSelectEnabled">
+                                <option value="all">
+                                    Todos
+                                </option>
+                                <option value="true">
+                                    {{$t('common.yes')}}
+                                </option>
+                                <option value="false">
+                                    {{$t('common.no')}}
+                                </option>
+                            </select>
+                        </div>
+                    </template>
                     <template #id="props">
                         <router-link :to="{ name: 'pipelineEdit', params: { id: props.row.id } }">
                             {{props.row.id}}
@@ -101,6 +118,7 @@ export default {
 
         return {
             first: 'first',
+            enabledFilter: 'true', // 'all' | 'true' | 'false'; disabled (deleted) pipelines are hidden by default
             pipelineTemplates: [],
             templateOptions: [
                 { value: null, text: 'Não utilizar template' },
@@ -109,7 +127,18 @@ export default {
         };
     },
     methods: {
+        handleSelectEnabled(ev) {
+            const table = this.$refs.pipelineList;
+            table.setCustomQuery({ enabled: ev.target.value });
+            table.getData();
+        },
         async load(data) {
+            // the table keeps the custom filter between visits (saveState)
+            this.enabledFilter = data.customQueries?.enabled ?? this.enabledFilter;
+            if (this.enabledFilter !== 'all') {
+                data.enabled = this.enabledFilter;
+            }
+            delete data.customQueries;
             data.sort = data.orderBy;
             data.asc = data.ascending === 1 ? 'true' : 'false';
             data.size = data.limit;
@@ -118,7 +147,11 @@ export default {
 
             try {
                 const resp = await axios.get(`${tahitiUrl}/pipelines`, { params: data });
-                return { data: resp.data.data, count: resp.data.pagination.total };
+                return {
+                    data: resp.data.data,
+                    count: resp.data.pagination.total,
+                    customQueries: { enabled: this.enabledFilter },
+                };
             } catch (e) {
                 this.error(e);
             }
@@ -161,7 +194,8 @@ export default {
                 this.$t('messages.doYouWantToDelete'),
                 async () => {
                     try {
-                        await axios.delete(`${tahitiUrl}/pipelines/${pipelineId}`, {});
+                        // soft delete: the pipeline is only disabled
+                        await axios.patch(`${tahitiUrl}/pipelines/${pipelineId}`, { enabled: false });
                         this.success(
                             this.$t('messages.successDeletion', {
                                 what: 'Pipeline'
