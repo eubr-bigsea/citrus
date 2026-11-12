@@ -40,10 +40,14 @@ class AuthService {
         let merged = {...settings, ...resp['data']['data']};
 
         this.settings = merged;
-        merged.redirect_uri ??= window.location.origin;
-        merged.post_logout_redirect_uri ??= `${window.location.origin}/logout`;
-        // Accepts absolute or relative values (relative ones resolve against the current origin).
-        merged.silent_redirect_uri = new URL(merged.silent_redirect_uri ?? '/static/silent-renew.html', window.location.origin).href;
+        // Absolute values are kept as is; relative ones resolve against the current origin.
+        const toAbsolute = (value, fallback) => {
+            const v = value ?? fallback;
+            return /^[a-z][a-z0-9+.-]*:/i.test(v) ? v : new URL(v, window.location.origin).href;
+        };
+        merged.redirect_uri = toAbsolute(merged.redirect_uri, window.location.origin);
+        merged.post_logout_redirect_uri = toAbsolute(merged.post_logout_redirect_uri, '/logout');
+        merged.silent_redirect_uri = toAbsolute(merged.silent_redirect_uri, '/static/silent-renew.html');
         //console.debug('Redirecting', merged.redirect_uri)
         //merged.scope = 'profile, email'
         /*
