@@ -169,6 +169,8 @@ import {
     faClock,
     faCircleXmark,
     faFolder,
+    faFolderOpen,
+    faTerminal,
     faFile,
     faCompress,
     faSeedling,
@@ -348,6 +350,8 @@ library.add(
     faClock,
     faCircleXmark,
     faFolder,
+    faFolderOpen,
+    faTerminal,
     faFile
 );
 /**

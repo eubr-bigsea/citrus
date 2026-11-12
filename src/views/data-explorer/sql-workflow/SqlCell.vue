@@ -58,8 +58,15 @@
                         :format="{ language: 'spark', tabWidth: 2, keywordCase: 'upper', linesBetweenQueries: 2 }" />
                     <template v-else-if="cell.operation.slug === 'execute-script'">
                         <label>Caminho completo para o arquivo (visível no servidor)</label>
-                        <input ref="scriptRef" class="form-control form-control-sm" type="text"
-                            v-model="cell.forms.script.value" maxlength="400" @input="emit('dirty')" />
+                        <div class="input-group input-group-sm">
+                            <input ref="scriptRef" class="form-control form-control-sm" type="text"
+                                v-model="cell.forms.script.value" maxlength="400" @input="emit('dirty')" />
+                            <button type="button" class="btn btn-outline-secondary" @click="browserRef.show()">
+                                Procurar arquivos
+                            </button>
+                        </div>
+                        <script-file-browser-modal ref="browserRef"
+                            @select="(p) => { cell.forms.script.value = p; emit('dirty') }" />
                     </template>
                     <python-editor v-else-if="cell.operation.slug === 'execute-python'" :query="cell.forms.code.value"
                         @update="(v) => { if (v !== cell.forms.code.value) { cell.forms.code.value = v; emit('dirty') } }" ref="editorRef"
@@ -115,6 +122,7 @@
 import { computed, ref, watch } from 'vue';
 import SqlEditor from './SqlEditor.vue';
 import PythonEditor from './PythonEditor.vue';
+import ScriptFileBrowserModal from './ScriptFileBrowserModal.vue';
 import SqlEditorToolbar from './SqlEditorToolbar.vue';
 import { CELL_TYPE_ICONS, getCellStatusLabel } from './cellStatus.js';
 
@@ -138,6 +146,7 @@ const toolbarRef = ref();
 const editorRef = ref();
 const isSql = computed(() => props.cell.operation.slug === 'execute-sql');
 const scriptRef = ref();
+const browserRef = ref();
 const typeIcon = computed(() => CELL_TYPE_ICONS[props.cell.operation.slug]);
 
 const indent = () => {
